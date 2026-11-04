@@ -600,6 +600,41 @@ que el bloque completo de seis. El margen contra el umbral del mes **en curso**
 hace mucho menos (36), lo que tiene sentido: la etiqueta está definida por el
 umbral del mes objetivo, no del mes en curso.
 
+#### Definición exacta de las variables del bloque G
+
+Se escriben aquí para que el bloque sea reimplementable desde este documento.
+Todas se calculan sobre el mes de referencia `t`, con `casos` el total de
+notificaciones del mes y `h` el horizonte en meses. Los umbrales son columnas
+del panel: `p75_t{h}` es el P75 del mes objetivo y `p25_canal_t` / `p75_canal_t`
+son la banda endémica del mes en curso.
+
+```
+margen_objetivo      = (casos[t] - p75_t{h}[t]) / (p75_t{h}[t] + 1)
+margen_curso         = (casos[t] - p75_canal_t[t]) / (p75_canal_t[t] + 1)
+pos_banda            = (casos[t] - p25_canal_t[t]) / (p75_canal_t[t] - p25_canal_t[t] + 1)
+margen_objetivo_vel  = margen_objetivo[t] - margen_objetivo[t-1]
+margen_curso_vel     = margen_curso[t]    - margen_curso[t-1]
+margen_curso_acel    = margen_curso_vel[t] - margen_curso_vel[t-1]
+```
+
+El `+1` del denominador evita la división por cero en municipios con umbral
+cero y deja la escala en unidades de umbral. La línea base del canal endémico
+alerta exactamente cuando `margen_objetivo > 0`, de modo que la variable es esa
+regla medida en magnitud en vez de en signo.
+
+**Prueba anti-fuga aplicada a estas variables.** Se construyó la tabla completa
+y una recortada en un mes de corte, y se exigió igualdad exacta en todos los
+meses anteriores al corte: una variable sin fuga da el mismo valor en el mes `t`
+exista o no el futuro. Las quince variables de las tres hipótesis pasaron en los
+dos horizontes.
+
+**Dónde está el código.** Los scripts de las cinco tandas no se publican en este
+repositorio; son material de trabajo del autor y quedan disponibles a petición.
+Lo que sí está completo aquí es el diseño de cada experimento, las definiciones
+de arriba y los resultados por celda, que es lo que permite auditar el método y
+rehacerlo. La corrida exacta además depende de artefactos de datos de 1,6 GB que
+no son públicos, así que ni publicando los scripts sería reproducible tal cual.
+
 **La lectura de fondo.** El canal endémico no era un competidor del modelo: era
 una variable que al modelo le faltaba. `margen_objetivo` es la regla de
 decisión del canal convertida de signo en magnitud —el canal alerta cuando esta
