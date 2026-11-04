@@ -286,11 +286,38 @@ class EvaluationRecord(ContractModel):
     onset_sensitivity: Probability | None
 
 
+class CandidateComparison(ContractModel):
+    """Per-candidate performance over the frozen evaluation block.
+
+    Includes the declared baseline. Without it the published candidate's
+    sensitivity has nothing to be judged against, which is what made the
+    dashboard state that the model was not approved without ever showing
+    what it had been measured against.
+    """
+
+    horizon: Horizon
+    candidate: Annotated[str, Field(min_length=1, max_length=40)]
+    label: Annotated[str, Field(min_length=1, max_length=40)]
+    role: Literal["BASELINE", "PUBLISHED", "OTHER"]
+    onsets_detected: NonNegativeCount | None
+    actual_onsets: NonNegativeCount | None
+    alerts_emitted: NonNegativeCount | None
+    false_alerts: NonNegativeCount | None
+    false_alert_ratio: Probability | None
+    onset_sensitivity: Probability | None
+    auroc: Probability | None
+    average_precision: Probability | None
+    brier: Probability | None
+
+
 class EvaluationContext(ContractModel):
     """Historically scoped context, separate from current results."""
 
     demonstrative_values: Annotated[bool, Field(strict=True)]
     evaluation_records: list[EvaluationRecord]
+    # Opcional: los resultados publicados antes de noviembre de 2026 no lo
+    # traen, y rechazarlos romperia la lectura de archivos ya en circulacion.
+    comparison: list[CandidateComparison] | None = None
 
 
 class DashboardResponse(ContractModel):

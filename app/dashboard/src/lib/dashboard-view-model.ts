@@ -49,6 +49,18 @@ export interface Muni {
   t2: Forecast;
 }
 
+export interface Candidato {
+  horizon: "T+1" | "T+2";
+  label: string;
+  role: "BASELINE" | "PUBLISHED" | "OTHER";
+  detected: number | null;
+  onsets: number | null;
+  alerts: number | null;
+  falseAlerts: number | null;
+  sensitivity: number | null;
+  falseAlertRatio: number | null;
+}
+
 export interface HistoryRecord {
   horizon: "T+1" | "T+2";
   procedureId: string;
@@ -85,6 +97,7 @@ export interface DashboardViewModel {
   demonstrativeValues: boolean;
   municipalities: Muni[];
   history: HistoryRecord[];
+  candidatos: Candidato[];
 }
 
 export const DEPTS: Record<Dept, string> = { tolima: "Tolima", meta: "Meta" };
@@ -245,6 +258,17 @@ export function adaptDashboardResponse(response: DashboardResponse): DashboardVi
     limitation: response.governance.limitation,
     demonstrativeValues: response.evaluation_context.demonstrative_values,
     municipalities,
+    candidatos: (response.evaluation_context.comparison ?? []).map((c) => ({
+      horizon: c.horizon === "T1" ? ("T+1" as const) : ("T+2" as const),
+      label: c.label,
+      role: c.role,
+      detected: c.onsets_detected,
+      onsets: c.actual_onsets,
+      alerts: c.alerts_emitted,
+      falseAlerts: c.false_alerts,
+      sensitivity: c.onset_sensitivity,
+      falseAlertRatio: c.false_alert_ratio,
+    })),
     history: response.evaluation_context.evaluation_records.map((record) => ({
       horizon: record.horizon === "T1" ? "T+1" : "T+2",
       procedureId: record.procedure_id,

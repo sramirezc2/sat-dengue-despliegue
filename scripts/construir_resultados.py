@@ -136,6 +136,56 @@ def leer_comparacion(ruta: Path, candidato: str) -> dict[str, dict[str, str]]:
         return {f["horizon"]: f for f in csv.DictReader(fh) if f["candidate"] == candidato}
 
 
+# Nombres para humanos. "persistence" es la linea base declarada en la politica
+# de decision: alertar donde el exceso ya esta ocurriendo. Se llama regla simple
+# porque eso es lo que es, y porque "persistencia" no le dice nada a nadie fuera
+# del equipo.
+ETIQUETAS_CANDIDATO = {
+    "persistence": "Regla simple",
+    "xgboost": "XGBoost",
+    "lightgbm": "LightGBM",
+    "gam": "GAM",
+}
+
+
+def leer_todos_los_candidatos(ruta: Path, publicado: str) -> list[dict[str, object]]:
+    """Desempeno de cada candidato evaluado, para poder compararlos en pantalla.
+
+    El tablero declaraba que el modelo no esta aprobado y no mostraba contra que
+    se lo habia medido. Sin la linea base, "25 % de los inicios" no se puede
+    juzgar: hay que saber que la regla simple detecta cero a un mes y treinta a
+    dos meses. Todo sale de la misma corrida registrada.
+    """
+    with ruta.open(encoding="utf-8") as fh:
+        filas = list(csv.DictReader(fh))
+    salida: list[dict[str, object]] = []
+    for f in filas:
+        cand = f["candidate"]
+        salida.append(
+            {
+                "horizon": f"T{f['horizon']}",
+                "candidate": cand,
+                "label": ETIQUETAS_CANDIDATO.get(cand, cand),
+                "role": (
+                    "BASELINE"
+                    if cand == "persistence"
+                    else "PUBLISHED" if cand == publicado else "OTHER"
+                ),
+                "onsets_detected": _entero(f.get("detected_onsets")),
+                "actual_onsets": _entero(f.get("real_onsets")),
+                "alerts_emitted": _entero(f.get("emitted_alerts")),
+                "false_alerts": _entero(f.get("false_alerts")),
+                "false_alert_ratio": _numero(f.get("false_alarm_ratio")),
+                "onset_sensitivity": _numero(f.get("onset_sensitivity")),
+                "auroc": _numero(f.get("auroc")),
+                "average_precision": _numero(f.get("average_precision")),
+                "brier": _numero(f.get("brier")),
+            }
+        )
+    salida.sort(key=lambda r: (r["horizon"], -(r["onsets_detected"] or 0)))
+    return salida
+
+
 def serie_del_canal(
     panel: dict[tuple[str, str], dict[str, str]], municipio: str, referencia: str
 ) -> list[dict[str, object]]:
@@ -223,6 +273,7 @@ def construir_documento(
     predicciones: dict[tuple[str, str, str], dict[str, str]],
     umbrales: dict[str, Umbral],
     comparacion: dict[str, dict[str, str]],
+    candidatos: list[dict[str, object]],
     candidato: str,
     procedimiento: str,
     version_modelo: str,
@@ -312,6 +363,7 @@ def construir_documento(
         "evaluation_context": {
             "demonstrative_values": False,
             "evaluation_records": registros,
+            "comparison": candidatos,
         },
     }
 
@@ -331,6 +383,7 @@ def main() -> None:
     panel = leer_panel(args.panel)
     predicciones, umbrales = leer_predicciones(args.predicciones, args.candidato)
     comparacion = leer_comparacion(args.comparacion, args.candidato)
+    candidatos = leer_todos_los_candidatos(args.comparacion, args.candidato)
     generado = datetime.now(timezone.utc).isoformat(timespec="seconds")
     version_modelo = args.version_modelo or f"{args.candidato}-{args.procedimiento[:12]}"
 
@@ -357,6 +410,7 @@ def main() -> None:
                 predicciones=predicciones,
                 umbrales=umbrales,
                 comparacion=comparacion,
+                candidatos=candidatos,
                 candidato=args.candidato,
                 procedimiento=args.procedimiento,
                 version_modelo=version_modelo,

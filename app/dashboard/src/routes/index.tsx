@@ -50,6 +50,7 @@ import { Button } from "@/components/ui/button";
 import { MunicipalMap } from "@/components/municipal-map";
 import { TablaTriaje } from "@/components/tabla-triaje";
 import { DetalleMunicipio } from "@/components/detalle-municipio";
+import { ComparacionModelo } from "@/components/comparacion-modelo";
 import { useDashboard } from "@/lib/use-dashboard";
 import { DashboardClientError } from "@/lib/dashboard-client";
 import { etiquetaPeriodo, usePeriodos } from "@/lib/periodos";
@@ -372,6 +373,7 @@ export function Dashboard() {
             aria-labelledby="tab-acierta"
             className="space-y-5"
           >
+            <ComparacionModelo view={view} />
             <HistoryCard view={view} />
           </div>
         )}

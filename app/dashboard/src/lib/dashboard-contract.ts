@@ -151,6 +151,24 @@ const evaluationRecordSchema = z
   })
   .strict();
 
+const candidateComparisonSchema = z
+  .object({
+    horizon: z.enum(["T1", "T2"]),
+    candidate: z.string().min(1).max(40),
+    label: z.string().min(1).max(40),
+    role: z.enum(["BASELINE", "PUBLISHED", "OTHER"]),
+    onsets_detected: z.number().int().nonnegative().nullable(),
+    actual_onsets: z.number().int().nonnegative().nullable(),
+    alerts_emitted: z.number().int().nonnegative().nullable(),
+    false_alerts: z.number().int().nonnegative().nullable(),
+    false_alert_ratio: z.number().min(0).max(1).nullable(),
+    onset_sensitivity: z.number().min(0).max(1).nullable(),
+    auroc: z.number().min(0).max(1).nullable(),
+    average_precision: z.number().min(0).max(1).nullable(),
+    brier: z.number().min(0).max(1).nullable(),
+  })
+  .strict();
+
 export const dashboardResponseSchema = z
   .object({
     metadata: z
@@ -182,6 +200,11 @@ export const dashboardResponseSchema = z
       .object({
         demonstrative_values: z.boolean(),
         evaluation_records: z.array(evaluationRecordSchema),
+        // Desempeño de cada candidato evaluado, incluida la línea base. Es
+        // opcional porque los resultados publicados antes de noviembre de 2026
+        // no lo traen, y un tablero que se cae ante un archivo viejo es peor
+        // que uno que oculta una sección.
+        comparison: z.array(candidateComparisonSchema).optional(),
       })
       .strict(),
   })
