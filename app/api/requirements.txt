@@ -1,0 +1,7 @@
+# API del tablero. Los pines de fastapi y pydantic estan alineados con el
+# pyproject de SAT-Dengue-V2 para que el contrato se comporte igual aqui que
+# en el repositorio cientifico.
+fastapi==0.161.0
+pydantic==2.14.1
+uvicorn==0.54.0
+boto3==1.42.6

@@ -1,0 +1,31 @@
+# Entornos
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Node
+node_modules/
+.output/
+.wrangler/
+.tanstack/
+
+# Configuracion local
+.env
+.env.*
+!.env.example
+
+# Los resultados publicados si se versionan: pesan poco y hacen que el
+# repositorio arranque solo, sin depender de S3, que es lo que permite
+# reproducir el despliegue desde cero.
+
+# Artefactos pesados
+modelos/*.pkl
+modelos/*.joblib
+
+# Sistema
+.DS_Store
+
+# Material de trabajo personal: no se versiona ni se publica.
+prompt_a_seguir.md
+experimentos/

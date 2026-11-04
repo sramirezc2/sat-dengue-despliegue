@@ -1,0 +1,19 @@
+# Servicio systemd. Es lo que hace que la aplicacion vuelva sola cuando AWS
+# Academy reinicia la instancia al iniciar el laboratorio.
+[Unit]
+Description=SAT Dengue, tablero de alerta temprana
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/sat-dengue
+EnvironmentFile=/opt/sat-dengue/.env
+ExecStart=/usr/bin/docker compose -f docker/docker-compose.yml --env-file .env up -d
+ExecStop=/usr/bin/docker compose -f docker/docker-compose.yml --env-file .env down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

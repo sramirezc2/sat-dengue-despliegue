@@ -1,0 +1,3684 @@
+{
+  "metadata": {
+    "result_set_id": "3f628e83-62e0-5562-8886-98726a57db36",
+    "reference_period": "2025-04",
+    "generated_at": "2026-11-04T16:04:02+00:00",
+    "data_updated_at": "2026-11-04T16:04:02+00:00",
+    "data_version": "g5-frozen-2025"
+  },
+  "governance": {
+    "governance_gate": "G5",
+    "governance_status": "NOT_APPROVED",
+    "champion_status": "NOT_SELECTED",
+    "limitation": "Resultados reales de un candidato provisional sobre el bloque de evaluacion congelado de 2025. El champion no esta seleccionado y estas alertas no estan autorizadas para decisiones operativas."
+  },
+  "department": {
+    "department_code": "50",
+    "department_name": "Meta",
+    "requested_period": "2025-04"
+  },
+  "municipalities": [
+    {
+      "municipality_code": "50001",
+      "municipality_name": "Villavicencio",
+      "cases_t": 549,
+      "endemic_zone_t": "EXCESO",
+      "p25": 47.0,
+      "median": 156.0,
+      "p75": 305.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 347,
+          "p25": 55.0,
+          "median": 255.0,
+          "p75": 304.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 410,
+          "p25": 59.0,
+          "median": 205.0,
+          "p75": 250.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 435,
+          "p25": 105.0,
+          "median": 135.0,
+          "p75": 216.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 549,
+          "p25": 47.0,
+          "median": 156.0,
+          "p75": 305.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 56.0,
+          "median": 195.0,
+          "p75": 348.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 68.0,
+          "median": 189.0,
+          "p75": 421.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 62.0,
+          "median": 204.0,
+          "p75": 377.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 42.0,
+          "median": 161.0,
+          "p75": 320.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 44.0,
+          "median": 165.0,
+          "p75": 273.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 32.0,
+          "median": 181.0,
+          "p75": 249.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 44.0,
+          "median": 217.0,
+          "p75": 222.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 55.0,
+          "median": 208.0,
+          "p75": 211.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "00e1f74d-7d54-5848-a1a1-e0e8f8140ed5",
+          "probability": 0.900632,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "937b3822-02b7-5cf0-9d19-c1e4bdc34fbc",
+          "probability": 0.82833,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50006",
+      "municipality_name": "Acacías",
+      "cases_t": 92,
+      "endemic_zone_t": "SEGURIDAD",
+      "p25": 19.0,
+      "median": 99.0,
+      "p75": 110.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 87,
+          "p25": 29.0,
+          "median": 47.0,
+          "p75": 59.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 66,
+          "p25": 42.0,
+          "median": 42.0,
+          "p75": 60.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 81,
+          "p25": 34.0,
+          "median": 74.0,
+          "p75": 78.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 92,
+          "p25": 19.0,
+          "median": 99.0,
+          "p75": 110.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 26.0,
+          "median": 121.0,
+          "p75": 226.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 18.0,
+          "median": 103.0,
+          "p75": 124.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 10.0,
+          "median": 83.0,
+          "p75": 86.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 15.0,
+          "median": 47.0,
+          "p75": 77.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 19.0,
+          "median": 39.0,
+          "p75": 70.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 15.0,
+          "median": 28.0,
+          "p75": 66.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 22.0,
+          "median": 39.0,
+          "p75": 62.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 32.0,
+          "median": 42.0,
+          "p75": 63.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "5a91d540-faa3-5897-ae35-12c1f99272b3",
+          "probability": 0.418177,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "2f1ff169-a9a3-55ff-a16c-b8215b93fe1c",
+          "probability": 0.434761,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50110",
+      "municipality_name": "Barranca de Upía",
+      "cases_t": 13,
+      "endemic_zone_t": "EXCESO",
+      "p25": 2.0,
+      "median": 7.0,
+      "p75": 12.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 4,
+          "p25": 0.0,
+          "median": 3.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 7,
+          "p25": 2.0,
+          "median": 3.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 9,
+          "p25": 2.0,
+          "median": 7.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 13,
+          "p25": 2.0,
+          "median": 7.0,
+          "p75": 12.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 0.0,
+          "median": 4.0,
+          "p75": 25.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 0.0,
+          "median": 11.0,
+          "p75": 17.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 1.0,
+          "median": 8.0,
+          "p75": 11.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 2.0,
+          "median": 2.0,
+          "p75": 3.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "14c657fc-a5ca-5ef4-bf1a-ba0ea471ac42",
+          "probability": 0.74983,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "5d8143d5-bd86-57e0-8038-1af8a6341e6c",
+          "probability": 0.683524,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50124",
+      "municipality_name": "Cabuyaro",
+      "cases_t": 8,
+      "endemic_zone_t": "EXCESO",
+      "p25": 1.0,
+      "median": 2.0,
+      "p75": 2.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 5,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 4,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 7,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 8,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 2.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "f5b42eab-bbb3-5b83-829d-843b6d48ce5f",
+          "probability": 0.707182,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "f4a04aee-de0b-52e1-b145-e624bff1690e",
+          "probability": 0.579763,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50150",
+      "municipality_name": "Castilla la Nueva",
+      "cases_t": 13,
+      "endemic_zone_t": "EXITO",
+      "p25": 16.0,
+      "median": 19.0,
+      "p75": 20.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 20,
+          "p25": 4.0,
+          "median": 7.0,
+          "p75": 19.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 19,
+          "p25": 9.0,
+          "median": 10.0,
+          "p75": 11.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 22,
+          "p25": 10.0,
+          "median": 20.0,
+          "p75": 35.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 13,
+          "p25": 16.0,
+          "median": 19.0,
+          "p75": 20.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 15.0,
+          "median": 50.0,
+          "p75": 78.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 11.0,
+          "median": 21.0,
+          "p75": 34.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 5.0,
+          "median": 18.0,
+          "p75": 31.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 8.0,
+          "median": 8.0,
+          "p75": 13.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 3.0,
+          "median": 14.0,
+          "p75": 17.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 6.0,
+          "median": 7.0,
+          "p75": 12.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 3.0,
+          "median": 4.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 4.0,
+          "median": 8.0,
+          "p75": 11.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "1d887919-aac3-5ac6-82e3-b64dac383bd3",
+          "probability": 0.085179,
+          "threshold": 0.306748,
+          "alert_status": "NO_ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "a8e4f5d8-433b-57bf-a871-c6c961ec4b3e",
+          "probability": 0.122727,
+          "threshold": 0.315448,
+          "alert_status": "NO_ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50223",
+      "municipality_name": "Cubarral",
+      "cases_t": 10,
+      "endemic_zone_t": "EXCESO",
+      "p25": 4.0,
+      "median": 5.0,
+      "p75": 6.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 3,
+          "p25": 0.0,
+          "median": 8.0,
+          "p75": 10.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 2,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 2,
+          "p25": 3.0,
+          "median": 3.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 10,
+          "p25": 4.0,
+          "median": 5.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 2.0,
+          "median": 8.0,
+          "p75": 12.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 5.0,
+          "median": 9.0,
+          "p75": 11.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 3.0,
+          "median": 8.0,
+          "p75": 9.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 1.0,
+          "median": 7.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 4.0,
+          "median": 5.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 9.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 3.0,
+          "median": 6.0,
+          "p75": 8.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "d49d3829-e646-5ad5-9b00-e787f7bf27d2",
+          "probability": 0.527094,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "3e2d2a5d-8272-51bc-a97a-4adc1148aa29",
+          "probability": 0.462417,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50226",
+      "municipality_name": "Cumaral",
+      "cases_t": 61,
+      "endemic_zone_t": "EXCESO",
+      "p25": 9.0,
+      "median": 30.0,
+      "p75": 38.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 41,
+          "p25": 8.0,
+          "median": 9.0,
+          "p75": 16.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 23,
+          "p25": 5.0,
+          "median": 8.0,
+          "p75": 11.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 32,
+          "p25": 7.0,
+          "median": 15.0,
+          "p75": 22.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 61,
+          "p25": 9.0,
+          "median": 30.0,
+          "p75": 38.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 9.0,
+          "median": 36.0,
+          "p75": 55.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 3.0,
+          "median": 22.0,
+          "p75": 25.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 3.0,
+          "median": 15.0,
+          "p75": 27.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 12.0,
+          "median": 12.0,
+          "p75": 19.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 6.0,
+          "median": 8.0,
+          "p75": 11.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 2.0,
+          "median": 3.0,
+          "p75": 9.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 2.0,
+          "median": 6.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 6.0,
+          "median": 8.0,
+          "p75": 11.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "a4265334-b6f1-538e-8d1a-d45bfa97e923",
+          "probability": 0.894254,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "a841a443-47b0-5355-8c9c-f8e7796e6268",
+          "probability": 0.800345,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50245",
+      "municipality_name": "El Calvario",
+      "cases_t": 0,
+      "endemic_zone_t": "SEGURIDAD",
+      "p25": 0.0,
+      "median": 0.0,
+      "p75": 0.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 0,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 1,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 0,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 0,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "64540281-316c-51aa-86a7-02c608448859",
+          "probability": 0.134715,
+          "threshold": 0.306748,
+          "alert_status": "NO_ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "ec055a3a-a5e9-5f8c-a58c-410f35715849",
+          "probability": 0.163745,
+          "threshold": 0.315448,
+          "alert_status": "NO_ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50251",
+      "municipality_name": "El Castillo",
+      "cases_t": 10,
+      "endemic_zone_t": "ALERTA",
+      "p25": 0.0,
+      "median": 3.0,
+      "p75": 10.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 10,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 11.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 7,
+          "p25": 1.0,
+          "median": 4.0,
+          "p75": 9.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 7,
+          "p25": 1.0,
+          "median": 4.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 10,
+          "p25": 0.0,
+          "median": 3.0,
+          "p75": 10.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 1.0,
+          "median": 5.0,
+          "p75": 13.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 2.0,
+          "median": 2.0,
+          "p75": 10.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 3.0,
+          "median": 4.0,
+          "p75": 5.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "c2944771-65ab-5cfe-8576-ecbef8012b1e",
+          "probability": 0.309993,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "6ca11900-51bc-507d-a69f-9c4f7dd430d1",
+          "probability": 0.352843,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50270",
+      "municipality_name": "El Dorado",
+      "cases_t": 2,
+      "endemic_zone_t": "ALERTA",
+      "p25": 1.0,
+      "median": 1.0,
+      "p75": 8.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 7,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 3,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 4,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 2,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 9.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 4.0,
+          "median": 5.0,
+          "p75": 9.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 2.0,
+          "median": 3.0,
+          "p75": 7.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "9bc252ac-1d27-5673-b64a-d9b5d4d9d97f",
+          "probability": 0.311713,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "4d72b655-d387-5985-b1ae-75074f4beaca",
+          "probability": 0.336184,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50287",
+      "municipality_name": "Fuentedeoro",
+      "cases_t": 44,
+      "endemic_zone_t": "EXCESO",
+      "p25": 1.0,
+      "median": 4.0,
+      "p75": 10.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 48,
+          "p25": 2.0,
+          "median": 4.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 35,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 28,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 14.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 44,
+          "p25": 1.0,
+          "median": 4.0,
+          "p75": 10.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 4.0,
+          "median": 7.0,
+          "p75": 13.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 1.0,
+          "median": 4.0,
+          "p75": 15.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 8.0,
+          "median": 12.0,
+          "p75": 14.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 2.0,
+          "median": 3.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 16.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 0.0,
+          "median": 3.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 7.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "0ba2e775-8a4a-5f4b-919a-9b91ac3a7c80",
+          "probability": 0.866257,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "e94ddf55-30aa-5bac-9452-aefbf30177b9",
+          "probability": 0.789446,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50313",
+      "municipality_name": "Granada",
+      "cases_t": 68,
+      "endemic_zone_t": "EXCESO",
+      "p25": 6.0,
+      "median": 17.0,
+      "p75": 22.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 18,
+          "p25": 5.0,
+          "median": 7.0,
+          "p75": 21.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 35,
+          "p25": 16.0,
+          "median": 21.0,
+          "p75": 25.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 52,
+          "p25": 10.0,
+          "median": 15.0,
+          "p75": 22.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 68,
+          "p25": 6.0,
+          "median": 17.0,
+          "p75": 22.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 8.0,
+          "median": 28.0,
+          "p75": 32.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 5.0,
+          "median": 18.0,
+          "p75": 40.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 7.0,
+          "median": 17.0,
+          "p75": 33.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 5.0,
+          "median": 9.0,
+          "p75": 27.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 1.0,
+          "median": 14.0,
+          "p75": 18.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 3.0,
+          "median": 11.0,
+          "p75": 20.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 7.0,
+          "median": 9.0,
+          "p75": 16.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 5.0,
+          "median": 9.0,
+          "p75": 10.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "c14fb9bd-bf79-54d5-8e92-ebc38e360e1f",
+          "probability": 0.90256,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "8bb8bdfe-6dc4-5b9a-896a-fdbea665ec2b",
+          "probability": 0.78923,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50318",
+      "municipality_name": "Guamal",
+      "cases_t": 21,
+      "endemic_zone_t": "ALERTA",
+      "p25": 4.0,
+      "median": 5.0,
+      "p75": 30.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 11,
+          "p25": 0.0,
+          "median": 8.0,
+          "p75": 16.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 8,
+          "p25": 0.0,
+          "median": 9.0,
+          "p75": 19.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 19,
+          "p25": 5.0,
+          "median": 5.0,
+          "p75": 16.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 21,
+          "p25": 4.0,
+          "median": 5.0,
+          "p75": 30.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 11.0,
+          "median": 12.0,
+          "p75": 18.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 9.0,
+          "median": 10.0,
+          "p75": 25.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 5.0,
+          "median": 10.0,
+          "p75": 14.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 2.0,
+          "median": 3.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 5.0,
+          "median": 5.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 4.0,
+          "median": 4.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 4.0,
+          "median": 7.0,
+          "p75": 12.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "0b3b6424-332c-5aa4-b25b-fc89cfc8c592",
+          "probability": 0.429755,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "c1c9d54a-85a1-557a-84c5-771b9e585eed",
+          "probability": 0.405268,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50325",
+      "municipality_name": "Mapiripán",
+      "cases_t": 0,
+      "endemic_zone_t": "EXITO",
+      "p25": 1.0,
+      "median": 3.0,
+      "p75": 8.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 0,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 1,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 0,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 0,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 2.0,
+          "median": 3.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 3.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "1edf1861-4ddc-5500-b183-7c95ef2035d6",
+          "probability": 0.080551,
+          "threshold": 0.306748,
+          "alert_status": "NO_ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "305e3365-371e-55d3-b690-57e5ca55f22b",
+          "probability": 0.096421,
+          "threshold": 0.315448,
+          "alert_status": "NO_ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50330",
+      "municipality_name": "Mesetas",
+      "cases_t": 3,
+      "endemic_zone_t": "SEGURIDAD",
+      "p25": 0.0,
+      "median": 6.0,
+      "p75": 10.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 3,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 5,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 3,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 11.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 3,
+          "p25": 0.0,
+          "median": 6.0,
+          "p75": 10.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 13.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 1.0,
+          "median": 4.0,
+          "p75": 10.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 10.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 0.0,
+          "median": 3.0,
+          "p75": 7.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "eefdb43b-99d1-5159-a5f8-8623eadfeb05",
+          "probability": 0.221435,
+          "threshold": 0.306748,
+          "alert_status": "NO_ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "01ad09f4-248b-5b46-8d84-9f960e1d6188",
+          "probability": 0.254428,
+          "threshold": 0.315448,
+          "alert_status": "NO_ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50350",
+      "municipality_name": "La Macarena",
+      "cases_t": 4,
+      "endemic_zone_t": "SEGURIDAD",
+      "p25": 0.0,
+      "median": 6.0,
+      "p75": 7.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 0,
+          "p25": 0.0,
+          "median": 3.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 1,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 7,
+          "p25": 1.0,
+          "median": 4.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 4,
+          "p25": 0.0,
+          "median": 6.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 2.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "69703dbc-d3df-5379-b1b6-748812db5aa3",
+          "probability": 0.305037,
+          "threshold": 0.306748,
+          "alert_status": "NO_ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "a66140ad-342e-545d-9c14-8d61ce81674b",
+          "probability": 0.291875,
+          "threshold": 0.315448,
+          "alert_status": "NO_ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50370",
+      "municipality_name": "Uribe",
+      "cases_t": 2,
+      "endemic_zone_t": "EXCESO",
+      "p25": 0.0,
+      "median": 1.0,
+      "p75": 1.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 20,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 15,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 10,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 2,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 5.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "72f70868-60b1-51fb-910e-54f7686fc510",
+          "probability": 0.646994,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "5563158f-e04a-54ef-b241-b480435af174",
+          "probability": 0.52466,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50400",
+      "municipality_name": "Lejanías",
+      "cases_t": 13,
+      "endemic_zone_t": "ALERTA",
+      "p25": 2.0,
+      "median": 2.0,
+      "p75": 18.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 12,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 12,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 12.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 17,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 13,
+          "p25": 2.0,
+          "median": 2.0,
+          "p75": 18.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 13.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 12.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 0.0,
+          "median": 3.0,
+          "p75": 11.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 0.0,
+          "median": 3.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 4.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "ea6b8af1-ac3c-5ed5-9c62-5b9904730693",
+          "probability": 0.432281,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "a5878c75-0244-5493-be4c-53785987dd33",
+          "probability": 0.405268,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50450",
+      "municipality_name": "Puerto Concordia",
+      "cases_t": 18,
+      "endemic_zone_t": "ALERTA",
+      "p25": 2.0,
+      "median": 9.0,
+      "p75": 19.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 10,
+          "p25": 0.0,
+          "median": 3.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 20,
+          "p25": 2.0,
+          "median": 2.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 25,
+          "p25": 2.0,
+          "median": 5.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 18,
+          "p25": 2.0,
+          "median": 9.0,
+          "p75": 19.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 0.0,
+          "median": 22.0,
+          "p75": 31.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 0.0,
+          "median": 15.0,
+          "p75": 15.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 1.0,
+          "median": 7.0,
+          "p75": 10.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 2.0,
+          "median": 11.0,
+          "p75": 14.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 0.0,
+          "median": 6.0,
+          "p75": 12.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 0.0,
+          "median": 7.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 2.0,
+          "median": 5.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 8.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "ab2ac83a-8520-572a-8626-2b3dea505ade",
+          "probability": 0.416946,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "f92fae92-abc9-5334-8ef1-bf995f9c95ce",
+          "probability": 0.374639,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50568",
+      "municipality_name": "Puerto Gaitán",
+      "cases_t": 72,
+      "endemic_zone_t": "EXCESO",
+      "p25": 7.0,
+      "median": 18.0,
+      "p75": 34.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 39,
+          "p25": 8.0,
+          "median": 9.0,
+          "p75": 13.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 60,
+          "p25": 7.0,
+          "median": 13.0,
+          "p75": 18.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 60,
+          "p25": 5.0,
+          "median": 7.0,
+          "p75": 16.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 72,
+          "p25": 7.0,
+          "median": 18.0,
+          "p75": 34.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 9.0,
+          "median": 23.0,
+          "p75": 50.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 8.0,
+          "median": 14.0,
+          "p75": 30.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 10.0,
+          "median": 18.0,
+          "p75": 27.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 2.0,
+          "median": 13.0,
+          "p75": 14.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 7.0,
+          "median": 10.0,
+          "p75": 15.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 2.0,
+          "median": 8.0,
+          "p75": 18.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 3.0,
+          "median": 7.0,
+          "p75": 23.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 3.0,
+          "median": 6.0,
+          "p75": 16.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "9b74a7e9-b632-551c-b12d-8a095d684844",
+          "probability": 0.87675,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "77986f23-fb8d-51f4-890c-5f00ceb1327e",
+          "probability": 0.852978,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50573",
+      "municipality_name": "Puerto López",
+      "cases_t": 98,
+      "endemic_zone_t": "EXCESO",
+      "p25": 16.0,
+      "median": 16.0,
+      "p75": 18.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 30,
+          "p25": 6.0,
+          "median": 7.0,
+          "p75": 15.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 25,
+          "p25": 4.0,
+          "median": 6.0,
+          "p75": 14.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 42,
+          "p25": 7.0,
+          "median": 9.0,
+          "p75": 19.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 98,
+          "p25": 16.0,
+          "median": 16.0,
+          "p75": 18.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 16.0,
+          "median": 17.0,
+          "p75": 32.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 13.0,
+          "median": 18.0,
+          "p75": 24.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 14.0,
+          "median": 17.0,
+          "p75": 19.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 9.0,
+          "median": 14.0,
+          "p75": 23.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 7.0,
+          "median": 9.0,
+          "p75": 18.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 9.0,
+          "median": 11.0,
+          "p75": 14.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 10.0,
+          "median": 11.0,
+          "p75": 18.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 9.0,
+          "median": 12.0,
+          "p75": 16.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "57c9548d-3414-5919-983a-0986f926f8d2",
+          "probability": 0.911877,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "368509fa-e8c1-5904-82f8-e638ec5cf7a9",
+          "probability": 0.817151,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50577",
+      "municipality_name": "Puerto Lleras",
+      "cases_t": 8,
+      "endemic_zone_t": "EXCESO",
+      "p25": 0.0,
+      "median": 1.0,
+      "p75": 2.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 2,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 8,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 9,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 8,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 2.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "042889a2-0151-5a44-8e8b-25b713dddf63",
+          "probability": 0.704883,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "c8064ded-3ef8-5e55-80bd-0519e474cf12",
+          "probability": 0.56836,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50590",
+      "municipality_name": "Puerto Rico",
+      "cases_t": 8,
+      "endemic_zone_t": "ALERTA",
+      "p25": 2.0,
+      "median": 2.0,
+      "p75": 8.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 4,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 3,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 11,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 8,
+          "p25": 2.0,
+          "median": 2.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 0.0,
+          "median": 5.0,
+          "p75": 14.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 0.0,
+          "median": 3.0,
+          "p75": 4.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "402ebcc4-11ae-5285-b5d0-30abe2c015d8",
+          "probability": 0.425225,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "6a369871-3037-54ed-8e1d-4f1f2d5f6960",
+          "probability": 0.395464,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50606",
+      "municipality_name": "Restrepo",
+      "cases_t": 42,
+      "endemic_zone_t": "EXCESO",
+      "p25": 4.0,
+      "median": 6.0,
+      "p75": 8.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 10,
+          "p25": 2.0,
+          "median": 6.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 18,
+          "p25": 2.0,
+          "median": 6.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 21,
+          "p25": 3.0,
+          "median": 5.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 42,
+          "p25": 4.0,
+          "median": 6.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 5.0,
+          "median": 12.0,
+          "p75": 21.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 3.0,
+          "median": 3.0,
+          "p75": 17.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 3.0,
+          "median": 3.0,
+          "p75": 12.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 4.0,
+          "median": 6.0,
+          "p75": 11.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 6.0,
+          "median": 9.0,
+          "p75": 17.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 4.0,
+          "median": 6.0,
+          "p75": 14.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 4.0,
+          "median": 5.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 0.0,
+          "median": 9.0,
+          "p75": 11.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "5605d64e-5c46-53c5-8b35-4c7012bab2c0",
+          "probability": 0.90034,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "c9595ca2-2f5e-5809-8cfb-9adb390805e3",
+          "probability": 0.824175,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50680",
+      "municipality_name": "San Carlos de Guaroa",
+      "cases_t": 14,
+      "endemic_zone_t": "EXCESO",
+      "p25": 2.0,
+      "median": 3.0,
+      "p75": 6.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 7,
+          "p25": 3.0,
+          "median": 4.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 13,
+          "p25": 4.0,
+          "median": 5.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 20,
+          "p25": 3.0,
+          "median": 3.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 14,
+          "p25": 2.0,
+          "median": 3.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 4.0,
+          "median": 7.0,
+          "p75": 18.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 3.0,
+          "median": 7.0,
+          "p75": 17.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 2.0,
+          "median": 3.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 3.0,
+          "median": 6.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 2.0,
+          "median": 3.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 6.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "6d97d902-4299-5326-bf60-96caffe64f24",
+          "probability": 0.748504,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "471da345-a420-5037-b2c3-b7fc829ee187",
+          "probability": 0.641661,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50683",
+      "municipality_name": "San Juan de Arama",
+      "cases_t": 20,
+      "endemic_zone_t": "EXCESO",
+      "p25": 1.0,
+      "median": 1.0,
+      "p75": 2.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 0,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 3,
+          "p25": 1.0,
+          "median": 3.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 3,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 20,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 2.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 2.0,
+          "median": 4.0,
+          "p75": 12.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 0.0,
+          "median": 2.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 2.0,
+          "median": 4.0,
+          "p75": 9.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 4.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 0.0,
+          "median": 1.0,
+          "p75": 3.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 1.0,
+          "median": 1.0,
+          "p75": 2.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "df525bb5-02f7-5fef-8635-91bc1ff25c2c",
+          "probability": 0.890418,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "53608dd5-17e9-54b4-8ffd-04194e98842e",
+          "probability": 0.774436,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50686",
+      "municipality_name": "San Juanito",
+      "cases_t": 0,
+      "endemic_zone_t": "SEGURIDAD",
+      "p25": 0.0,
+      "median": 0.0,
+      "p75": 0.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 0,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 1,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 0,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 0,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 1.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "3967eecb-7f16-5120-be39-b0fd37fecb89",
+          "probability": 0.154676,
+          "threshold": 0.306748,
+          "alert_status": "NO_ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "d81021f6-bf46-517b-9e55-d54857a875da",
+          "probability": 0.157221,
+          "threshold": 0.315448,
+          "alert_status": "NO_ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50689",
+      "municipality_name": "San Martín",
+      "cases_t": 20,
+      "endemic_zone_t": "ALERTA",
+      "p25": 7.0,
+      "median": 7.0,
+      "p75": 27.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 38,
+          "p25": 4.0,
+          "median": 12.0,
+          "p75": 18.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 53,
+          "p25": 4.0,
+          "median": 5.0,
+          "p75": 19.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 52,
+          "p25": 7.0,
+          "median": 15.0,
+          "p75": 16.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 20,
+          "p25": 7.0,
+          "median": 7.0,
+          "p75": 27.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 6.0,
+          "median": 13.0,
+          "p75": 50.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 5.0,
+          "median": 14.0,
+          "p75": 33.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 7.0,
+          "median": 8.0,
+          "p75": 18.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 7.0,
+          "median": 13.0,
+          "p75": 18.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 3.0,
+          "median": 4.0,
+          "p75": 20.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 3.0,
+          "median": 6.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 3.0,
+          "median": 4.0,
+          "p75": 7.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 3.0,
+          "median": 6.0,
+          "p75": 8.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "16e116b8-4a29-59f0-83b4-c772c9fb6d11",
+          "probability": 0.387354,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "d3682598-47bc-5632-9dcb-ffe22f4ecb28",
+          "probability": 0.374639,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    },
+    {
+      "municipality_code": "50711",
+      "municipality_name": "Vistahermosa",
+      "cases_t": 26,
+      "endemic_zone_t": "EXCESO",
+      "p25": 2.0,
+      "median": 8.0,
+      "p75": 8.0,
+      "endemic_channel_series": [
+        {
+          "period": "2025-01",
+          "cases": 32,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-02",
+          "cases": 58,
+          "p25": 1.0,
+          "median": 2.0,
+          "p75": 6.0
+        },
+        {
+          "period": "2025-03",
+          "cases": 58,
+          "p25": 2.0,
+          "median": 2.0,
+          "p75": 10.0
+        },
+        {
+          "period": "2025-04",
+          "cases": 26,
+          "p25": 2.0,
+          "median": 8.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-05",
+          "cases": null,
+          "p25": 4.0,
+          "median": 10.0,
+          "p75": 19.0
+        },
+        {
+          "period": "2025-06",
+          "cases": null,
+          "p25": 2.0,
+          "median": 4.0,
+          "p75": 13.0
+        },
+        {
+          "period": "2025-07",
+          "cases": null,
+          "p25": 3.0,
+          "median": 6.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-08",
+          "cases": null,
+          "p25": 1.0,
+          "median": 13.0,
+          "p75": 17.0
+        },
+        {
+          "period": "2025-09",
+          "cases": null,
+          "p25": 0.0,
+          "median": 5.0,
+          "p75": 8.0
+        },
+        {
+          "period": "2025-10",
+          "cases": null,
+          "p25": 3.0,
+          "median": 3.0,
+          "p75": 11.0
+        },
+        {
+          "period": "2025-11",
+          "cases": null,
+          "p25": 2.0,
+          "median": 5.0,
+          "p75": 5.0
+        },
+        {
+          "period": "2025-12",
+          "cases": null,
+          "p25": 2.0,
+          "median": 8.0,
+          "p75": 10.0
+        }
+      ],
+      "results": [
+        {
+          "horizon": "T1",
+          "target_period": "2025-05",
+          "result_id": "d35d8f3b-67cc-5784-bdb1-d723917af442",
+          "probability": 0.802076,
+          "threshold": 0.306748,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        },
+        {
+          "horizon": "T2",
+          "target_period": "2025-06",
+          "result_id": "8e1bbb05-0754-50c4-a9ad-3b906f461502",
+          "probability": 0.677964,
+          "threshold": 0.315448,
+          "alert_status": "ALERT",
+          "availability_status": "AVAILABLE",
+          "availability_reason": null,
+          "model_family": "xgboost",
+          "model_role": "PROVISIONAL_CANDIDATE",
+          "model_version": "xgboost-88e3ad9decce",
+          "procedure_id": "88e3ad9decce8bd4d"
+        }
+      ]
+    }
+  ],
+  "evaluation_context": {
+    "demonstrative_values": false,
+    "evaluation_records": [
+      {
+        "horizon": "T1",
+        "procedure_id": "88e3ad9decce8bd4d",
+        "evaluation_period_start": "2025-01",
+        "evaluation_period_end": "2025-12",
+        "evaluation_geography": "Tolima y Meta, 76 municipios",
+        "auroc": 0.8189467104235038,
+        "average_precision": 0.6757316065086036,
+        "brier": 0.14334855688903853,
+        "false_alerts": 177,
+        "alerts_emitted": 350,
+        "false_alert_ratio": 0.5057142857142857,
+        "onsets_detected": 22,
+        "actual_onsets": 86,
+        "onset_sensitivity": 0.2558139534883721
+      },
+      {
+        "horizon": "T2",
+        "procedure_id": "88e3ad9decce8bd4d",
+        "evaluation_period_start": "2025-01",
+        "evaluation_period_end": "2025-12",
+        "evaluation_geography": "Tolima y Meta, 76 municipios",
+        "auroc": 0.7638099703078606,
+        "average_precision": 0.5610511010183987,
+        "brier": 0.16717997767919235,
+        "false_alerts": 289,
+        "alerts_emitted": 469,
+        "false_alert_ratio": 0.6162046908315565,
+        "onsets_detected": 48,
+        "actual_onsets": 86,
+        "onset_sensitivity": 0.5581395348837209
+      }
+    ]
+  }
+}

@@ -1,0 +1,181 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+/*
+ * Lenguaje visual: instrumento de vigilancia.
+ *
+ * Grises sin tinte azul, filetes de un pixel en vez de sombras, radio de dos
+ * pixeles. El color con significado es solo el del canal endemico. Las cifras
+ * van en mono con alineacion tabular. Las fuentes se empaquetan, no se piden
+ * a un CDN.
+ */
+
+@theme inline {
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-zone-exito: var(--zone-exito);
+  --color-zone-seguridad: var(--zone-seguridad);
+  --color-zone-alerta: var(--zone-alerta);
+  --color-zone-exceso: var(--zone-exceso);
+  --color-warn: var(--warn);
+  --color-warn-foreground: var(--warn-foreground);
+  --color-map-unavailable: var(--map-unavailable);
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 3px;
+  --radius-xl: 3px;
+  --radius-2xl: 4px;
+  --radius-3xl: 4px;
+  --radius-4xl: 6px;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+}
+
+:root {
+  --radius: 2px;
+
+  /* Grises neutros, sin tinte. Es lo que separa este tablero del gris azulado
+     que traen las plantillas de componentes por defecto. */
+  --background: oklch(0.145 0.003 95);
+  --foreground: oklch(0.93 0.004 95);
+  --card: oklch(0.185 0.003 95);
+  --card-foreground: oklch(0.93 0.004 95);
+  --popover: oklch(0.21 0.003 95);
+  --popover-foreground: oklch(0.93 0.004 95);
+  --muted: oklch(0.235 0.003 95);
+  --muted-foreground: oklch(0.65 0.006 95);
+  --secondary: oklch(0.235 0.003 95);
+  --secondary-foreground: oklch(0.9 0.004 95);
+  --accent: oklch(0.26 0.004 95);
+  --accent-foreground: oklch(0.93 0.004 95);
+  --border: oklch(0.29 0.003 95);
+  --border-strong: oklch(0.42 0.004 95);
+  --input: oklch(0.31 0.003 95);
+
+  /* Un solo acento, frio y contenido, fuera de la escala del canal para que
+     nunca se confunda con un estado epidemiologico. Se usa en el foco, los
+     enlaces y la pestana activa; nunca para rellenar botones grandes. */
+  --primary: oklch(0.74 0.09 215);
+  --primary-foreground: oklch(0.145 0.003 95);
+  --ring: oklch(0.74 0.09 215);
+
+  --destructive: oklch(0.62 0.19 27);
+  --destructive-foreground: oklch(0.97 0.003 95);
+
+  /* Escala del canal endemico. Es el unico color con significado. */
+  --zone-exito: oklch(0.66 0.13 152);
+  --zone-seguridad: oklch(0.79 0.14 108);
+  --zone-alerta: oklch(0.76 0.15 68);
+  --zone-exceso: oklch(0.62 0.2 27);
+
+  --warn: oklch(0.8 0.14 85);
+  --warn-foreground: oklch(0.2 0.03 80);
+
+  --map-unavailable: oklch(0.34 0.003 95);
+  --map-boundary: oklch(0.52 0.004 95);
+  --map-selected: oklch(0.97 0.003 95);
+
+  --chart-1: oklch(0.74 0.09 215);
+  --chart-2: oklch(0.66 0.13 152);
+  --chart-3: oklch(0.76 0.15 68);
+  --chart-4: oklch(0.79 0.14 108);
+  --chart-5: oklch(0.62 0.2 27);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "tnum" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Todo numero se lee en columna. */
+  .cifra {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /* Etiqueta de seccion: versalita sobre filete, sin icono. */
+  .rotulo {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--color-muted-foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+
+.municipal-area {
+  stroke: var(--map-boundary);
+  stroke-width: 0.6;
+  vector-effect: non-scaling-stroke;
+  transition:
+    fill 150ms ease,
+    stroke-width 150ms ease;
+}
+.municipal-area[data-state="alert"] {
+  fill: var(--zone-exceso);
+}
+.municipal-area[data-state="clear"] {
+  fill: var(--zone-exito);
+}
+.municipal-area[data-state="unavailable"] {
+  fill: var(--map-unavailable);
+}
+.municipal-area[data-selected="true"],
+.municipal-area:focus-visible {
+  stroke: var(--map-selected);
+  stroke-width: 2;
+  outline: none;
+}
+.municipal-area:hover {
+  stroke-width: 1.5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .municipal-area {
+    transition: none;
+  }
+}

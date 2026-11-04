@@ -1,0 +1,21 @@
+# Tablero TanStack Start. El preset por defecto del proyecto es cloudflare,
+# que no corre en una instancia propia: aqui se fija node_server.
+FROM oven/bun:1.4.4 AS build
+WORKDIR /src
+
+COPY app/dashboard/package.json app/dashboard/bun.lock ./
+RUN bun install --frozen-lockfile
+
+COPY app/dashboard/ ./
+# Vacio: el navegador pide /api al mismo origen y nginx lo enruta. Sin URLs en el bundle.
+ENV VITE_API_BASE_URL="" \
+    NITRO_PRESET=node_server
+RUN bun run build
+
+FROM node:22-slim AS runtime
+WORKDIR /opt/tablero
+ENV NODE_ENV=production
+COPY --from=build /src/.output ./
+USER node
+EXPOSE 3000
+CMD ["node", "./server/index.mjs"]

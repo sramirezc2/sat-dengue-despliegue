@@ -1,0 +1,56 @@
+# Despliegue completo en una instancia: tres servicios, una sola puerta de
+# entrada. `restart: unless-stopped` devuelve la aplicacion sola tras cada
+# reinicio de la instancia, que en AWS Academy ocurre al reiniciar el lab.
+name: sat-dengue
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    image: sat-dengue-api:${VERSION_IMAGEN:-local}
+    restart: unless-stopped
+    environment:
+      SATD_ENTORNO: ${SATD_ENTORNO:-produccion}
+      SATD_NIVEL_LOG: ${SATD_NIVEL_LOG:-info}
+      SATD_DIRECTORIO_RESULTADOS: /datos/resultados
+      SATD_DEPARTAMENTOS: ${SATD_DEPARTAMENTOS:-50,73}
+      SATD_ORIGENES_CORS: ${SATD_ORIGENES_CORS:-http://localhost}
+      SATD_BUCKET_S3: ${SATD_BUCKET_S3:-}
+      SATD_PREFIJO_S3: ${SATD_PREFIJO_S3:-resultados/}
+      SATD_SINCRONIZAR_AL_ARRANCAR: ${SATD_SINCRONIZAR_AL_ARRANCAR:-true}
+      SATD_ESPERA_S3_SEGUNDOS: ${SATD_ESPERA_S3_SEGUNDOS:-20}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
+    volumes:
+      # Cache local de resultados; sobrevive al reinicio de la instancia.
+      - resultados:/datos/resultados
+    expose:
+      - "8000"
+
+  dashboard:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dashboard
+    image: sat-dengue-dashboard:${VERSION_IMAGEN:-local}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+    expose:
+      - "3000"
+    depends_on:
+      - api
+
+  proxy:
+    image: nginx:1.29-alpine
+    restart: unless-stopped
+    ports:
+      - "${PUERTO_PUBLICO:-80}:80"
+    volumes:
+      - ../docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - api
+      - dashboard
+
+volumes:
+  resultados:
