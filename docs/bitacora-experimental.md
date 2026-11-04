@@ -114,6 +114,44 @@ reemplaza. El informe final debe discutir cuál corresponde al problema de
 decisión real de una secretaría de salud, que opera con una restricción de
 capacidad y no de precisión.
 
+**4 de noviembre de 2026 — se propone revisar los criterios de la compuerta G5.**
+
+*Origen:* **después** de ver los resultados de la tanda 5. Se declara así de
+forma explícita, y es la razón por la que la propuesta conserva los umbrales
+numéricos de la política vigente sin tocarlos y exige controles negativos
+obligatorios. El documento completo es `politica-de-decision-v2.md`, con su
+versión legible por máquina en `politica-de-decision-v2.json`.
+
+*Motivo:* tres inconsistencias internas de la política vigente, todas
+verificables en los artefactos registrados y ninguna que dependa de nuestros
+resultados. La línea base es la persistencia, que en T+1 detecta cero inicios
+por construcción, de modo que el criterio de detección es vacío y el de falsas
+casi insatisfacible. El denominador de la carga de falsas es el número de
+alertas que el candidato elige emitir. Y la sensibilidad se mide sobre inicios
+mientras la falsa alarma se mide sobre excesos, de modo que una alerta sobre un
+municipio ya en exceso cuenta como correcta aunque no pueda detectar ningún
+inicio: en la corrida registrada la persistencia acumula 151 alertas contadas
+como verdaderas con cero inicios detectados.
+
+*Continuidad con el cambio anterior:* el segundo defecto es la misma
+observación que motivó agregar "falsas alarmas por inicio detectado" en la
+tanda 2, cuando se escribió que la tasa premia diluir y que la métrica debía ser
+invariante al volumen. Entonces se aplicó a nuestra métrica de trabajo; ahora se
+aplica a la política de gobernanza. No es una crítica nueva inventada para la
+ocasión.
+
+*Qué no cambia:* nada de lo ya decidido. El `NOT_APPROVED` del 21 de octubre se
+conserva con su autoridad y su motivo. La política vigente sigue siendo v1
+hasta que la autoridad decida. El tablero desplegado no se toca. Y los umbrales
+de 10,0 y 5,0 se conservan deliberadamente, porque elegir números después de
+ver resultados es exactamente lo que esta sección existe para impedir.
+
+*Autocrítica que la propuesta incorpora:* se midió cada cambio por separado y
+**dos de los tres, aislados, producen una compuerta inservible** —cambiar solo
+el evento de verdad hace que "alertar sobre todo" apruebe en los tres cortes—.
+Los controles negativos detectaron eso. Es la evidencia de que el conjunto es
+mínimo y coherente y no una colección de ajustes convenientes.
+
 ---
 
 ## 4. Reglas de método
@@ -649,6 +687,102 @@ adoptarla como vigente sería elegir el mejor subconjunto a posteriori, que es
 exactamente lo que las reglas de esta bitácora prohíben. Lo confirmado es el
 bloque G tal como se preinscribió, y es el bloque G el que pasa a ser el
 vigente. La versión mínima queda preinscrita para la tanda siguiente.
+
+#### Diagnóstico: ¿esta mejora acerca algo a la compuerta G5?
+
+Pregunta que surgió al reportar la tanda 5 y que obligó a leer la política de
+decisión del artefacto en vez de citarla de memoria. El archivo es
+`docs/product/stage-5/champion_decision_policy_v1.json`, con SHA-256
+`29b5d6d7…`, y sus criterios son explícitos:
+
+| Elemento | Valor |
+| --- | --- |
+| Línea base de comparación | **persistencia**, no el canal endémico |
+| Ganancia mínima de sensibilidad de inicios | 10 pp, sobre la **cota inferior** del intervalo |
+| Aumento máximo de la razón de falsas | 5 pp, sobre la **cota superior** del intervalo |
+| Razón de falsas | falsas / **alertas emitidas** |
+| Métrica de ranking | precisión promedio; AUROC solo complementario |
+| Decisión registrada | `NOT_APPROVED`, autoridad Mauricio, 21 de octubre de 2026 |
+| Motivo registrado | los seis procedimientos candidato/horizonte excedieron la restricción de aumento de falsas en la comparación 2025 |
+
+**Primero, lo que `NOT_APPROVED` no significa.** No es un veredicto sobre el
+modelo de la tanda 5, que nunca se presentó a la compuerta y por lo tanto no
+tiene estado en ella. Es una decisión humana sobre los seis candidatos de la
+corrida registrada, medidos sobre el bloque 2025, que es evidencia consumida
+(regla 4.1) y no se vuelve a medir aquí.
+
+**Segundo, el modelo de la tanda 5 tampoco pasaría, y por mucho.** Medido con
+la métrica y la línea base de la compuerta sobre los cortes de validación
+propios, con remuestreo por mes:
+
+| Corte | Estrategia | Alertas | Sensibilidad | Razón FA | Ganancia pp [IC] | FA pp [IC] | G5 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 2018-12 | persistencia | 207 | 0 % | 15,9 % | referencia | | |
+| | vigente | 69 | 55 % | 52,2 % | 55,0 [48,2; 63,1] | 36,2 [27,6; 44,8] | no |
+| | G | 69 | 70 % | 39,1 % | 70,0 [65,5; 77,4] | 23,2 [16,5; 27,6] | no |
+| | canal endémico | 208 | 28 % | 13,0 % | 28,3 [16,1; 40,7] | −3,0 [−6,5; 2,4] | **PASA** |
+| 2022-12 | persistencia | 215 | 0 % | 19,1 % | referencia | | |
+| | G | 96 | 86 % | 47,9 % | 86,0 [81,9; 93,8] | 28,8 [21,8; 36,5] | no |
+| | canal endémico | 204 | 25 % | 13,2 % | 24,6 [13,6; 40,4] | −5,8 [−7,3; −4,3] | **PASA** |
+| 2024-06 | persistencia | 189 | 0 % | 32,3 % | referencia | | |
+| | G | 203 | 100 % | 72,9 % | 100,0 [100; 100] | 40,6 [33,5; 47,6] | no |
+| | canal endémico | 203 | 44 % | 29,6 % | 43,8 [27,3; 61,0] | −2,7 [−7,3; 1,8] | **PASA** |
+
+G mejora el eje de detección de forma abrumadora —70 y 86 puntos sobre la
+línea base, contra un mínimo exigido de 10— y falla el de falsas por 23 a 41
+puntos sobre un techo de 5. Igual que los seis candidatos: ninguno falló por
+detectar poco.
+
+**Tercero, y es el hallazgo: la restricción es estructuralmente insatisfacible
+para un detector de inicios.** En T+1 la persistencia detecta **cero inicios por
+construcción**: solo alerta donde ya hay exceso, y un inicio exige que no lo
+haya. Y precisamente por eso tiene una razón de falsas *baja*, porque "ya está
+en exceso, seguirá en exceso" es una predicción fácil y acertada. De modo que
+la compuerta compara a todo detector de inicios contra una línea base que es
+máximamente precisa y completamente ciega a lo que se quiere detectar. Un
+detector de inicios tiene que alertar donde el exceso **todavía no** está, y eso
+eleva mecánicamente su razón de falsas. El techo de 5 pp no mide la calidad del
+detector: mide cuánto se aleja uno de alertar sobre excesos ya instalados.
+
+**La evidencia que lo prueba: el canal endémico sí pasa G5**, en los tres
+cortes, con aumento de falsas *negativo*. Porque el canal, como la
+persistencia, alerta sobre todo donde el exceso ya está. La compuerta tal como
+está escrita es satisfacible por reglas que se parecen a la persistencia y
+prácticamente insatisfacible por reglas que de verdad detectan inicios.
+
+**Y la razón de falsas depende del volumen de alertas que uno elige.** G emite
+69 alertas con 27 falsas; el canal emite 208 con 27 falsas. Las mismas falsas en
+términos absolutos, la misma carga real sobre el sistema de salud, y una razón
+de 39 % contra 13 % solo porque el denominador es el número de alertas que uno
+decidió emitir. Un modelo que alerta poco y bien queda castigado por esta
+métrica.
+
+**Qué no se concluye de esto.** Que la restricción esté mal pensada. El
+cansancio por falsas alarmas es real y "qué fracción de las alertas que recibo
+son falsas" es una preocupación operativa legítima. El problema no es la
+métrica sola: es la combinación de esa métrica con una línea base ciega al
+objetivo. Y esto **no autoriza a cambiar la métrica para ganar**, que es lo que
+la sección 3 de esta bitácora prohíbe. Lo que corresponde es documentar el
+hallazgo y dejarlo como recomendación para quien tiene la autoridad de la
+compuerta, que según el artefacto es Mauricio.
+
+**Límites de este diagnóstico.** Se midió sobre los cortes de validación
+propios, no sobre el bloque 2025 de la compuerta, que es evidencia consumida. El
+intervalo es un remuestreo por mes construido aquí, que reproduce la forma de la
+regla pero no necesariamente el procedimiento exacto de la corrida registrada.
+Es un diagnóstico, no una presentación a la compuerta.
+
+**Qué se hizo con esto.** El diagnóstico derivó en una propuesta formal de
+revisión de los criterios, que vive en `politica-de-decision-v2.md` y
+`politica-de-decision-v2.json`, con el registro del cambio en la sección 3 de
+esta bitácora. Resumen de lo que resultó: bajo los criterios revisados el modelo
+de la tanda 5 aprueba en los 3 cortes de T+1, el modelo de la tanda 4 en 2 de 3,
+el modelo deliberadamente degradado en 0 de 3, y los cuatro controles negativos
+—persistencia, ranking aleatorio, alertar sobre todo y canal inflado con alertas
+al azar— en 0 de 3. En T+2 no aprueba nadie, y el veredicto de tres valores
+aclara que es por ancho de intervalo con 37 a 48 inicios, no por desempeño. La
+propuesta no está vigente: la decisión es de la autoridad declarada en el
+artefacto.
 
 **T+2 vuelve a estar en duda.** T+2 se cerró en la tanda 3 porque ninguna
 configuración superaba al canal de forma consistente a dos meses. Con G, en

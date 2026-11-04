@@ -1,0 +1,133 @@
+{
+  "schema": "stage5-champion-decision-policy-v2",
+  "version": "2.0.0-propuesta",
+  "status": "PROPUESTA_NO_VIGENTE",
+  "purpose": "Propuesta de revision de la politica de decision de la etapa 5. No es la politica vigente. Requiere la decision de la autoridad declarada para entrar en vigor, y no altera ninguna decision ya registrada.",
+  "authority_required": "Mauricio",
+  "proposed_on": "2026-11-04",
+  "supersedes": {
+    "schema": "stage5-champion-decision-policy-v1",
+    "version": "1.0.0",
+    "path": "docs/product/stage-5/champion_decision_policy_v1.json",
+    "sha256": "29b5d6d7924c74d0c0b1f3cd2e588d1ab587a22c3f59b64d385469246f7a4ec8",
+    "effect_on_recorded_decisions": "ninguno",
+    "recorded_decision_preserved": {
+      "G5": "NOT_APPROVED",
+      "champion": "not_selected",
+      "authority": "Mauricio",
+      "decided_on": "2026-10-21"
+    }
+  },
+
+  "objective": {
+    "event": "onset",
+    "event_definition": "exceso en el periodo objetivo y ausencia de exceso en el periodo inmediatamente anterior",
+    "rationale": "El sistema existe para avisar que un brote empieza. La continuacion de un brote ya instalado no requiere aviso: ya se sabe."
+  },
+
+  "comparison": {
+    "baseline": "endemic_channel",
+    "baseline_rationale": "Es la regla que la vigilancia usa hoy, de modo que 'mejor que el canal' es la decision que de verdad importa; y detecta inicios, de modo que la comparacion es sobre el mismo evento. La persistencia no sirve como linea base de una politica de inicios porque en T+1 detecta cero inicios por construccion.",
+    "descriptive_references": [
+      "persistence"
+    ],
+    "descriptive_references_rationale": "La persistencia se reporta siempre, porque muestra cuanto se logra prediciendo la simple continuacion del exceso. Informa, no decide.",
+    "alert_truth_event": "onset",
+    "alert_truth_rationale": "Una alerta se juzga contra el mismo evento que la politica declara perseguir. En v1 la sensibilidad se medía sobre inicios y la falsa alarma sobre excesos, de modo que una alerta sobre un municipio ya en exceso, que no puede detectar ningun inicio, contaba a favor del candidato.",
+    "scope": "separate_by_horizon",
+    "population": "full_declared_annual_reserved_cohort"
+  },
+
+  "operating_point": {
+    "rule": "baseline_alert_rate_measured_out_of_sample",
+    "measured_on": "inner_partition_of_training_window",
+    "rationale": "El punto de operacion del candidato se compromete fuera de la muestra con que se mide, segun la regla 4.2 del proyecto. El candidato no puede elegir cuantas alertas emite despues de ver el resultado.",
+    "baseline_operates_its_own_rule": true
+  },
+
+  "burden": {
+    "metric": "non_onset_alerts_per_100_municipality_months",
+    "replaces": "false_alerts_divided_by_emitted_alerts",
+    "rationale": "El denominador de v1 era el numero de alertas emitidas, que el candidato elige. Dos reglas con las mismas falsas absolutas, y por tanto la misma carga real sobre la vigilancia, recibian veredictos distintos segun cuantas alertas emitieran. El denominador poblacional lo fija la cohorte y no se puede manipular.",
+    "unit": "alertas que no son inicio por cada 100 municipio-mes observados"
+  },
+
+  "utility": {
+    "min_onset_sensitivity_gain_pp": 10.0,
+    "max_burden_increase": 5.0,
+    "seed": 42,
+    "threshold_provenance": "heredados_de_v1_sin_recalibrar",
+    "threshold_warning": "Los dos umbrales son los de v1 y se conservan deliberadamente sin tocar. El de 5.0 se aplicaba en v1 a puntos porcentuales de una razon entre alertas y aqui se aplica a una tasa por 100 municipio-mes, de modo que su calibracion es heredada y no derivada. Es el punto mas debil de esta propuesta y es una decision que corresponde a la autoridad, no a quien la redacta.",
+    "why_not_recalibrated": "Quien redacta esta propuesta ya observo los resultados de los candidatos. Cualquier umbral elegido ahora estaria contaminado por ese conocimiento. Conservar los valores acordados es la unica opcion no autocomplaciente disponible."
+  },
+
+  "interval_rule": {
+    "rule": "lower_onset_gain_bound_must_meet_minimum_and_upper_burden_increase_bound_must_meet_maximum",
+    "method": "bootstrap_by_target_month",
+    "resamples": 2000,
+    "level": 0.95,
+    "retained_from_v1": true,
+    "rationale": "Se conserva de v1. Exigir las dos cotas es conservador y para un sistema de alertas operativo eso es correcto."
+  },
+
+  "verdicts": {
+    "meets": "las dos cotas cumplen",
+    "does_not_meet_effect": "la estimacion puntual ya no cumple el criterio",
+    "insufficient_precision": "la estimacion puntual cumple pero la cota no, por ancho del intervalo",
+    "rationale": "v1 reportaba un unico 'does_not_meet' que no distinguia un candidato malo de una cohorte pequena. Las dos situaciones piden acciones distintas: descartar el candidato, o conseguir mas datos.",
+    "mandatory_reporting": [
+      "rows",
+      "municipalities",
+      "target_months",
+      "real_onsets",
+      "interval_width_onset_gain_pp",
+      "interval_width_burden_increase"
+    ],
+    "reporting_rationale": "Regla 4.4 del proyecto: el tamano de muestra se declara siempre, junto al veredicto y no en otra parte."
+  },
+
+  "negative_controls": {
+    "required": true,
+    "controls": [
+      "persistence",
+      "random_ranking_at_same_operating_point",
+      "alert_everything",
+      "baseline_inflated_with_random_extra_alerts"
+    ],
+    "rule": "si cualquier control negativo obtiene veredicto 'meets', la aplicacion de la politica es nula y la politica debe revisarse",
+    "rationale": "Una compuerta que nada puede pasar es inutil, y una que todo pasa lo es igual. Este requisito es la unica proteccion real contra una politica revisada por las mismas personas a quienes evalua, que es exactamente el caso de esta propuesta."
+  },
+
+  "ranking": {
+    "primary_metric": "average_precision",
+    "auroc_role": "complementary_only",
+    "eligible_candidates_only": true,
+    "none_eligible": "no_champion",
+    "tie_rule": "exact_ties_require_human_decision",
+    "retained_from_v1": true,
+    "note": "La elegibilidad la deciden los criterios de utilidad; el ranking solo ordena a los elegibles. Sin cambios respecto de v1."
+  },
+
+  "mvp_boundary": {
+    "champion_required_for_read_only_mvp": false,
+    "operational_model_integration_allowed": false,
+    "required_display_status": "NOT_APPROVED",
+    "result_source": "persisted_historical_or_evaluation_results",
+    "retained_from_v1": true,
+    "note": "Sin cambios. El tablero desplegado sigue publicando resultados de evaluacion y declarando que no son alertas autorizadas."
+  },
+
+  "alert_thresholds": {
+    "manual_override_allowed_for_scientific_reclassification": false,
+    "manual_override_changes_alert_behavior": true,
+    "source": "retained_procedure_artifacts",
+    "retained_from_v1": true
+  },
+
+  "evidence_status": {
+    "first_application_is": "exploratory_not_confirmatory",
+    "reason": "Los resultados de los candidatos se observaron antes de redactar esta propuesta. Una revision de la politica informada por los resultados que luego evalua no puede producir evidencia confirmatoria sobre esos mismos resultados.",
+    "what_a_confirmatory_verdict_requires": "una cohorte no usada en la revision: los datos de la linea E cuando lleguen, o meses futuros. El bloque reservado de 2025 es evidencia consumida y no se reutiliza.",
+    "project_rule": "regla 4.1 y regla 4.8"
+  }
+}
