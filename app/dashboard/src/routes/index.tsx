@@ -48,6 +48,7 @@ import {
 } from "@/lib/dashboard-view-model";
 import { Button } from "@/components/ui/button";
 import { MunicipalMap } from "@/components/municipal-map";
+import { TablaTriaje } from "@/components/tabla-triaje";
 import { useDashboard } from "@/lib/use-dashboard";
 import { DashboardClientError } from "@/lib/dashboard-client";
 import { etiquetaPeriodo, usePeriodos } from "@/lib/periodos";
@@ -299,6 +300,16 @@ export function Dashboard() {
             </a>
           ))}
         </section>
+
+        {/* 2. Triaje del departamento. Va antes del detalle porque la primera
+            pregunta de una secretaria es a cuales municipios atender, no como
+            esta uno en particular. */}
+        <TablaTriaje
+          munis={munis}
+          selected={muni.id}
+          onSelect={setMuniId}
+          targetMonth={muni.t1.targetMonth}
+        />
 
         {/* 2 + 3 */}
         <div className="grid gap-5 lg:grid-cols-3">
