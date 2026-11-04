@@ -373,6 +373,72 @@ en T+2, mejor en dos cortes y peor en uno, mientras que en T+1 es casi exacta.
 
 ---
 
+### Tanda 4 — Variables del canal y costo asimétrico
+
+**Hipótesis preinscritas.** Las dos se comparan contra el mejor resultado
+vigente: el modelo entrenado sobre la etiqueta de inicio con el presupuesto de
+alertas del canal. Solo T+1 decide; T+2 quedó cerrado en la tanda 3.
+
+- *B*: quitar las dos variables derivadas del canal, `zona_canal_t` y
+  `zona_canal_lag_1`, debería mejorar la detección de inicios, porque la
+  ablación del informe sugiere que empujan hacia la persistencia.
+- *D*: entrenar sobre la etiqueta de exceso con las filas de inicio pesadas
+  para que cuenten tanto como el resto junto, debería igualar o superar al
+  modelo de inicio sin descartar la información de las continuaciones.
+
+También se preinscribió una **contrahipótesis** para B: si el modelo de inicio
+usa `zona_canal_t` para excluir las filas ya en exceso, que es lo que insinuó
+la tanda 3, quitársela debería empeorarlo.
+
+**Resultado: las dos fracasan, en los tres cortes de T+1.**
+
+| Corte | Estrategia | Alertas | Falsas | Inicios | Cobertura | Falsas/inicio |
+| --- | --- | --- | --- | --- | --- | --- |
+| 2018-12 | canal endémico | 208 | 27 | 17/60 | 28 % | 1,59 |
+| | **inicio (vigente)** | 69 | 35 | **34/60** | **57 %** | **1,03** |
+| | B · sin canal | 69 | 42 | 17/60 | 28 % | 2,47 |
+| | D · costo asimétrico | 69 | 5 | 2/60 | 3 % | 2,50 |
+| 2022-12 | canal endémico | 204 | 27 | 14/57 | 25 % | 1,93 |
+| | **inicio (vigente)** | 96 | 56 | **40/57** | **70 %** | **1,40** |
+| | B · sin canal | 96 | 53 | 27/57 | 47 % | 1,96 |
+| | D · costo asimétrico | 96 | 14 | 6/57 | 11 % | 2,33 |
+| 2024-06 | canal endémico | 203 | 60 | 21/48 | 44 % | 2,86 |
+| | **inicio (vigente)** | 203 | 148 | **48/48** | **100 %** | 3,08 |
+| | B · sin canal | 203 | 130 | 33/48 | 69 % | 3,94 |
+| | D · costo asimétrico | 203 | 82 | 27/48 | 56 % | 3,04 |
+
+**B: se cumple la contrahipótesis, no la hipótesis.** Quitar las dos variables
+del canal reduce la detección de inicios a la mitad y encarece cada inicio. En
+2018-12 el modelo pasa de 34 inicios a 17, exactamente los mismos que detecta
+el canal por sí solo.
+
+Esto cierra el razonamiento que empezó en la tanda 3. Allí se vio que el modelo
+de inicio ya se estratifica solo, colocando todas sus alertas en filas que no
+están en exceso. Aquí se ve **con qué lo hace**: con `zona_canal_t`. Sin esa
+variable pierde la capacidad de distinguir dónde un inicio es posible.
+
+**Y matiza la ablación del informe.** El informe de avance reporta que el
+modelo sin variables del canal detecta más inicios a igual tasa de falsas
+alarmas, 63 contra 56. Eso se midió con el objetivo de **exceso**, donde las
+variables del canal efectivamente arrastran hacia la persistencia. Con el
+objetivo de **inicio** las mismas variables cumplen el papel contrario: son las
+que permiten excluir las continuaciones. La misma variable, dos roles opuestos
+según qué se esté optimizando. Es un matiz que el informe final debería
+recoger, porque la lectura literal de la ablación lleva a la decisión
+equivocada.
+
+**D: el costo asimétrico no reemplaza al cambio de etiqueta.** Con los inicios
+pesados ocho veces, el modelo sigue comportándose como un detector de
+continuaciones: en 2018-12 emite 69 alertas con solo 5 falsas, precisión
+altísima, y detecta 2 inicios de 60. Pesar las filas cambia la función de
+pérdida pero no la etiqueta: las continuaciones siguen siendo positivas y
+siguen dominando. Alinear el objetivo requiere cambiar qué se predice, no
+cuánto pesa cada fila.
+
+**Veredicto.** Las líneas B y D se cierran.
+
+---
+
 ## 6. Estado de las líneas de trabajo
 
 | Línea | Estado |
@@ -380,9 +446,9 @@ en T+2, mejor en dos cortes y peor en uno, mientras que en T+1 es casi exacta.
 | Objetivo de entrenamiento sobre el inicio | Confirmada en ordenamiento; insuficiente por sí sola |
 | A. Umbral por tasa en vez de valor | **Cerrada**: rechazada en la tanda 2 |
 | F. Presupuesto de alertas | **Resuelta**: confirmada en T+1, rechazada en T+2 |
-| B. Entrenar sin las variables del canal | Abierta |
+| B. Entrenar sin las variables del canal | **Cerrada**: rechazada en la tanda 4; esas variables son necesarias |
 | C. Modelo en dos etapas | **Cerrada**: rechazada en la tanda 3; el modelo ya estratifica solo |
-| D. Costo asimétrico en el entrenamiento | Abierta |
+| D. Costo asimétrico en el entrenamiento | **Cerrada**: rechazada en la tanda 4 |
 | E. Variables demográficas y sociales | Abierta, en curso por otro integrante |
 
 **Horizonte T+2.** Cerrado como línea de mejora tras la tanda 3: en tres tandas
@@ -403,6 +469,22 @@ tiempo. Una línea cerrada no se reabre sin un mecanismo nuevo.
 **El ciclo completo para** cuando dos tandas seguidas cierren todas sus líneas
 sin mejora, o cuando falten menos de cinco días para una entrega y haya trabajo
 de escritura pendiente.
+
+**Esa condición se cumplió en la tanda 4.** La tanda 3 cerró la línea C y la
+tanda 4 cerró las líneas B y D, dos tandas seguidas sin mejora; y las líneas A
+a D están todas cerradas o resueltas, con la E dependiendo de datos que aún no
+están disponibles. El ciclo de experimentación se declara cerrado aquí.
+
+La configuración que queda como resultado del trabajo es: **modelo entrenado
+sobre la etiqueta de inicio, con todas las variables, operado al presupuesto de
+alertas del canal endémico medido en la partición interna, horizonte T+1.**
+Detecta entre el 57 % y el 100 % de los inicios según el corte, contra el 25 %
+a 44 % del canal endémico, y con menos falsas alarmas por inicio detectado en
+dos de los tres cortes evaluables. Sigue siendo un resultado de evaluación, no
+un sistema de alertas autorizado: la compuerta G5 permanece en `NOT_APPROVED`.
+
+No se abren tandas nuevas sin un mecanismo nuevo preinscrito o sin los datos de
+la línea E.
 
 **Qué no cuenta como mejora:** ganar AUROC global perdiendo inicios; ganar en
 una celda y perder en otras tres; ganar bajando el umbral, que es alertar más y
