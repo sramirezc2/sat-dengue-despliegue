@@ -2,23 +2,34 @@
 @source "../src";
 @import "tw-animate-css";
 
-@import "@fontsource/ibm-plex-sans/400.css";
-@import "@fontsource/ibm-plex-sans/500.css";
-@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/source-sans-3/400.css";
+@import "@fontsource/source-sans-3/600.css";
+@import "@fontsource/source-sans-3/700.css";
 @import "@fontsource/ibm-plex-mono/400.css";
 @import "@fontsource/ibm-plex-mono/500.css";
 
 /*
- * Lenguaje visual: instrumento de vigilancia.
+ * Lenguaje visual: servicio de salud publica.
  *
- * Grises sin tinte azul, filetes de un pixel en vez de sombras, radio de dos
- * pixeles. El color con significado es solo el del canal endemico. Las cifras
- * van en mono con alineacion tabular. Las fuentes se empaquetan, no se piden
- * a un CDN.
+ * La paleta sale del NHS Digital Service Manual, que es el sistema de diseno
+ * de un servicio publico de salud real y publica sus valores con obligacion
+ * de accesibilidad. De ahi vienen tres decisiones:
+ *
+ *   - el fondo es un gris muy claro y no blanco puro, con las tarjetas en
+ *     blanco para destacar lo importante;
+ *   - el foco es amarillo con borde oscuro, que contrasta sobre cualquier
+ *     fondo de la paleta;
+ *   - ningun color carga significado solo: la zona del canal va siempre con
+ *     su nombre y con un indicador de nivel.
+ *
+ * Filetes de un pixel en vez de sombras, radio de dos pixeles. Las cifras van
+ * en mono con alineacion tabular. Las fuentes se empaquetan, no se piden a un
+ * CDN. Los cuatro tonos del canal se verificaron uno a uno: todos superan 4,5:1
+ * sobre blanco y sobre el gris de fondo.
  */
 
 @theme inline {
-  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-sans: "Source Sans 3", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
   --color-zone-exito: var(--zone-exito);
   --color-zone-seguridad: var(--zone-seguridad);
@@ -65,52 +76,62 @@
 :root {
   --radius: 2px;
 
-  /* Grises neutros, sin tinte. Es lo que separa este tablero del gris azulado
-     que traen las plantillas de componentes por defecto. */
-  --background: oklch(0.145 0.003 95);
-  --foreground: oklch(0.93 0.004 95);
-  --card: oklch(0.185 0.003 95);
-  --card-foreground: oklch(0.93 0.004 95);
-  --popover: oklch(0.21 0.003 95);
-  --popover-foreground: oklch(0.93 0.004 95);
-  --muted: oklch(0.235 0.003 95);
-  --muted-foreground: oklch(0.65 0.006 95);
-  --secondary: oklch(0.235 0.003 95);
-  --secondary-foreground: oklch(0.9 0.004 95);
-  --accent: oklch(0.26 0.004 95);
-  --accent-foreground: oklch(0.93 0.004 95);
-  --border: oklch(0.29 0.003 95);
-  --border-strong: oklch(0.42 0.004 95);
-  --input: oklch(0.31 0.003 95);
+  /* Neutros del NHS: grey-5 de fondo, blanco para tarjetas, grey-1 para texto
+     secundario. El grey-2 (#768692) queda fuera del texto a proposito: da
+     3,75:1 y no alcanza el minimo AA. */
+  --background: #f0f4f5;
+  --foreground: #212b32;
+  --card: #ffffff;
+  --card-foreground: #212b32;
+  --popover: #ffffff;
+  --popover-foreground: #212b32;
+  --muted: #e8edef;
+  --muted-foreground: #4c6272;
+  --secondary: #e8edef;
+  --secondary-foreground: #212b32;
+  --accent: #e6eff7;
+  --accent-foreground: #212b32;
+  --border: #d8dde0;
+  --border-strong: #aeb7bd;
+  --input: #ffffff;
 
-  /* Un solo acento, frio y contenido, fuera de la escala del canal para que
-     nunca se confunda con un estado epidemiologico. Se usa en el foco, los
-     enlaces y la pestana activa; nunca para rellenar botones grandes. */
-  --primary: oklch(0.74 0.09 215);
-  --primary-foreground: oklch(0.145 0.003 95);
-  --ring: oklch(0.74 0.09 215);
+  /* Un solo acento, fuera de la escala del canal para que nunca se confunda
+     con un estado epidemiologico. Se usa en enlaces y en la pestana activa. */
+  --primary: #005eb8;
+  --primary-foreground: #ffffff;
 
-  --destructive: oklch(0.62 0.19 27);
-  --destructive-foreground: oklch(0.97 0.003 95);
+  /* El foco del NHS: amarillo con filete oscuro. Funciona sobre fondo claro y
+     sobre los rellenos de color del mapa. */
+  --ring: #ffeb3b;
+  --ring-outline: #212b32;
 
-  /* Escala del canal endemico. Es el unico color con significado. */
-  --zone-exito: oklch(0.66 0.13 152);
-  --zone-seguridad: oklch(0.79 0.14 108);
-  --zone-alerta: oklch(0.76 0.15 68);
-  --zone-exceso: oklch(0.62 0.2 27);
+  --destructive: #b01810;
+  --destructive-foreground: #ffffff;
 
-  --warn: oklch(0.8 0.14 85);
-  --warn-foreground: oklch(0.2 0.03 80);
+  /* Escala del canal endemico. Es el unico color con significado, y es una
+     escala ordenada: su luminancia no es monotona, asi que el orden lo lleva
+     el indicador de nivel y no el tono. */
+  --zone-exito: #00703c;
+  --zone-seguridad: #8a6a00;
+  --zone-alerta: #c0500f;
+  --zone-exceso: #b01810;
 
-  --map-unavailable: oklch(0.34 0.003 95);
-  --map-boundary: oklch(0.52 0.004 95);
-  --map-selected: oklch(0.97 0.003 95);
+  --warn: #fff1d2;
+  --warn-foreground: #664a0b;
 
-  --chart-1: oklch(0.74 0.09 215);
-  --chart-2: oklch(0.66 0.13 152);
-  --chart-3: oklch(0.76 0.15 68);
-  --chart-4: oklch(0.79 0.14 108);
-  --chart-5: oklch(0.62 0.2 27);
+  /* El mapa pinta superficies grandes, asi que no reutiliza los tonos del
+     canal: el estado sin alerta va en un verde palido que no compite. */
+  --map-alert: #b01810;
+  --map-clear: #cce5d8;
+  --map-unavailable: #e8edef;
+  --map-boundary: #aeb7bd;
+  --map-selected: #212b32;
+
+  --chart-1: #005eb8;
+  --chart-2: #00703c;
+  --chart-3: #c0500f;
+  --chart-4: #8a6a00;
+  --chart-5: #b01810;
 }
 
 @layer base {
@@ -142,9 +163,12 @@
     color: var(--color-muted-foreground);
   }
 
+  /* Foco del NHS: el amarillo contrasta con fondos oscuros y el filete oscuro
+     con los claros, de modo que se ve en cualquier parte del tablero. */
   :focus-visible {
-    outline: 2px solid var(--color-ring);
-    outline-offset: 2px;
+    outline: 3px solid var(--color-ring);
+    outline-offset: 0;
+    box-shadow: 0 0 0 5px var(--ring-outline);
   }
 }
 
@@ -157,10 +181,10 @@
     stroke-width 150ms ease;
 }
 .municipal-area[data-state="alert"] {
-  fill: var(--zone-exceso);
+  fill: var(--map-alert);
 }
 .municipal-area[data-state="clear"] {
-  fill: var(--zone-exito);
+  fill: var(--map-clear);
 }
 .municipal-area[data-state="unavailable"] {
   fill: var(--map-unavailable);

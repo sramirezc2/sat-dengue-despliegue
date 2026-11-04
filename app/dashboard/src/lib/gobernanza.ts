@@ -19,17 +19,17 @@ export interface EnlaceDeEvidencia {
 export function textoDeGobernanza(
   estado: DashboardViewModel["governanceStatus"],
   champion: DashboardViewModel["championStatus"],
+  anio?: number,
 ): string {
   if (estado === "APPROVED" && champion === "SELECTED") {
-    return (
-      "El modelo superó la compuerta G5 y tiene champion seleccionado. " +
-      "Los resultados publicados corresponden a ese modelo."
-    );
+    return "Los resultados corresponden al modelo autorizado para operar.";
   }
+  const periodo = anio
+    ? `sobre ${anio}, el último año con datos completos`
+    : "sobre un periodo ya cerrado";
   return (
-    "Los resultados provienen de un candidato provisional evaluado sobre el bloque " +
-    "congelado de 2025. El champion no está seleccionado y estas alertas no están " +
-    "autorizadas para decisiones operativas."
+    `Resultados de un modelo en prueba ${periodo}. ` +
+    "Ningún modelo fue autorizado para uso operativo."
   );
 }
 

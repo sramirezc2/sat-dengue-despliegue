@@ -200,9 +200,13 @@ describe("dashboard query integration", () => {
     const municipalitySelector = screen.getByLabelText("Municipio") as HTMLSelectElement;
     expect(municipalitySelector.options).toHaveLength(47);
     expect(screen.getAllByText("Disponible", { exact: false }).length).toBeGreaterThan(0);
-    expect(
-      screen.getByRole("region", { name: "Estado de gobernanza del modelo" }),
-    ).toHaveTextContent("G5: NOT_APPROVED");
+    // La politica del proyecto exige que el tablero declare que el modelo no
+    // esta autorizado. Lo que se verifica es esa declaracion, no la redaccion:
+    // el codigo tecnico G5 salio de la vista por ilegible, pero la garantia
+    // sigue siendo que un visitante no pueda confundir esto con alertas reales.
+    const gobernanza = screen.getByRole("region", { name: "Estado de gobernanza del modelo" });
+    expect(gobernanza).toHaveTextContent(/Ejercicio de evaluación/i);
+    expect(gobernanza).toHaveTextContent(/Ningún modelo fue autorizado para uso operativo/i);
     expect(screen.getByRole("img", { name: /Canal endémico Ibagué/ })).toBeInTheDocument();
     expect(screen.getByRole("table", { name: /Tabla equivalente al mapa/ })).toBeInTheDocument();
 

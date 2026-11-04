@@ -274,53 +274,30 @@ export function Dashboard() {
       {encabezado}
 
       <main className="mx-auto max-w-7xl space-y-5 px-4 py-6">
-        {/* 1. Gobernanza */}
+        {/* 1. Gobernanza. Una linea, no un bloque: la politica del proyecto
+            exige declarar el estado, pero explicarlo en extenso ocupaba el
+            lugar de la informacion y no ayudaba a nadie a decidir. */}
         <section
           aria-label="Estado de gobernanza del modelo"
-          className="border border-border border-l-2 border-l-muted-foreground bg-card p-5"
+          className="border-b border-border pb-4 text-sm leading-relaxed text-muted-foreground"
         >
-          <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="flex items-center gap-3">
-              <ShieldOff className="h-8 w-8 text-muted-foreground" />
-              <div>
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Estado de gobernanza (no es nivel de riesgo)
-                </p>
-                <p className="text-lg font-bold">
-                  MODELO {view.governanceStatus === "APPROVED" ? "APROBADO" : "NO APROBADO"}
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2 font-mono text-xs">
-              <span className="rounded border border-border bg-background px-2 py-1">
-                {view.governanceGate}: {view.governanceStatus}
-              </span>
-              <span className="rounded border border-border bg-background px-2 py-1">
-                Champion: {view.championStatus === "SELECTED" ? "seleccionado" : "no seleccionado"}
-              </span>
-            </div>
-            <div className="md:ml-auto md:max-w-xl">
-              <p className="text-sm text-muted-foreground">
-                {textoDeGobernanza(view.governanceStatus, view.championStatus)}
-              </p>
-              <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
-                <span className="text-muted-foreground">Evidencia:</span>
-                {enlacesDeEvidencia(getDashboardConfig().repositorioUrl).map((enlace) => (
-                  <a
-                    key={enlace.href}
-                    href={enlace.href}
-                    title={enlace.descripcion}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="inline-flex items-center gap-1 underline underline-offset-4 decoration-border-strong hover:decoration-foreground"
-                  >
-                    {enlace.rotulo}
-                    <ExternalLink aria-hidden className="h-3 w-3" />
-                  </a>
-                ))}
-              </p>
-            </div>
-          </div>
+          <span className="font-semibold text-foreground">
+            {view.governanceStatus === "APPROVED" ? "Modelo aprobado." : "Ejercicio de evaluación."}
+          </span>{" "}
+          {textoDeGobernanza(view.governanceStatus, view.championStatus, view.periodYear)}{" "}
+          {enlacesDeEvidencia(getDashboardConfig().repositorioUrl).map((enlace) => (
+            <a
+              key={enlace.href}
+              href={enlace.href}
+              title={enlace.descripcion}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="ml-3 inline-flex items-center gap-1 whitespace-nowrap text-primary underline underline-offset-4"
+            >
+              {enlace.rotulo}
+              <ExternalLink aria-hidden className="h-3 w-3" />
+            </a>
+          ))}
         </section>
 
         {/* 2 + 3 */}
@@ -752,9 +729,9 @@ function ChannelChart({ muni, view }: { muni: Muni; view: DashboardViewModel }) 
               dataKey="b1"
               name="Éxito (<P25)"
               fill="var(--zone-exito)"
-              fillOpacity={0.85}
+              fillOpacity={0.18}
               stroke="var(--zone-exito)"
-              strokeOpacity={0.9}
+              strokeOpacity={0.55}
               strokeWidth={1}
             />
             <Area
@@ -762,9 +739,9 @@ function ChannelChart({ muni, view }: { muni: Muni; view: DashboardViewModel }) 
               dataKey="b2"
               name="Seguridad (P25–Mediana)"
               fill="var(--zone-seguridad)"
-              fillOpacity={0.8}
+              fillOpacity={0.16}
               stroke="var(--zone-seguridad)"
-              strokeOpacity={0.9}
+              strokeOpacity={0.55}
               strokeWidth={1}
             />
             <Area
@@ -772,10 +749,10 @@ function ChannelChart({ muni, view }: { muni: Muni; view: DashboardViewModel }) 
               dataKey="b3"
               name="Alerta (Mediana–P75)"
               fill="var(--zone-alerta)"
-              fillOpacity={0.75}
+              fillOpacity={0.14}
               stroke="var(--zone-exceso)"
               strokeOpacity={1}
-              strokeWidth={1.5}
+              strokeWidth={2}
             />
             <Line
               dataKey="observed"

@@ -16,9 +16,9 @@ export function renderErrorPage(): string {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
       body {
-        font: 15px/1.6 "IBM Plex Sans", system-ui, -apple-system, sans-serif;
-        background: #191815;
-        color: #e8e6e1;
+        font: 15px/1.6 "Source Sans 3", system-ui, -apple-system, sans-serif;
+        background: #f0f4f5;
+        color: #212b32;
         display: grid;
         place-items: center;
         min-height: 100vh;
@@ -28,8 +28,8 @@ export function renderErrorPage(): string {
       .tarjeta {
         max-width: 28rem;
         width: 100%;
-        background: #211f1d;
-        border: 1px solid #3f3d39;
+        background: #ffffff;
+        border: 1px solid #d8dde0;
         padding: 2rem;
       }
       .rotulo {
@@ -37,18 +37,18 @@ export function renderErrorPage(): string {
         font-size: 0.6875rem;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: #9b968d;
+        color: #4c6272;
         margin: 0;
       }
       h1 { font-size: 1.25rem; font-weight: 600; margin: 0.75rem 0 0; }
-      p.detalle { color: #9b968d; font-size: 0.875rem; margin: 0.5rem 0 0; }
+      p.detalle { color: #4c6272; font-size: 0.875rem; margin: 0.5rem 0 0; }
       .acciones { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1.5rem; }
       a, button {
         display: inline-flex;
         align-items: center;
         min-height: 2.75rem;
         padding: 0 1rem;
-        border: 1px solid #58544e;
+        border: 1px solid #aeb7bd;
         border-radius: 2px;
         background: transparent;
         color: inherit;
@@ -58,7 +58,7 @@ export function renderErrorPage(): string {
         text-decoration: none;
         cursor: pointer;
       }
-      a:hover, button:hover { background: #2b2926; }
+      a:hover, button:hover { background: #e6eff7; }
     </style>
   </head>
   <body>
