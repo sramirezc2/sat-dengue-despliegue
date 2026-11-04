@@ -437,6 +437,194 @@ cuánto pesa cada fila.
 
 **Veredicto.** Las líneas B y D se cierran.
 
+### Tanda 5 — Lo que el modelo no puede ver
+
+**Por qué se reabre el ciclo.** La condición de parada se activó en la tanda 4
+y sigue siendo válida para lo que la activó. Las cuatro familias probadas hasta
+ahí eran variaciones de **cómo se entrena y cómo se fija el umbral** sobre la
+misma matriz de 29 variables. Esta tanda no reintenta ninguna: cambia **qué ve
+el modelo**, que es el mecanismo nuevo que la regla de parada exige para
+reabrir.
+
+**El inventario que la motiva.** Comparando las 29 columnas de la matriz
+preparada contra las 51 del panel, el modelo nunca recibe la variable de
+decisión del canal endémico. Tiene `zona_canal_t`, una categoría de tres
+niveles sobre el mes en curso, y el conteo de casos con sus rezagos. Pero el
+umbral del canal es específico de cada municipio y de cada mes calendario, y no
+está en la matriz. El modelo no puede calcular a qué distancia está un
+municipio del umbral del mes siguiente, que es precisamente la pregunta que se
+le hace. Faltan además tres bloques: nada espacial, en una enfermedad
+transmitida por vector; nada de memoria más allá de un mes; y nada que trate el
+cruce del umbral como un fenómeno continuo. La estacionalidad sí está
+(`mes_sin`, `mes_cos`) y por eso no se propone.
+
+**Hipótesis preinscritas**, todas contra el vigente (etiqueta de inicio, todas
+las variables, presupuesto del canal) y solo en T+1:
+
+- *G · margen al umbral*: dar el margen continuo contra el umbral del mes
+  objetivo y del mes en curso, la posición dentro de la banda P25–P75, y la
+  velocidad de acercamiento. Un inicio es el cruce de un umbral, y un cruce se
+  predice con posición y velocidad.
+- *H · presión epidémica regional*: fracción de los otros municipios del
+  departamento en exceso (dejando fuera al propio), y la misma señal sobre los
+  cinco municipios cuya historia de exceso más correlaciona con la del
+  municipio, elegidos solo con datos de entrenamiento. Sustituto de adyacencia
+  geográfica, porque el panel no trae coordenadas.
+- *I · memoria y agotamiento de susceptibles*: meses desde el último exceso,
+  excesos en los últimos 12 y 24 meses, duración de la racha actual en calma.
+- *J · regresión sobre el margen*: mecanismo, no feature. Se predice el margen
+  continuo del mes objetivo y se ordena por margen predicho entre las filas que
+  no están en exceso. Es la alternativa estructural a cambiar la etiqueta,
+  después de que la tanda 4 mostró que cambiar el peso no sirve.
+
+Cada una se preinscribió con su **contrahipótesis**. La de G es la más
+importante: el margen contra el umbral objetivo *es* la regla del canal, y el
+canal detecta pocos inicios, así que dársela podría arrastrar al modelo hacia
+el comportamiento del canal y empeorarlo.
+
+**Comprobación de fuga previa.** La columna `history_periods_used_t1` lista los
+periodos con que se construye cada umbral: los cinco mismos meses calendario de
+años anteriores, estrictamente previos al mes de referencia. Se verificó además
+que `p75_canal_t[t] == p75_t1[t-1]`. Usar el umbral como variable es tan
+legítimo como que el canal lo use para alertar.
+
+**Guarda contra la comparación múltiple, preinscrita.** Cinco comparaciones
+(cuatro hipótesis más la combinación) contra el mismo vigente, con una barra de
+2 de 3 cortes, hacen que ganar por ruido no sea despreciable. Toda variante que
+pase la barra queda como **candidata**, no como mejora confirmada, y para
+confirmarse debe además ir en la misma dirección en el corte 2020-12 —excluido
+por tamaño de muestra y usado solo como chequeo de dirección, nunca como
+voto— y mostrar las features nuevas entre las que el modelo realmente usa.
+
+#### Resultado: G mejora, y es la primera mejora confirmada del ciclo
+
+| Corte | Estrategia | Alertas | Falsas | Inicios | Cobertura | Falsas/inicio |
+| --- | --- | --- | --- | --- | --- | --- |
+| 2018-12 | canal endémico | 208 | 27 | 17/60 | 28 % | 1,59 |
+| | vigente | 69 | 36 | 33/60 | 55 % | 1,09 |
+| | **G · margen al umbral** | 69 | 27 | **42/60** | **70 %** | **0,64** |
+| | H · presión regional | 69 | 41 | 28/60 | 47 % | 1,46 |
+| | I · memoria | 69 | 35 | 34/60 | 57 % | 1,03 |
+| | G+H+I | 69 | 29 | 40/60 | 67 % | 0,72 |
+| | J · regresión (acotada) | 69 | 28 | 41/60 | 68 % | 0,68 |
+| | J · regresión (libre) | 69 | 0 | 0/60 | 0 % | — |
+| 2022-12 | canal endémico | 204 | 27 | 14/57 | 25 % | 1,93 |
+| | vigente | 96 | 58 | 38/57 | 67 % | 1,53 |
+| | **G · margen al umbral** | 96 | 46 | **49/57** | **86 %** | **0,94** |
+| | H · presión regional | 96 | 58 | 38/57 | 67 % | 1,53 |
+| | I · memoria | 96 | 58 | 38/57 | 67 % | 1,53 |
+| | G+H+I | 96 | 48 | 48/57 | 84 % | 1,00 |
+| | J · regresión (acotada) | 96 | 51 | 45/57 | 79 % | 1,13 |
+| | J · regresión (libre) | 96 | 3 | 0/57 | 0 % | — |
+| 2024-06 | canal endémico | 203 | 60 | 21/48 | 44 % | 2,86 |
+| | vigente | 203 | 150 | 48/48 | 100 % | 3,12 |
+| | G · margen al umbral | 203 | 148 | 48/48 | 100 % | 3,08 |
+| | G+H+I | 203 | 148 | 48/48 | 100 % | 3,08 |
+| | J · regresión (acotada) | 191 | 143 | 48/48 | 100 % | 2,98 |
+
+**Veredicto en T+1.** G pasa la barra en 2 de 3 cortes; G+H+I y J acotada
+también, en 2 de 3. H falla (0 de 3) e I falla (1 de 3).
+
+El tercer corte, 2024-06, **no es una derrota de G: es un techo.** El vigente
+ya detecta 48 de 48 inicios, así que "más inicios" es imposible por
+construcción; G empata en el techo y cuesta marginalmente menos (3,08 contra
+3,12). Se reporta así y no como una victoria, porque la regla preinscrita exige
+*más* inicios.
+
+**G queda confirmada**, porque cumple las dos condiciones de la guarda:
+
+- *Dirección en 2020-12*: 8 inicios contra 6 del vigente, a 12,25 contra 16,67
+  falsas por inicio. Mismo sentido.
+- *Mecanismo legible*: `margen_curso` y `margen_objetivo` son la primera y
+  segunda variable por ganancia en los cuatro cortes (11–13 % y 9–11 %), y al
+  entrar desplazan a `zona_canal_t`, que cae del 23–29 % al 3–9 %. O sea que el
+  modelo sustituye la categoría de tres niveles por la versión continua de la
+  misma información, que es exactamente el mecanismo propuesto.
+
+**H falla y la contrahipótesis explica por qué.** `presion_vecinos` sí aparece
+alta en la ganancia (8–12 %), o sea que el modelo la usa, pero el resultado
+empeora. Con dos departamentos el agregado toma pocos valores por mes y lo que
+el modelo aprende de él no ordena municipios dentro de un mes: gasta capacidad
+en una señal que no discrimina donde hace falta discriminar. La señal espacial
+puede existir; esta forma de medirla no sirve.
+
+**I falla pese a ser la más usada.** `racha_calma` y `meses_desde_exceso` se
+llevan 15–18 % y 12–14 % de la ganancia, y el resultado es idéntico al vigente
+en 2022-12 y apenas mejor en 2018-12. Que una variable se use mucho no quiere
+decir que aporte: lo más probable es que esté codificando la identidad del
+municipio, que el modelo ya tenía por el nivel de casos.
+
+**J: el mecanismo no se puede acreditar.** J acotada pasa la barra, pero fue
+construida **sobre el bloque G**, porque el margen es lo que define su objetivo.
+Comparar J contra el vigente mezcla dos cambios a la vez. La comparación que
+aísla el mecanismo es J contra G, y ahí J pierde en los dos cortes que deciden
+(41 contra 42, y 45 contra 49). La regresión no aporta sobre la clasificación;
+lo que aportaba eran las variables. Defecto de diseño propio, y por eso J no se
+cuenta como mejora.
+
+Y J libre confirma su contrahipótesis de forma total: **0 inicios** en dos
+cortes. Los márgenes predichos más altos son los municipios que ya están en
+exceso, donde un inicio es imposible por definición. El regresor ordena bien la
+magnitud y pésimo el cruce.
+
+#### Verificación de G
+
+*Estabilidad ante la semilla*, cinco semillas, T+1, inicios detectados como
+mediana y rango:
+
+| Corte | Inicios reales | Vigente | G |
+| --- | --- | --- | --- |
+| 2018-12 | 60 | 34 [32–34] a 1,03 | **42 [42–44] a 0,64** |
+| 2022-12 | 57 | 38 [38–38] a 1,53 | **49 [48–49] a 0,94** |
+| 2024-06 | 48 | 48 [48–48] a 3,08 | 48 [48–48] a 3,08 |
+
+G nunca queda por debajo del vigente en ninguna de las 15 corridas, y queda
+estrictamente por encima en 10; los 5 empates son el techo de 2024-06. No es
+una semilla con suerte.
+
+*Descomposición del bloque*, para no atribuirle a "G" más de lo que hace
+(semilla 7, T+1, inicios a falsas por inicio):
+
+| Subconjunto | 2018-12 | 2022-12 | 2024-06 |
+| --- | --- | --- | --- |
+| vigente | 33 a 1,09 | 38 a 1,53 | 48 a 3,12 |
+| **solo `margen_objetivo`** | **45 a 0,53** | **49 a 0,96** | 48 a 3,12 |
+| solo `margen_curso` | 36 a 0,92 | 42 a 1,29 | 48 a 3,10 |
+| niveles (los tres) | 44 a 0,57 | 48 a 0,98 | 48 a 3,04 |
+| velocidades (las tres) | 39 a 0,77 | 43 a 1,23 | 48 a 3,06 |
+| G completo (seis) | 42 a 0,64 | 49 a 0,94 | 48 a 3,08 |
+
+**Una sola variable carga el resultado**, y es el margen contra el umbral del
+mes **objetivo**. Sola llega a 45 de 60 inicios a 0,53 falsas por inicio, mejor
+que el bloque completo de seis. El margen contra el umbral del mes **en curso**
+hace mucho menos (36), lo que tiene sentido: la etiqueta está definida por el
+umbral del mes objetivo, no del mes en curso.
+
+**La lectura de fondo.** El canal endémico no era un competidor del modelo: era
+una variable que al modelo le faltaba. `margen_objetivo` es la regla de
+decisión del canal convertida de signo en magnitud —el canal alerta cuando esta
+cantidad pasa de cero— y el modelo, al recibirla, aprende dónde en esa escala
+ocurren de verdad los inicios, que es justo por debajo del umbral y subiendo.
+Nueve tandas de variaciones sobre el entrenamiento y el umbral no habían
+movido nada; darle al modelo la variable que el canal usa, sí.
+
+**Nota sobre la versión mínima.** Que `margen_objetivo` sola sea mejor que el
+bloque completo se descubrió **después** de mirar los resultados, así que
+adoptarla como vigente sería elegir el mejor subconjunto a posteriori, que es
+exactamente lo que las reglas de esta bitácora prohíben. Lo confirmado es el
+bloque G tal como se preinscribió, y es el bloque G el que pasa a ser el
+vigente. La versión mínima queda preinscrita para la tanda siguiente.
+
+**T+2 vuelve a estar en duda.** T+2 se cerró en la tanda 3 porque ninguna
+configuración superaba al canal de forma consistente a dos meses. Con G, en
+T+2, se detectan 20 contra 10 inicios en 2018-12, 20 contra 18 en 2022-12 y 28
+contra 23 en 2024-06, siempre más barato, y en 2022-12 G supera al canal en los
+dos ejes a la vez (20 a 0,85 contra 14 a 1,43). Esto **no decide nada**, porque
+la preinscripción de esta tanda dice que solo T+1 decide y T+2 es informativo.
+Lo que hace es dar el mecanismo nuevo que las reglas exigen para reabrir una
+línea cerrada, y por eso T+2 se reabre como hipótesis preinscrita, no como
+resultado.
+
 ---
 
 ## 6. Estado de las líneas de trabajo
@@ -449,11 +637,19 @@ cuánto pesa cada fila.
 | B. Entrenar sin las variables del canal | **Cerrada**: rechazada en la tanda 4; esas variables son necesarias |
 | C. Modelo en dos etapas | **Cerrada**: rechazada en la tanda 3; el modelo ya estratifica solo |
 | D. Costo asimétrico en el entrenamiento | **Cerrada**: rechazada en la tanda 4 |
+| G. Margen continuo al umbral del canal | **Confirmada** en la tanda 5; pasa a ser el vigente |
+| H. Presión epidémica regional | **Cerrada**: rechazada en la tanda 5 con esta forma de medirla |
+| I. Memoria y agotamiento de susceptibles | **Cerrada**: rechazada en la tanda 5 |
+| J. Regresión sobre el margen | **Cerrada**: no aporta sobre la clasificación |
 | E. Variables demográficas y sociales | Abierta, en curso por otro integrante |
+| K. Versión mínima de G (una sola variable) | Preinscrita para la tanda 6 |
+| L. Reapertura de T+2 con el margen | Preinscrita para la tanda 6 |
 
-**Horizonte T+2.** Cerrado como línea de mejora tras la tanda 3: en tres tandas
-ninguna configuración superó al canal endémico de forma consistente a dos
-meses. Se reporta como resultado.
+**Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
+tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
+cortes de T+2, y en 2022-12 supera al canal en los dos ejes. Se reabre como
+hipótesis preinscrita (línea L), no como resultado, porque la preinscripción de
+la tanda 5 establecía que solo T+1 decide.
 
 ---
 
@@ -470,18 +666,31 @@ tiempo. Una línea cerrada no se reabre sin un mecanismo nuevo.
 sin mejora, o cuando falten menos de cinco días para una entrega y haya trabajo
 de escritura pendiente.
 
-**Esa condición se cumplió en la tanda 4.** La tanda 3 cerró la línea C y la
-tanda 4 cerró las líneas B y D, dos tandas seguidas sin mejora; y las líneas A
-a D están todas cerradas o resueltas, con la E dependiendo de datos que aún no
-están disponibles. El ciclo de experimentación se declara cerrado aquí.
+**Esa condición se cumplió en la tanda 4** y el ciclo se cerró ahí: la tanda 3
+cerró la línea C y la tanda 4 cerró B y D, dos tandas seguidas sin mejora.
 
-La configuración que queda como resultado del trabajo es: **modelo entrenado
-sobre la etiqueta de inicio, con todas las variables, operado al presupuesto de
-alertas del canal endémico medido en la partición interna, horizonte T+1.**
-Detecta entre el 57 % y el 100 % de los inicios según el corte, contra el 25 %
-a 44 % del canal endémico, y con menos falsas alarmas por inicio detectado en
-dos de los tres cortes evaluables. Sigue siendo un resultado de evaluación, no
-un sistema de alertas autorizado: la compuerta G5 permanece en `NOT_APPROVED`.
+**Y se reabrió en la tanda 5**, por la vía que las propias reglas dejan
+abierta: un mecanismo nuevo. Las cuatro líneas cerradas hasta la tanda 4 eran
+variaciones de cómo se entrena y cómo se fija el umbral sobre la misma matriz;
+la tanda 5 cambió qué ve el modelo. Produjo mejora confirmada, así que el
+contador de tandas consecutivas sin mejora vuelve a cero.
+
+La configuración vigente pasa a ser: **modelo entrenado sobre la etiqueta de
+inicio, con las 29 variables de la matriz preparada más el bloque G del margen
+al umbral, operado al presupuesto de alertas del canal endémico medido en la
+partición interna, horizonte T+1.** Detecta el 70 %, el 86 % y el 100 % de los
+inicios en los tres cortes evaluables, contra el 28 %, 25 % y 44 % del canal
+endémico, y con menos falsas alarmas por inicio en los tres. Sigue siendo un
+resultado de evaluación y no un sistema de alertas autorizado: la compuerta G5
+permanece en `NOT_APPROVED` y el tablero desplegado publica la evaluación
+congelada, no este modelo.
+
+**La lección de método, que vale más que el resultado.** El ciclo se había
+cerrado correctamente y por las razones correctas: nueve variaciones sobre el
+entrenamiento y el umbral, todas sin efecto. Lo que faltaba no era otra
+variación: era revisar el inventario de lo que el modelo podía ver. Cuando una
+familia entera de intentos no mueve nada, la pregunta siguiente no es cuál
+variante falta, sino qué información no está entrando.
 
 No se abren tandas nuevas sin un mecanismo nuevo preinscrito o sin los datos de
 la línea E.
