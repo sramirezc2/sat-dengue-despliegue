@@ -97,9 +97,9 @@ en `/api/docs`. Esa interfaz carga sus recursos desde un CDN público;
 
 | Recurso | Dirección |
 | --- | --- |
-| Repositorio del despliegue | este repositorio |
+| Aplicación desplegada | http://34.206.240.59 |
+| Repositorio del despliegue | https://github.com/sramirezc2/sat-dengue-despliegue |
 | Procedencia de los datos publicados | corrida `88e3ad9decce8bd4d`, evaluación congelada G5 |
-| Aplicación desplegada | se publica al crear la instancia, antes de la revisión |
 | Repositorio científico (pipelines, notebooks, evidencia) | `SAT-Dengue-V2` |
 | Informe de avance | entregado el 25 de octubre de 2026 |
 
