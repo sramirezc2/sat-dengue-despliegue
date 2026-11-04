@@ -152,6 +152,42 @@ el evento de verdad hace que "alertar sobre todo" apruebe en los tres cortes—.
 Los controles negativos detectaron eso. Es la evidencia de que el conjunto es
 mínimo y coherente y no una colección de ajustes convenientes.
 
+**4 de noviembre de 2026 — el canal endémico se publica como fila de
+referencia en la comparación del tablero.**
+
+*Origen:* **después** de ver los resultados, y por una pregunta de lectura, no
+de medición: la comparación publicada mostraba al modelo contra la
+persistencia, que en T+1 detecta cero inicios por construcción, de modo que la
+pantalla hacía ver bien al modelo por una razón que no tiene nada que ver con
+el modelo.
+
+*Qué se agrega:* una fila con rol `REFERENCE` por horizonte, marcada con
+`source: "computed_from_panel"` para distinguirla de las que vienen de la
+corrida evaluada. No se recalcula ninguna métrica existente ni se toca la
+corrida: la persistencia sigue publicada como `BASELINE` con sus mismos
+números, porque es la línea base que declaró la evaluación.
+
+*Definición:* alerta si los casos observados del municipio en el mes de aviso
+superan su P75 del mes, con el mismo canal que usa el proyecto. El acierto se
+cuenta contra inicio, no contra exceso, sobre exactamente las mismas filas del
+panel que evaluó a los modelos.
+
+*Trampa aritmética que costó una corrección:* en el panel `y_t1[m]` codifica
+exceso en `m+1`, de modo que el exceso del mes anterior al objetivo vive en
+`y_t1[objetivo − 2]`, no en `objetivo − 1`. Con el desplazamiento equivocado la
+definición de inicio daba 0 de 86 en los dos horizontes. Los números
+publicados se reconciliaron después contra un recuento independiente en pandas.
+
+*Resultado, que no favorece al modelo:* en T+1 el canal anticipa 27 de 86
+inicios con 266 alertas y 105 en falso —3,9 falsas por acierto— contra 22 de 86
+del XGBoost publicado con 350 alertas y 177 en falso —8,0 por acierto—. El
+canal le gana al modelo publicado en los dos ejes. En T+2 el modelo detecta más
+—48 contra 44— pero cada acierto le cuesta 6,0 falsas contra 2,9 del canal.
+
+*Qué no contradice:* la mejora de la tanda 5 no está en esta comparación. La
+comparación publica la corrida congelada de octubre, que es anterior al bloque
+G; el modelo de la tanda 5 no está desplegado ni autorizado.
+
 ---
 
 ## 4. Reglas de método

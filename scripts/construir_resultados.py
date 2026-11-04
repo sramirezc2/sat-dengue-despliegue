@@ -148,6 +148,79 @@ ETIQUETAS_CANDIDATO = {
 }
 
 
+def canal_endemico(
+    panel: dict[tuple[str, str], dict[str, str]],
+    predicciones: dict[tuple[str, str, str], dict[str, str]],
+) -> list[dict[str, object]]:
+    """Desempeno de la regla que la vigilancia usa hoy, sobre las mismas filas.
+
+    No sale de la corrida registrada: se calcula aqui, con la misma definicion
+    que usa el proyecto en todas partes -alertar cuando los casos del mes
+    superan el P75 historico del mes objetivo- y sobre exactamente las filas
+    que la evaluacion midio. Se publica con `source` distinto para que nadie
+    lo confunda con una metrica de la corrida.
+
+    Esta fila existe porque sin ella la comparacion enganaba. La linea base que
+    declaro la evaluacion es la persistencia, que alerta donde el exceso ya
+    esta y por eso no puede detectar ni un inicio: ese cero es aritmetico y no
+    mide nada. El canal si detecta inicios, y es contra el canal que una
+    secretaria de salud necesita saber si el modelo aporta.
+    """
+    por_horizonte: dict[str, dict[str, int]] = defaultdict(
+        lambda: {"alertas": 0, "inicios": 0, "falsas": 0, "reales": 0}
+    )
+    for (municipio, mes, horizonte), fila in predicciones.items():
+        acc = por_horizonte[horizonte]
+        panel_fila = panel.get((municipio, mes))
+        if panel_fila is None:
+            continue
+        casos = _numero(panel_fila.get("total_notifications_count"))
+        umbral = _numero(panel_fila.get(f"p75_t{horizonte}"))
+        alerta = casos is not None and umbral is not None and casos > umbral
+
+        # Un inicio es exceso en el mes objetivo viniendo de un mes sin exceso.
+        # El panel guarda y_t1[m] = exceso en m+1, de modo que el exceso del mes
+        # anterior al objetivo esta en y_t1 dos meses antes del objetivo.
+        exceso = _numero(fila.get("y_true")) == 1
+        objetivo = _periodo_desplazado(mes, int(horizonte))
+        previo = panel.get((municipio, _periodo_desplazado(objetivo, -2)))
+        inicio = exceso and previo is not None and _numero(previo.get("y_t1")) == 0
+
+        acc["reales"] += int(inicio)
+        if alerta:
+            acc["alertas"] += 1
+            acc["inicios"] += int(inicio)
+            acc["falsas"] += int(not exceso)
+
+    salida = []
+    for horizonte, acc in sorted(por_horizonte.items()):
+        salida.append(
+            {
+                "horizon": f"T{horizonte}",
+                "candidate": "endemic_channel",
+                "label": "Canal endemico",
+                "role": "REFERENCE",
+                "source": "computed_from_panel",
+                "onsets_detected": acc["inicios"],
+                "actual_onsets": acc["reales"],
+                "alerts_emitted": acc["alertas"],
+                "false_alerts": acc["falsas"],
+                "false_alert_ratio": (acc["falsas"] / acc["alertas"]) if acc["alertas"] else None,
+                "onset_sensitivity": (acc["inicios"] / acc["reales"]) if acc["reales"] else None,
+                "auroc": None,
+                "average_precision": None,
+                "brier": None,
+            }
+        )
+    return salida
+
+
+def _periodo_desplazado(periodo: str, meses: int) -> str:
+    anio, mes = (int(x) for x in periodo.split("-"))
+    total = anio * 12 + (mes - 1) + meses
+    return f"{total // 12:04d}-{total % 12 + 1:02d}"
+
+
 def leer_todos_los_candidatos(ruta: Path, publicado: str) -> list[dict[str, object]]:
     """Desempeno de cada candidato evaluado, para poder compararlos en pantalla.
 
@@ -171,6 +244,7 @@ def leer_todos_los_candidatos(ruta: Path, publicado: str) -> list[dict[str, obje
                     if cand == "persistence"
                     else "PUBLISHED" if cand == publicado else "OTHER"
                 ),
+                "source": "evaluation_run",
                 "onsets_detected": _entero(f.get("detected_onsets")),
                 "actual_onsets": _entero(f.get("real_onsets")),
                 "alerts_emitted": _entero(f.get("emitted_alerts")),
@@ -384,6 +458,8 @@ def main() -> None:
     predicciones, umbrales = leer_predicciones(args.predicciones, args.candidato)
     comparacion = leer_comparacion(args.comparacion, args.candidato)
     candidatos = leer_todos_los_candidatos(args.comparacion, args.candidato)
+    candidatos += canal_endemico(panel, predicciones)
+    candidatos.sort(key=lambda r: (r["horizon"], -(r["onsets_detected"] or 0)))
     generado = datetime.now(timezone.utc).isoformat(timespec="seconds")
     version_modelo = args.version_modelo or f"{args.candidato}-{args.procedimiento[:12]}"
 

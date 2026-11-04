@@ -160,6 +160,14 @@ function Dispersion({ filas }: { filas: Candidato[] }) {
             stroke="var(--zone-seguridad)"
             strokeWidth={2.5}
           />
+        ) : f.role === "REFERENCE" ? (
+          <path
+            key={f.label}
+            d={`M ${cx} ${cy - 7} L ${cx + 7} ${cy} L ${cx} ${cy + 7} L ${cx - 7} ${cy} Z`}
+            fill="none"
+            stroke="var(--zone-exceso)"
+            strokeWidth={2.5}
+          />
         ) : f.role === "PUBLISHED" ? (
           <circle
             key={f.label}
@@ -201,11 +209,13 @@ function Dispersion({ filas }: { filas: Candidato[] }) {
             fontSize={11}
             fontWeight={f.role === "PUBLISHED" ? 600 : 400}
             fill={
-              f.role === "BASELINE"
-                ? "var(--zone-seguridad)"
-                : f.role === "PUBLISHED"
-                  ? "var(--foreground)"
-                  : "var(--muted-foreground)"
+              f.role === "REFERENCE"
+                ? "var(--zone-exceso)"
+                : f.role === "BASELINE"
+                  ? "var(--zone-seguridad)"
+                  : f.role === "PUBLISHED"
+                    ? "var(--foreground)"
+                    : "var(--muted-foreground)"
             }
           >
             {f.label}
@@ -222,14 +232,29 @@ export function ComparacionModelo({ view }: { view: DashboardViewModel }) {
   if (filas.length === 0) return null;
 
   const base = filas.find((f) => f.role === "BASELINE");
+  const canal = filas.find((f) => f.role === "REFERENCE");
   const publicado = filas.find((f) => f.role === "PUBLISHED");
-  const inicios = filas[0]?.onsets ?? 0;
+  const inicios = filas.find((f) => (f.onsets ?? 0) > 0)?.onsets ?? 0;
+  const costo = (f?: Candidato) =>
+    f && f.detected ? coma((f.falseAlerts ?? 0) / f.detected) : "—";
 
+  // El relato se construye contra el canal endemico y no contra la persistencia:
+  // comparar contra la persistencia hacia ver bien al modelo por una razon que
+  // no tiene nada que ver con el modelo, porque esa regla no puede detectar un
+  // inicio ni en principio.
   const relato =
-    base && publicado
-      ? (base.detected ?? 0) === 0
-        ? `Avisando con ${horizonte === "T+1" ? "un mes" : "dos meses"} de anticipación, la regla simple no anticipa ni un solo brote de los ${inicios}. Tiene sentido: solo señala donde el brote ya empezó, y un brote que empieza es justamente el que todavía no está. Aun así emite ${base.alerts} avisos. El modelo publicado anticipa ${publicado.detected}.`
-        : `Con ${horizonte === "T+1" ? "un mes" : "dos meses"} de anticipación la regla simple anticipa ${base.detected} de ${inicios} brotes, y le cuesta ${coma((base.falseAlerts ?? 0) / (base.detected || 1))} avisos en falso por acierto. El modelo publicado anticipa ${publicado.detected}, pagando ${coma((publicado.falseAlerts ?? 0) / (publicado.detected || 1))}.`
+    canal && publicado
+      ? (() => {
+          const masBrotes = (publicado.detected ?? 0) > (canal.detected ?? 0);
+          const masBarato =
+            (publicado.falseAlerts ?? 0) / (publicado.detected || 1) <
+            (canal.falseAlerts ?? 0) / (canal.detected || 1);
+          if (masBrotes && masBarato)
+            return `El modelo anticipa ${publicado.detected} brotes de ${inicios} contra ${canal.detected} del canal endémico, y cada acierto le cuesta menos avisos en falso: ${costo(publicado)} contra ${costo(canal)}. Mejora en los dos ejes.`;
+          if (masBrotes)
+            return `El modelo anticipa ${publicado.detected} brotes de ${inicios} contra ${canal.detected} del canal endémico, pero cada acierto le cuesta más avisos en falso: ${costo(publicado)} contra ${costo(canal)}. Detecta más, pagando más.`;
+          return `El canal endémico anticipa ${canal.detected} brotes de ${inicios} y el modelo ${publicado.detected}; además al canal cada acierto le cuesta menos: ${costo(canal)} avisos en falso contra ${costo(publicado)}. Sobre este bloque evaluado, la regla que ya se usa le gana al modelo en los dos ejes.`;
+        })()
       : "";
 
   return (
@@ -240,14 +265,15 @@ export function ComparacionModelo({ view }: { view: DashboardViewModel }) {
       <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border p-4">
         <div className="grid gap-1">
           <h2 className="text-base font-semibold">
-            Qué tan bien acierta, comparado con la regla simple
+            Qué tan bien acierta, comparado con lo que se usa hoy
           </h2>
           <p className="max-w-prose text-sm text-muted-foreground">
             Durante el periodo evaluado hubo{" "}
             <b className="font-semibold text-foreground">{inicios} brotes que empezaron</b> en los
-            municipios de Tolima y Meta. La{" "}
-            <b className="font-semibold text-foreground">regla simple</b> es la forma más básica de
-            avisar: señalar los municipios donde el brote ya está ocurriendo.
+            municipios de Tolima y Meta. La referencia útil es el{" "}
+            <b className="font-semibold text-foreground">canal endémico</b>, que es como se vigila
+            hoy; la <b className="font-semibold text-foreground">regla simple</b> es la línea base
+            que declaró la evaluación.
           </p>
         </div>
         <div
@@ -280,6 +306,13 @@ export function ComparacionModelo({ view }: { view: DashboardViewModel }) {
             <li className="flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-full border-2 border-muted-foreground" />
               Otros modelos probados
+            </li>
+            <li className="flex items-center gap-1.5">
+              <span
+                className="h-2.5 w-2.5 rotate-45 border-2"
+                style={{ borderColor: "var(--zone-exceso)" }}
+              />
+              Canal endémico (lo que se usa hoy)
             </li>
             <li className="flex items-center gap-1.5">
               <span
@@ -316,7 +349,7 @@ export function ComparacionModelo({ view }: { view: DashboardViewModel }) {
               {filas.map((f) => (
                 <tr
                   key={f.label}
-                  className={`border-b border-border ${f.role === "PUBLISHED" ? "bg-accent font-semibold" : ""}`}
+                  className={`border-b border-border ${f.role === "PUBLISHED" ? "bg-accent font-semibold" : ""}${f.role === "REFERENCE" ? " text-zone-exceso" : ""}`}
                 >
                   <td className="px-2 py-2">
                     {f.label}
@@ -339,18 +372,42 @@ export function ComparacionModelo({ view }: { view: DashboardViewModel }) {
               ))}
             </tbody>
           </table>
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-            Ninguno de los modelos fue autorizado. Para aprobarse, un modelo debe anticipar bastante
-            más brotes que la regla simple <b className="font-semibold">sin</b> disparar los avisos
-            en falso. Los tres fallaron por lo segundo, no por lo primero. El criterio completo está
-            en la propuesta de política de decisión del repositorio.
-          </p>
+          <div className="mt-3 grid gap-2 text-xs leading-relaxed text-muted-foreground">
+            {horizonte === "T+1" ? (
+              <p>
+                <b className="font-semibold">Por qué la regla simple queda en cero a un mes.</b>{" "}
+                Avisa donde el brote <i>ya</i> está ocurriendo, y un brote que empieza a un mes es
+                por definición uno que todavía no está: son casos que no se superponen, así que no
+                puede anticipar ninguno. El cero es aritmético y no mide qué tan buena es. Aparece
+                acá porque es la línea base que declaró la evaluación, no porque alguien vigile así.
+              </p>
+            ) : (
+              <p>
+                <b className="font-semibold">Por qué a dos meses la regla simple ya no es cero.</b>{" "}
+                Avisa donde el brote ya está ocurriendo. Que un brote empiece a dos meses exige que
+                el mes intermedio esté por debajo del umbral, pero no dice nada del mes en que se
+                avisa: un municipio que estaba en exceso, bajó un mes y volvió a cruzar cuenta como
+                acierto. A un mes esa combinación es imposible y por eso ahí queda en cero.
+              </p>
+            )}
+            <p>
+              <b className="font-semibold">Ninguno de los modelos fue autorizado.</b> El criterio
+              exigía ganarle a esa línea base sin disparar los avisos en falso, y los tres fallaron
+              por lo segundo. Que la línea base no detecte lo que se quiere detectar es parte del
+              problema, y está documentado en la propuesta de política de decisión del repositorio.
+            </p>
+            <p>
+              La fila del canal endémico no viene de la corrida evaluada: se calcula al publicar,
+              con la misma definición que usa el proyecto y sobre exactamente las mismas filas.
+            </p>
+          </div>
         </div>
       </div>
 
       <p className="border-t border-border p-4 text-xs text-muted-foreground">
         Porcentaje de brotes anticipados: {pct(publicado?.sensitivity ?? null)} el modelo publicado,{" "}
-        {pct(base?.sensitivity ?? null)} la regla simple.
+        {pct(canal?.sensitivity ?? null)} el canal endémico, {pct(base?.sensitivity ?? null)} la
+        regla simple.
       </p>
     </section>
   );

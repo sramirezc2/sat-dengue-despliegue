@@ -52,7 +52,8 @@ export interface Muni {
 export interface Candidato {
   horizon: "T+1" | "T+2";
   label: string;
-  role: "BASELINE" | "PUBLISHED" | "OTHER";
+  role: "BASELINE" | "PUBLISHED" | "OTHER" | "REFERENCE";
+  source: "evaluation_run" | "computed_from_panel";
   detected: number | null;
   onsets: number | null;
   alerts: number | null;
@@ -60,6 +61,17 @@ export interface Candidato {
   sensitivity: number | null;
   falseAlertRatio: number | null;
 }
+
+/** El contrato transporta los nombres sin tildes y en la jerga del proyecto.
+ *  La pantalla escribe los suyos: el `label` del API queda de respaldo para un
+ *  candidato que todavia no este en esta tabla. */
+const NOMBRE_CANDIDATO: Record<string, string> = {
+  endemic_channel: "Canal endémico",
+  persistence: "Regla simple",
+  xgboost: "XGBoost",
+  lightgbm: "LightGBM",
+  gam: "GAM",
+};
 
 export interface HistoryRecord {
   horizon: "T+1" | "T+2";
@@ -260,8 +272,9 @@ export function adaptDashboardResponse(response: DashboardResponse): DashboardVi
     municipalities,
     candidatos: (response.evaluation_context.comparison ?? []).map((c) => ({
       horizon: c.horizon === "T1" ? ("T+1" as const) : ("T+2" as const),
-      label: c.label,
+      label: NOMBRE_CANDIDATO[c.candidate] ?? c.label,
       role: c.role,
+      source: c.source,
       detected: c.onsets_detected,
       onsets: c.actual_onsets,
       alerts: c.alerts_emitted,

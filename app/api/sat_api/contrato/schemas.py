@@ -298,7 +298,11 @@ class CandidateComparison(ContractModel):
     horizon: Horizon
     candidate: Annotated[str, Field(min_length=1, max_length=40)]
     label: Annotated[str, Field(min_length=1, max_length=40)]
-    role: Literal["BASELINE", "PUBLISHED", "OTHER"]
+    role: Literal["BASELINE", "PUBLISHED", "OTHER", "REFERENCE"]
+    # De donde sale la fila: de la corrida registrada, o calculada por el
+    # script de publicacion sobre las mismas filas evaluadas. El canal endemico
+    # es lo segundo y no debe confundirse con una metrica de la corrida.
+    source: Literal["evaluation_run", "computed_from_panel"] = "evaluation_run"
     onsets_detected: NonNegativeCount | None
     actual_onsets: NonNegativeCount | None
     alerts_emitted: NonNegativeCount | None

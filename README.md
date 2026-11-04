@@ -33,12 +33,28 @@ secretaría pueda absorber.
 
 ### Qué hace esta aplicación
 
-El tablero presenta, por departamento y periodo de referencia:
+El tablero responde dos preguntas distintas y las separa en dos pestañas,
+porque mezcladas en una sola página ninguna se leía entera.
 
-- la situación observada del mes y la zona del canal endémico de cada municipio;
-- el pronóstico T+1 y T+2 con probabilidad, umbral aplicado y estado de alerta;
-- el canal endémico del municipio seleccionado a lo largo del año;
-- la representación territorial del departamento coloreada por alerta;
+**Qué municipios vigilar**, que es la pregunta de operación:
+
+- el triaje del departamento: los municipios ordenados por riesgo estimado,
+  con búsqueda, filtro por zona del canal y filtro de solo alertados;
+- el detalle del municipio elegido, que arranca por la decisión —se emite o no
+  se emite alerta— y deja la probabilidad como sustento, no como titular;
+- la serie del municipio en casos divididos por el P75 de cada mes, de modo
+  que el umbral queda fijo en 1,0 y dos municipios se pueden comparar;
+- el pronóstico T+1 y T+2 con probabilidad, umbral aplicado y estado de alerta,
+  en un panel con escala propia: el modelo estima con qué probabilidad se cruza
+  un umbral, no cuántos casos habrá, y dibujarlo sobre la serie sugeriría una
+  magnitud que nadie calculó;
+- la representación territorial del departamento coloreada por alerta.
+
+**Qué tan bien acierta**, que es la pregunta de confianza:
+
+- el desempeño de cada candidato evaluado frente al **canal endémico**, que es
+  la regla con la que hoy se vigila, y frente a la línea base que declaró la
+  evaluación;
 - el contexto histórico de desempeño del procedimiento evaluado.
 
 ### Qué no hace, y por qué
@@ -101,6 +117,7 @@ en `/api/docs`. Esa interfaz carga sus recursos desde un CDN público;
 | Repositorio del despliegue | https://github.com/sramirezc2/sat-dengue-despliegue |
 | Procedencia de los datos publicados | corrida `88e3ad9decce8bd4d`, evaluación congelada G5 |
 | Bitácora experimental | [`docs/bitacora-experimental.md`](docs/bitacora-experimental.md) |
+| Propuesta de política de decisión v2 | [`docs/politica-de-decision-v2.md`](docs/politica-de-decision-v2.md) |
 | Repositorio científico (pipelines, notebooks, evidencia) | `SAT-Dengue-V2` |
 | Informe de avance | entregado el 25 de octubre de 2026 |
 
@@ -237,6 +254,11 @@ de 5,9e-04 en T+1 y 1,3e-03 en T+2.
 Solo se publican los meses de referencia que tienen los dos horizontes. Un mes
 con un solo horizonte dejaría la mitad del tablero en "no calculado" sin
 aportar nada.
+
+El script publica el desempeño de **todos** los candidatos de `comparison.csv`,
+no solo el del candidato elegido, y además calcula del panel la fila de
+referencia del canal endémico. La sección 14 explica por qué esa fila existe y
+cómo viaja marcada para no confundirse con las que sí salen de la corrida.
 
 ### Salida
 
@@ -420,10 +442,19 @@ es mejor que no responder.
 │   │   ├── tests/
 │   │   └── requirements.txt
 │   └── dashboard/                # tablero TanStack Start
+│       └── src/
+│           ├── components/
+│           │   ├── tabla-triaje.tsx       # municipios ordenados por riesgo
+│           │   ├── detalle-municipio.tsx  # decisión, cifras y serie del elegido
+│           │   └── comparacion-modelo.tsx # modelo contra canal y línea base
+│           ├── lib/                       # contrato Zod y adaptador de vista
+│           └── test/                      # contrato, adaptador e integración
 ├── datos/resultados/            # resultados publicados, un JSON por periodo
 ├── docker/                      # Dockerfiles, compose y nginx
 ├── docs/
-│   └── bitacora-experimental.md # registro de experimentos, métricas y decisiones
+│   ├── bitacora-experimental.md    # registro de experimentos, métricas y decisiones
+│   ├── politica-de-decision-v2.md  # propuesta de revisión de la compuerta G5
+│   └── politica-de-decision-v2.json # la misma propuesta, legible por máquina
 ├── modelos/                     # artefactos de modelo
 ├── notebooks/                   # análisis y evaluación
 └── scripts/                     # construcción de resultados, verificación y systemd
@@ -439,7 +470,7 @@ Dos suites, una por lado. Ambas corren sin levantar la aplicación.
 # API: 22 pruebas sobre la capa de despliegue
 cd app/api && python -m pytest
 
-# Tablero: 24 pruebas de contrato, adaptador e integración
+# Tablero: 25 pruebas de contrato, adaptador e integración
 cd app/dashboard && bun run test
 ```
 
@@ -460,8 +491,30 @@ Y la verificación de extremo a extremo, que es lo que hará el jurado:
 
 ## 13. Decisiones de interfaz
 
-El tablero no usa el aspecto por defecto de una librería de componentes. Tres
-decisiones lo gobiernan.
+El tablero no usa el aspecto por defecto de una librería de componentes. Seis
+decisiones lo gobiernan: tres sobre qué pregunta responde cada pantalla y tres
+sobre cómo se ve.
+
+**Cada pestaña responde una pregunta.** Una versión anterior resolvía "cómo
+está este municipio", de a uno, por un desplegable de 47 entradas. La pregunta
+que una secretaría de salud tiene que resolver primero es otra: a cuáles de sus
+municipios manda equipo este mes. El triaje responde esa y la vista de
+municipio pasa a ser el detalle al que se entra desde ahí. La pregunta de
+confianza —qué tan bien acierta el procedimiento— vive en su propia pestaña,
+porque es de otra audiencia y de otro momento.
+
+**La decisión va antes que la cifra.** El detalle del municipio abre con la
+frase que hay que leer, "se emite alerta para noviembre de 2025", y la
+probabilidad la sostiene. Antes la probabilidad era lo más grande de la
+pantalla, y es justamente lo que peor se lee solo: no dice magnitud ni
+duración, solo con qué probabilidad se cruza un umbral.
+
+**Una escala, una cosa.** La serie del municipio va en casos divididos por el
+P75 de ese mes y no en casos crudos, porque el P75 se mueve mes a mes y
+municipio a municipio —en Ibagué va de 141 a 683 según el mes—, de modo que una
+escala en casos aplasta el año entero para acomodar enero. En esa unidad el
+umbral queda fijo en 1,0. El pronóstico va en un panel aparte con su propia
+escala, a propósito: es una probabilidad, no un número de casos.
 
 **El color tiene significado o no está.** La única escala cromática es la del
 canal endémico: éxito, seguridad, alerta y exceso. Las superficies son grises
@@ -499,6 +552,19 @@ evaluación congelada que el repositorio científico identifica como la corrida
 | Casos observados y canal endémico (P25, mediana, P75, zona) | `stages/data/.../bundle/panel.csv` |
 | Probabilidad calibrada y decisión por municipio, mes y horizonte | `predictions.csv` de la evaluación |
 | Desempeño del procedimiento (AUROC, AP, Brier, falsas alertas, sensibilidad) | `comparison.csv` de la evaluación |
+| Fila de referencia del canal endémico en la comparación | se calcula al publicar, sobre `panel.csv` |
+
+Esa última fila es la única del bloque `comparison` que no sale de la corrida
+evaluada, y por eso viaja marcada: `role: "REFERENCE"` y
+`source: "computed_from_panel"`, contra `source: "evaluation_run"` de todas las
+demás. Se calcula con la misma definición de canal que usa el proyecto —alerta
+si los casos del mes de aviso superan el P75 de ese mes— y sobre exactamente
+las mismas filas del panel que evaluaron a los modelos. Está ahí porque la
+línea base que declaró la evaluación es la persistencia, que en T+1 no puede
+detectar ningún inicio por construcción: comparar contra ella sola hacía ver
+bien al modelo por una razón ajena al modelo. La persistencia se conserva
+publicada con el rol `BASELINE` y sus mismos números, porque es la línea base
+que la gobernanza declaró.
 
 El candidato publicado es **XGBoost**, con el rol `PROVISIONAL_CANDIDATE` que
 le asigna la gobernanza del proyecto. La compuerta G5 sigue en `NOT_APPROVED` y
