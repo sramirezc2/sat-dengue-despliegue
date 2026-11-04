@@ -5,6 +5,13 @@ import {
 } from "./dashboard-contract";
 import { DashboardConfigError, getDashboardConfig, type DashboardConfig } from "./dashboard-config";
 
+/**
+ * El cliente solo necesita saber a qué origen pedir. No debe depender del
+ * resto de la configuración del tablero: así una opción nueva, como la URL del
+ * repositorio, no obliga a tocar este módulo ni sus pruebas.
+ */
+type ConfigDeRed = Pick<DashboardConfig, "apiBaseUrl">;
+
 export type DashboardClientErrorKind = "http" | "network" | "contract" | "config";
 
 export class DashboardClientError extends Error {
@@ -26,7 +33,7 @@ export class DashboardClientError extends Error {
 }
 
 export function buildDashboardUrl(
-  config: DashboardConfig,
+  config: ConfigDeRed,
   departmentCode: string,
   period: string,
 ): string {
@@ -44,12 +51,12 @@ export async function fetchDashboard(
   period: string,
   signal?: AbortSignal,
   options: {
-    config?: DashboardConfig;
+    config?: ConfigDeRed;
     fetcher?: typeof fetch;
     timeoutMs?: number;
   } = {},
 ): Promise<DashboardResponse> {
-  let config: DashboardConfig;
+  let config: ConfigDeRed;
   try {
     config = options.config ?? getDashboardConfig();
   } catch (cause) {

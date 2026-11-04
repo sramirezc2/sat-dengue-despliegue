@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Area,
   Bar,
@@ -32,6 +32,7 @@ import {
   Check,
   ArrowLeft,
   RefreshCw,
+  ExternalLink,
 } from "lucide-react";
 import {
   DEPTS,
@@ -50,6 +51,8 @@ import { MunicipalMap } from "@/components/municipal-map";
 import { useDashboard } from "@/lib/use-dashboard";
 import { DashboardClientError } from "@/lib/dashboard-client";
 import { etiquetaPeriodo, usePeriodos } from "@/lib/periodos";
+import { getDashboardConfig } from "@/lib/dashboard-config";
+import { enlacesDeEvidencia, textoDeGobernanza } from "@/lib/gobernanza";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -178,7 +181,13 @@ export function Dashboard() {
   const [muniId, setMuniId] = useState("");
   const periodos = usePeriodos();
   const now = useBogotaNow();
-  const periodosDelDepto = periodos.data?.[DEPARTMENT_CODES[dept]] ?? [];
+  // Memorizado porque `?? []` crea un arreglo nuevo en cada render, y ese
+  // arreglo es dependencia del efecto de mas abajo: sin esto el efecto se
+  // reevalua siempre, aunque los periodos publicados no hayan cambiado.
+  const periodosDelDepto = useMemo(
+    () => periodos.data?.[DEPARTMENT_CODES[dept]] ?? [],
+    [periodos.data, dept],
+  );
   const periodoVigente = periodosDelDepto[0];
 
   // No se consulta hasta saber que periodos publico el servicio. Preguntar por
@@ -290,9 +299,27 @@ export function Dashboard() {
                 Champion: {view.championStatus === "SELECTED" ? "seleccionado" : "no seleccionado"}
               </span>
             </div>
-            <p className="text-sm text-muted-foreground md:ml-auto md:max-w-xl">
-              {view.limitation}
-            </p>
+            <div className="md:ml-auto md:max-w-xl">
+              <p className="text-sm text-muted-foreground">
+                {textoDeGobernanza(view.governanceStatus, view.championStatus)}
+              </p>
+              <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+                <span className="text-muted-foreground">Evidencia:</span>
+                {enlacesDeEvidencia(getDashboardConfig().repositorioUrl).map((enlace) => (
+                  <a
+                    key={enlace.href}
+                    href={enlace.href}
+                    title={enlace.descripcion}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="inline-flex items-center gap-1 underline underline-offset-4 decoration-border-strong hover:decoration-foreground"
+                  >
+                    {enlace.rotulo}
+                    <ExternalLink aria-hidden className="h-3 w-3" />
+                  </a>
+                ))}
+              </p>
+            </div>
           </div>
         </section>
 
