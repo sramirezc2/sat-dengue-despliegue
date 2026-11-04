@@ -100,6 +100,7 @@ en `/api/docs`. Esa interfaz carga sus recursos desde un CDN público;
 | Aplicación desplegada | http://34.206.240.59 |
 | Repositorio del despliegue | https://github.com/sramirezc2/sat-dengue-despliegue |
 | Procedencia de los datos publicados | corrida `88e3ad9decce8bd4d`, evaluación congelada G5 |
+| Bitácora experimental | [`docs/bitacora-experimental.md`](docs/bitacora-experimental.md) |
 | Repositorio científico (pipelines, notebooks, evidencia) | `SAT-Dengue-V2` |
 | Informe de avance | entregado el 25 de octubre de 2026 |
 
@@ -421,6 +422,8 @@ es mejor que no responder.
 │   └── dashboard/                # tablero TanStack Start
 ├── datos/resultados/            # resultados publicados, un JSON por periodo
 ├── docker/                      # Dockerfiles, compose y nginx
+├── docs/
+│   └── bitacora-experimental.md # registro de experimentos, métricas y decisiones
 ├── modelos/                     # artefactos de modelo
 ├── notebooks/                   # análisis y evaluación
 └── scripts/                     # construcción de resultados, verificación y systemd
