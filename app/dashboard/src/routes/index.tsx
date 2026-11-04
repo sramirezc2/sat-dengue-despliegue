@@ -49,6 +49,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MunicipalMap } from "@/components/municipal-map";
 import { TablaTriaje } from "@/components/tabla-triaje";
+import { DetalleMunicipio } from "@/components/detalle-municipio";
 import { useDashboard } from "@/lib/use-dashboard";
 import { DashboardClientError } from "@/lib/dashboard-client";
 import { etiquetaPeriodo, usePeriodos } from "@/lib/periodos";
@@ -180,6 +181,7 @@ export function Dashboard() {
   const [dept, setDept] = useState<Dept>("tolima");
   const [period, setPeriod] = useState(DEFAULT_PERIODS.tolima);
   const [muniId, setMuniId] = useState("");
+  const [vista, setVista] = useState<"vigilar" | "acierta">("vigilar");
   const periodos = usePeriodos();
   const now = useBogotaNow();
   // Memorizado porque `?? []` crea un arreglo nuevo en cada render, y ese
@@ -301,50 +303,78 @@ export function Dashboard() {
           ))}
         </section>
 
-        {/* 2. Triaje del departamento. Va antes del detalle porque la primera
-            pregunta de una secretaria es a cuales municipios atender, no como
-            esta uno en particular. */}
-        <TablaTriaje
-          munis={munis}
-          selected={muni.id}
-          onSelect={setMuniId}
-          targetMonth={muni.t1.targetMonth}
-        />
-
-        {/* 2 + 3 */}
-        <div className="grid gap-5 lg:grid-cols-3">
-          <Card title="Situación observada actual">
-            <p className="text-sm text-muted-foreground">
-              {muni.name}, {view.departmentName} · Mes T: {view.periodLabel}
-            </p>
-            <p className="mt-3 text-5xl font-bold tabular-nums">
-              {muni.observedT ?? "No disponible"}
-            </p>
-            <p className="text-sm text-muted-foreground">casos observados</p>
-            <div className="mt-4 flex items-center gap-2 text-sm">
-              Canal endémico: <ZoneBadge zone={muni.zoneT} />
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Referencia del mes: P25 {muni.p25 ?? "No disponible"} · Mediana{" "}
-              {muni.median ?? "No disponible"} · P75 {muni.p75 ?? "No disponible"}
-            </p>
-          </Card>
-          {[muni.t1, muni.t2].map((f) => (
-            <ForecastCard key={`${muni.id}-${f.horizon}`} f={f} />
+        {/* El tablero responde dos preguntas distintas y antes las mezclaba en
+            una sola pagina larga. Separadas, cada una se puede leer entera. */}
+        <nav role="tablist" aria-label="Vistas del tablero" className="flex border-b border-border">
+          {[
+            { k: "vigilar" as const, t: "Qué municipios vigilar" },
+            { k: "acierta" as const, t: "Qué tan bien acierta" },
+          ].map(({ k, t }) => (
+            <button
+              key={k}
+              type="button"
+              role="tab"
+              id={`tab-${k}`}
+              aria-selected={vista === k}
+              aria-controls={`panel-${k}`}
+              onClick={() => setVista(k)}
+              className={`-mb-px border-b-2 px-4 py-3 text-sm font-medium ${
+                vista === k
+                  ? "border-primary text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t}
+            </button>
           ))}
-        </div>
+        </nav>
 
-        {/* 4 */}
-        <ChannelChart muni={muni} view={view} />
+        {vista === "vigilar" ? (
+          <div
+            id="panel-vigilar"
+            role="tabpanel"
+            aria-labelledby="tab-vigilar"
+            className="space-y-5"
+          >
+            {/* El triaje va antes del detalle porque la primera pregunta de una
+                secretaria es a cuales municipios atender, no como esta uno. */}
+            <div className="grid gap-5 lg:grid-cols-2">
+              <TablaTriaje
+                munis={munis}
+                selected={muni.id}
+                onSelect={setMuniId}
+                targetMonth={muni.t1.targetMonth}
+              />
+              <DetalleMunicipio muni={muni} view={view} />
+            </div>
 
-        {/* 5 + 6 */}
-        <div className="grid gap-5 lg:grid-cols-5">
-          <TerritoryMap dept={dept} munis={munis} selected={muni.id} onSelect={setMuniId} />
-          <HorizonChart muni={muni} />
-        </div>
+            {/* Las tarjetas de pronostico dejan de ser el titular -esa es ahora
+                la frase de decision- pero se quedan: son las que exponen la
+                trazabilidad del resultado, limitada a los cinco campos
+                autorizados. */}
+            <div className="grid gap-5 lg:grid-cols-2">
+              {[muni.t1, muni.t2].map((f) => (
+                <ForecastCard key={`${muni.id}-${f.horizon}`} f={f} />
+              ))}
+            </div>
 
-        {/* 7 */}
-        <HistoryCard view={view} />
+            <div className="grid gap-5 lg:grid-cols-5">
+              <TerritoryMap dept={dept} munis={munis} selected={muni.id} onSelect={setMuniId} />
+              <HorizonChart muni={muni} />
+            </div>
+
+            <ChannelChart muni={muni} view={view} />
+          </div>
+        ) : (
+          <div
+            id="panel-acierta"
+            role="tabpanel"
+            aria-labelledby="tab-acierta"
+            className="space-y-5"
+          >
+            <HistoryCard view={view} />
+          </div>
+        )}
 
         <footer className="pb-6 pt-2 text-center text-xs text-muted-foreground">
           Resultados de evaluación de un candidato provisional. No reemplazan el criterio del

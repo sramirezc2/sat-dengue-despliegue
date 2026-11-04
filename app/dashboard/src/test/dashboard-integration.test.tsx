@@ -196,7 +196,7 @@ describe("dashboard query integration", () => {
     vi.stubGlobal("fetch", fetcher);
     renderDashboard();
 
-    expect(await screen.findByText("Ibagué, Tolima", { exact: false })).toBeInTheDocument();
+    expect(await screen.findByRole("region", { name: /Detalle de Ibagué/ })).toBeInTheDocument();
     const municipalitySelector = screen.getByLabelText("Municipio") as HTMLSelectElement;
     expect(municipalitySelector.options).toHaveLength(47);
     expect(screen.getAllByText("Disponible", { exact: false }).length).toBeGreaterThan(0);
@@ -211,7 +211,7 @@ describe("dashboard query integration", () => {
     expect(screen.getByRole("table", { name: /Tabla equivalente al mapa/ })).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText("Municipio"), { target: { value: "73024" } });
-    expect(await screen.findByText("Alpujarra, Tolima", { exact: false })).toBeInTheDocument();
+    expect(await screen.findByRole("region", { name: /Detalle de Alpujarra/ })).toBeInTheDocument();
     expect(screen.getAllByText("Historia insuficiente", { exact: false }).length).toBeGreaterThan(
       0,
     );
@@ -223,7 +223,9 @@ describe("dashboard query integration", () => {
     expect(screen.getAllByText("No calculado", { exact: false }).length).toBeGreaterThan(0);
 
     fireEvent.click(screen.getByRole("tab", { name: "Meta" }));
-    expect(await screen.findByText("Villavicencio, Meta", { exact: false })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("region", { name: /Detalle de Villavicencio/ }),
+    ).toBeInTheDocument();
     expect((screen.getByLabelText("Municipio") as HTMLSelectElement).options).toHaveLength(29);
     fireEvent.click(screen.getByRole("button", { name: "T+2" }));
     expect(screen.getByLabelText("Mapa municipal de Meta, T+2")).toBeInTheDocument();
@@ -236,7 +238,7 @@ describe("dashboard query integration", () => {
     );
     renderDashboard();
 
-    expect(await screen.findByText("Ibagué, Tolima", { exact: false })).toBeInTheDocument();
+    expect(await screen.findByRole("region", { name: /Detalle de Ibagué/ })).toBeInTheDocument();
     const detailButton = screen.getAllByRole("button", { name: "Detalle del resultado" })[0]!;
     fireEvent.click(detailButton);
     const card = detailButton.closest("section")!;
@@ -258,7 +260,7 @@ describe("dashboard query integration", () => {
     );
     renderDashboard();
     expect(await screen.findByText(title)).toBeInTheDocument();
-    expect(screen.queryByText("Ibagué, Tolima", { exact: false })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: /Detalle de Ibagué/ })).not.toBeInTheDocument();
   });
 
   it.each([
@@ -299,10 +301,10 @@ describe("dashboard query integration", () => {
     renderDashboard();
 
     expect(await screen.findByText("Error interno del API")).toBeInTheDocument();
-    expect(screen.queryByText("Ibagué, Tolima", { exact: false })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: /Detalle de Ibagué/ })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /Reintentar/i }));
     await waitFor(() =>
-      expect(screen.getByText("Ibagué, Tolima", { exact: false })).toBeInTheDocument(),
+      expect(screen.getByRole("region", { name: /Detalle de Ibagué/ })).toBeInTheDocument(),
     );
     expect(intentosDashboard).toBe(2);
   });

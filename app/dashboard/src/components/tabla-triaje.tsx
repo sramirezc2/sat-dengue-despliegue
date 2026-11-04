@@ -89,7 +89,7 @@ export function TablaTriaje({
   };
 
   return (
-    <section aria-label="Triaje de municipios" className="border border-border bg-card">
+    <section aria-label="Triaje de municipios" className="min-w-0 border border-border bg-card">
       <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border p-4">
         <h2 className="text-base font-semibold">Riesgo para {targetMonth}</h2>
         <div className="flex flex-wrap gap-2 font-mono text-xs">
