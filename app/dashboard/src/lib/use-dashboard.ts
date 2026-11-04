@@ -2,8 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { DashboardClientError, fetchDashboard } from "./dashboard-client";
 import { adaptDashboardResponse } from "./dashboard-view-model";
 
-export function useDashboard(departmentCode: string, period: string) {
+export function useDashboard(
+  departmentCode: string,
+  period: string,
+  opciones: { enabled?: boolean } = {},
+) {
   return useQuery({
+    enabled: opciones.enabled ?? true,
     queryKey: ["dashboard", departmentCode, period],
     queryFn: async ({ signal }) => {
       const response = await fetchDashboard(departmentCode, period, signal);

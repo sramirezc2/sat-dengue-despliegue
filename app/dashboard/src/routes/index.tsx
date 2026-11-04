@@ -176,11 +176,18 @@ export function Dashboard() {
   const [dept, setDept] = useState<Dept>("tolima");
   const [period, setPeriod] = useState(DEFAULT_PERIODS.tolima);
   const [muniId, setMuniId] = useState("");
-  const dashboard = useDashboard(DEPARTMENT_CODES[dept], period);
   const periodos = usePeriodos();
   const now = useBogotaNow();
   const periodosDelDepto = periodos.data?.[DEPARTMENT_CODES[dept]] ?? [];
   const periodoVigente = periodosDelDepto[0];
+
+  // No se consulta hasta saber que periodos publico el servicio. Preguntar por
+  // uno inventado devolvia 404 en la primera carga y hacia parpadear la
+  // tarjeta de error antes de corregirse sola.
+  const periodoConocido = periodos.isError || periodosDelDepto.includes(period);
+  const dashboard = useDashboard(DEPARTMENT_CODES[dept], period, {
+    enabled: periodos.isFetched && periodoConocido,
+  });
 
   // El periodo por defecto no puede estar quemado en el codigo: lo publicado
   // cambia cada vez que se agrega una corrida. Si el seleccionado no esta
@@ -227,11 +234,13 @@ export function Dashboard() {
   );
 
   if (dashboard.isError || view === null || muni === null) {
+    const cargando =
+      !dashboard.isError && (periodos.isPending || !periodoConocido || dashboard.isPending);
     return (
       <div className="min-h-screen bg-background">
         {encabezado}
         <main className="mx-auto max-w-7xl px-4 py-12">
-          {dashboard.isError ? (
+          {!cargando && dashboard.isError ? (
             <DashboardError
               error={dashboard.error}
               onRetry={() => void dashboard.refetch()}
