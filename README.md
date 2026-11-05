@@ -239,7 +239,6 @@ python scripts/construir_resultados.py \
   --panel       <corrida>/stages/data/<id>/bundle/panel.csv \
   --predicciones <corrida>/predictions.csv \
   --comparacion  <corrida>/comparison.csv \
-  --candidato xgboost \
   --procedimiento 88e3ad9decce8bd4d \
   --version-datos g5-frozen-2025 \
   --salida datos/resultados
@@ -255,10 +254,11 @@ Solo se publican los meses de referencia que tienen los dos horizontes. Un mes
 con un solo horizonte dejaría la mitad del tablero en "no calculado" sin
 aportar nada.
 
-El script publica el desempeño de **todos** los candidatos de `comparison.csv`,
-no solo el del candidato elegido, y además calcula del panel la fila de
-referencia del canal endémico. La sección 14 explica por qué esa fila existe y
-cómo viaja marcada para no confundirse con las que sí salen de la corrida.
+No lleva `--candidato`: cuál de los candidatos evaluados maneja la vista de
+municipio lo decide un criterio escrito, no una bandera. La sección 14 lo
+explica. El script publica además el desempeño de **todos** los candidatos de
+`comparison.csv`, no solo el elegido, y calcula del panel la fila de referencia
+del canal endémico.
 
 ### Salida
 
@@ -585,10 +585,52 @@ bien al modelo por una razón ajena al modelo. La persistencia se conserva
 publicada con el rol `BASELINE` y sus mismos números, porque es la línea base
 que la gobernanza declaró.
 
-El candidato publicado es **XGBoost**, con el rol `PROVISIONAL_CANDIDATE` que
-le asigna la gobernanza del proyecto. La compuerta G5 sigue en `NOT_APPROVED` y
-no hay champion seleccionado, de modo que el tablero presenta resultados de
-evaluación trazables y no alertas operativas autorizadas.
+### Qué candidato se publica, y por qué ese
+
+La corrida evaluó tres familias y **la gobernanza no eligió ninguna**: el audit
+dice `champion: not_selected` y deja las seis combinaciones candidato-horizonte
+en `does_not_meet`. La compuerta G5 sigue en `NOT_APPROVED`. Elegir cuál de los
+tres maneja la vista de municipio es, por lo tanto, una decisión de
+publicación, y el script la toma con un criterio escrito en vez de con una
+preferencia.
+
+El criterio es el que el proyecto ya tenía desde su primera tanda de
+experimentos: **anticipar más inicios de brote y que cada acierto cueste menos
+falsas alarmas**. Se aplica sobre T+1, que es el horizonte que decide, se
+descarta la línea base, y gana el candidato que **domina** a los demás —no
+menos inicios y no más falsas por acierto, y estrictamente mejor en alguno—.
+Si ninguno domina, gana el de mayor cobertura y el empate se rompe por costo.
+Está en `elegir_candidato()` y el script imprime la razón al publicar.
+
+En la corrida publicada gana **LightGBM**, que domina a los otros dos en T+1:
+34 de 86 inicios anticipados a 6,4 falsas por acierto, contra 22 a 8,0 de
+XGBoost y 20 a 7,5 del GAM.
+
+**Qué cambia respecto de antes, y por qué no es un capricho.** El tablero
+publicaba XGBoost. Esa elección tenía una razón, aunque no estuviera escrita:
+XGBoost encabeza el ranking por **precisión promedio**, que es la métrica de
+ranking de la política de decisión G5 —0,6757 contra 0,6689 de LightGBM, con
+AUROC empatados en la tercera cifra—.
+
+Hay dos problemas con eso. El primero es que esa misma política dice que el
+ranking **solo ordena a los candidatos elegibles**, y ninguno lo fue: las seis
+combinaciones quedaron en `does_not_meet`. Aplicar el ranking a un conjunto
+vacío de elegibles es usarlo fuera de su alcance.
+
+El segundo es más interesante y vale para el informe: **las dos reglas eligen
+modelos distintos.** Por precisión promedio gana XGBoost; por el criterio de
+utilidad —anticipar inicios, barato— gana LightGBM. Una métrica de ordenamiento
+global y un criterio de decisión en un punto de operación no tienen por qué
+coincidir, y acá no coinciden. El tablero existe para ayudar a decidir a qué
+municipios mandar equipo, así que publica el que gana en utilidad, y deja el
+otro visible en la comparación con sus cifras.
+
+Pasar `--candidato <nombre>` anula el criterio, y el script avisa que eso hay
+que justificarlo por escrito.
+
+Nada de esto convierte al candidato publicado en un sistema autorizado: sigue
+viajando con el rol `PROVISIONAL_CANDIDATE`, y el tablero presenta resultados
+de evaluación trazables, no alertas operativas.
 
 Una advertencia sobre la serie del canal: los casos de los meses posteriores al
 de referencia se publican en nulo. En el mes T nadie los conoce todavía, y

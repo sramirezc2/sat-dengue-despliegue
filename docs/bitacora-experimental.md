@@ -188,6 +188,71 @@ canal le gana al modelo publicado en los dos ejes. En T+2 el modelo detecta más
 comparación publica la corrida congelada de octubre, que es anterior al bloque
 G; el modelo de la tanda 5 no está desplegado ni autorizado.
 
+*Corregido el 5 de noviembre, ver la entrada siguiente:* los números del canal
+quedaron en 265 alertas y 104 en falso al usar la cuenta de casos correcta, y
+el candidato publicado dejó de ser XGBoost.
+
+**5 de noviembre de 2026 — el candidato publicado se elige por criterio y pasa
+a ser LightGBM.**
+
+*Origen:* una pregunta de Stevan —por qué está publicado XGBoost si debería
+verse el mejor— que resultó tener razón. Se declara el origen porque el cambio
+se hizo después de ver los números.
+
+*Primera versión de este diagnóstico, que estaba mal y se corrige acá.* Escribí
+que la elección de XGBoost era arbitraria y sin razón escrita. No lo es: XGBoost
+encabeza el ranking por **precisión promedio**, que es la métrica de ranking de
+la política G5. La elección venía de ahí aunque nadie lo hubiera anotado. Lo que
+sigue es el diagnóstico corregido.
+
+*Qué estaba mal, en realidad.* Dos cosas. La primera es de alcance: la propia
+política dice que el ranking **solo ordena a los candidatos elegibles**, y
+ninguno lo fue —el audit deja las seis combinaciones en `does_not_meet` y el
+champion en `not_selected`—. Rankear un conjunto vacío de elegibles es usar la
+regla fuera de su alcance.
+
+La segunda es de fondo y vale para el informe: **la métrica de ranking y el
+criterio de utilidad eligen modelos distintos.** Por precisión promedio gana
+XGBoost; por el criterio que el proyecto declaró desde la tanda 1 —anticipar
+más inicios y que cada acierto cueste menos— gana LightGBM:
+
+| T+1 | Inicios | Falsas/acierto | AUROC | AP |
+| --- | --- | --- | --- | --- |
+| LightGBM | **34/86** | **6,4** | 0,8192 | 0,6689 |
+| XGBoost | 22/86 | 8,0 | 0,8189 | **0,6757** |
+| GAM | 20/86 | 7,5 | 0,8093 | 0,6448 |
+
+LightGBM domina a los otros dos: más inicios anticipados **y** menos falsas por
+acierto. XGBoost gana solo en precisión promedio; en AUROC están empatados en
+la tercera cifra.
+
+Que una métrica de ordenamiento global y un criterio de decisión en un punto de
+operación no coincidan no es una anomalía: la precisión promedio resume el
+ordenamiento sobre todos los umbrales posibles, y la utilidad se mide en el
+único umbral al que el sistema va a operar. Es la misma familia de observación
+que motivó la propuesta de política v2, y conviene que el informe la discuta:
+el proyecto rankea por una cosa y declara que le importa otra.
+
+*Por qué importaba más de lo que parece:* publicar el peor de los tres inflaba
+en pantalla la ventaja del canal endémico por un motivo ajeno a los modelos. La
+comparación decía que el canal le ganaba al modelo en los dos ejes, y con el
+candidato que el criterio elige la lectura cambia: **el modelo anticipa 34
+inicios contra 27 del canal**, pero cada acierto le cuesta 6,4 falsas contra
+3,9. Detecta más, pagando más. Esa sí es la tensión real que la secretaría
+tendría que resolver, y la anterior era un artefacto de la publicación.
+
+*Qué se cambió:* la elección pasó de bandera a criterio, en
+`elegir_candidato()`. Sobre T+1, descartando la línea base, gana el candidato
+que domina a los demás; si ninguno domina, el de mayor cobertura, y el empate
+se rompe por costo. El script imprime la razón al publicar. Nombrar un
+candidato a mano sigue siendo posible pero el script avisa que hay que
+justificarlo por escrito.
+
+*Qué no cambia:* el `NOT_APPROVED` de la compuerta G5 y el `NOT_SELECTED` del
+champion se conservan con su autoridad. Cambiar qué candidato se muestra no es
+aprobar ninguno: los tres siguen en `does_not_meet` y el publicado sigue
+viajando con el rol `PROVISIONAL_CANDIDATE`.
+
 ---
 
 ## 4. Reglas de método
@@ -1067,6 +1132,91 @@ Ibagué en enero de 2025 pasa de 203 casos a 198.
 
 ---
 
+### Tanda 7, línea N — Repartir el trabajo entre el canal y el modelo
+
+**Hipótesis.** El canal confirma un brote en curso: alerta cuando los casos ya
+cruzaron el umbral, de modo que sus alertas se concentran donde un inicio es
+imposible o poco probable. El modelo anticipa. Repartirlos en vez de
+enfrentarlos debería detectar más inicios al mismo cupo de alertas.
+
+**Observación que la motivó, y que no cuenta como evidencia.** Sobre el bloque
+congelado de 2025, de 86 inicios el canal atrapa 10 que el modelo pierde y el
+modelo 17 que el canal pierde; juntos llegan a 44. Eso se calculó sobre
+**evidencia consumida**, de predicciones ya publicadas. Sirve para formular la
+hipótesis, no para elegir la regla. La elección se hizo en desarrollo.
+
+**El cupo es la parte que había que hacer bien.** Una unión libre detecta más
+porque alerta más, y eso no es una mejora. Todos los arms que compiten se miden
+al mismo cupo que el canal emite según la partición interna. La unión libre se
+reporta como techo, no como competidor.
+
+#### Un error de diseño, encontrado por auditoría antes de concluir
+
+La primera versión de esta tanda probó dos arms: gastar todo el cupo entre los
+municipios que el canal alerta, y gastarlo todo entre los que no. Ninguno le
+ganó al modelo, y la conclusión iba a ser que repartir no sirve.
+
+**Eran los dos extremos del reparto, no el reparto.** En la parametrización por
+la fracción *f* del cupo que se gasta en el lado del canal, esos arms son
+*f* = 1 y *f* = 0. El interior —que es literalmente lo que la hipótesis
+llamaba repartir— no se probó nunca. Una auditoría independiente del código lo
+detectó y mostró que una interpolación entre los dos arms existentes superaba
+al modelo en varias celdas.
+
+Se rehizo con un arm `reparto` cuya fracción **se elige en la partición interna
+del entrenamiento**, con un modelo entrenado sin ver esa partición, y se aplica
+tal cual a validación. Es la regla 4.2 aplicada a un parámetro nuevo: no se
+escoge sobre los datos con que se mide. Las fracciones elegidas fueron 0,2 y
+0,3 en T+1.
+
+La auditoría encontró además que el arm `modelo` se comparaba contra sí mismo
+—siempre falso, y las filas leían como evidencia— y que las cinco semillas
+estaban declaradas pero nunca se usaban. Las dos cosas quedaron corregidas.
+
+#### Resultado: el reparto no agrega sobre el modelo
+
+Inicios detectados y falsas por inicio, media y desviación sobre cinco semillas:
+
+| T+1 | Canal | Modelo | Reparto |
+| --- | --- | --- | --- |
+| 2018-12, 60 inicios | 17 · 1,59 | 42,2 ± 1,3 · 0,64 | 41,6 ± 1,9 · 0,66 |
+| 2022-12, 57 inicios | 14 · 1,93 | 48,6 ± 1,0 · 0,96 | 49,0 ± 0,9 · 0,94 |
+| 2024-06, 48 inicios | 21 · 2,86 | 48,0 ± 0,0 · 3,09 | 48,0 ± 0,0 · **2,94** |
+
+En una sola semilla el reparto daba 50 contra 49 en 2022-12 y parecía un
+hallazgo. Con cinco semillas la diferencia desaparece: 49,0 ± 0,9 contra
+48,6 ± 1,0. Es exactamente lo que la regla 4.9 obliga a comprobar, y es la
+segunda vez en dos tandas que una diferencia de un inicio resulta ser ruido.
+
+**La línea se cierra** por la condición preinscrita: ninguna regla de reparto
+supera al modelo en 2 de 3 cortes.
+
+**Lo que sí es real, y es chico.** En 2024-06 el reparto alcanza la misma
+detección que el modelo —los 48 inicios, con desviación cero— a **2,94 falsas
+por acierto contra 3,09**, y los rangos de las cinco semillas no se solapan. Un
+5 % menos de falsas al mismo rendimiento. No alcanza la barra, que exige
+detectar *más*, pero es reproducible y vale anotarlo.
+
+**Por qué falló, que es lo informativo.** La contrahipótesis preinscrita
+acertó: el modelo ya aprendió a no gastar alertas donde un inicio es imposible,
+porque la etiqueta de inicio se lo enseña. Forzarlo a repartir con el canal no
+le agrega información; en el mejor caso le ahorra unas pocas falsas.
+
+Y explica por qué la observación de 2025 no se replicó: ahí el modelo publicado
+**no tenía el bloque G**. La complementariedad que se veía era la debilidad del
+modelo, no una virtud del canal. Una vez que el modelo ve el margen al umbral,
+el canal no aporta nada que el modelo no tuviera ya.
+
+**Dos puntos de operación que quedan anotados y no se adoptan.** La
+intersección de las dos reglas detecta poco —16, 13 y 21 inicios— pero a 0,31,
+0,30 y 1,06 falsas por acierto, muy por debajo de todo lo demás. Y `canal
+primero` detecta lo mismo que el canal a la mitad del costo. Son candidatos
+para una secretaría con muy poca capacidad de respuesta, no mejoras del
+procedimiento, y elegir uno después de ver este cuadro sería selección a
+posteriori.
+
+---
+
 ## 6. Estado de las líneas de trabajo
 
 | Línea | Estado |
@@ -1086,6 +1236,8 @@ Ibagué en enero de 2025 pasa de 203 casos a 198.
 | L. Reapertura de T+2 con el margen | Preinscrita para la tanda 6 |
 | M1. Amplitud de la banda del canal | **Cerrada**: rechazada en la tanda 6; separa pero no aporta sobre G |
 | M2. Volatilidad realizada del municipio | **Cerrada**: rechazada en la tanda 6; no separa dentro del municipio |
+| N. Repartir el trabajo con el canal | **Cerrada**: rechazada en la tanda 7; el modelo con G ya no necesita al canal |
+| O. Banco de evaluación de origen móvil | Preinscrita, pendiente de correr |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres

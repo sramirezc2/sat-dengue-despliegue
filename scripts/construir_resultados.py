@@ -234,6 +234,72 @@ def _periodo_desplazado(periodo: str, meses: int) -> str:
     return f"{total // 12:04d}-{total % 12 + 1:02d}"
 
 
+def elegir_candidato(ruta: Path) -> tuple[str, str]:
+    """El candidato que se publica sale de un criterio, no de una preferencia.
+
+    Antes se pasaba por bandera y se publicaba `xgboost`. Esa eleccion tenia
+    una razon, aunque no estuviera escrita: `xgboost` encabeza el ranking por
+    **precision promedio**, que es la metrica de ranking de la politica G5
+    -0,6757 contra 0,6689 de `lightgbm`, con AUROC empatados en la tercera
+    cifra-.
+
+    El problema es que ese ranking **solo ordena a los candidatos elegibles**,
+    y la propia politica lo dice. Ninguno fue elegible: el audit de la corrida
+    deja las seis combinaciones candidato-horizonte en `does_not_meet` y el
+    champion en `not_selected`. Aplicar el ranking a un conjunto vacio de
+    elegibles es usarlo fuera de su alcance.
+
+    Y las dos reglas no coinciden. Por precision promedio gana `xgboost`; por
+    el criterio de utilidad gana `lightgbm`, que en T+1 anticipa 34 de 86
+    inicios a 6,4 falsas por acierto contra 22 a 8,0. Publicar el que pierde en
+    utilidad infla en pantalla la ventaja del canal endemico por un motivo
+    ajeno a los modelos.
+
+    El criterio es el que el proyecto ya tenia escrito desde la tanda 1:
+    **anticipar mas inicios de brote y que cada acierto cueste menos falsas**.
+
+      1. Solo T+1, que es el horizonte que decide en el protocolo.
+      2. Se descarta la linea base, que no es un candidato.
+      3. Si un candidato **domina** a todos los demas -no menos inicios y no
+         mas falsas por acierto, y estrictamente mejor en al menos uno-, se
+         publica ese.
+      4. Si ninguno domina, gana el que mas inicios anticipa, y a igualdad de
+         inicios el de menor costo por acierto. Se prefiere la cobertura
+         porque anticipar el brote es el proposito declarado del sistema; el
+         empate se rompe por costo y no al reves.
+
+    Devuelve el candidato y la frase que explica por que, para registrarla.
+    """
+    with ruta.open(encoding="utf-8") as fh:
+        filas = [f for f in csv.DictReader(fh) if f["horizon"] == "1"]
+
+    def costo(f: dict[str, str]) -> float:
+        det = _entero(f.get("detected_onsets")) or 0
+        return (_entero(f.get("false_alerts")) or 0) / det if det else float("inf")
+
+    aspirantes = [f for f in filas if (f.get("result") or "") != "reference"]
+    if not aspirantes:
+        sys.exit("ERROR: la comparacion no trae ningun candidato evaluable en T+1")
+
+    def domina(a: dict[str, str], b: dict[str, str]) -> bool:
+        da, db = _entero(a.get("detected_onsets")) or 0, _entero(b.get("detected_onsets")) or 0
+        ca, cb = costo(a), costo(b)
+        return da >= db and ca <= cb and (da > db or ca < cb)
+
+    for f in aspirantes:
+        if all(domina(f, g) for g in aspirantes if g is not f):
+            return f["candidate"], (
+                f"domina a los demas candidatos en T+1: {_entero(f.get('detected_onsets'))} "
+                f"inicios anticipados y {costo(f):.1f} falsas por acierto"
+            )
+
+    mejor = min(aspirantes, key=lambda f: (-(_entero(f.get("detected_onsets")) or 0), costo(f)))
+    return mejor["candidate"], (
+        f"ningun candidato domina; gana por cobertura en T+1 con "
+        f"{_entero(mejor.get('detected_onsets'))} inicios anticipados"
+    )
+
+
 def leer_todos_los_candidatos(ruta: Path, publicado: str) -> list[dict[str, object]]:
     """Desempeno de cada candidato evaluado, para poder compararlos en pantalla.
 
@@ -460,7 +526,13 @@ def main() -> None:
     parser.add_argument("--panel", type=Path, required=True)
     parser.add_argument("--predicciones", type=Path, required=True)
     parser.add_argument("--comparacion", type=Path, required=True)
-    parser.add_argument("--candidato", default="xgboost")
+    parser.add_argument(
+        "--candidato",
+        default="auto",
+        help="Candidato a publicar. 'auto', que es el valor por defecto, lo elige "
+        "con el criterio declarado del proyecto; ver elegir_candidato(). Nombrar "
+        "uno a mano anula el criterio y hay que justificarlo por escrito.",
+    )
     parser.add_argument("--procedimiento", required=True, help="Identificador de la corrida")
     parser.add_argument("--version-modelo", default=None)
     parser.add_argument("--version-datos", required=True)
@@ -468,6 +540,16 @@ def main() -> None:
     args = parser.parse_args()
 
     panel = leer_panel(args.panel)
+    if args.candidato == "auto":
+        candidato, motivo = elegir_candidato(args.comparacion)
+        print(f"Candidato elegido por criterio: {candidato}")
+        print(f"  {motivo}")
+    else:
+        candidato, motivo = args.candidato, "elegido a mano por bandera"
+        print(f"Candidato forzado por bandera: {candidato}")
+        print("  AVISO: anula el criterio de elegir_candidato(); justificarlo por escrito")
+    args.candidato = candidato
+
     predicciones, umbrales = leer_predicciones(args.predicciones, args.candidato)
     comparacion = leer_comparacion(args.comparacion, args.candidato)
     candidatos = leer_todos_los_candidatos(args.comparacion, args.candidato)
@@ -485,7 +567,6 @@ def main() -> None:
         print(f"  meses omitidos por tener un solo horizonte: {', '.join(descartados)}")
     args.salida.mkdir(parents=True, exist_ok=True)
 
-    print(f"Candidato {args.candidato}")
     for horizonte, umbral in sorted(umbrales.items()):
         print(f"  umbral T+{horizonte}: {umbral.valor:.6f} (margen {umbral.margen:.2e})")
 
