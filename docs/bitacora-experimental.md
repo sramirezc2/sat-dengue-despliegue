@@ -216,6 +216,13 @@ Sin estas reglas los resultados se ven bien y no valen nada.
 8. **Se preinscribe antes de mirar.** Cada tanda escribe, antes de correr,
    qué hipótesis prueba, qué métrica decide, qué contaría como mejora y qué
    contaría como fracaso.
+9. **Separar no es aportar.** Añadida tras la tanda 6. Que una variable nueva
+   separe la etiqueta no significa que agregue nada: la separación univariada
+   mide si la información existe, no si el modelo ya podía alcanzarla. Antes de
+   preinscribir un bloque por su separación, se entrena un modelo con las
+   variables vigentes para predecir esa feature; si la predice bien, no agrega.
+   Corolario: ninguna diferencia de uno o dos inicios se reporta sin cinco
+   semillas detrás.
 
 ---
 
@@ -888,6 +895,70 @@ M2 ya murió acá: dentro del municipio, `cv_6m` queda en 0,495 y el rango
 relativo en 0,494. Lo que parecía señal dentro del decil de margen desaparece
 al controlar por municipio, que es el control correcto.
 
+#### Resultados completos, las seis configuraciones en las ocho celdas
+
+Se reportan todas, incluidas las que no funcionaron y las que no se adoptan.
+`Gc` es un control de especificación, no una hipótesis: es el bloque G con la
+cuenta de casos del canal a los dos lados, y existe por el hallazgo colateral
+que se describe más abajo. Alertas, falsas, inicios detectados sobre inicios
+reales, y falsas por inicio.
+
+**T+1, el horizonte que decide**
+
+| | 2018-12 · 60 inicios | 2020-12 · 14 inicios | 2022-12 · 57 inicios | 2024-06 · 48 inicios |
+| --- | --- | --- | --- | --- |
+| Canal endémico | 17 · 1,59 | 1 · 8,00 | 14 · 1,93 | 21 · 2,86 |
+| Persistencia | 0 · — | 0 · — | 0 · — | 0 · — |
+| Vigente, 29 variables | 33 · 1,09 | 6 · 16,67 | 38 · 1,53 | 48 · 3,12 |
+| G | 42 · 0,64 | 8 · 12,25 | 49 · 0,94 | 48 · 3,08 |
+| **G+M1** | **44 · 0,57** | 9 · 10,78 | **50 · 0,92** | 48 · 3,10 |
+| G+M2 | 43 · 0,60 | 8 · 12,25 | 47 · 1,02 | 48 · 3,10 |
+| G+M1+M2 | 43 · 0,60 | 9 · 10,78 | 50 · 0,92 | 48 · 3,10 |
+| Gc, control de cuenta | 44 · 0,57 | 9 · 10,78 | 48 · 1,00 | 48 · 3,10 |
+| Cupo de alertas | 69 | 106 | 96 | 203 |
+
+**T+2, informativo, línea cerrada desde la tanda 3**
+
+| | 2018-12 · 48 inicios | 2020-12 · 13 inicios | 2022-12 · 41 inicios | 2024-06 · 37 inicios |
+| --- | --- | --- | --- | --- |
+| Canal endémico | 18 · 0,94 | 1 · 7,00 | 14 · 1,43 | 24 · 2,25 |
+| Persistencia | 9 · 2,33 | 0 · — | 11 · 3,09 | 16 · 3,81 |
+| Vigente, 29 variables | 10 · 2,30 | 4 · 22,75 | 18 · 1,44 | 23 · 4,13 |
+| G | 20 · 0,65 | 8 · 10,62 | 20 · 0,85 | 28 · 3,14 |
+| G+M1 | 19 · 0,89 | 7 · 12,29 | 21 · 0,62 | 30 · 2,73 |
+| G+M2 | 21 · 0,62 | 9 · 9,33 | 19 · 0,84 | 30 · 2,80 |
+| G+M1+M2 | 19 · 0,89 | 8 · 10,50 | 21 · 0,67 | 30 · 2,87 |
+| Gc, control de cuenta | 20 · 0,65 | 9 · 9,33 | 20 · 0,80 | 29 · 2,97 |
+| Cupo de alertas | 57 | 99 | 71 | 162 |
+
+De 2020-12 no sale ninguna conclusión: 14 y 13 inicios, por debajo del mínimo
+de 30 que fija la regla de tamaño de muestra. Se reporta como chequeo de
+dirección y no vota, igual que en las tandas anteriores.
+
+La persistencia detecta **cero inicios en los cuatro cortes de T+1**, como
+corresponde: alerta donde el exceso ya está, y un inicio a un mes exige que no
+esté. No es un desempeño malo, es una imposibilidad aritmética, y es la razón
+por la que la barra de esta tanda se puso contra el canal y no contra ella.
+
+#### Verificación contra las reglas de método, una por una
+
+| Regla | Cómo se cumplió en esta tanda |
+| --- | --- |
+| **4.1** Bloque de 2025 consumido | No se tocó. El sondeo usó filas de entrenamiento hasta 2024-06; la tanda corrió sobre los cortes de validación. Ninguna medición contra el bloque congelado. |
+| **4.2** El umbral no se elige sobre los datos con que se mide | El cupo de alertas se fija con la fracción del canal medida en la **partición interna del entrenamiento**, los últimos 12 meses, y se aplica tal cual a validación. Se reportan alertas y falsas realizadas. |
+| **4.3** Consistencia entre cortes | Se reportan las ocho celdas y las seis configuraciones, no la mejor. El veredicto exige 2 de 3 cortes utilizables, que es la forma que toma la regla cuando 2020-12 queda fuera por 4.4. |
+| **4.4** Tamaño de muestra declarado | Cada celda lleva su denominador. De 2020-12, con 14 y 13 inicios, no se concluye nada. Las diferencias entre configuraciones se midieron contra su propia dispersión, cinco semillas, y resultaron indistinguibles. |
+| **4.5** La prevalencia cambia entre periodos | El cupo se recalcula por corte a partir del canal de ese corte, no se fija un valor absoluto. Por eso va de 69 alertas en 2018-12 a 203 en 2024-06. |
+| **4.6** Fuga por la etiqueta | Verificado numéricamente antes de preinscribir: el P75 del mes objetivo coincide con `p75_t*` del panel en 13 376 de 13 376 filas. M2 solo usa ventanas que terminan en el mes de referencia. |
+| **4.7** Las dos líneas base sobre las mismas filas | **Corregido después de la corrida.** `compresion.py` reportaba solo el canal. La persistencia se calculó aparte, sobre exactamente las mismas filas evaluables, y está en las tablas de arriba. |
+| **4.8** Preinscripción antes de mirar | La hipótesis, la métrica, la barra y el criterio de fracaso se escribieron antes de entrenar. El sondeo univariado es anterior a la preinscripción y **se declara como tal**: midió si la información existía y si era nueva, no si el modelo mejoraba. |
+
+Dos desviaciones que conviene dejar escritas y no esconder. La primera es la de
+4.7, corregida arriba. La segunda es que esta verificación regla por regla
+**no se había hecho en las tandas anteriores**, aunque el protocolo la pide;
+esta es la primera que la trae. Las tandas 1 a 5 cumplen las reglas —se puede
+comprobar en sus entradas— pero no dejaron la comprobación escrita.
+
 #### Resultado: la señal no se convierte en nada
 
 **M1 no aporta sobre el bloque G, y la línea se cierra.**
@@ -924,6 +995,29 @@ variables; la amplitud de la banda sí lo era.
 **Regla nueva, barata, que sale de acá:** antes de preinscribir un bloque por
 su separación univariada, comprobar si un modelo con las variables vigentes ya
 predice esa feature. Si la predice bien, no agrega aunque separe.
+
+Y se corrió esa prueba sobre el caso que la motivó, porque si no la explicación
+de arriba sería una historia y no un hallazgo. Se entrenó un regresor con el
+vigente más el bloque G para predecir cada variable de M1, y se midió el R²
+fuera de muestra en los cuatro cortes:
+
+| Variable de M1 | R² medio | AUC cruda |
+| --- | --- | --- |
+| `holgura_curso` | **0,958** | 0,599 |
+| `compresion` | **0,783** | 0,329 |
+| `salto_objetivo` | 0,771 | 0,474 |
+| `amplitud_curso` | 0,541 | 0,547 |
+| `amplitud_objetivo` | 0,272 | 0,392 |
+
+La explicación queda confirmada y además afinada: **las variables que más
+separan son precisamente las que el modelo ya podía reconstruir.** La
+compresión, que era la apuesta, se predice con R² 0,78 desde variables que el
+modelo ya tenía. La única que el vigente no reconstruye bien, `amplitud_objetivo`
+con R² 0,27, es también la que menos separa una vez controlado el margen.
+
+Esto es lo que la tanda 6 aporta de verdad, y es un resultado de método que el
+informe final puede usar: una prueba de dos minutos que decide si vale la pena
+montar un bloque de features.
 
 #### Dos cosas que quedaron a la vista y no se adoptan
 
