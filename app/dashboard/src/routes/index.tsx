@@ -856,6 +856,7 @@ function TerritoryMap({
   onSelect: (id: string) => void;
 }) {
   const [h, setH] = useState<"t1" | "t2">("t1");
+  const enAlerta = munis.filter((m) => m.t1.alertStatus === "ALERT").length;
   return (
     <Card
       title={`Representación territorial — ${DEPTS[dept]}`}
@@ -889,48 +890,63 @@ function TerritoryMap({
         horizon={h}
         onSelect={onSelect}
       />
-      <div className="mt-3 w-full overflow-x-auto">
-        <table className="w-full text-left text-xs">
-          <caption className="sr-only">
-            Tabla equivalente al mapa: estado observado y riesgo T+1/T+2 por municipio
-          </caption>
-          <thead className="text-muted-foreground">
-            <tr className="border-b border-border">
-              <th className="py-2 pr-2">Municipio</th>
-              <th className="pr-2">Casos T</th>
-              <th className="pr-2">Estado observado</th>
-              <th className="pr-2">T+1</th>
-              <th>T+2</th>
-            </tr>
-          </thead>
-          <tbody>
-            {munis.map((m) => (
-              <tr
-                key={m.id}
-                className={`border-b border-border/60 ${m.id === selected ? "bg-accent/50" : ""}`}
-              >
-                <td className="py-2 pr-2">
-                  <button className="font-medium hover:text-primary" onClick={() => onSelect(m.id)}>
-                    {m.name}
-                  </button>
-                </td>
-                <td className="pr-2 tabular-nums">{m.observedT ?? "No disponible"}</td>
-                <td className="pr-2">
-                  <ZoneBadge zone={m.zoneT} />
-                </td>
-                <td className="pr-2">
-                  <span className="mr-1 tabular-nums">{pct(m.t1.prob)}</span>
-                  <AlertBadge f={m.t1} />
-                </td>
-                <td>
-                  <span className="mr-1 tabular-nums">{pct(m.t2.prob)}</span>
-                  <AlertBadge f={m.t2} />
-                </td>
+      {/* La tabla es el equivalente accesible del mapa y no puede desaparecer,
+          pero desplegada son 47 filas que estiraban la tarjeta y dejaban la
+          columna de al lado en blanco hasta el final. Va plegada por defecto:
+          el mapa responde la pregunta y la tabla queda para quien la necesite,
+          a un clic y sin scroll infinito. */}
+      <details className="group mt-3 w-full">
+        <summary className="flex cursor-pointer list-none items-center gap-2 border-t border-border py-2 text-xs text-muted-foreground hover:text-foreground">
+          <ChevronDown aria-hidden className="h-4 w-4 transition-transform group-open:rotate-180" />
+          Ver los {munis.length} municipios como tabla
+          {enAlerta > 0 && <span className="text-zone-exceso">· {enAlerta} con alerta en T+1</span>}
+        </summary>
+        <div className="max-h-96 w-full overflow-auto">
+          <table className="w-full text-left text-xs">
+            <caption className="sr-only">
+              Tabla equivalente al mapa: estado observado y riesgo T+1/T+2 por municipio
+            </caption>
+            <thead className="text-muted-foreground">
+              <tr className="border-b border-border">
+                <th className="py-2 pr-2">Municipio</th>
+                <th className="pr-2">Casos T</th>
+                <th className="pr-2">Estado observado</th>
+                <th className="pr-2">T+1</th>
+                <th>T+2</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {munis.map((m) => (
+                <tr
+                  key={m.id}
+                  className={`border-b border-border/60 ${m.id === selected ? "bg-accent/50" : ""}`}
+                >
+                  <td className="py-2 pr-2">
+                    <button
+                      className="font-medium hover:text-primary"
+                      onClick={() => onSelect(m.id)}
+                    >
+                      {m.name}
+                    </button>
+                  </td>
+                  <td className="pr-2 tabular-nums">{m.observedT ?? "No disponible"}</td>
+                  <td className="pr-2">
+                    <ZoneBadge zone={m.zoneT} />
+                  </td>
+                  <td className="pr-2">
+                    <span className="mr-1 tabular-nums">{pct(m.t1.prob)}</span>
+                    <AlertBadge f={m.t1} />
+                  </td>
+                  <td>
+                    <span className="mr-1 tabular-nums">{pct(m.t2.prob)}</span>
+                    <AlertBadge f={m.t2} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
     </Card>
   );
 }
