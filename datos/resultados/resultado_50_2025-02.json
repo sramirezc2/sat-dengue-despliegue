@@ -2,8 +2,8 @@
   "metadata": {
     "result_set_id": "a0c4726c-46fb-5e8d-94d8-e8a75baa7214",
     "reference_period": "2025-02",
-    "generated_at": "2026-11-04T23:25:28+00:00",
-    "data_updated_at": "2026-11-04T23:25:28+00:00",
+    "generated_at": "2026-11-05T00:37:22+00:00",
+    "data_updated_at": "2026-11-05T00:37:22+00:00",
     "data_version": "g5-frozen-2025"
   },
   "governance": {
@@ -21,7 +21,7 @@
     {
       "municipality_code": "50001",
       "municipality_name": "Villavicencio",
-      "cases_t": 410,
+      "cases_t": 405,
       "endemic_zone_t": "EXCESO",
       "p25": 59.0,
       "median": 205.0,
@@ -29,14 +29,14 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 347,
+          "cases": 346,
           "p25": 55.0,
           "median": 255.0,
           "p75": 304.0
         },
         {
           "period": "2025-02",
-          "cases": 410,
+          "cases": 405,
           "p25": 59.0,
           "median": 205.0,
           "p75": 250.0
@@ -146,7 +146,7 @@
     {
       "municipality_code": "50006",
       "municipality_name": "Acacías",
-      "cases_t": 66,
+      "cases_t": 63,
       "endemic_zone_t": "EXCESO",
       "p25": 42.0,
       "median": 42.0,
@@ -161,7 +161,7 @@
         },
         {
           "period": "2025-02",
-          "cases": 66,
+          "cases": 63,
           "p25": 42.0,
           "median": 42.0,
           "p75": 60.0
@@ -1396,7 +1396,7 @@
     {
       "municipality_code": "50313",
       "municipality_name": "Granada",
-      "cases_t": 35,
+      "cases_t": 34,
       "endemic_zone_t": "EXCESO",
       "p25": 16.0,
       "median": 21.0,
@@ -1411,7 +1411,7 @@
         },
         {
           "period": "2025-02",
-          "cases": 35,
+          "cases": 34,
           "p25": 16.0,
           "median": 21.0,
           "p75": 25.0
@@ -2029,7 +2029,7 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 20,
+          "cases": 18,
           "p25": 0.0,
           "median": 0.0,
           "p75": 4.0
@@ -2404,7 +2404,7 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 39,
+          "cases": 38,
           "p25": 8.0,
           "median": 9.0,
           "p75": 13.0
@@ -3396,7 +3396,7 @@
     {
       "municipality_code": "50689",
       "municipality_name": "San Martín",
-      "cases_t": 53,
+      "cases_t": 52,
       "endemic_zone_t": "EXCESO",
       "p25": 4.0,
       "median": 5.0,
@@ -3404,14 +3404,14 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 38,
+          "cases": 37,
           "p25": 4.0,
           "median": 12.0,
           "p75": 18.0
         },
         {
           "period": "2025-02",
-          "cases": 53,
+          "cases": 52,
           "p25": 4.0,
           "median": 5.0,
           "p75": 19.0
@@ -3705,9 +3705,9 @@
         "source": "computed_from_panel",
         "onsets_detected": 27,
         "actual_onsets": 86,
-        "alerts_emitted": 266,
-        "false_alerts": 105,
-        "false_alert_ratio": 0.39473684210526316,
+        "alerts_emitted": 265,
+        "false_alerts": 104,
+        "false_alert_ratio": 0.39245283018867927,
         "onset_sensitivity": 0.313953488372093,
         "auroc": null,
         "average_precision": null,
@@ -3815,12 +3815,12 @@
         "label": "Canal endemico",
         "role": "REFERENCE",
         "source": "computed_from_panel",
-        "onsets_detected": 44,
+        "onsets_detected": 43,
         "actual_onsets": 86,
-        "alerts_emitted": 291,
-        "false_alerts": 128,
-        "false_alert_ratio": 0.43986254295532645,
-        "onset_sensitivity": 0.5116279069767442,
+        "alerts_emitted": 287,
+        "false_alerts": 126,
+        "false_alert_ratio": 0.43902439024390244,
+        "onset_sensitivity": 0.5,
         "auroc": null,
         "average_precision": null,
         "brier": null

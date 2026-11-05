@@ -43,6 +43,19 @@ ESPACIO_IDS = uuid.UUID("6f1b0f2e-9a7a-4a1a-9a9f-3f5a1b2c3d4e")
 
 ZONAS_VALIDAS = {"EXITO", "SEGURIDAD", "ALERTA", "EXCESO"}
 
+# El canal del proyecto se construye sobre esta columna y no sobre
+# `total_notifications_count`, que es dengue mas dengue grave. En
+# `channel_history.csv`, `current_count` coincide con esta en el 100 % de las
+# filas y con la otra en el 89 %, y `zona_canal_t == "EXCESO"` equivale
+# exactamente a que esta columna supere el P75.
+#
+# Se publica esta y no el total para que la cifra del mes, la serie de la
+# grafica, la zona del canal y la fila de comparacion hablen todas de la misma
+# cantidad. Mezclarlas dejaba el tablero diciendo dos cosas a la vez: en el
+# periodo publicado habia una fila dibujada por encima del P75 cuya zona no era
+# exceso. El total notificado sigue en el panel para quien lo necesite.
+CASOS_DEL_CANAL = "dengue_notifications_count"
+
 MOTIVO_POR_ESTADO = {
     "insufficient_history": ("INSUFFICIENT_HISTORY", "Historia insuficiente para el canal."),
     "target_outside_panel": ("NOT_CALCULATED", "El mes objetivo esta fuera del panel."),
@@ -174,7 +187,7 @@ def canal_endemico(
         panel_fila = panel.get((municipio, mes))
         if panel_fila is None:
             continue
-        casos = _numero(panel_fila.get("total_notifications_count"))
+        casos = _numero(panel_fila.get(CASOS_DEL_CANAL))
         umbral = _numero(panel_fila.get(f"p75_t{horizonte}"))
         alerta = casos is not None and umbral is not None and casos > umbral
 
@@ -274,7 +287,7 @@ def serie_del_canal(
     for mes in range(1, 13):
         periodo = f"{anio}-{mes:02d}"
         fila = panel.get((municipio, periodo))
-        observados = _entero(fila["total_notifications_count"]) if fila else None
+        observados = _entero(fila[CASOS_DEL_CANAL]) if fila else None
         serie.append(
             {
                 "period": periodo,
@@ -366,7 +379,7 @@ def construir_documento(
             {
                 "municipality_code": codigo,
                 "municipality_name": nombre,
-                "cases_t": _entero(fila["total_notifications_count"]) if fila else None,
+                "cases_t": _entero(fila[CASOS_DEL_CANAL]) if fila else None,
                 "endemic_zone_t": zona if zona in ZONAS_VALIDAS else "UNAVAILABLE",
                 "p25": _numero(fila["p25_canal_t"]) if fila else None,
                 "median": _numero(fila["p50_canal_t"]) if fila else None,

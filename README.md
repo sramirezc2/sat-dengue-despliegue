@@ -558,8 +558,27 @@ Esa última fila es la única del bloque `comparison` que no sale de la corrida
 evaluada, y por eso viaja marcada: `role: "REFERENCE"` y
 `source: "computed_from_panel"`, contra `source: "evaluation_run"` de todas las
 demás. Se calcula con la misma definición de canal que usa el proyecto —alerta
-si los casos del mes de aviso superan el P75 de ese mes— y sobre exactamente
-las mismas filas del panel que evaluaron a los modelos. Está ahí porque la
+si los casos del mes de aviso superan el P75 del mes objetivo— y sobre
+exactamente las mismas filas del panel que evaluaron a los modelos.
+
+### Qué cuenta de casos se publica
+
+Todo lo que el tablero muestra como "casos" es `dengue_notifications_count`, la
+columna sobre la que el proyecto construye el canal endémico. No es
+`total_notifications_count`, que es dengue más dengue grave.
+
+La diferencia importa porque las bandas que el tablero dibuja se calculan sobre
+la primera: en `channel_history.csv`, `current_count` coincide con
+`dengue_notifications_count` en el **100 %** de las filas y con el total solo
+en el **89 %**, y `zona_canal_t == "EXCESO"` equivale exactamente a que esa
+columna supere el P75. Publicar el total contra esas bandas dejaba al tablero
+diciendo dos cosas a la vez: en el periodo publicado había un municipio-mes
+dibujado por encima de su P75 cuya zona no era exceso. Ahora la cifra del mes,
+la serie de la gráfica, la zona y la fila de comparación hablan todas de la
+misma cantidad, y esa incoherencia es cero en los 22 archivos.
+
+El total notificado sigue en el panel para quien lo necesite; lo que no puede
+es ir dibujado contra un canal que no lo usa. Está ahí porque la
 línea base que declaró la evaluación es la persistencia, que en T+1 no puede
 detectar ningún inicio por construcción: comparar contra ella sola hacía ver
 bien al modelo por una razón ajena al modelo. La persistencia se conserva

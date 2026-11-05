@@ -2,8 +2,8 @@
   "metadata": {
     "result_set_id": "b7a1a557-3a08-5242-8696-3c9ba16847ea",
     "reference_period": "2025-04",
-    "generated_at": "2026-11-04T23:25:28+00:00",
-    "data_updated_at": "2026-11-04T23:25:28+00:00",
+    "generated_at": "2026-11-05T00:37:22+00:00",
+    "data_updated_at": "2026-11-05T00:37:22+00:00",
     "data_version": "g5-frozen-2025"
   },
   "governance": {
@@ -29,14 +29,14 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 203,
+          "cases": 198,
           "p25": 25.0,
           "median": 69.0,
           "p75": 683.0
         },
         {
           "period": "2025-02",
-          "cases": 139,
+          "cases": 137,
           "p25": 27.0,
           "median": 80.0,
           "p75": 631.0
@@ -661,7 +661,7 @@
         },
         {
           "period": "2025-02",
-          "cases": 12,
+          "cases": 11,
           "p25": 2.0,
           "median": 8.0,
           "p75": 15.0
@@ -779,7 +779,7 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 14,
+          "cases": 13,
           "p25": 4.0,
           "median": 5.0,
           "p75": 28.0
@@ -1271,7 +1271,7 @@
     {
       "municipality_code": "73168",
       "municipality_name": "Chaparral",
-      "cases_t": 26,
+      "cases_t": 25,
       "endemic_zone_t": "ALERTA",
       "p25": 11.0,
       "median": 13.0,
@@ -1300,7 +1300,7 @@
         },
         {
           "period": "2025-04",
-          "cases": 26,
+          "cases": 25,
           "p25": 11.0,
           "median": 13.0,
           "p75": 45.0
@@ -1529,14 +1529,14 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 9,
+          "cases": 8,
           "p25": 4.0,
           "median": 11.0,
           "p75": 15.0
         },
         {
           "period": "2025-02",
-          "cases": 12,
+          "cases": 11,
           "p25": 3.0,
           "median": 18.0,
           "p75": 27.0
@@ -1896,7 +1896,7 @@
     {
       "municipality_code": "73268",
       "municipality_name": "Espinal",
-      "cases_t": 137,
+      "cases_t": 134,
       "endemic_zone_t": "EXCESO",
       "p25": 16.0,
       "median": 49.0,
@@ -1904,28 +1904,28 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 135,
+          "cases": 131,
           "p25": 24.0,
           "median": 54.0,
           "p75": 75.0
         },
         {
           "period": "2025-02",
-          "cases": 111,
+          "cases": 108,
           "p25": 32.0,
           "median": 58.0,
           "p75": 80.0
         },
         {
           "period": "2025-03",
-          "cases": 138,
+          "cases": 134,
           "p25": 21.0,
           "median": 33.0,
           "p75": 89.0
         },
         {
           "period": "2025-04",
-          "cases": 137,
+          "cases": 134,
           "p25": 16.0,
           "median": 49.0,
           "p75": 108.0
@@ -2168,7 +2168,7 @@
         },
         {
           "period": "2025-03",
-          "cases": 36,
+          "cases": 35,
           "p25": 1.0,
           "median": 4.0,
           "p75": 20.0
@@ -2411,14 +2411,14 @@
         },
         {
           "period": "2025-02",
-          "cases": 39,
+          "cases": 38,
           "p25": 12.0,
           "median": 19.0,
           "p75": 45.0
         },
         {
           "period": "2025-03",
-          "cases": 32,
+          "cases": 31,
           "p25": 5.0,
           "median": 16.0,
           "p75": 33.0
@@ -2904,7 +2904,7 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 6,
+          "cases": 5,
           "p25": 3.0,
           "median": 7.0,
           "p75": 7.0
@@ -3036,7 +3036,7 @@
         },
         {
           "period": "2025-02",
-          "cases": 5,
+          "cases": 4,
           "p25": 2.0,
           "median": 8.0,
           "p75": 48.0
@@ -3271,7 +3271,7 @@
     {
       "municipality_code": "73449",
       "municipality_name": "Melgar",
-      "cases_t": 32,
+      "cases_t": 31,
       "endemic_zone_t": "ALERTA",
       "p25": 18.0,
       "median": 19.0,
@@ -3300,7 +3300,7 @@
         },
         {
           "period": "2025-04",
-          "cases": 32,
+          "cases": 31,
           "p25": 18.0,
           "median": 19.0,
           "p75": 40.0
@@ -3536,7 +3536,7 @@
         },
         {
           "period": "2025-02",
-          "cases": 5,
+          "cases": 4,
           "p25": 0.0,
           "median": 3.0,
           "p75": 9.0
@@ -4654,7 +4654,7 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 36,
+          "cases": 35,
           "p25": 1.0,
           "median": 10.0,
           "p75": 41.0
@@ -4668,7 +4668,7 @@
         },
         {
           "period": "2025-03",
-          "cases": 17,
+          "cases": 16,
           "p25": 1.0,
           "median": 3.0,
           "p75": 12.0
@@ -5955,9 +5955,9 @@
         "source": "computed_from_panel",
         "onsets_detected": 27,
         "actual_onsets": 86,
-        "alerts_emitted": 266,
-        "false_alerts": 105,
-        "false_alert_ratio": 0.39473684210526316,
+        "alerts_emitted": 265,
+        "false_alerts": 104,
+        "false_alert_ratio": 0.39245283018867927,
         "onset_sensitivity": 0.313953488372093,
         "auroc": null,
         "average_precision": null,
@@ -6065,12 +6065,12 @@
         "label": "Canal endemico",
         "role": "REFERENCE",
         "source": "computed_from_panel",
-        "onsets_detected": 44,
+        "onsets_detected": 43,
         "actual_onsets": 86,
-        "alerts_emitted": 291,
-        "false_alerts": 128,
-        "false_alert_ratio": 0.43986254295532645,
-        "onset_sensitivity": 0.5116279069767442,
+        "alerts_emitted": 287,
+        "false_alerts": 126,
+        "false_alert_ratio": 0.43902439024390244,
+        "onset_sensitivity": 0.5,
         "auroc": null,
         "average_precision": null,
         "brier": null

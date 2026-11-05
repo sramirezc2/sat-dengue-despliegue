@@ -2,8 +2,8 @@
   "metadata": {
     "result_set_id": "a42c5f88-e21e-58a4-a4e5-c767f3c381eb",
     "reference_period": "2024-12",
-    "generated_at": "2026-11-04T23:25:28+00:00",
-    "data_updated_at": "2026-11-04T23:25:28+00:00",
+    "generated_at": "2026-11-05T00:37:22+00:00",
+    "data_updated_at": "2026-11-05T00:37:22+00:00",
     "data_version": "g5-frozen-2025"
   },
   "governance": {
@@ -21,7 +21,7 @@
     {
       "municipality_code": "50001",
       "municipality_name": "Villavicencio",
-      "cases_t": 320,
+      "cases_t": 317,
       "endemic_zone_t": "EXCESO",
       "p25": 55.0,
       "median": 208.0,
@@ -29,84 +29,84 @@
       "endemic_channel_series": [
         {
           "period": "2024-01",
-          "cases": 258,
+          "cases": 255,
           "p25": 55.0,
           "median": 304.0,
           "p75": 335.0
         },
         {
           "period": "2024-02",
-          "cases": 206,
+          "cases": 205,
           "p25": 59.0,
           "median": 250.0,
           "p75": 397.0
         },
         {
           "period": "2024-03",
-          "cases": 221,
+          "cases": 216,
           "p25": 105.0,
           "median": 135.0,
           "p75": 595.0
         },
         {
           "period": "2024-04",
-          "cases": 307,
+          "cases": 305,
           "p25": 47.0,
           "median": 156.0,
           "p75": 792.0
         },
         {
           "period": "2024-05",
-          "cases": 350,
+          "cases": 348,
           "p25": 56.0,
           "median": 195.0,
           "p75": 1136.0
         },
         {
           "period": "2024-06",
-          "cases": 424,
+          "cases": 421,
           "p25": 68.0,
           "median": 189.0,
           "p75": 735.0
         },
         {
           "period": "2024-07",
-          "cases": 380,
+          "cases": 377,
           "p25": 62.0,
           "median": 204.0,
           "p75": 517.0
         },
         {
           "period": "2024-08",
-          "cases": 322,
+          "cases": 320,
           "p25": 42.0,
           "median": 161.0,
           "p75": 344.0
         },
         {
           "period": "2024-09",
-          "cases": 287,
+          "cases": 284,
           "p25": 44.0,
           "median": 165.0,
           "p75": 273.0
         },
         {
           "period": "2024-10",
-          "cases": 314,
+          "cases": 312,
           "p25": 32.0,
           "median": 181.0,
           "p75": 249.0
         },
         {
           "period": "2024-11",
-          "cases": 309,
+          "cases": 306,
           "p25": 44.0,
           "median": 217.0,
           "p75": 222.0
         },
         {
           "period": "2024-12",
-          "cases": 320,
+          "cases": 317,
           "p25": 55.0,
           "median": 208.0,
           "p75": 211.0
@@ -154,7 +154,7 @@
       "endemic_channel_series": [
         {
           "period": "2024-01",
-          "cases": 107,
+          "cases": 105,
           "p25": 29.0,
           "median": 36.0,
           "p75": 47.0
@@ -168,7 +168,7 @@
         },
         {
           "period": "2024-03",
-          "cases": 79,
+          "cases": 78,
           "p25": 34.0,
           "median": 74.0,
           "p75": 133.0
@@ -182,14 +182,14 @@
         },
         {
           "period": "2024-05",
-          "cases": 122,
+          "cases": 121,
           "p25": 26.0,
           "median": 226.0,
           "p75": 234.0
         },
         {
           "period": "2024-06",
-          "cases": 125,
+          "cases": 124,
           "p25": 18.0,
           "median": 103.0,
           "p75": 181.0
@@ -210,21 +210,21 @@
         },
         {
           "period": "2024-09",
-          "cases": 74,
+          "cases": 73,
           "p25": 19.0,
           "median": 39.0,
           "p75": 67.0
         },
         {
           "period": "2024-10",
-          "cases": 79,
+          "cases": 78,
           "p25": 15.0,
           "median": 28.0,
           "p75": 61.0
         },
         {
           "period": "2024-11",
-          "cases": 83,
+          "cases": 82,
           "p25": 22.0,
           "median": 39.0,
           "p75": 62.0
@@ -307,21 +307,21 @@
         },
         {
           "period": "2024-05",
-          "cases": 27,
+          "cases": 25,
           "p25": 0.0,
           "median": 4.0,
           "p75": 19.0
         },
         {
           "period": "2024-06",
-          "cases": 18,
+          "cases": 17,
           "p25": 0.0,
           "median": 11.0,
           "p75": 12.0
         },
         {
           "period": "2024-07",
-          "cases": 20,
+          "cases": 19,
           "p25": 1.0,
           "median": 8.0,
           "p75": 11.0
@@ -557,14 +557,14 @@
         },
         {
           "period": "2024-05",
-          "cases": 81,
+          "cases": 80,
           "p25": 15.0,
           "median": 50.0,
           "p75": 59.0
         },
         {
           "period": "2024-06",
-          "cases": 56,
+          "cases": 55,
           "p25": 11.0,
           "median": 21.0,
           "p75": 34.0
@@ -599,7 +599,7 @@
         },
         {
           "period": "2024-11",
-          "cases": 27,
+          "cases": 26,
           "p25": 3.0,
           "median": 4.0,
           "p75": 6.0
@@ -800,7 +800,7 @@
         },
         {
           "period": "2024-04",
-          "cases": 42,
+          "cases": 41,
           "p25": 9.0,
           "median": 30.0,
           "p75": 38.0
@@ -828,7 +828,7 @@
         },
         {
           "period": "2024-08",
-          "cases": 20,
+          "cases": 19,
           "p25": 12.0,
           "median": 12.0,
           "p75": 24.0
@@ -1071,7 +1071,7 @@
         },
         {
           "period": "2024-07",
-          "cases": 12,
+          "cases": 11,
           "p25": 1.0,
           "median": 3.0,
           "p75": 3.0
@@ -1271,7 +1271,7 @@
     {
       "municipality_code": "50287",
       "municipality_name": "Fuentedeoro",
-      "cases_t": 32,
+      "cases_t": 31,
       "endemic_zone_t": "EXCESO",
       "p25": 1.0,
       "median": 2.0,
@@ -1342,7 +1342,7 @@
         },
         {
           "period": "2024-10",
-          "cases": 17,
+          "cases": 16,
           "p25": 1.0,
           "median": 3.0,
           "p75": 6.0
@@ -1356,7 +1356,7 @@
         },
         {
           "period": "2024-12",
-          "cases": 32,
+          "cases": 31,
           "p25": 1.0,
           "median": 2.0,
           "p75": 2.0
@@ -1411,7 +1411,7 @@
         },
         {
           "period": "2024-02",
-          "cases": 26,
+          "cases": 25,
           "p25": 16.0,
           "median": 21.0,
           "p75": 73.0
@@ -1467,14 +1467,14 @@
         },
         {
           "period": "2024-10",
-          "cases": 21,
+          "cases": 20,
           "p25": 3.0,
           "median": 11.0,
           "p75": 32.0
         },
         {
           "period": "2024-11",
-          "cases": 17,
+          "cases": 16,
           "p25": 7.0,
           "median": 9.0,
           "p75": 20.0
@@ -1550,7 +1550,7 @@
         },
         {
           "period": "2024-04",
-          "cases": 31,
+          "cases": 30,
           "p25": 4.0,
           "median": 5.0,
           "p75": 23.0
@@ -1925,7 +1925,7 @@
         },
         {
           "period": "2024-04",
-          "cases": 8,
+          "cases": 7,
           "p25": 0.0,
           "median": 3.0,
           "p75": 6.0
@@ -2064,7 +2064,7 @@
         },
         {
           "period": "2024-06",
-          "cases": 6,
+          "cases": 5,
           "p25": 0.0,
           "median": 0.0,
           "p75": 3.0
@@ -2300,7 +2300,7 @@
         },
         {
           "period": "2024-04",
-          "cases": 10,
+          "cases": 9,
           "p25": 2.0,
           "median": 10.0,
           "p75": 19.0
@@ -2335,7 +2335,7 @@
         },
         {
           "period": "2024-09",
-          "cases": 20,
+          "cases": 19,
           "p25": 0.0,
           "median": 6.0,
           "p75": 8.0
@@ -2396,7 +2396,7 @@
     {
       "municipality_code": "50568",
       "municipality_name": "Puerto Gaitán",
-      "cases_t": 17,
+      "cases_t": 16,
       "endemic_zone_t": "EXCESO",
       "p25": 3.0,
       "median": 6.0,
@@ -2411,7 +2411,7 @@
         },
         {
           "period": "2024-02",
-          "cases": 8,
+          "cases": 7,
           "p25": 12.0,
           "median": 13.0,
           "p75": 18.0
@@ -2432,14 +2432,14 @@
         },
         {
           "period": "2024-05",
-          "cases": 24,
+          "cases": 23,
           "p25": 9.0,
           "median": 50.0,
           "p75": 61.0
         },
         {
           "period": "2024-06",
-          "cases": 31,
+          "cases": 30,
           "p25": 8.0,
           "median": 14.0,
           "p75": 37.0
@@ -2467,7 +2467,7 @@
         },
         {
           "period": "2024-10",
-          "cases": 23,
+          "cases": 22,
           "p25": 2.0,
           "median": 8.0,
           "p75": 14.0
@@ -2481,7 +2481,7 @@
         },
         {
           "period": "2024-12",
-          "cases": 17,
+          "cases": 16,
           "p25": 3.0,
           "median": 6.0,
           "p75": 13.0
@@ -2904,7 +2904,7 @@
       "endemic_channel_series": [
         {
           "period": "2024-01",
-          "cases": 9,
+          "cases": 8,
           "p25": 2.0,
           "median": 6.0,
           "p75": 8.0
@@ -3396,7 +3396,7 @@
     {
       "municipality_code": "50689",
       "municipality_name": "San Martín",
-      "cases_t": 47,
+      "cases_t": 45,
       "endemic_zone_t": "EXCESO",
       "p25": 3.0,
       "median": 6.0,
@@ -3467,7 +3467,7 @@
         },
         {
           "period": "2024-10",
-          "cases": 37,
+          "cases": 34,
           "p25": 3.0,
           "median": 6.0,
           "p75": 7.0
@@ -3481,7 +3481,7 @@
         },
         {
           "period": "2024-12",
-          "cases": 47,
+          "cases": 45,
           "p25": 3.0,
           "median": 6.0,
           "p75": 8.0
@@ -3536,7 +3536,7 @@
         },
         {
           "period": "2024-02",
-          "cases": 7,
+          "cases": 6,
           "p25": 1.0,
           "median": 2.0,
           "p75": 32.0
@@ -3705,9 +3705,9 @@
         "source": "computed_from_panel",
         "onsets_detected": 27,
         "actual_onsets": 86,
-        "alerts_emitted": 266,
-        "false_alerts": 105,
-        "false_alert_ratio": 0.39473684210526316,
+        "alerts_emitted": 265,
+        "false_alerts": 104,
+        "false_alert_ratio": 0.39245283018867927,
         "onset_sensitivity": 0.313953488372093,
         "auroc": null,
         "average_precision": null,
@@ -3815,12 +3815,12 @@
         "label": "Canal endemico",
         "role": "REFERENCE",
         "source": "computed_from_panel",
-        "onsets_detected": 44,
+        "onsets_detected": 43,
         "actual_onsets": 86,
-        "alerts_emitted": 291,
-        "false_alerts": 128,
-        "false_alert_ratio": 0.43986254295532645,
-        "onset_sensitivity": 0.5116279069767442,
+        "alerts_emitted": 287,
+        "false_alerts": 126,
+        "false_alert_ratio": 0.43902439024390244,
+        "onset_sensitivity": 0.5,
         "auroc": null,
         "average_precision": null,
         "brier": null

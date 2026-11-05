@@ -832,6 +832,147 @@ resultado.
 
 ---
 
+### Tanda 6 — La amplitud de la banda del canal
+
+**De dónde salió la hipótesis.** De mirar la gráfica del canal endémico de
+Ibagué en el tablero. La banda entre el P25 y el P75 se comprime unos meses y
+se expande otros, y la pregunta fue si esa compresión dice algo sobre el
+movimiento siguiente. No salió de un razonamiento previo ni estaba en el plan,
+y se registra así porque el origen de una hipótesis cambia cuánto pesa su
+resultado.
+
+**Qué dice el inventario.** Igual que en la tanda 5, antes de proponer nada se
+revisó qué puede ver el modelo. En las 29 variables de la matriz preparada hay
+niveles, cinco rezagos, una media de 3 meses y un cambio de 1 mes. **No hay
+ninguna medida de dispersión.** Los bloques G, H e I de la tanda 5 tampoco
+agregaron ninguna. Nadie le había dado nunca al modelo una medida de cuánta
+variabilidad hay.
+
+**Comprobación de fuga, hecha antes de preinscribir (regla 4.6).** La banda del
+mes objetivo se arma con los cinco mismos meses calendario de años
+estrictamente anteriores al objetivo, todos previos al mes de referencia. Es el
+mismo argumento por el que `p75_t1` ya es columna legítima del panel, y se
+verificó numéricamente en vez de darlo por bueno: el P75 del mes objetivo
+buscado en `channel_history.csv` coincide con `p75_t*` del panel en **13 376 de
+13 376 filas, en los dos horizontes**. `channel_history.csv` trae además el P25
+y la mediana de cada mes, que el panel descarta: el proyecto siempre tuvo el
+**ancho** de la banda del mes objetivo y nunca lo había extraído.
+
+**Dos bloques preinscritos.** **M1**, la amplitud de la banda: ancho relativo
+del mes en curso y del objetivo, su cociente —la compresión—, la holgura hasta
+el umbral en anchos de banda y el salto que faltaría para cruzarlo. **M2**, la
+volatilidad realizada del municipio: coeficiente de variación a 6 y 12 meses,
+su cociente, su cambio a 3 meses y el rango relativo.
+
+#### El sondeo: la señal existe y es nueva
+
+Sobre filas de entrenamiento hasta 2024-06, 11 932 filas con 1 304 inicios, sin
+tocar ningún bloque evaluado. AUC de Mann-Whitney sobre inicio contra no-inicio:
+
+| | cruda | dentro del mes | dentro del municipio | dentro del decil de `margen_objetivo` |
+|---|---|---|---|---|
+| `compresion` | 0,329 | 0,326 | 0,332 | 0,341 |
+| `holgura_curso` | 0,599 | 0,599 | 0,587 | 0,673 |
+| `amplitud_objetivo` | 0,392 | 0,393 | 0,387 | 0,465 |
+| `cv_6m` (M2) | 0,515 | 0,516 | 0,495 | 0,585 |
+| `margen_objetivo`, de referencia | 0,534 | 0,536 | — | — |
+
+La compresión separa, y separa más que la mejor variable de la tanda 5. No es
+estacionalidad, porque dentro del mes calendario queda en 0,326. No es un
+efecto fijo del municipio, porque dentro del municipio queda en 0,332. No es el
+bloque G con otro nombre, porque dentro del decil de `margen_objetivo` queda en
+0,341 y su correlación de Spearman con esa variable es −0,201. Por cuartiles,
+la tasa de inicios va de **19,3 % a 11,2 % a 6,2 % a 3,7 %**, monótona.
+
+M2 ya murió acá: dentro del municipio, `cv_6m` queda en 0,495 y el rango
+relativo en 0,494. Lo que parecía señal dentro del decil de margen desaparece
+al controlar por municipio, que es el control correcto.
+
+#### Resultado: la señal no se convierte en nada
+
+**M1 no aporta sobre el bloque G, y la línea se cierra.**
+
+Con una sola semilla parecía haber ventaja: en 2018-12, G detecta 42 inicios a
+0,64 falsas por inicio y G+M1 detecta 44 a 0,57. No sobrevive al cambio de
+semilla. Sobre **15 celdas**, tres cortes por cinco semillas:
+
+| G+M1 contra G | efecto |
+| --- | --- |
+| Inicios detectados | **+0,00 ± 1,67** (5 a favor, 4 en contra, 6 empates) |
+| Falsas por inicio | **+0,008 ± 0,069** (6 a favor, 7 en contra) |
+
+Cero exacto. La corrida que parecía buena era la semilla 7.
+
+El veredicto preinscrito lo cierra igual por el otro lado. M1 pasa la barra del
+canal en 2 de 3 cortes, pero el vigente **sin ninguna variable nueva** también
+pasa 2 de 3, y G pasa exactamente los mismos dos. La condición de fracaso
+estaba escrita antes de correr: *pasar solo en los cortes donde G ya pasaba*.
+
+#### La lección, que vale más que el resultado
+
+`compresion` separa de verdad y aun así no aporta. Las dos cosas son
+compatibles y conviene entender por qué, porque es un error que se puede
+repetir.
+
+La separación univariada mide **si la información existe**. No mide **si el
+modelo ya podía alcanzarla**. Un árbol con el bloque G puede reconstruir buena
+parte de la compresión combinando `margen_objetivo`, `pos_banda` y la
+estacionalidad que ya tiene. La tanda 5 funcionó porque el margen al umbral
+abría una dimensión que no era alcanzable desde ninguna combinación de las 29
+variables; la amplitud de la banda sí lo era.
+
+**Regla nueva, barata, que sale de acá:** antes de preinscribir un bloque por
+su separación univariada, comprobar si un modelo con las variables vigentes ya
+predice esa feature. Si la predice bien, no agrega aunque separe.
+
+#### Dos cosas que quedaron a la vista y no se adoptan
+
+Se anotan porque callarlas sería elegir qué reportar.
+
+`G+M1+M2` da 43,4 ± 0,8 inicios en 2018-12 y 50,6 ± 0,8 en 2022-12, contra 42,2
+y 48,6 de G: la mejor de las seis variantes en los dos cortes que deciden. **No
+se adopta.** Es una variante elegida después de ver el cuadro, entre seis, con
+una diferencia de un sigma. Si interesa, se preinscribe y se corre con semillas
+nuevas.
+
+En 2024-06, **todas** las variantes detectan 48 de 48 inicios con desviación
+0,0. El cupo del canal en ese corte es de 162 alertas sobre 304 filas: la
+detección está saturada y la comparación se reduce al costo, donde el canal
+gana 2,86 contra 3,09. Ese corte no discrimina entre modelos a ese presupuesto,
+y eso explica por qué ninguna variante gana nunca ahí.
+
+#### Hallazgo colateral: la cuenta de casos del canal
+
+Encontrado al construir M, no buscado. El canal del proyecto se arma sobre
+`dengue_notifications_count`: `channel_history.current_count` coincide con esa
+columna en el **100 %** de las filas y con `total_notifications_count` solo en
+el **89 %**, porque `total = dengue + grave`.
+
+El bloque G calcula su margen con `total_notifications_count` contra un P75
+construido sobre dengue solo, y la propia línea base del canal en el banco de
+evaluación hace lo mismo. El canal contra el que se venía midiendo no era
+exactamente el canal del proyecto.
+
+*Tamaño del error.* Una variante de control con la cuenta del canal a los dos
+lados da 43,6 ± 1,4 inicios contra 42,2 ± 1,3 en 2018-12 y 48,8 contra 48,6 en
+2022-12: dentro del ruido. **Ninguna conclusión de las tandas 1 a 6 cambia.**
+
+*En el tablero publicado.* La fila del canal pasa de 266 a 265 alertas en T+1,
+con los mismos 27 inicios, y de 44 inicios con 291 alertas a 43 con 287 en T+2.
+No cambia ninguna lectura, pero el número publicado debe ser el del canal real
+y se corrige.
+
+*Y una incoherencia visible, que es lo que de verdad obligaba a corregir.* El
+tablero graficaba los casos **totales** contra bandas construidas solo con
+dengue. En el periodo publicado eso dejaba un municipio-mes dibujado por encima
+de su P75 cuya zona no era exceso: la gráfica y la etiqueta decían cosas
+distintas sobre la misma fila. Se pasó toda la publicación a la cuenta del
+canal —la cifra del mes, la serie, la zona y la fila de comparación— y esa
+incoherencia queda en cero en los 22 archivos. Las cifras visibles cambian poco:
+Ibagué en enero de 2025 pasa de 203 casos a 198.
+
+---
+
 ## 6. Estado de las líneas de trabajo
 
 | Línea | Estado |
@@ -849,6 +990,8 @@ resultado.
 | E. Variables demográficas y sociales | Abierta, en curso por otro integrante |
 | K. Versión mínima de G (una sola variable) | Preinscrita para la tanda 6 |
 | L. Reapertura de T+2 con el margen | Preinscrita para la tanda 6 |
+| M1. Amplitud de la banda del canal | **Cerrada**: rechazada en la tanda 6; separa pero no aporta sobre G |
+| M2. Volatilidad realizada del municipio | **Cerrada**: rechazada en la tanda 6; no separa dentro del municipio |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres

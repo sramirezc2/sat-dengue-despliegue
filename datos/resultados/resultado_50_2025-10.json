@@ -2,8 +2,8 @@
   "metadata": {
     "result_set_id": "102f8c99-429a-5d9b-8612-e54d54368904",
     "reference_period": "2025-10",
-    "generated_at": "2026-11-04T23:25:28+00:00",
-    "data_updated_at": "2026-11-04T23:25:28+00:00",
+    "generated_at": "2026-11-05T00:37:22+00:00",
+    "data_updated_at": "2026-11-05T00:37:22+00:00",
     "data_version": "g5-frozen-2025"
   },
   "governance": {
@@ -21,7 +21,7 @@
     {
       "municipality_code": "50001",
       "municipality_name": "Villavicencio",
-      "cases_t": 285,
+      "cases_t": 278,
       "endemic_zone_t": "EXCESO",
       "p25": 32.0,
       "median": 181.0,
@@ -29,70 +29,70 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 347,
+          "cases": 346,
           "p25": 55.0,
           "median": 255.0,
           "p75": 304.0
         },
         {
           "period": "2025-02",
-          "cases": 410,
+          "cases": 405,
           "p25": 59.0,
           "median": 205.0,
           "p75": 250.0
         },
         {
           "period": "2025-03",
-          "cases": 435,
+          "cases": 431,
           "p25": 105.0,
           "median": 135.0,
           "p75": 216.0
         },
         {
           "period": "2025-04",
-          "cases": 549,
+          "cases": 542,
           "p25": 47.0,
           "median": 156.0,
           "p75": 305.0
         },
         {
           "period": "2025-05",
-          "cases": 807,
+          "cases": 795,
           "p25": 56.0,
           "median": 195.0,
           "p75": 348.0
         },
         {
           "period": "2025-06",
-          "cases": 653,
+          "cases": 648,
           "p25": 68.0,
           "median": 189.0,
           "p75": 421.0
         },
         {
           "period": "2025-07",
-          "cases": 418,
+          "cases": 411,
           "p25": 62.0,
           "median": 204.0,
           "p75": 377.0
         },
         {
           "period": "2025-08",
-          "cases": 360,
+          "cases": 359,
           "p25": 42.0,
           "median": 161.0,
           "p75": 320.0
         },
         {
           "period": "2025-09",
-          "cases": 369,
+          "cases": 366,
           "p25": 44.0,
           "median": 165.0,
           "p75": 273.0
         },
         {
           "period": "2025-10",
-          "cases": 285,
+          "cases": 278,
           "p25": 32.0,
           "median": 181.0,
           "p75": 249.0
@@ -161,56 +161,56 @@
         },
         {
           "period": "2025-02",
-          "cases": 66,
+          "cases": 63,
           "p25": 42.0,
           "median": 42.0,
           "p75": 60.0
         },
         {
           "period": "2025-03",
-          "cases": 81,
+          "cases": 79,
           "p25": 34.0,
           "median": 74.0,
           "p75": 78.0
         },
         {
           "period": "2025-04",
-          "cases": 92,
+          "cases": 90,
           "p25": 19.0,
           "median": 99.0,
           "p75": 110.0
         },
         {
           "period": "2025-05",
-          "cases": 132,
+          "cases": 131,
           "p25": 26.0,
           "median": 121.0,
           "p75": 226.0
         },
         {
           "period": "2025-06",
-          "cases": 118,
+          "cases": 115,
           "p25": 18.0,
           "median": 103.0,
           "p75": 124.0
         },
         {
           "period": "2025-07",
-          "cases": 72,
+          "cases": 70,
           "p25": 10.0,
           "median": 83.0,
           "p75": 86.0
         },
         {
           "period": "2025-08",
-          "cases": 70,
+          "cases": 69,
           "p25": 15.0,
           "median": 47.0,
           "p75": 77.0
         },
         {
           "period": "2025-09",
-          "cases": 38,
+          "cases": 37,
           "p25": 19.0,
           "median": 39.0,
           "p75": 70.0
@@ -807,14 +807,14 @@
         },
         {
           "period": "2025-05",
-          "cases": 75,
+          "cases": 74,
           "p25": 9.0,
           "median": 36.0,
           "p75": 55.0
         },
         {
           "period": "2025-06",
-          "cases": 68,
+          "cases": 67,
           "p25": 3.0,
           "median": 22.0,
           "p75": 25.0
@@ -1050,7 +1050,7 @@
         },
         {
           "period": "2025-04",
-          "cases": 10,
+          "cases": 9,
           "p25": 0.0,
           "median": 3.0,
           "p75": 10.0
@@ -1293,14 +1293,14 @@
         },
         {
           "period": "2025-03",
-          "cases": 28,
+          "cases": 27,
           "p25": 1.0,
           "median": 3.0,
           "p75": 14.0
         },
         {
           "period": "2025-04",
-          "cases": 44,
+          "cases": 43,
           "p25": 1.0,
           "median": 4.0,
           "p75": 10.0
@@ -1321,7 +1321,7 @@
         },
         {
           "period": "2025-07",
-          "cases": 2,
+          "cases": 1,
           "p25": 8.0,
           "median": 12.0,
           "p75": 14.0
@@ -1411,14 +1411,14 @@
         },
         {
           "period": "2025-02",
-          "cases": 35,
+          "cases": 34,
           "p25": 16.0,
           "median": 21.0,
           "p75": 25.0
         },
         {
           "period": "2025-03",
-          "cases": 52,
+          "cases": 50,
           "p25": 10.0,
           "median": 15.0,
           "p75": 22.0
@@ -1432,14 +1432,14 @@
         },
         {
           "period": "2025-05",
-          "cases": 48,
+          "cases": 47,
           "p25": 8.0,
           "median": 28.0,
           "p75": 32.0
         },
         {
           "period": "2025-06",
-          "cases": 39,
+          "cases": 37,
           "p25": 5.0,
           "median": 18.0,
           "p75": 40.0
@@ -1793,7 +1793,7 @@
         },
         {
           "period": "2025-03",
-          "cases": 3,
+          "cases": 2,
           "p25": 1.0,
           "median": 1.0,
           "p75": 11.0
@@ -1918,7 +1918,7 @@
         },
         {
           "period": "2025-03",
-          "cases": 7,
+          "cases": 6,
           "p25": 1.0,
           "median": 4.0,
           "p75": 4.0
@@ -1939,7 +1939,7 @@
         },
         {
           "period": "2025-06",
-          "cases": 10,
+          "cases": 9,
           "p25": 1.0,
           "median": 1.0,
           "p75": 4.0
@@ -2029,7 +2029,7 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 20,
+          "cases": 18,
           "p25": 0.0,
           "median": 0.0,
           "p75": 4.0
@@ -2043,7 +2043,7 @@
         },
         {
           "period": "2025-03",
-          "cases": 10,
+          "cases": 9,
           "p25": 0.0,
           "median": 0.0,
           "p75": 0.0
@@ -2182,14 +2182,14 @@
         },
         {
           "period": "2025-05",
-          "cases": 23,
+          "cases": 22,
           "p25": 1.0,
           "median": 3.0,
           "p75": 13.0
         },
         {
           "period": "2025-06",
-          "cases": 8,
+          "cases": 7,
           "p25": 0.0,
           "median": 1.0,
           "p75": 12.0
@@ -2396,7 +2396,7 @@
     {
       "municipality_code": "50568",
       "municipality_name": "Puerto Gaitán",
-      "cases_t": 12,
+      "cases_t": 10,
       "endemic_zone_t": "ALERTA",
       "p25": 2.0,
       "median": 8.0,
@@ -2404,7 +2404,7 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 39,
+          "cases": 38,
           "p25": 8.0,
           "median": 9.0,
           "p75": 13.0
@@ -2425,14 +2425,14 @@
         },
         {
           "period": "2025-04",
-          "cases": 72,
+          "cases": 70,
           "p25": 7.0,
           "median": 18.0,
           "p75": 34.0
         },
         {
           "period": "2025-05",
-          "cases": 92,
+          "cases": 90,
           "p25": 9.0,
           "median": 23.0,
           "p75": 50.0
@@ -2467,7 +2467,7 @@
         },
         {
           "period": "2025-10",
-          "cases": 12,
+          "cases": 10,
           "p25": 2.0,
           "median": 8.0,
           "p75": 18.0
@@ -2543,7 +2543,7 @@
         },
         {
           "period": "2025-03",
-          "cases": 42,
+          "cases": 41,
           "p25": 7.0,
           "median": 9.0,
           "p75": 19.0
@@ -2578,7 +2578,7 @@
         },
         {
           "period": "2025-08",
-          "cases": 39,
+          "cases": 38,
           "p25": 9.0,
           "median": 14.0,
           "p75": 23.0
@@ -2675,7 +2675,7 @@
         },
         {
           "period": "2025-04",
-          "cases": 8,
+          "cases": 7,
           "p25": 0.0,
           "median": 1.0,
           "p75": 2.0
@@ -2689,7 +2689,7 @@
         },
         {
           "period": "2025-06",
-          "cases": 4,
+          "cases": 3,
           "p25": 1.0,
           "median": 1.0,
           "p75": 4.0
@@ -2925,21 +2925,21 @@
         },
         {
           "period": "2025-04",
-          "cases": 42,
+          "cases": 41,
           "p25": 4.0,
           "median": 6.0,
           "p75": 8.0
         },
         {
           "period": "2025-05",
-          "cases": 35,
+          "cases": 34,
           "p25": 5.0,
           "median": 12.0,
           "p75": 21.0
         },
         {
           "period": "2025-06",
-          "cases": 30,
+          "cases": 29,
           "p25": 3.0,
           "median": 3.0,
           "p75": 17.0
@@ -3043,28 +3043,28 @@
         },
         {
           "period": "2025-03",
-          "cases": 20,
+          "cases": 19,
           "p25": 3.0,
           "median": 3.0,
           "p75": 4.0
         },
         {
           "period": "2025-04",
-          "cases": 14,
+          "cases": 13,
           "p25": 2.0,
           "median": 3.0,
           "p75": 6.0
         },
         {
           "period": "2025-05",
-          "cases": 10,
+          "cases": 9,
           "p25": 4.0,
           "median": 7.0,
           "p75": 18.0
         },
         {
           "period": "2025-06",
-          "cases": 8,
+          "cases": 7,
           "p25": 3.0,
           "median": 7.0,
           "p75": 17.0
@@ -3182,7 +3182,7 @@
         },
         {
           "period": "2025-05",
-          "cases": 27,
+          "cases": 26,
           "p25": 2.0,
           "median": 4.0,
           "p75": 12.0
@@ -3404,21 +3404,21 @@
       "endemic_channel_series": [
         {
           "period": "2025-01",
-          "cases": 38,
+          "cases": 37,
           "p25": 4.0,
           "median": 12.0,
           "p75": 18.0
         },
         {
           "period": "2025-02",
-          "cases": 53,
+          "cases": 52,
           "p25": 4.0,
           "median": 5.0,
           "p75": 19.0
         },
         {
           "period": "2025-03",
-          "cases": 52,
+          "cases": 51,
           "p25": 7.0,
           "median": 15.0,
           "p75": 16.0
@@ -3543,14 +3543,14 @@
         },
         {
           "period": "2025-03",
-          "cases": 58,
+          "cases": 56,
           "p25": 2.0,
           "median": 2.0,
           "p75": 10.0
         },
         {
           "period": "2025-04",
-          "cases": 26,
+          "cases": 25,
           "p25": 2.0,
           "median": 8.0,
           "p75": 8.0
@@ -3705,9 +3705,9 @@
         "source": "computed_from_panel",
         "onsets_detected": 27,
         "actual_onsets": 86,
-        "alerts_emitted": 266,
-        "false_alerts": 105,
-        "false_alert_ratio": 0.39473684210526316,
+        "alerts_emitted": 265,
+        "false_alerts": 104,
+        "false_alert_ratio": 0.39245283018867927,
         "onset_sensitivity": 0.313953488372093,
         "auroc": null,
         "average_precision": null,
@@ -3815,12 +3815,12 @@
         "label": "Canal endemico",
         "role": "REFERENCE",
         "source": "computed_from_panel",
-        "onsets_detected": 44,
+        "onsets_detected": 43,
         "actual_onsets": 86,
-        "alerts_emitted": 291,
-        "false_alerts": 128,
-        "false_alert_ratio": 0.43986254295532645,
-        "onset_sensitivity": 0.5116279069767442,
+        "alerts_emitted": 287,
+        "false_alerts": 126,
+        "false_alert_ratio": 0.43902439024390244,
+        "onset_sensitivity": 0.5,
         "auroc": null,
         "average_precision": null,
         "brier": null
