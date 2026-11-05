@@ -1217,6 +1217,82 @@ posteriori.
 
 ---
 
+### Tanda 7, línea O — Banco de evaluación de origen móvil
+
+**Qué motivó la línea.** El banco vigente decide con tres cortes de seis meses
+de validación, unos 165 inicios en total, y la heterogeneidad entre años es
+grande: la tasa de exceso va de 9,0 % en 2021 a 62,9 % en 2019. Concluir desde
+tres ventanas cortas es frágil, y un compañero del equipo planteó
+independientemente la misma objeción sobre otro modelo del proyecto.
+
+**Diseño.** Ventana expansiva. Para cada año objetivo se entrena con todas las
+filas evaluables cuyo objetivo cae hasta diciembre del año anterior, y se
+predicen los doce meses del año. Un reentrenamiento por año. El cupo de alertas
+se mide con la tasa del canal en los doce meses previos al primer origen del
+año, nunca sobre el año que se evalúa. **2025 no se toca**: es evidencia
+consumida y su medición es de un solo tiro.
+
+Esto lleva la evaluación de ~165 inicios en tres cortes a **647 inicios en
+siete años**.
+
+#### Resultado: el instrumento funciona y confirma el bloque G con mucha más evidencia
+
+Acumulado 2018–2024, T+1, inicios detectados y falsas por inicio:
+
+| | Inicios | Cobertura | Falsas/acierto |
+| --- | --- | --- | --- |
+| Canal endémico | 181 de 647 | 28 % | **2,92** |
+| Persistencia | 0 de 647 | 0 % | — |
+| Vigente, 29 variables | 388 de 647 | 60 % | 3,72 |
+| **Vigente + bloque G** | **467 de 647** | **72 %** | **2,92** |
+
+**El modelo con G anticipa 2,6 veces más inicios que el canal, al mismo costo
+por acierto.** Con tres semillas: 465, 466 y 467 inicios, con costo 2,92 a
+2,94. La diferencia no es ruido.
+
+Y el bloque G aporta de verdad sobre el vigente —467 contra 388 inicios **y**
+2,92 contra 3,72 de costo—, que es lo que la tanda 5 había medido sobre tres
+cortes y ahora se sostiene sobre siete años.
+
+Año por año en T+1, el modelo con G supera al canal **en inicios los siete
+años**, y en los dos ejes a la vez en cuatro de siete:
+
+| Año | Inicios reales | Canal | Vigente + G |
+| --- | --- | --- | --- |
+| 2018 | 91 | 20 · 3,20 | **43 · 1,79** |
+| 2019 | 118 | 32 · 2,50 | **84 · 0,93** |
+| 2020 | 69 | 18 · 5,44 | 68 · 6,96 |
+| 2021 | 52 | 10 · 3,50 | 33 · 6,64 |
+| 2022 | 89 | 24 · 3,08 | **31 · 1,03** |
+| 2023 | 125 | 35 · 2,20 | **105 · 1,16** |
+| 2024 | 103 | 42 · 2,40 | 103 · 3,53 |
+
+**Dónde pierde, y conviene mirarlo.** En 2020 y 2021 detecta mucho más pero
+paga más por acierto. Son los dos años de pandemia, con la vigilancia
+distorsionada y el cupo del canal disparado —541 y 252 alertas—. En 2024
+también paga más, aunque detecta 103 de 103.
+
+**T+2, informativo.** El modelo con G detecta 345 de 647 contra 258 del canal,
+pero a 3,25 falsas por acierto contra 2,51. Detecta más, pagando más. La línea
+L sigue sin la evidencia que pedía.
+
+#### Qué no demuestra esto
+
+El banco es un arnés propio de experimentación, **no el pipeline del
+proyecto**: reconstruye la ventana expansiva sobre la matriz preparada
+publicada, con el bloque G calculado desde el panel. Que un tercero corra la
+misma validación sobre el pipeline real es el control que falta, y es el que
+convierte esto en un resultado del proyecto y no en un resultado nuestro.
+
+Tampoco toca el bloque congelado de 2025. La medición contra ese bloque sigue
+siendo de un solo tiro y sigue sin hacerse.
+
+**Línea O: confirmada como instrumento.** El banco nuevo reproduce en signo las
+conclusiones de las tandas 1 a 6 y las sostiene con ocho veces más inicios. No
+las invierte, que era el riesgo declarado al preinscribirla.
+
+---
+
 ## 6. Estado de las líneas de trabajo
 
 | Línea | Estado |
@@ -1237,7 +1313,7 @@ posteriori.
 | M1. Amplitud de la banda del canal | **Cerrada**: rechazada en la tanda 6; separa pero no aporta sobre G |
 | M2. Volatilidad realizada del municipio | **Cerrada**: rechazada en la tanda 6; no separa dentro del municipio |
 | N. Repartir el trabajo con el canal | **Cerrada**: rechazada en la tanda 7; el modelo con G ya no necesita al canal |
-| O. Banco de evaluación de origen móvil | Preinscrita, pendiente de correr |
+| O. Banco de evaluación de origen móvil | **Confirmada** en la tanda 7; sostiene G sobre 647 inicios en siete años |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres

@@ -55,6 +55,8 @@ porque mezcladas en una sola página ninguna se leía entera.
 - el desempeño de cada candidato evaluado frente al **canal endémico**, que es
   la regla con la que hoy se vigila, y frente a la línea base que declaró la
   evaluación;
+- un **retroanálisis de ventana expansiva** sobre 2018–2024, en su propia
+  sección, que mide 647 brotes en siete años en vez de 86 en doce meses;
 - el contexto histórico de desempeño del procedimiento evaluado.
 
 ### Qué no hace, y por qué
@@ -553,6 +555,7 @@ evaluación congelada que el repositorio científico identifica como la corrida
 | Probabilidad calibrada y decisión por municipio, mes y horizonte | `predictions.csv` de la evaluación |
 | Desempeño del procedimiento (AUROC, AP, Brier, falsas alertas, sensibilidad) | `comparison.csv` de la evaluación |
 | Fila de referencia del canal endémico en la comparación | se calcula al publicar, sobre `panel.csv` |
+| Retroanálisis de ventana expansiva 2018–2024 | `datos/retro/ventana_expansiva.json` |
 
 Esa última fila es la única del bloque `comparison` que no sale de la corrida
 evaluada, y por eso viaja marcada: `role: "REFERENCE"` y
@@ -637,6 +640,33 @@ de referencia se publican en nulo. En el mes T nadie los conoce todavía, y
 mostrarlos convertiría el tablero en una vista retrospectiva disfrazada de
 pronóstico. Los percentiles sí se conservan, porque se calculan con la historia
 previa.
+
+### El retroanálisis de ventana expansiva
+
+El tablero publica una **segunda** evaluación, en su propia sección y nunca
+mezclada con la anterior. La corrida congelada mide doce meses de 2025 con 86
+brotes que empezaron; el retroanálisis mide **2018 a 2024 con 647**,
+reentrenando cada año con toda la historia previa y prediciendo el año
+siguiente. Son dos evaluaciones distintas, sobre periodos y filas distintos, y
+sus cifras no se suman.
+
+Existe porque doce meses no distinguen diferencias que siete años sí: la tasa
+de exceso del panel va de 9,0 % en 2021 a 62,9 % en 2019, y concluir desde una
+sola ventana es frágil.
+
+Dos cosas van declaradas en pantalla y no en una nota al pie:
+
+- **Su procedencia.** El campo `provenance` vale `experimental_harness`: lo
+  produjo el banco de experimentación del proyecto y **no la tubería
+  científica**. No es todavía un resultado del procedimiento evaluado y no
+  cambia su estado de gobernanza. Que un tercero reproduzca la misma validación
+  sobre la tubería real es el control que falta.
+- **Que el bloque congelado de 2025 no se tocó.** El retroanálisis termina en
+  2024. La medición contra ese bloque sigue siendo de un solo tiro y sigue sin
+  hacerse.
+
+El detalle metodológico y los resultados año por año están en la bitácora, en
+la tanda 7, línea O.
 
 ### Alcance de la evaluación publicada
 

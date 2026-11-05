@@ -314,6 +314,62 @@ class CandidateComparison(ContractModel):
     brier: Probability | None
 
 
+class BacktestRow(ContractModel):
+    """Una fila del retroanalisis de ventana expansiva.
+
+    Es una evaluacion DISTINTA de la corrida congelada y nunca se mezcla con
+    ella: otro periodo, otras filas, otro numero de inicios. Va en su propio
+    bloque por eso mismo, y no como filas mas de `comparison`.
+
+    `year` nulo marca la fila acumulada del horizonte.
+    """
+
+    horizon: Horizon
+    year: Annotated[int, Field(ge=2000, le=2100)] | None = None
+    candidate: Annotated[str, Field(min_length=1, max_length=40)]
+    label: Annotated[str, Field(min_length=1, max_length=40)]
+    role: Literal["BASELINE", "PUBLISHED", "OTHER", "REFERENCE"]
+    onsets_detected: NonNegativeCount
+    actual_onsets: NonNegativeCount
+    alerts_emitted: NonNegativeCount
+    false_alerts: NonNegativeCount
+
+
+class DevelopmentBacktest(ContractModel):
+    """Retroanalisis sobre los anios de desarrollo, fuera del bloque reservado.
+
+    Existe porque la corrida congelada mide doce meses y no distingue
+    diferencias que si se ven sobre varios anios. No sustituye a la corrida
+    congelada ni se compara con ella: el bloque de 2025 es evidencia consumida
+    y aqui no se toca.
+
+    `provenance` dice de donde sale, y hoy dice `experimental_harness`: lo
+    produjo el banco de experimentacion del proyecto y no la tuberia
+    cientifica. Es una distincion que el tablero tiene que mostrar, no
+    esconder.
+    """
+
+    method: Annotated[str, Field(min_length=1, max_length=60)]
+    period_start: Month
+    period_end: Month
+    provenance: Literal["experimental_harness", "evaluation_run"]
+    seeds_checked: list[Annotated[int, Field(ge=0)]]
+    rows: list[BacktestRow]
+
+    @model_validator(mode="after")
+    def _coherente(self) -> "DevelopmentBacktest":
+        if not self.rows:
+            raise ValueError("Backtest requires at least one row")
+        if self.period_end < self.period_start:
+            raise ValueError("Backtest period must be chronological")
+        for fila in self.rows:
+            if fila.onsets_detected > fila.actual_onsets:
+                raise ValueError("Detected onsets cannot exceed real onsets")
+            if fila.false_alerts > fila.alerts_emitted:
+                raise ValueError("False alerts cannot exceed emitted alerts")
+        return self
+
+
 class EvaluationContext(ContractModel):
     """Historically scoped context, separate from current results."""
 
@@ -322,6 +378,7 @@ class EvaluationContext(ContractModel):
     # Opcional: los resultados publicados antes de noviembre de 2026 no lo
     # traen, y rechazarlos romperia la lectura de archivos ya en circulacion.
     comparison: list[CandidateComparison] | None = None
+    development_backtest: DevelopmentBacktest | None = None
 
 
 class DashboardResponse(ContractModel):

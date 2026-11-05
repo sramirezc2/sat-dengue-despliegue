@@ -330,4 +330,59 @@ describe("dashboard query integration", () => {
     expect(screen.getByRole("tab", { name: "Meta" })).toBeInTheDocument();
     expect(screen.getByLabelText("Periodo de referencia")).toBeInTheDocument();
   });
+
+  it("publica el retroanálisis separado de la corrida congelada, con su procedencia", async () => {
+    // Las dos evaluaciones miden cosas distintas -doce meses contra siete
+    // años- y juntarlas sugeriría que sus cifras son comparables. La prueba
+    // fija que viven en regiones separadas y que la procedencia se dice en
+    // pantalla en vez de quedar implícita.
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) =>
+        response(
+          String(input).includes("department_code=50") ? fixture("meta") : fixture("tolima"),
+        ),
+      ),
+    );
+    renderDashboard();
+    await screen.findByRole("region", { name: /Detalle de Ibagué/ });
+
+    fireEvent.click(screen.getByRole("tab", { name: /Qué tan bien acierta/ }));
+
+    const retro = await screen.findByRole("region", { name: /Retroanálisis/ });
+    const congelada = screen.getByRole("region", { name: /Comparación del modelo/ });
+    expect(retro).not.toContainElement(congelada);
+
+    expect(within(retro).getByText(/647 brotes que empezaron/)).toBeInTheDocument();
+    expect(within(retro).getAllByText(/467 de 647/).length).toBeGreaterThan(0);
+    expect(within(retro).getAllByText(/181 de 647/).length).toBeGreaterThan(0);
+    expect(within(retro).getByText(/no la tubería científica/)).toBeInTheDocument();
+    // El bloque congelado de 2025 no entra en esta evaluación.
+    expect(within(retro).getByText(/termina en 2024/)).toBeInTheDocument();
+  });
+
+  it("omite el retroanálisis cuando el resultado no lo trae", async () => {
+    // Los resultados publicados antes de noviembre de 2026 no lo traen y el
+    // tablero tiene que seguir leyéndolos.
+    const sinRetro = (nombre: "tolima" | "meta") => {
+      const d = structuredClone(fixture(nombre)) as DashboardResponse;
+      delete (d.evaluation_context as { development_backtest?: unknown }).development_backtest;
+      return d;
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) =>
+        response(
+          String(input).includes("department_code=50") ? sinRetro("meta") : sinRetro("tolima"),
+        ),
+      ),
+    );
+    renderDashboard();
+    await screen.findByRole("region", { name: /Detalle de Ibagué/ });
+
+    fireEvent.click(screen.getByRole("tab", { name: /Qué tan bien acierta/ }));
+
+    await screen.findByRole("region", { name: /Comparación del modelo/ });
+    expect(screen.queryByRole("region", { name: /Retroanálisis/ })).not.toBeInTheDocument();
+  });
 });

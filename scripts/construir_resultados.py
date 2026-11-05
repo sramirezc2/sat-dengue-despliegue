@@ -427,6 +427,7 @@ def construir_documento(
     umbrales: dict[str, Umbral],
     comparacion: dict[str, dict[str, str]],
     candidatos: list[dict[str, object]],
+    retroanalisis: dict[str, object] | None,
     candidato: str,
     procedimiento: str,
     version_modelo: str,
@@ -517,6 +518,7 @@ def construir_documento(
             "demonstrative_values": False,
             "evaluation_records": registros,
             "comparison": candidatos,
+            **({"development_backtest": retroanalisis} if retroanalisis else {}),
         },
     }
 
@@ -536,10 +538,27 @@ def main() -> None:
     parser.add_argument("--procedimiento", required=True, help="Identificador de la corrida")
     parser.add_argument("--version-modelo", default=None)
     parser.add_argument("--version-datos", required=True)
+    parser.add_argument(
+        "--retroanalisis",
+        type=Path,
+        default=Path("datos/retro/ventana_expansiva.json"),
+        help="Retroanalisis de ventana expansiva sobre los anios de desarrollo. "
+        "Es una evaluacion distinta de la corrida congelada y se publica en su "
+        "propio bloque; si el archivo no existe, se omite.",
+    )
     parser.add_argument("--salida", type=Path, default=Path("datos/resultados"))
     args = parser.parse_args()
 
     panel = leer_panel(args.panel)
+    retroanalisis = None
+    if args.retroanalisis and args.retroanalisis.exists():
+        with args.retroanalisis.open(encoding="utf-8") as fh:
+            retroanalisis = json.load(fh)
+        acumuladas = [r for r in retroanalisis["rows"] if r.get("year") is None]
+        print(f"Retroanalisis: {args.retroanalisis}, {len(retroanalisis['rows'])} filas, "
+              f"{len(acumuladas)} acumuladas, procedencia {retroanalisis['provenance']}")
+    else:
+        print("Retroanalisis: ausente, se publica sin ese bloque")
     if args.candidato == "auto":
         candidato, motivo = elegir_candidato(args.comparacion)
         print(f"Candidato elegido por criterio: {candidato}")
@@ -581,6 +600,7 @@ def main() -> None:
                 umbrales=umbrales,
                 comparacion=comparacion,
                 candidatos=candidatos,
+                retroanalisis=retroanalisis,
                 candidato=args.candidato,
                 procedimiento=args.procedimiento,
                 version_modelo=version_modelo,

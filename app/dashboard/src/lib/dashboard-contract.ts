@@ -170,6 +170,46 @@ const candidateComparisonSchema = z
   })
   .strict();
 
+/** Retroanalisis de ventana expansiva sobre los anios de desarrollo.
+ *
+ *  Va en su propio bloque y no como filas mas de `comparison`, a proposito:
+ *  es otra evaluacion, sobre otro periodo y otras filas, y mezclarlas en una
+ *  tabla seria exactamente la tergiversacion que el resto del tablero evita.
+ *  `year` nulo marca la fila acumulada del horizonte. */
+const backtestRowSchema = z
+  .object({
+    horizon: z.enum(["T1", "T2"]),
+    year: z.number().int().min(2000).max(2100).nullable().default(null),
+    candidate: z.string().min(1).max(40),
+    label: z.string().min(1).max(40),
+    role: z.enum(["BASELINE", "PUBLISHED", "OTHER", "REFERENCE"]),
+    onsets_detected: z.number().int().nonnegative(),
+    actual_onsets: z.number().int().nonnegative(),
+    alerts_emitted: z.number().int().nonnegative(),
+    false_alerts: z.number().int().nonnegative(),
+  })
+  .strict()
+  .refine((r) => r.onsets_detected <= r.actual_onsets, {
+    message: "detected onsets exceed real onsets",
+  })
+  .refine((r) => r.false_alerts <= r.alerts_emitted, {
+    message: "false alerts exceed emitted alerts",
+  });
+
+const developmentBacktestSchema = z
+  .object({
+    method: z.string().min(1).max(60),
+    period_start: month,
+    period_end: month,
+    provenance: z.enum(["experimental_harness", "evaluation_run"]),
+    seeds_checked: z.array(z.number().int().nonnegative()),
+    rows: z.array(backtestRowSchema).min(1),
+  })
+  .strict()
+  .refine((b) => b.period_start <= b.period_end, {
+    message: "backtest period is not chronological",
+  });
+
 export const dashboardResponseSchema = z
   .object({
     metadata: z
@@ -206,6 +246,7 @@ export const dashboardResponseSchema = z
         // no lo traen, y un tablero que se cae ante un archivo viejo es peor
         // que uno que oculta una sección.
         comparison: z.array(candidateComparisonSchema).optional(),
+        development_backtest: developmentBacktestSchema.optional(),
       })
       .strict(),
   })

@@ -71,7 +71,30 @@ const NOMBRE_CANDIDATO: Record<string, string> = {
   xgboost: "XGBoost",
   lightgbm: "LightGBM",
   gam: "GAM",
+  vigente: "Modelo sin el margen",
+  vigente_mas_g: "Modelo con el margen",
 };
+
+/** Una fila del retroanalisis de ventana expansiva. `year` nulo = acumulado. */
+export interface FilaRetro {
+  horizon: "T+1" | "T+2";
+  year: number | null;
+  candidate: string;
+  label: string;
+  role: "BASELINE" | "PUBLISHED" | "OTHER" | "REFERENCE";
+  detected: number;
+  onsets: number;
+  alerts: number;
+  falseAlerts: number;
+}
+
+export interface Retroanalisis {
+  desde: string;
+  hasta: string;
+  semillas: number[];
+  propio: boolean;
+  filas: FilaRetro[];
+}
 
 export interface HistoryRecord {
   horizon: "T+1" | "T+2";
@@ -110,6 +133,7 @@ export interface DashboardViewModel {
   municipalities: Muni[];
   history: HistoryRecord[];
   candidatos: Candidato[];
+  retro: Retroanalisis | null;
 }
 
 export const DEPTS: Record<Dept, string> = { tolima: "Tolima", meta: "Meta" };
@@ -164,6 +188,8 @@ const MODEL_LABELS: Record<string, string> = {
   xgboost: "XGBoost",
   lightgbm: "LightGBM",
   gam: "GAM",
+  vigente: "Modelo sin el margen",
+  vigente_mas_g: "Modelo con el margen",
 };
 
 function formatModelName(model: string | null): string | null {
@@ -282,6 +308,28 @@ export function adaptDashboardResponse(response: DashboardResponse): DashboardVi
       sensitivity: c.onset_sensitivity,
       falseAlertRatio: c.false_alert_ratio,
     })),
+    retro: response.evaluation_context.development_backtest
+      ? {
+          desde: response.evaluation_context.development_backtest.period_start,
+          hasta: response.evaluation_context.development_backtest.period_end,
+          semillas: response.evaluation_context.development_backtest.seeds_checked,
+          // Hoy siempre cierto: lo produjo el banco de experimentacion del
+          // proyecto y no la tuberia cientifica. La pantalla lo dice.
+          propio:
+            response.evaluation_context.development_backtest.provenance === "experimental_harness",
+          filas: response.evaluation_context.development_backtest.rows.map((r) => ({
+            horizon: r.horizon === "T1" ? ("T+1" as const) : ("T+2" as const),
+            year: r.year,
+            candidate: r.candidate,
+            label: NOMBRE_CANDIDATO[r.candidate] ?? r.label,
+            role: r.role,
+            detected: r.onsets_detected,
+            onsets: r.actual_onsets,
+            alerts: r.alerts_emitted,
+            falseAlerts: r.false_alerts,
+          })),
+        }
+      : null,
     history: response.evaluation_context.evaluation_records.map((record) => ({
       horizon: record.horizon === "T1" ? "T+1" : "T+2",
       procedureId: record.procedure_id,

@@ -51,6 +51,7 @@ import { MunicipalMap } from "@/components/municipal-map";
 import { TablaTriaje } from "@/components/tabla-triaje";
 import { DetalleMunicipio } from "@/components/detalle-municipio";
 import { ComparacionModelo } from "@/components/comparacion-modelo";
+import { Retroanalisis } from "@/components/retroanalisis";
 import { useDashboard } from "@/lib/use-dashboard";
 import { DashboardClientError } from "@/lib/dashboard-client";
 import { etiquetaPeriodo, usePeriodos } from "@/lib/periodos";
@@ -374,6 +375,7 @@ export function Dashboard() {
             className="space-y-5"
           >
             <ComparacionModelo view={view} />
+            <Retroanalisis view={view} />
             <HistoryCard view={view} />
           </div>
         )}
