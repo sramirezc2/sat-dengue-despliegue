@@ -332,7 +332,29 @@ class BacktestRow(ContractModel):
     onsets_detected: NonNegativeCount
     actual_onsets: NonNegativeCount
     alerts_emitted: NonNegativeCount
+    # Dos cuentas de falsas, a proposito. `false_alerts` cuenta contra EXCESO,
+    # que es como lo hace la corrida congelada, y favorece al canal: una
+    # alerta sobre un municipio que ya esta en exceso cuenta como verdadera
+    # aunque no anticipe nada. `false_alerts_onset` cuenta contra INICIO, que
+    # es lo que el sistema dice querer anticipar. La pantalla usa la segunda y
+    # conserva la primera para poder comparar con la corrida congelada.
     false_alerts: NonNegativeCount
+    false_alerts_onset: NonNegativeCount
+
+
+class BacktestCurvePoint(ContractModel):
+    """Un punto de la curva de deteccion contra volumen de alertas.
+
+    Existe porque un solo punto de operacion no zanja una comparacion: dos
+    personas midiendo el mismo modelo a volumenes distintos sacan conclusiones
+    distintas y las dos tienen razon en su punto. La curva hace visible de que
+    depende la ventaja.
+    """
+
+    horizon: Horizon
+    candidate: Annotated[str, Field(min_length=1, max_length=40)]
+    alerts_emitted: NonNegativeCount
+    onsets_detected: NonNegativeCount
 
 
 class DevelopmentBacktest(ContractModel):
@@ -355,6 +377,7 @@ class DevelopmentBacktest(ContractModel):
     provenance: Literal["experimental_harness", "evaluation_run"]
     seeds_checked: list[Annotated[int, Field(ge=0)]]
     rows: list[BacktestRow]
+    curve: list[BacktestCurvePoint] = []
 
     @model_validator(mode="after")
     def _coherente(self) -> "DevelopmentBacktest":
@@ -367,6 +390,15 @@ class DevelopmentBacktest(ContractModel):
                 raise ValueError("Detected onsets cannot exceed real onsets")
             if fila.false_alerts > fila.alerts_emitted:
                 raise ValueError("False alerts cannot exceed emitted alerts")
+            if fila.false_alerts_onset > fila.alerts_emitted:
+                raise ValueError("Onset-based false alerts cannot exceed emitted alerts")
+            if fila.false_alerts_onset < fila.false_alerts:
+                raise ValueError(
+                    "Onset-based false alerts cannot be fewer than excess-based ones"
+                )
+        for punto in self.curve:
+            if punto.onsets_detected > punto.alerts_emitted:
+                raise ValueError("Curve detects more onsets than alerts emitted")
         return self
 
 

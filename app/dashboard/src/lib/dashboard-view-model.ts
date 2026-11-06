@@ -73,6 +73,7 @@ const NOMBRE_CANDIDATO: Record<string, string> = {
   gam: "GAM",
   vigente: "Modelo sin el margen",
   vigente_mas_g: "Modelo con el margen",
+  endemic_channel_tuned: "Canal con umbral ajustado",
 };
 
 /** Una fila del retroanalisis de ventana expansiva. `year` nulo = acumulado. */
@@ -85,7 +86,18 @@ export interface FilaRetro {
   detected: number;
   onsets: number;
   alerts: number;
+  /** Contra exceso. Favorece al canal y se conserva solo para comparar con la
+   *  corrida congelada; la pantalla no la usa. */
   falseAlerts: number;
+  /** Contra inicio, que es lo que el sistema dice querer anticipar. */
+  falseAlertsOnset: number;
+}
+
+export interface PuntoCurva {
+  horizon: "T+1" | "T+2";
+  candidate: string;
+  alerts: number;
+  detected: number;
 }
 
 export interface Retroanalisis {
@@ -94,6 +106,7 @@ export interface Retroanalisis {
   semillas: number[];
   propio: boolean;
   filas: FilaRetro[];
+  curva: PuntoCurva[];
 }
 
 export interface HistoryRecord {
@@ -327,6 +340,13 @@ export function adaptDashboardResponse(response: DashboardResponse): DashboardVi
             onsets: r.actual_onsets,
             alerts: r.alerts_emitted,
             falseAlerts: r.false_alerts,
+            falseAlertsOnset: r.false_alerts_onset,
+          })),
+          curva: (response.evaluation_context.development_backtest.curve ?? []).map((p) => ({
+            horizon: p.horizon === "T1" ? ("T+1" as const) : ("T+2" as const),
+            candidate: p.candidate,
+            alerts: p.alerts_emitted,
+            detected: p.onsets_detected,
           })),
         }
       : null,

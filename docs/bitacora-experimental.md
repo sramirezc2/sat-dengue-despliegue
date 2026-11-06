@@ -1293,6 +1293,104 @@ las invierte, que era el riesgo declarado al preinscribirla.
 
 ---
 
+### Tanda 8, línea P — El canal con umbral ajustado, y una métrica sesgada propia
+
+**Origen.** Una crítica de un integrante del equipo al retroanálisis de la
+tanda 7, al día siguiente de compartir el repositorio. Sostuvo que buena parte
+de la ventaja del modelo venía del volumen de alertas, que la línea base
+correcta era un canal con el umbral ajustado, y que la ventaja real estaba más
+cerca del 10–17 % que del 2,6×.
+
+**Lo primero que hay que decir: replicó la etiqueta de forma independiente** y
+obtuvo 644 inicios contra nuestros 647, y 180 detectados por el canal contra
+nuestros 181. Esa coincidencia es la mejor evidencia de que el arnés de
+evaluación está bien construido, y vale más que cualquier discusión posterior.
+
+#### Tenía razón en lo que importa
+
+Ajustar el umbral del canal —alertar a una fracción del P75, elegida sobre el
+año anterior— lo lleva de **181 a 365 inicios anticipados de 647** en T+1. Más
+del doble, con la misma regla y sin modelo.
+
+Es un hallazgo del proyecto y no una nota al margen: **buena parte de lo que le
+falta al canal endémico no es el método, es que su umbral está puesto para
+confirmar un brote en curso y no para anticipar uno nuevo.** Para una
+secretaría de salud eso es accionable mañana, sin modelo, sin pipeline y sin
+gobernanza.
+
+El canal ajustado pasa a ser la tercera línea base publicada, junto al canal
+estándar y la persistencia.
+
+#### Y destapó, por otra vía, un defecto nuestro
+
+La tanda 7 reportó «2,92 falsas por acierto» tanto para el canal como para el
+modelo y lo presentó como empate al mismo costo. Esa cifra cuenta las falsas
+contra **exceso**, no contra **inicio**: una alerta sobre un municipio que ya
+está en exceso cuenta como acertada aunque no anticipe nada, y el canal alerta
+justamente ahí.
+
+**Es el tercer defecto que la propuesta de política v2 de este mismo
+repositorio le señala a la compuerta G5, colado en nuestra propia
+comparación.** Con las dos cuentas, T+1 acumulado:
+
+| | Falsas por acierto, contra exceso | Contra inicio |
+| --- | --- | --- |
+| Canal endémico | 2,92 | **11,15** |
+| Canal con umbral ajustado | 3,76 | **8,02** |
+| Modelo sin el margen | 3,72 | **3,77** |
+| Modelo con el margen | 2,92 | **2,97** |
+
+La métrica sesgada favorecía al canal y aun así empataba. Corregida, la
+distancia es de 2,97 contra 11,15. El tablero pasa a publicar la cuenta contra
+inicio y conserva la otra en el contrato para poder compararse con la corrida
+congelada.
+
+#### Donde la crítica no se sostiene, y por qué los dos teníamos razón
+
+Su conclusión era que la ventaja real ronda el 10–17 %. Las cifras discrepaban
+porque cada uno medía en un **punto de operación distinto**, no porque alguno
+midiera mal. La comparación honesta no es un punto sino la curva entera.
+
+Inicios anticipados a igual volumen de alertas, T+1, 647 inicios reales:
+
+| Alertas | Canal | Modelo sin G | Modelo con G | Ventaja sobre el canal |
+| --- | --- | --- | --- | --- |
+| 1 000 | 41 | 278 | **399** | +874 % |
+| 1 852 | 121 | 445 | **547** | +352 % |
+| 2 200 (canal de hoy) | 181 | 492 | **578** | +220 % |
+| 3 294 (canal ajustado) | 390 | 587 | **622** | +60 % |
+| 4 000 | 446 | 615 | **635** | +42 % |
+
+**A igual volumen el modelo queda por encima del canal en todo el rango.** La
+ventaja se encoge al subir el volumen —al final todo converge, porque alertar
+sobre todo detecta todo— pero no desaparece: +42 % incluso a 4 000 alertas. Y
+el modelo alcanza la detección del canal ajustado con cerca de un tercio de las
+alertas.
+
+También queda claro que el volumen no explicaba la ventaja original: el modelo
+emitía **1 852 alertas contra 2 200 del canal**, menos y no más.
+
+#### Lecciones de método
+
+**Una métrica que uno mismo declaró defectuosa no deja de serlo porque la use
+uno.** La política v2 le achaca a la compuerta G5 medir el acierto contra
+exceso mientras mide la sensibilidad contra inicio. Escribimos eso y después lo
+repetimos en nuestra propia comparación. Revisar los artefactos propios contra
+las críticas que uno le hace a los ajenos debería ser parte del cierre de cada
+tanda.
+
+**Un punto de operación no es una comparación.** Dos personas midiendo el mismo
+modelo a volúmenes distintos sacan conclusiones distintas y las dos tienen
+razón en su punto. Lo que se publica ahora es la curva.
+
+**La revisión externa encontró en un día lo que nosotros no vimos en siete
+tandas.** Es el tercer caso en dos días en que una revisión independiente
+—primero un auditor sobre el código, ahora un integrante sobre el método—
+encuentra un defecto real. Lo que no lo encontró nunca fue releer el propio
+trabajo.
+
+---
+
 ## 6. Estado de las líneas de trabajo
 
 | Línea | Estado |
@@ -1314,6 +1412,7 @@ las invierte, que era el riesgo declarado al preinscribirla.
 | M2. Volatilidad realizada del municipio | **Cerrada**: rechazada en la tanda 6; no separa dentro del municipio |
 | N. Repartir el trabajo con el canal | **Cerrada**: rechazada en la tanda 7; el modelo con G ya no necesita al canal |
 | O. Banco de evaluación de origen móvil | **Confirmada** en la tanda 7; sostiene G sobre 647 inicios en siete años |
+| P. Canal con umbral ajustado como línea base | **Confirmada** en la tanda 8; lleva al canal de 181 a 365 inicios y pasa a ser línea base publicada |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres

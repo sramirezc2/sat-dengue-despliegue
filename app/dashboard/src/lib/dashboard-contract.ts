@@ -186,7 +186,10 @@ const backtestRowSchema = z
     onsets_detected: z.number().int().nonnegative(),
     actual_onsets: z.number().int().nonnegative(),
     alerts_emitted: z.number().int().nonnegative(),
+    // `false_alerts` cuenta contra exceso y favorece al canal; la pantalla usa
+    // `false_alerts_onset`, que cuenta contra lo que se quiere anticipar.
     false_alerts: z.number().int().nonnegative(),
+    false_alerts_onset: z.number().int().nonnegative(),
   })
   .strict()
   .refine((r) => r.onsets_detected <= r.actual_onsets, {
@@ -194,6 +197,24 @@ const backtestRowSchema = z
   })
   .refine((r) => r.false_alerts <= r.alerts_emitted, {
     message: "false alerts exceed emitted alerts",
+  })
+  .refine((r) => r.false_alerts_onset <= r.alerts_emitted, {
+    message: "onset-based false alerts exceed emitted alerts",
+  })
+  .refine((r) => r.false_alerts_onset >= r.false_alerts, {
+    message: "onset-based false alerts cannot be fewer than excess-based ones",
+  });
+
+const backtestCurvePointSchema = z
+  .object({
+    horizon: z.enum(["T1", "T2"]),
+    candidate: z.string().min(1).max(40),
+    alerts_emitted: z.number().int().nonnegative(),
+    onsets_detected: z.number().int().nonnegative(),
+  })
+  .strict()
+  .refine((p) => p.onsets_detected <= p.alerts_emitted, {
+    message: "curve detects more onsets than alerts emitted",
   });
 
 const developmentBacktestSchema = z
@@ -204,6 +225,7 @@ const developmentBacktestSchema = z
     provenance: z.enum(["experimental_harness", "evaluation_run"]),
     seeds_checked: z.array(z.number().int().nonnegative()),
     rows: z.array(backtestRowSchema).min(1),
+    curve: z.array(backtestCurvePointSchema).default([]),
   })
   .strict()
   .refine((b) => b.period_start <= b.period_end, {

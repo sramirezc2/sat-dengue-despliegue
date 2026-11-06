@@ -2,8 +2,8 @@
   "metadata": {
     "result_set_id": "c47f6415-024e-50ce-a245-ebf3ed6635a6",
     "reference_period": "2025-10",
-    "generated_at": "2026-11-05T04:19:45+00:00",
-    "data_updated_at": "2026-11-05T04:19:45+00:00",
+    "generated_at": "2026-11-06T15:19:32+00:00",
+    "data_updated_at": "2026-11-06T15:19:32+00:00",
     "data_version": "g5-frozen-2025"
   },
   "governance": {
@@ -6112,7 +6112,20 @@
           "onsets_detected": 20,
           "actual_onsets": 91,
           "alerts_emitted": 162,
-          "false_alerts": 64
+          "false_alerts": 64,
+          "false_alerts_onset": 142
+        },
+        {
+          "horizon": "T1",
+          "year": 2018,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 39,
+          "actual_onsets": 91,
+          "alerts_emitted": 237,
+          "false_alerts": 114,
+          "false_alerts_onset": 198
         },
         {
           "horizon": "T1",
@@ -6123,7 +6136,8 @@
           "onsets_detected": 0,
           "actual_onsets": 91,
           "alerts_emitted": 159,
-          "false_alerts": 74
+          "false_alerts": 74,
+          "false_alerts_onset": 159
         },
         {
           "horizon": "T1",
@@ -6134,7 +6148,8 @@
           "onsets_detected": 24,
           "actual_onsets": 91,
           "alerts_emitted": 120,
-          "false_alerts": 96
+          "false_alerts": 96,
+          "false_alerts_onset": 96
         },
         {
           "horizon": "T1",
@@ -6145,7 +6160,8 @@
           "onsets_detected": 43,
           "actual_onsets": 91,
           "alerts_emitted": 120,
-          "false_alerts": 77
+          "false_alerts": 77,
+          "false_alerts_onset": 77
         },
         {
           "horizon": "T1",
@@ -6156,7 +6172,20 @@
           "onsets_detected": 32,
           "actual_onsets": 118,
           "alerts_emitted": 541,
-          "false_alerts": 80
+          "false_alerts": 80,
+          "false_alerts_onset": 509
+        },
+        {
+          "horizon": "T1",
+          "year": 2019,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 64,
+          "actual_onsets": 118,
+          "alerts_emitted": 656,
+          "false_alerts": 148,
+          "false_alerts_onset": 592
         },
         {
           "horizon": "T1",
@@ -6167,7 +6196,8 @@
           "onsets_detected": 0,
           "actual_onsets": 118,
           "alerts_emitted": 536,
-          "false_alerts": 91
+          "false_alerts": 91,
+          "false_alerts_onset": 536
         },
         {
           "horizon": "T1",
@@ -6178,7 +6208,8 @@
           "onsets_detected": 65,
           "actual_onsets": 118,
           "alerts_emitted": 162,
-          "false_alerts": 97
+          "false_alerts": 97,
+          "false_alerts_onset": 97
         },
         {
           "horizon": "T1",
@@ -6189,7 +6220,8 @@
           "onsets_detected": 84,
           "actual_onsets": 118,
           "alerts_emitted": 162,
-          "false_alerts": 78
+          "false_alerts": 78,
+          "false_alerts_onset": 78
         },
         {
           "horizon": "T1",
@@ -6200,7 +6232,20 @@
           "onsets_detected": 18,
           "actual_onsets": 69,
           "alerts_emitted": 252,
-          "false_alerts": 98
+          "false_alerts": 98,
+          "false_alerts_onset": 234
+        },
+        {
+          "horizon": "T1",
+          "year": 2020,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 51,
+          "actual_onsets": 69,
+          "alerts_emitted": 526,
+          "false_alerts": 335,
+          "false_alerts_onset": 475
         },
         {
           "horizon": "T1",
@@ -6211,7 +6256,8 @@
           "onsets_detected": 0,
           "actual_onsets": 69,
           "alerts_emitted": 251,
-          "false_alerts": 111
+          "false_alerts": 111,
+          "false_alerts_onset": 251
         },
         {
           "horizon": "T1",
@@ -6222,7 +6268,8 @@
           "onsets_detected": 63,
           "actual_onsets": 69,
           "alerts_emitted": 541,
-          "false_alerts": 478
+          "false_alerts": 478,
+          "false_alerts_onset": 478
         },
         {
           "horizon": "T1",
@@ -6233,7 +6280,8 @@
           "onsets_detected": 68,
           "actual_onsets": 69,
           "alerts_emitted": 541,
-          "false_alerts": 473
+          "false_alerts": 473,
+          "false_alerts_onset": 473
         },
         {
           "horizon": "T1",
@@ -6244,7 +6292,20 @@
           "onsets_detected": 10,
           "actual_onsets": 52,
           "alerts_emitted": 63,
-          "false_alerts": 35
+          "false_alerts": 35,
+          "false_alerts_onset": 53
+        },
+        {
+          "horizon": "T1",
+          "year": 2021,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 23,
+          "actual_onsets": 52,
+          "alerts_emitted": 213,
+          "false_alerts": 169,
+          "false_alerts_onset": 190
         },
         {
           "horizon": "T1",
@@ -6255,7 +6316,8 @@
           "onsets_detected": 0,
           "actual_onsets": 52,
           "alerts_emitted": 66,
-          "false_alerts": 45
+          "false_alerts": 45,
+          "false_alerts_onset": 66
         },
         {
           "horizon": "T1",
@@ -6266,7 +6328,8 @@
           "onsets_detected": 25,
           "actual_onsets": 52,
           "alerts_emitted": 252,
-          "false_alerts": 227
+          "false_alerts": 227,
+          "false_alerts_onset": 227
         },
         {
           "horizon": "T1",
@@ -6277,7 +6340,8 @@
           "onsets_detected": 33,
           "actual_onsets": 52,
           "alerts_emitted": 252,
-          "false_alerts": 219
+          "false_alerts": 219,
+          "false_alerts_onset": 219
         },
         {
           "horizon": "T1",
@@ -6288,7 +6352,20 @@
           "onsets_detected": 24,
           "actual_onsets": 89,
           "alerts_emitted": 228,
-          "false_alerts": 74
+          "false_alerts": 74,
+          "false_alerts_onset": 204
+        },
+        {
+          "horizon": "T1",
+          "year": 2022,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 39,
+          "actual_onsets": 89,
+          "alerts_emitted": 285,
+          "false_alerts": 113,
+          "false_alerts_onset": 246
         },
         {
           "horizon": "T1",
@@ -6299,7 +6376,8 @@
           "onsets_detected": 0,
           "actual_onsets": 89,
           "alerts_emitted": 219,
-          "false_alerts": 80
+          "false_alerts": 80,
+          "false_alerts_onset": 219
         },
         {
           "horizon": "T1",
@@ -6310,7 +6388,8 @@
           "onsets_detected": 23,
           "actual_onsets": 89,
           "alerts_emitted": 63,
-          "false_alerts": 40
+          "false_alerts": 40,
+          "false_alerts_onset": 40
         },
         {
           "horizon": "T1",
@@ -6321,7 +6400,8 @@
           "onsets_detected": 31,
           "actual_onsets": 89,
           "alerts_emitted": 63,
-          "false_alerts": 32
+          "false_alerts": 32,
+          "false_alerts_onset": 32
         },
         {
           "horizon": "T1",
@@ -6332,7 +6412,20 @@
           "onsets_detected": 35,
           "actual_onsets": 125,
           "alerts_emitted": 486,
-          "false_alerts": 77
+          "false_alerts": 77,
+          "false_alerts_onset": 451
+        },
+        {
+          "horizon": "T1",
+          "year": 2023,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 65,
+          "actual_onsets": 125,
+          "alerts_emitted": 627,
+          "false_alerts": 170,
+          "false_alerts_onset": 562
         },
         {
           "horizon": "T1",
@@ -6343,7 +6436,8 @@
           "onsets_detected": 0,
           "actual_onsets": 125,
           "alerts_emitted": 502,
-          "false_alerts": 109
+          "false_alerts": 109,
+          "false_alerts_onset": 502
         },
         {
           "horizon": "T1",
@@ -6354,7 +6448,8 @@
           "onsets_detected": 85,
           "actual_onsets": 125,
           "alerts_emitted": 228,
-          "false_alerts": 143
+          "false_alerts": 143,
+          "false_alerts_onset": 143
         },
         {
           "horizon": "T1",
@@ -6365,7 +6460,8 @@
           "onsets_detected": 105,
           "actual_onsets": 125,
           "alerts_emitted": 228,
-          "false_alerts": 122
+          "false_alerts": 122,
+          "false_alerts_onset": 123
         },
         {
           "horizon": "T1",
@@ -6376,7 +6472,20 @@
           "onsets_detected": 42,
           "actual_onsets": 103,
           "alerts_emitted": 468,
-          "false_alerts": 101
+          "false_alerts": 101,
+          "false_alerts_onset": 426
+        },
+        {
+          "horizon": "T1",
+          "year": 2024,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 84,
+          "actual_onsets": 103,
+          "alerts_emitted": 750,
+          "false_alerts": 323,
+          "false_alerts_onset": 666
         },
         {
           "horizon": "T1",
@@ -6387,7 +6496,8 @@
           "onsets_detected": 0,
           "actual_onsets": 103,
           "alerts_emitted": 459,
-          "false_alerts": 116
+          "false_alerts": 116,
+          "false_alerts_onset": 459
         },
         {
           "horizon": "T1",
@@ -6398,7 +6508,8 @@
           "onsets_detected": 103,
           "actual_onsets": 103,
           "alerts_emitted": 486,
-          "false_alerts": 361
+          "false_alerts": 361,
+          "false_alerts_onset": 383
         },
         {
           "horizon": "T1",
@@ -6409,7 +6520,8 @@
           "onsets_detected": 103,
           "actual_onsets": 103,
           "alerts_emitted": 486,
-          "false_alerts": 364
+          "false_alerts": 364,
+          "false_alerts_onset": 383
         },
         {
           "horizon": "T1",
@@ -6420,7 +6532,20 @@
           "onsets_detected": 181,
           "actual_onsets": 647,
           "alerts_emitted": 2200,
-          "false_alerts": 529
+          "false_alerts": 529,
+          "false_alerts_onset": 2019
+        },
+        {
+          "horizon": "T1",
+          "year": null,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 365,
+          "actual_onsets": 647,
+          "alerts_emitted": 3294,
+          "false_alerts": 1372,
+          "false_alerts_onset": 2929
         },
         {
           "horizon": "T1",
@@ -6431,7 +6556,8 @@
           "onsets_detected": 0,
           "actual_onsets": 647,
           "alerts_emitted": 2192,
-          "false_alerts": 626
+          "false_alerts": 626,
+          "false_alerts_onset": 2192
         },
         {
           "horizon": "T1",
@@ -6442,7 +6568,8 @@
           "onsets_detected": 388,
           "actual_onsets": 647,
           "alerts_emitted": 1852,
-          "false_alerts": 1442
+          "false_alerts": 1442,
+          "false_alerts_onset": 1464
         },
         {
           "horizon": "T1",
@@ -6453,7 +6580,8 @@
           "onsets_detected": 467,
           "actual_onsets": 647,
           "alerts_emitted": 1852,
-          "false_alerts": 1365
+          "false_alerts": 1365,
+          "false_alerts_onset": 1385
         },
         {
           "horizon": "T2",
@@ -6464,7 +6592,20 @@
           "onsets_detected": 35,
           "actual_onsets": 91,
           "alerts_emitted": 168,
-          "false_alerts": 75
+          "false_alerts": 75,
+          "false_alerts_onset": 133
+        },
+        {
+          "horizon": "T2",
+          "year": 2018,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 46,
+          "actual_onsets": 91,
+          "alerts_emitted": 227,
+          "false_alerts": 117,
+          "false_alerts_onset": 181
         },
         {
           "horizon": "T2",
@@ -6475,7 +6616,8 @@
           "onsets_detected": 0,
           "actual_onsets": 91,
           "alerts_emitted": 159,
-          "false_alerts": 74
+          "false_alerts": 74,
+          "false_alerts_onset": 159
         },
         {
           "horizon": "T2",
@@ -6486,7 +6628,8 @@
           "onsets_detected": 15,
           "actual_onsets": 91,
           "alerts_emitted": 121,
-          "false_alerts": 98
+          "false_alerts": 98,
+          "false_alerts_onset": 106
         },
         {
           "horizon": "T2",
@@ -6497,7 +6640,8 @@
           "onsets_detected": 32,
           "actual_onsets": 91,
           "alerts_emitted": 121,
-          "false_alerts": 71
+          "false_alerts": 71,
+          "false_alerts_onset": 89
         },
         {
           "horizon": "T2",
@@ -6508,7 +6652,20 @@
           "onsets_detected": 54,
           "actual_onsets": 118,
           "alerts_emitted": 509,
-          "false_alerts": 85
+          "false_alerts": 85,
+          "false_alerts_onset": 455
+        },
+        {
+          "horizon": "T2",
+          "year": 2019,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 69,
+          "actual_onsets": 118,
+          "alerts_emitted": 604,
+          "false_alerts": 132,
+          "false_alerts_onset": 535
         },
         {
           "horizon": "T2",
@@ -6519,7 +6676,8 @@
           "onsets_detected": 0,
           "actual_onsets": 118,
           "alerts_emitted": 536,
-          "false_alerts": 91
+          "false_alerts": 91,
+          "false_alerts_onset": 536
         },
         {
           "horizon": "T2",
@@ -6530,7 +6688,8 @@
           "onsets_detected": 31,
           "actual_onsets": 118,
           "alerts_emitted": 168,
-          "false_alerts": 69
+          "false_alerts": 69,
+          "false_alerts_onset": 137
         },
         {
           "horizon": "T2",
@@ -6541,7 +6700,8 @@
           "onsets_detected": 52,
           "actual_onsets": 118,
           "alerts_emitted": 168,
-          "false_alerts": 55
+          "false_alerts": 55,
+          "false_alerts_onset": 116
         },
         {
           "horizon": "T2",
@@ -6552,7 +6712,20 @@
           "onsets_detected": 27,
           "actual_onsets": 69,
           "alerts_emitted": 295,
-          "false_alerts": 144
+          "false_alerts": 144,
+          "false_alerts_onset": 268
+        },
+        {
+          "horizon": "T2",
+          "year": 2020,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 52,
+          "actual_onsets": 69,
+          "alerts_emitted": 600,
+          "false_alerts": 414,
+          "false_alerts_onset": 548
         },
         {
           "horizon": "T2",
@@ -6563,7 +6736,8 @@
           "onsets_detected": 0,
           "actual_onsets": 69,
           "alerts_emitted": 251,
-          "false_alerts": 111
+          "false_alerts": 111,
+          "false_alerts_onset": 251
         },
         {
           "horizon": "T2",
@@ -6574,7 +6748,8 @@
           "onsets_detected": 40,
           "actual_onsets": 69,
           "alerts_emitted": 509,
-          "false_alerts": 426
+          "false_alerts": 426,
+          "false_alerts_onset": 469
         },
         {
           "horizon": "T2",
@@ -6585,7 +6760,8 @@
           "onsets_detected": 61,
           "actual_onsets": 69,
           "alerts_emitted": 509,
-          "false_alerts": 393
+          "false_alerts": 393,
+          "false_alerts_onset": 448
         },
         {
           "horizon": "T2",
@@ -6596,7 +6772,20 @@
           "onsets_detected": 9,
           "actual_onsets": 52,
           "alerts_emitted": 68,
-          "false_alerts": 47
+          "false_alerts": 47,
+          "false_alerts_onset": 59
+        },
+        {
+          "horizon": "T2",
+          "year": 2021,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 17,
+          "actual_onsets": 52,
+          "alerts_emitted": 174,
+          "false_alerts": 142,
+          "false_alerts_onset": 157
         },
         {
           "horizon": "T2",
@@ -6607,7 +6796,8 @@
           "onsets_detected": 0,
           "actual_onsets": 52,
           "alerts_emitted": 66,
-          "false_alerts": 45
+          "false_alerts": 45,
+          "false_alerts_onset": 66
         },
         {
           "horizon": "T2",
@@ -6618,7 +6808,8 @@
           "onsets_detected": 17,
           "actual_onsets": 52,
           "alerts_emitted": 295,
-          "false_alerts": 272
+          "false_alerts": 272,
+          "false_alerts_onset": 278
         },
         {
           "horizon": "T2",
@@ -6629,7 +6820,8 @@
           "onsets_detected": 36,
           "actual_onsets": 52,
           "alerts_emitted": 295,
-          "false_alerts": 251
+          "false_alerts": 251,
+          "false_alerts_onset": 259
         },
         {
           "horizon": "T2",
@@ -6640,7 +6832,20 @@
           "onsets_detected": 29,
           "actual_onsets": 89,
           "alerts_emitted": 209,
-          "false_alerts": 82
+          "false_alerts": 82,
+          "false_alerts_onset": 180
+        },
+        {
+          "horizon": "T2",
+          "year": 2022,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 14,
+          "actual_onsets": 89,
+          "alerts_emitted": 107,
+          "false_alerts": 33,
+          "false_alerts_onset": 93
         },
         {
           "horizon": "T2",
@@ -6651,7 +6856,8 @@
           "onsets_detected": 0,
           "actual_onsets": 89,
           "alerts_emitted": 219,
-          "false_alerts": 80
+          "false_alerts": 80,
+          "false_alerts_onset": 219
         },
         {
           "horizon": "T2",
@@ -6662,7 +6868,8 @@
           "onsets_detected": 10,
           "actual_onsets": 89,
           "alerts_emitted": 68,
-          "false_alerts": 42
+          "false_alerts": 42,
+          "false_alerts_onset": 58
         },
         {
           "horizon": "T2",
@@ -6673,7 +6880,8 @@
           "onsets_detected": 20,
           "actual_onsets": 89,
           "alerts_emitted": 68,
-          "false_alerts": 31
+          "false_alerts": 31,
+          "false_alerts_onset": 48
         },
         {
           "horizon": "T2",
@@ -6684,7 +6892,20 @@
           "onsets_detected": 51,
           "actual_onsets": 125,
           "alerts_emitted": 473,
-          "false_alerts": 94
+          "false_alerts": 94,
+          "false_alerts_onset": 422
+        },
+        {
+          "horizon": "T2",
+          "year": 2023,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 71,
+          "actual_onsets": 125,
+          "alerts_emitted": 585,
+          "false_alerts": 154,
+          "false_alerts_onset": 514
         },
         {
           "horizon": "T2",
@@ -6695,7 +6916,8 @@
           "onsets_detected": 0,
           "actual_onsets": 125,
           "alerts_emitted": 502,
-          "false_alerts": 109
+          "false_alerts": 109,
+          "false_alerts_onset": 502
         },
         {
           "horizon": "T2",
@@ -6706,7 +6928,8 @@
           "onsets_detected": 44,
           "actual_onsets": 125,
           "alerts_emitted": 209,
-          "false_alerts": 96
+          "false_alerts": 96,
+          "false_alerts_onset": 165
         },
         {
           "horizon": "T2",
@@ -6717,7 +6940,8 @@
           "onsets_detected": 62,
           "actual_onsets": 125,
           "alerts_emitted": 209,
-          "false_alerts": 68
+          "false_alerts": 68,
+          "false_alerts_onset": 147
         },
         {
           "horizon": "T2",
@@ -6728,7 +6952,20 @@
           "onsets_detected": 53,
           "actual_onsets": 103,
           "alerts_emitted": 460,
-          "false_alerts": 121
+          "false_alerts": 121,
+          "false_alerts_onset": 407
+        },
+        {
+          "horizon": "T2",
+          "year": 2024,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 88,
+          "actual_onsets": 103,
+          "alerts_emitted": 743,
+          "false_alerts": 323,
+          "false_alerts_onset": 655
         },
         {
           "horizon": "T2",
@@ -6739,7 +6976,8 @@
           "onsets_detected": 0,
           "actual_onsets": 103,
           "alerts_emitted": 459,
-          "false_alerts": 116
+          "false_alerts": 116,
+          "false_alerts_onset": 459
         },
         {
           "horizon": "T2",
@@ -6750,7 +6988,8 @@
           "onsets_detected": 72,
           "actual_onsets": 103,
           "alerts_emitted": 473,
-          "false_alerts": 273
+          "false_alerts": 273,
+          "false_alerts_onset": 401
         },
         {
           "horizon": "T2",
@@ -6761,7 +7000,8 @@
           "onsets_detected": 87,
           "actual_onsets": 103,
           "alerts_emitted": 473,
-          "false_alerts": 248
+          "false_alerts": 248,
+          "false_alerts_onset": 386
         },
         {
           "horizon": "T2",
@@ -6772,7 +7012,20 @@
           "onsets_detected": 258,
           "actual_onsets": 647,
           "alerts_emitted": 2182,
-          "false_alerts": 648
+          "false_alerts": 648,
+          "false_alerts_onset": 1924
+        },
+        {
+          "horizon": "T2",
+          "year": null,
+          "candidate": "endemic_channel_tuned",
+          "label": "Canal con umbral ajustado",
+          "role": "REFERENCE",
+          "onsets_detected": 357,
+          "actual_onsets": 647,
+          "alerts_emitted": 3040,
+          "false_alerts": 1315,
+          "false_alerts_onset": 2683
         },
         {
           "horizon": "T2",
@@ -6783,7 +7036,8 @@
           "onsets_detected": 0,
           "actual_onsets": 647,
           "alerts_emitted": 2192,
-          "false_alerts": 626
+          "false_alerts": 626,
+          "false_alerts_onset": 2192
         },
         {
           "horizon": "T2",
@@ -6794,7 +7048,8 @@
           "onsets_detected": 229,
           "actual_onsets": 647,
           "alerts_emitted": 1843,
-          "false_alerts": 1276
+          "false_alerts": 1276,
+          "false_alerts_onset": 1614
         },
         {
           "horizon": "T2",
@@ -6805,7 +7060,1414 @@
           "onsets_detected": 350,
           "actual_onsets": 647,
           "alerts_emitted": 1843,
-          "false_alerts": 1117
+          "false_alerts": 1117,
+          "false_alerts_onset": 1493
+        }
+      ],
+      "curve": [
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1439,
+          "onsets_detected": 62
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1613,
+          "onsets_detected": 98
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1622,
+          "onsets_detected": 98
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1640,
+          "onsets_detected": 99
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1652,
+          "onsets_detected": 99
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1677,
+          "onsets_detected": 102
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1716,
+          "onsets_detected": 106
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1754,
+          "onsets_detected": 109
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1765,
+          "onsets_detected": 111
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1792,
+          "onsets_detected": 113
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1807,
+          "onsets_detected": 114
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1898,
+          "onsets_detected": 128
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1916,
+          "onsets_detected": 132
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1948,
+          "onsets_detected": 139
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2013,
+          "onsets_detected": 151
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2034,
+          "onsets_detected": 155
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2083,
+          "onsets_detected": 161
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2120,
+          "onsets_detected": 168
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2160,
+          "onsets_detected": 175
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2190,
+          "onsets_detected": 179
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2200,
+          "onsets_detected": 181
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2583,
+          "onsets_detected": 268
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2608,
+          "onsets_detected": 273
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2657,
+          "onsets_detected": 283
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2699,
+          "onsets_detected": 292
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2761,
+          "onsets_detected": 307
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2875,
+          "onsets_detected": 325
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2992,
+          "onsets_detected": 347
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3047,
+          "onsets_detected": 359
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3131,
+          "onsets_detected": 373
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3166,
+          "onsets_detected": 374
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3426,
+          "onsets_detected": 406
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3506,
+          "onsets_detected": 414
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3639,
+          "onsets_detected": 427
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3818,
+          "onsets_detected": 437
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3911,
+          "onsets_detected": 441
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 4095,
+          "onsets_detected": 451
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 126,
+          "onsets_detected": 37
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 252,
+          "onsets_detected": 71
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 385,
+          "onsets_detected": 115
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 511,
+          "onsets_detected": 149
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 637,
+          "onsets_detected": 185
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 763,
+          "onsets_detected": 216
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 896,
+          "onsets_detected": 252
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 1022,
+          "onsets_detected": 284
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 1148,
+          "onsets_detected": 315
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 1274,
+          "onsets_detected": 338
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 1407,
+          "onsets_detected": 368
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 1533,
+          "onsets_detected": 390
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 1659,
+          "onsets_detected": 409
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 1785,
+          "onsets_detected": 437
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 1918,
+          "onsets_detected": 453
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 2044,
+          "onsets_detected": 466
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 2170,
+          "onsets_detected": 487
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 2296,
+          "onsets_detected": 508
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 2429,
+          "onsets_detected": 528
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 2555,
+          "onsets_detected": 539
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 2681,
+          "onsets_detected": 554
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 2807,
+          "onsets_detected": 563
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 2940,
+          "onsets_detected": 566
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 3066,
+          "onsets_detected": 577
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 3192,
+          "onsets_detected": 585
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 3318,
+          "onsets_detected": 588
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 3444,
+          "onsets_detected": 594
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 3577,
+          "onsets_detected": 598
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 3703,
+          "onsets_detected": 604
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 3829,
+          "onsets_detected": 608
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 3955,
+          "onsets_detected": 613
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 4088,
+          "onsets_detected": 619
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 4214,
+          "onsets_detected": 622
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 4340,
+          "onsets_detected": 628
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 4466,
+          "onsets_detected": 632
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 4599,
+          "onsets_detected": 636
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 4725,
+          "onsets_detected": 637
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 4851,
+          "onsets_detected": 639
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 4977,
+          "onsets_detected": 642
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente",
+          "alerts_emitted": 5110,
+          "onsets_detected": 645
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 126,
+          "onsets_detected": 68
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 252,
+          "onsets_detected": 142
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 385,
+          "onsets_detected": 193
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 511,
+          "onsets_detected": 238
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 637,
+          "onsets_detected": 287
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 763,
+          "onsets_detected": 327
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 896,
+          "onsets_detected": 367
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1022,
+          "onsets_detected": 406
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1148,
+          "onsets_detected": 435
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1274,
+          "onsets_detected": 464
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1407,
+          "onsets_detected": 489
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1533,
+          "onsets_detected": 508
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1659,
+          "onsets_detected": 522
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1785,
+          "onsets_detected": 542
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1918,
+          "onsets_detected": 552
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2044,
+          "onsets_detected": 568
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2170,
+          "onsets_detected": 577
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2296,
+          "onsets_detected": 583
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2429,
+          "onsets_detected": 590
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2555,
+          "onsets_detected": 593
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2681,
+          "onsets_detected": 600
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2807,
+          "onsets_detected": 604
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2940,
+          "onsets_detected": 612
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3066,
+          "onsets_detected": 612
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3192,
+          "onsets_detected": 619
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3318,
+          "onsets_detected": 623
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3444,
+          "onsets_detected": 624
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3577,
+          "onsets_detected": 627
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3703,
+          "onsets_detected": 629
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3829,
+          "onsets_detected": 633
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3955,
+          "onsets_detected": 633
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4088,
+          "onsets_detected": 638
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4214,
+          "onsets_detected": 640
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4340,
+          "onsets_detected": 640
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4466,
+          "onsets_detected": 641
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4599,
+          "onsets_detected": 643
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4725,
+          "onsets_detected": 644
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4851,
+          "onsets_detected": 645
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4977,
+          "onsets_detected": 645
+        },
+        {
+          "horizon": "T1",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 5110,
+          "onsets_detected": 646
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1416,
+          "onsets_detected": 147
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1593,
+          "onsets_detected": 171
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1602,
+          "onsets_detected": 171
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1618,
+          "onsets_detected": 173
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1632,
+          "onsets_detected": 173
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1653,
+          "onsets_detected": 175
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1686,
+          "onsets_detected": 178
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1725,
+          "onsets_detected": 179
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1736,
+          "onsets_detected": 185
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1772,
+          "onsets_detected": 191
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1782,
+          "onsets_detected": 192
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1881,
+          "onsets_detected": 213
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1902,
+          "onsets_detected": 215
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1931,
+          "onsets_detected": 227
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1984,
+          "onsets_detected": 231
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2011,
+          "onsets_detected": 233
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2060,
+          "onsets_detected": 238
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2102,
+          "onsets_detected": 244
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2136,
+          "onsets_detected": 249
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2172,
+          "onsets_detected": 257
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2182,
+          "onsets_detected": 258
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2583,
+          "onsets_detected": 321
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2612,
+          "onsets_detected": 324
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2669,
+          "onsets_detected": 329
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2707,
+          "onsets_detected": 337
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2756,
+          "onsets_detected": 341
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2837,
+          "onsets_detected": 354
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2944,
+          "onsets_detected": 372
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 2989,
+          "onsets_detected": 377
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3087,
+          "onsets_detected": 392
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3143,
+          "onsets_detected": 398
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3405,
+          "onsets_detected": 424
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3480,
+          "onsets_detected": 434
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3602,
+          "onsets_detected": 445
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3790,
+          "onsets_detected": 461
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 3881,
+          "onsets_detected": 467
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 4062,
+          "onsets_detected": 479
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 126,
+          "onsets_detected": 16
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 252,
+          "onsets_detected": 37
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 385,
+          "onsets_detected": 55
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 511,
+          "onsets_detected": 73
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 637,
+          "onsets_detected": 87
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 763,
+          "onsets_detected": 104
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 896,
+          "onsets_detected": 121
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 1022,
+          "onsets_detected": 137
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 1148,
+          "onsets_detected": 151
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 1274,
+          "onsets_detected": 164
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 1407,
+          "onsets_detected": 186
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 1533,
+          "onsets_detected": 205
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 1659,
+          "onsets_detected": 218
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 1785,
+          "onsets_detected": 233
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 1918,
+          "onsets_detected": 249
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 2044,
+          "onsets_detected": 264
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 2170,
+          "onsets_detected": 281
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 2296,
+          "onsets_detected": 295
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 2429,
+          "onsets_detected": 314
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 2555,
+          "onsets_detected": 329
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 2681,
+          "onsets_detected": 348
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 2807,
+          "onsets_detected": 362
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 2940,
+          "onsets_detected": 375
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 3066,
+          "onsets_detected": 388
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 3192,
+          "onsets_detected": 407
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 3318,
+          "onsets_detected": 420
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 3444,
+          "onsets_detected": 432
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 3577,
+          "onsets_detected": 445
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 3703,
+          "onsets_detected": 455
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 3829,
+          "onsets_detected": 468
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 3955,
+          "onsets_detected": 477
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 4088,
+          "onsets_detected": 491
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 4214,
+          "onsets_detected": 500
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 4340,
+          "onsets_detected": 515
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 4466,
+          "onsets_detected": 523
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 4599,
+          "onsets_detected": 540
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 4725,
+          "onsets_detected": 558
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 4851,
+          "onsets_detected": 572
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 4977,
+          "onsets_detected": 579
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente",
+          "alerts_emitted": 5110,
+          "onsets_detected": 587
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 126,
+          "onsets_detected": 38
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 252,
+          "onsets_detected": 85
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 385,
+          "onsets_detected": 122
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 511,
+          "onsets_detected": 153
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 637,
+          "onsets_detected": 181
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 763,
+          "onsets_detected": 208
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 896,
+          "onsets_detected": 236
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1022,
+          "onsets_detected": 261
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1148,
+          "onsets_detected": 291
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1274,
+          "onsets_detected": 311
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1407,
+          "onsets_detected": 330
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1533,
+          "onsets_detected": 349
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1659,
+          "onsets_detected": 369
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1785,
+          "onsets_detected": 387
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 1918,
+          "onsets_detected": 407
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2044,
+          "onsets_detected": 427
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2170,
+          "onsets_detected": 433
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2296,
+          "onsets_detected": 446
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2429,
+          "onsets_detected": 460
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2555,
+          "onsets_detected": 472
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2681,
+          "onsets_detected": 478
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2807,
+          "onsets_detected": 496
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 2940,
+          "onsets_detected": 509
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3066,
+          "onsets_detected": 515
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3192,
+          "onsets_detected": 524
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3318,
+          "onsets_detected": 533
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3444,
+          "onsets_detected": 540
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3577,
+          "onsets_detected": 558
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3703,
+          "onsets_detected": 564
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3829,
+          "onsets_detected": 577
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 3955,
+          "onsets_detected": 582
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4088,
+          "onsets_detected": 589
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4214,
+          "onsets_detected": 592
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4340,
+          "onsets_detected": 599
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4466,
+          "onsets_detected": 607
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4599,
+          "onsets_detected": 614
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4725,
+          "onsets_detected": 617
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4851,
+          "onsets_detected": 618
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 4977,
+          "onsets_detected": 625
+        },
+        {
+          "horizon": "T2",
+          "candidate": "vigente_mas_g",
+          "alerts_emitted": 5110,
+          "onsets_detected": 628
         }
       ]
     }
