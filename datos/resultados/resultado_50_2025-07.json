@@ -2,8 +2,8 @@
   "metadata": {
     "result_set_id": "6d2064e4-5524-5fe1-a25f-78c765bbe3e9",
     "reference_period": "2025-07",
-    "generated_at": "2026-11-06T15:19:32+00:00",
-    "data_updated_at": "2026-11-06T15:19:32+00:00",
+    "generated_at": "2026-11-06T17:35:09+00:00",
+    "data_updated_at": "2026-11-06T17:35:09+00:00",
     "data_version": "g5-frozen-2025"
   },
   "governance": {
@@ -3849,7 +3849,9 @@
       "seeds_checked": [
         7,
         13,
-        29
+        29,
+        41,
+        53
       ],
       "provenance": "experimental_harness",
       "rows": [
@@ -3876,6 +3878,18 @@
           "alerts_emitted": 237,
           "false_alerts": 114,
           "false_alerts_onset": 198
+        },
+        {
+          "horizon": "T1",
+          "year": 2018,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 39,
+          "actual_onsets": 91,
+          "alerts_emitted": 94,
+          "false_alerts": 55,
+          "false_alerts_onset": 55
         },
         {
           "horizon": "T1",
@@ -3915,6 +3929,18 @@
         },
         {
           "horizon": "T1",
+          "year": 2018,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 43,
+          "actual_onsets": 91,
+          "alerts_emitted": 120,
+          "false_alerts": 77,
+          "false_alerts_onset": 77
+        },
+        {
+          "horizon": "T1",
           "year": 2019,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -3936,6 +3962,18 @@
           "alerts_emitted": 656,
           "false_alerts": 148,
           "false_alerts_onset": 592
+        },
+        {
+          "horizon": "T1",
+          "year": 2019,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 52,
+          "actual_onsets": 118,
+          "alerts_emitted": 92,
+          "false_alerts": 40,
+          "false_alerts_onset": 40
         },
         {
           "horizon": "T1",
@@ -3975,6 +4013,18 @@
         },
         {
           "horizon": "T1",
+          "year": 2019,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 84,
+          "actual_onsets": 118,
+          "alerts_emitted": 162,
+          "false_alerts": 78,
+          "false_alerts_onset": 78
+        },
+        {
+          "horizon": "T1",
           "year": 2020,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -3996,6 +4046,18 @@
           "alerts_emitted": 526,
           "false_alerts": 335,
           "false_alerts_onset": 475
+        },
+        {
+          "horizon": "T1",
+          "year": 2020,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 41,
+          "actual_onsets": 69,
+          "alerts_emitted": 150,
+          "false_alerts": 109,
+          "false_alerts_onset": 109
         },
         {
           "horizon": "T1",
@@ -4035,6 +4097,18 @@
         },
         {
           "horizon": "T1",
+          "year": 2020,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 68,
+          "actual_onsets": 69,
+          "alerts_emitted": 541,
+          "false_alerts": 473,
+          "false_alerts_onset": 473
+        },
+        {
+          "horizon": "T1",
           "year": 2021,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -4056,6 +4130,18 @@
           "alerts_emitted": 213,
           "false_alerts": 169,
           "false_alerts_onset": 190
+        },
+        {
+          "horizon": "T1",
+          "year": 2021,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 17,
+          "actual_onsets": 52,
+          "alerts_emitted": 76,
+          "false_alerts": 59,
+          "false_alerts_onset": 59
         },
         {
           "horizon": "T1",
@@ -4095,6 +4181,18 @@
         },
         {
           "horizon": "T1",
+          "year": 2021,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 33,
+          "actual_onsets": 52,
+          "alerts_emitted": 252,
+          "false_alerts": 219,
+          "false_alerts_onset": 219
+        },
+        {
+          "horizon": "T1",
           "year": 2022,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -4116,6 +4214,18 @@
           "alerts_emitted": 285,
           "false_alerts": 113,
           "false_alerts_onset": 246
+        },
+        {
+          "horizon": "T1",
+          "year": 2022,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 39,
+          "actual_onsets": 89,
+          "alerts_emitted": 86,
+          "false_alerts": 47,
+          "false_alerts_onset": 47
         },
         {
           "horizon": "T1",
@@ -4155,6 +4265,18 @@
         },
         {
           "horizon": "T1",
+          "year": 2022,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 31,
+          "actual_onsets": 89,
+          "alerts_emitted": 63,
+          "false_alerts": 32,
+          "false_alerts_onset": 32
+        },
+        {
+          "horizon": "T1",
           "year": 2023,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -4176,6 +4298,18 @@
           "alerts_emitted": 627,
           "false_alerts": 170,
           "false_alerts_onset": 562
+        },
+        {
+          "horizon": "T1",
+          "year": 2023,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 62,
+          "actual_onsets": 125,
+          "alerts_emitted": 121,
+          "false_alerts": 59,
+          "false_alerts_onset": 59
         },
         {
           "horizon": "T1",
@@ -4215,6 +4349,18 @@
         },
         {
           "horizon": "T1",
+          "year": 2023,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 105,
+          "actual_onsets": 125,
+          "alerts_emitted": 228,
+          "false_alerts": 123,
+          "false_alerts_onset": 123
+        },
+        {
+          "horizon": "T1",
           "year": 2024,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -4236,6 +4382,18 @@
           "alerts_emitted": 750,
           "false_alerts": 323,
           "false_alerts_onset": 666
+        },
+        {
+          "horizon": "T1",
+          "year": 2024,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 78,
+          "actual_onsets": 103,
+          "alerts_emitted": 219,
+          "false_alerts": 141,
+          "false_alerts_onset": 141
         },
         {
           "horizon": "T1",
@@ -4275,6 +4433,18 @@
         },
         {
           "horizon": "T1",
+          "year": 2024,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 103,
+          "actual_onsets": 103,
+          "alerts_emitted": 453,
+          "false_alerts": 350,
+          "false_alerts_onset": 350
+        },
+        {
+          "horizon": "T1",
           "year": null,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -4296,6 +4466,18 @@
           "alerts_emitted": 3294,
           "false_alerts": 1372,
           "false_alerts_onset": 2929
+        },
+        {
+          "horizon": "T1",
+          "year": null,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 328,
+          "actual_onsets": 647,
+          "alerts_emitted": 838,
+          "false_alerts": 510,
+          "false_alerts_onset": 510
         },
         {
           "horizon": "T1",
@@ -4334,6 +4516,18 @@
           "false_alerts_onset": 1385
         },
         {
+          "horizon": "T1",
+          "year": null,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 467,
+          "actual_onsets": 647,
+          "alerts_emitted": 1819,
+          "false_alerts": 1352,
+          "false_alerts_onset": 1352
+        },
+        {
           "horizon": "T2",
           "year": 2018,
           "candidate": "endemic_channel",
@@ -4356,6 +4550,18 @@
           "alerts_emitted": 227,
           "false_alerts": 117,
           "false_alerts_onset": 181
+        },
+        {
+          "horizon": "T2",
+          "year": 2018,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 22,
+          "actual_onsets": 91,
+          "alerts_emitted": 106,
+          "false_alerts": 64,
+          "false_alerts_onset": 84
         },
         {
           "horizon": "T2",
@@ -4395,6 +4601,18 @@
         },
         {
           "horizon": "T2",
+          "year": 2018,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 27,
+          "actual_onsets": 91,
+          "alerts_emitted": 121,
+          "false_alerts": 82,
+          "false_alerts_onset": 94
+        },
+        {
+          "horizon": "T2",
           "year": 2019,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -4416,6 +4634,18 @@
           "alerts_emitted": 604,
           "false_alerts": 132,
           "false_alerts_onset": 535
+        },
+        {
+          "horizon": "T2",
+          "year": 2019,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 33,
+          "actual_onsets": 118,
+          "alerts_emitted": 113,
+          "false_alerts": 43,
+          "false_alerts_onset": 80
         },
         {
           "horizon": "T2",
@@ -4455,6 +4685,18 @@
         },
         {
           "horizon": "T2",
+          "year": 2019,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 51,
+          "actual_onsets": 118,
+          "alerts_emitted": 168,
+          "false_alerts": 78,
+          "false_alerts_onset": 117
+        },
+        {
+          "horizon": "T2",
           "year": 2020,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -4473,9 +4715,21 @@
           "role": "REFERENCE",
           "onsets_detected": 52,
           "actual_onsets": 69,
-          "alerts_emitted": 600,
-          "false_alerts": 414,
-          "false_alerts_onset": 548
+          "alerts_emitted": 650,
+          "false_alerts": 462,
+          "false_alerts_onset": 598
+        },
+        {
+          "horizon": "T2",
+          "year": 2020,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 36,
+          "actual_onsets": 69,
+          "alerts_emitted": 347,
+          "false_alerts": 294,
+          "false_alerts_onset": 311
         },
         {
           "horizon": "T2",
@@ -4515,6 +4769,18 @@
         },
         {
           "horizon": "T2",
+          "year": 2020,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 53,
+          "actual_onsets": 69,
+          "alerts_emitted": 509,
+          "false_alerts": 435,
+          "false_alerts_onset": 456
+        },
+        {
+          "horizon": "T2",
           "year": 2021,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -4536,6 +4802,18 @@
           "alerts_emitted": 174,
           "false_alerts": 142,
           "false_alerts_onset": 157
+        },
+        {
+          "horizon": "T2",
+          "year": 2021,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 14,
+          "actual_onsets": 52,
+          "alerts_emitted": 118,
+          "false_alerts": 99,
+          "false_alerts_onset": 104
         },
         {
           "horizon": "T2",
@@ -4575,6 +4853,18 @@
         },
         {
           "horizon": "T2",
+          "year": 2021,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 34,
+          "actual_onsets": 52,
+          "alerts_emitted": 295,
+          "false_alerts": 256,
+          "false_alerts_onset": 261
+        },
+        {
+          "horizon": "T2",
           "year": 2022,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -4593,9 +4883,21 @@
           "role": "REFERENCE",
           "onsets_detected": 14,
           "actual_onsets": 89,
-          "alerts_emitted": 107,
-          "false_alerts": 33,
-          "false_alerts_onset": 93
+          "alerts_emitted": 103,
+          "false_alerts": 32,
+          "false_alerts_onset": 89
+        },
+        {
+          "horizon": "T2",
+          "year": 2022,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 21,
+          "actual_onsets": 89,
+          "alerts_emitted": 100,
+          "false_alerts": 55,
+          "false_alerts_onset": 79
         },
         {
           "horizon": "T2",
@@ -4635,6 +4937,18 @@
         },
         {
           "horizon": "T2",
+          "year": 2022,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 18,
+          "actual_onsets": 89,
+          "alerts_emitted": 68,
+          "false_alerts": 38,
+          "false_alerts_onset": 50
+        },
+        {
+          "horizon": "T2",
           "year": 2023,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -4656,6 +4970,18 @@
           "alerts_emitted": 585,
           "false_alerts": 154,
           "false_alerts_onset": 514
+        },
+        {
+          "horizon": "T2",
+          "year": 2023,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 31,
+          "actual_onsets": 125,
+          "alerts_emitted": 120,
+          "false_alerts": 46,
+          "false_alerts_onset": 89
         },
         {
           "horizon": "T2",
@@ -4695,6 +5021,18 @@
         },
         {
           "horizon": "T2",
+          "year": 2023,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 59,
+          "actual_onsets": 125,
+          "alerts_emitted": 209,
+          "false_alerts": 98,
+          "false_alerts_onset": 150
+        },
+        {
+          "horizon": "T2",
           "year": 2024,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -4716,6 +5054,18 @@
           "alerts_emitted": 743,
           "false_alerts": 323,
           "false_alerts_onset": 655
+        },
+        {
+          "horizon": "T2",
+          "year": 2024,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 52,
+          "actual_onsets": 103,
+          "alerts_emitted": 286,
+          "false_alerts": 182,
+          "false_alerts_onset": 234
         },
         {
           "horizon": "T2",
@@ -4755,6 +5105,18 @@
         },
         {
           "horizon": "T2",
+          "year": 2024,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 67,
+          "actual_onsets": 103,
+          "alerts_emitted": 453,
+          "false_alerts": 323,
+          "false_alerts_onset": 386
+        },
+        {
+          "horizon": "T2",
           "year": null,
           "candidate": "endemic_channel",
           "label": "Canal endémico",
@@ -4773,9 +5135,21 @@
           "role": "REFERENCE",
           "onsets_detected": 357,
           "actual_onsets": 647,
-          "alerts_emitted": 3040,
-          "false_alerts": 1315,
-          "false_alerts_onset": 2683
+          "alerts_emitted": 3086,
+          "false_alerts": 1362,
+          "false_alerts_onset": 2729
+        },
+        {
+          "horizon": "T2",
+          "year": null,
+          "candidate": "endemic_channel_gated",
+          "label": "Canal condicionado",
+          "role": "REFERENCE",
+          "onsets_detected": 209,
+          "actual_onsets": 647,
+          "alerts_emitted": 1190,
+          "false_alerts": 783,
+          "false_alerts_onset": 981
         },
         {
           "horizon": "T2",
@@ -4812,20 +5186,254 @@
           "alerts_emitted": 1843,
           "false_alerts": 1117,
           "false_alerts_onset": 1493
+        },
+        {
+          "horizon": "T2",
+          "year": null,
+          "candidate": "vigente_mas_g_gated",
+          "label": "Modelo con la misma compuerta",
+          "role": "OTHER",
+          "onsets_detected": 309,
+          "actual_onsets": 647,
+          "alerts_emitted": 1823,
+          "false_alerts": 1310,
+          "false_alerts_onset": 1514
         }
       ],
       "curve": [
         {
           "horizon": "T1",
           "candidate": "endemic_channel",
-          "alerts_emitted": 1439,
-          "onsets_detected": 62
+          "alerts_emitted": 270,
+          "onsets_detected": 34
         },
         {
           "horizon": "T1",
           "candidate": "endemic_channel",
-          "alerts_emitted": 1613,
-          "onsets_detected": 98
+          "alerts_emitted": 272,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 273,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 276,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 279,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 283,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 294,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 312,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 335,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 423,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 455,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 470,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 480,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 503,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 516,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 523,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 549,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 568,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 600,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 617,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 631,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 669,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 709,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 747,
+          "onsets_detected": 35
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 798,
+          "onsets_detected": 36
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 836,
+          "onsets_detected": 37
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 944,
+          "onsets_detected": 40
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1023,
+          "onsets_detected": 41
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1043,
+          "onsets_detected": 41
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1158,
+          "onsets_detected": 49
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1171,
+          "onsets_detected": 49
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1195,
+          "onsets_detected": 49
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1235,
+          "onsets_detected": 49
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1249,
+          "onsets_detected": 50
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1308,
+          "onsets_detected": 55
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1355,
+          "onsets_detected": 59
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1391,
+          "onsets_detected": 60
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1416,
+          "onsets_detected": 61
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1439,
+          "onsets_detected": 62
         },
         {
           "horizon": "T1",
@@ -4836,20 +5444,8 @@
         {
           "horizon": "T1",
           "candidate": "endemic_channel",
-          "alerts_emitted": 1640,
-          "onsets_detected": 99
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
           "alerts_emitted": 1652,
           "onsets_detected": 99
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 1677,
-          "onsets_detected": 102
         },
         {
           "horizon": "T1",
@@ -4860,20 +5456,8 @@
         {
           "horizon": "T1",
           "candidate": "endemic_channel",
-          "alerts_emitted": 1754,
-          "onsets_detected": 109
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
           "alerts_emitted": 1765,
           "onsets_detected": 111
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 1792,
-          "onsets_detected": 113
         },
         {
           "horizon": "T1",
@@ -4884,20 +5468,8 @@
         {
           "horizon": "T1",
           "candidate": "endemic_channel",
-          "alerts_emitted": 1898,
-          "onsets_detected": 128
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
           "alerts_emitted": 1916,
           "onsets_detected": 132
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 1948,
-          "onsets_detected": 139
         },
         {
           "horizon": "T1",
@@ -4908,20 +5480,8 @@
         {
           "horizon": "T1",
           "candidate": "endemic_channel",
-          "alerts_emitted": 2034,
-          "onsets_detected": 155
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
           "alerts_emitted": 2083,
           "onsets_detected": 161
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 2120,
-          "onsets_detected": 168
         },
         {
           "horizon": "T1",
@@ -4932,20 +5492,8 @@
         {
           "horizon": "T1",
           "candidate": "endemic_channel",
-          "alerts_emitted": 2190,
-          "onsets_detected": 179
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
           "alerts_emitted": 2200,
           "onsets_detected": 181
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 2583,
-          "onsets_detected": 268
         },
         {
           "horizon": "T1",
@@ -4956,20 +5504,8 @@
         {
           "horizon": "T1",
           "candidate": "endemic_channel",
-          "alerts_emitted": 2657,
-          "onsets_detected": 283
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
           "alerts_emitted": 2699,
           "onsets_detected": 292
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 2761,
-          "onsets_detected": 307
         },
         {
           "horizon": "T1",
@@ -4980,20 +5516,8 @@
         {
           "horizon": "T1",
           "candidate": "endemic_channel",
-          "alerts_emitted": 2992,
-          "onsets_detected": 347
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
           "alerts_emitted": 3047,
           "onsets_detected": 359
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 3131,
-          "onsets_detected": 373
         },
         {
           "horizon": "T1",
@@ -5004,20 +5528,8 @@
         {
           "horizon": "T1",
           "candidate": "endemic_channel",
-          "alerts_emitted": 3426,
-          "onsets_detected": 406
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
           "alerts_emitted": 3506,
           "onsets_detected": 414
-        },
-        {
-          "horizon": "T1",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 3639,
-          "onsets_detected": 427
         },
         {
           "horizon": "T1",
@@ -5028,14 +5540,374 @@
         {
           "horizon": "T1",
           "candidate": "endemic_channel",
-          "alerts_emitted": 3911,
-          "onsets_detected": 441
+          "alerts_emitted": 4095,
+          "onsets_detected": 451
         },
         {
           "horizon": "T1",
           "candidate": "endemic_channel",
-          "alerts_emitted": 4095,
+          "alerts_emitted": 4462,
+          "onsets_detected": 460
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 4603,
+          "onsets_detected": 461
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 58,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 59,
+          "onsets_detected": 35
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 60,
+          "onsets_detected": 36
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 61,
+          "onsets_detected": 37
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 40
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 67,
+          "onsets_detected": 41
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 67,
+          "onsets_detected": 41
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 83,
+          "onsets_detected": 49
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 83,
+          "onsets_detected": 49
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 83,
+          "onsets_detected": 49
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 84,
+          "onsets_detected": 49
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 85,
+          "onsets_detected": 50
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 92,
+          "onsets_detected": 55
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 98,
+          "onsets_detected": 59
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 99,
+          "onsets_detected": 60
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 100,
+          "onsets_detected": 61
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 101,
+          "onsets_detected": 62
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 159,
+          "onsets_detected": 98
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 160,
+          "onsets_detected": 99
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 169,
+          "onsets_detected": 106
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 176,
+          "onsets_detected": 111
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 182,
+          "onsets_detected": 114
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 220,
+          "onsets_detected": 132
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 255,
+          "onsets_detected": 151
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 272,
+          "onsets_detected": 161
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 302,
+          "onsets_detected": 175
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 321,
+          "onsets_detected": 181
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 604,
+          "onsets_detected": 273
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 655,
+          "onsets_detected": 292
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 783,
+          "onsets_detected": 325
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 921,
+          "onsets_detected": 359
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 1022,
+          "onsets_detected": 374
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 1330,
+          "onsets_detected": 414
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 1628,
+          "onsets_detected": 437
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 1904,
           "onsets_detected": 451
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 2270,
+          "onsets_detected": 460
+        },
+        {
+          "horizon": "T1",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 2411,
+          "onsets_detected": 461
         },
         {
           "horizon": "T1",
@@ -5520,14 +6392,236 @@
         {
           "horizon": "T2",
           "candidate": "endemic_channel",
-          "alerts_emitted": 1416,
+          "alerts_emitted": 268,
+          "onsets_detected": 57
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 268,
+          "onsets_detected": 57
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 268,
+          "onsets_detected": 57
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 269,
+          "onsets_detected": 57
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 273,
+          "onsets_detected": 57
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 273,
+          "onsets_detected": 57
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 284,
+          "onsets_detected": 57
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 298,
+          "onsets_detected": 57
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 336,
+          "onsets_detected": 57
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 406,
+          "onsets_detected": 58
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 435,
+          "onsets_detected": 58
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 456,
+          "onsets_detected": 59
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 466,
+          "onsets_detected": 59
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 488,
+          "onsets_detected": 59
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 507,
+          "onsets_detected": 59
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 518,
+          "onsets_detected": 59
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 545,
+          "onsets_detected": 60
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 564,
+          "onsets_detected": 60
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 605,
+          "onsets_detected": 66
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 620,
+          "onsets_detected": 66
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 633,
+          "onsets_detected": 67
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 671,
+          "onsets_detected": 68
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 705,
+          "onsets_detected": 70
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 763,
+          "onsets_detected": 75
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 799,
+          "onsets_detected": 77
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 842,
+          "onsets_detected": 80
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 950,
+          "onsets_detected": 95
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1019,
+          "onsets_detected": 99
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1042,
+          "onsets_detected": 100
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1146,
+          "onsets_detected": 117
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1164,
+          "onsets_detected": 120
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1190,
+          "onsets_detected": 123
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1219,
+          "onsets_detected": 124
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1233,
+          "onsets_detected": 125
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1302,
+          "onsets_detected": 137
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1337,
+          "onsets_detected": 141
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1369,
+          "onsets_detected": 144
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 1407,
           "onsets_detected": 147
         },
         {
           "horizon": "T2",
           "candidate": "endemic_channel",
-          "alerts_emitted": 1593,
-          "onsets_detected": 171
+          "alerts_emitted": 1416,
+          "onsets_detected": 147
         },
         {
           "horizon": "T2",
@@ -5538,20 +6632,8 @@
         {
           "horizon": "T2",
           "candidate": "endemic_channel",
-          "alerts_emitted": 1618,
-          "onsets_detected": 173
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
           "alerts_emitted": 1632,
           "onsets_detected": 173
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 1653,
-          "onsets_detected": 175
         },
         {
           "horizon": "T2",
@@ -5562,20 +6644,8 @@
         {
           "horizon": "T2",
           "candidate": "endemic_channel",
-          "alerts_emitted": 1725,
-          "onsets_detected": 179
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
           "alerts_emitted": 1736,
           "onsets_detected": 185
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 1772,
-          "onsets_detected": 191
         },
         {
           "horizon": "T2",
@@ -5586,20 +6656,8 @@
         {
           "horizon": "T2",
           "candidate": "endemic_channel",
-          "alerts_emitted": 1881,
-          "onsets_detected": 213
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
           "alerts_emitted": 1902,
           "onsets_detected": 215
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 1931,
-          "onsets_detected": 227
         },
         {
           "horizon": "T2",
@@ -5610,20 +6668,8 @@
         {
           "horizon": "T2",
           "candidate": "endemic_channel",
-          "alerts_emitted": 2011,
-          "onsets_detected": 233
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
           "alerts_emitted": 2060,
           "onsets_detected": 238
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 2102,
-          "onsets_detected": 244
         },
         {
           "horizon": "T2",
@@ -5634,20 +6680,8 @@
         {
           "horizon": "T2",
           "candidate": "endemic_channel",
-          "alerts_emitted": 2172,
-          "onsets_detected": 257
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
           "alerts_emitted": 2182,
           "onsets_detected": 258
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 2583,
-          "onsets_detected": 321
         },
         {
           "horizon": "T2",
@@ -5658,20 +6692,8 @@
         {
           "horizon": "T2",
           "candidate": "endemic_channel",
-          "alerts_emitted": 2669,
-          "onsets_detected": 329
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
           "alerts_emitted": 2707,
           "onsets_detected": 337
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 2756,
-          "onsets_detected": 341
         },
         {
           "horizon": "T2",
@@ -5682,20 +6704,8 @@
         {
           "horizon": "T2",
           "candidate": "endemic_channel",
-          "alerts_emitted": 2944,
-          "onsets_detected": 372
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
           "alerts_emitted": 2989,
           "onsets_detected": 377
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 3087,
-          "onsets_detected": 392
         },
         {
           "horizon": "T2",
@@ -5706,20 +6716,8 @@
         {
           "horizon": "T2",
           "candidate": "endemic_channel",
-          "alerts_emitted": 3405,
-          "onsets_detected": 424
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
           "alerts_emitted": 3480,
           "onsets_detected": 434
-        },
-        {
-          "horizon": "T2",
-          "candidate": "endemic_channel",
-          "alerts_emitted": 3602,
-          "onsets_detected": 445
         },
         {
           "horizon": "T2",
@@ -5730,14 +6728,374 @@
         {
           "horizon": "T2",
           "candidate": "endemic_channel",
-          "alerts_emitted": 3881,
-          "onsets_detected": 467
+          "alerts_emitted": 4062,
+          "onsets_detected": 479
         },
         {
           "horizon": "T2",
           "candidate": "endemic_channel",
-          "alerts_emitted": 4062,
-          "onsets_detected": 479
+          "alerts_emitted": 4424,
+          "onsets_detected": 489
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel",
+          "alerts_emitted": 4583,
+          "onsets_detected": 491
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 65,
+          "onsets_detected": 19
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 66,
+          "onsets_detected": 20
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 66,
+          "onsets_detected": 20
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 66,
+          "onsets_detected": 20
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 67,
+          "onsets_detected": 21
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 67,
+          "onsets_detected": 21
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 70,
+          "onsets_detected": 22
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 71,
+          "onsets_detected": 22
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 73,
+          "onsets_detected": 23
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 84,
+          "onsets_detected": 25
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 86,
+          "onsets_detected": 25
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 87,
+          "onsets_detected": 25
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 106,
+          "onsets_detected": 33
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 110,
+          "onsets_detected": 34
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 112,
+          "onsets_detected": 35
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 116,
+          "onsets_detected": 35
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 118,
+          "onsets_detected": 36
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 131,
+          "onsets_detected": 39
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 137,
+          "onsets_detected": 41
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 138,
+          "onsets_detected": 41
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 140,
+          "onsets_detected": 42
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 141,
+          "onsets_detected": 42
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 209,
+          "onsets_detected": 55
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 212,
+          "onsets_detected": 56
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 226,
+          "onsets_detected": 61
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 237,
+          "onsets_detected": 64
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 252,
+          "onsets_detected": 67
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 289,
+          "onsets_detected": 77
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 313,
+          "onsets_detected": 83
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 340,
+          "onsets_detected": 88
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 364,
+          "onsets_detected": 95
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 385,
+          "onsets_detected": 100
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 663,
+          "onsets_detected": 155
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 729,
+          "onsets_detected": 167
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 809,
+          "onsets_detected": 180
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 931,
+          "onsets_detected": 198
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 1045,
+          "onsets_detected": 216
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 1348,
+          "onsets_detected": 251
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 1640,
+          "onsets_detected": 278
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 1905,
+          "onsets_detected": 296
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 2260,
+          "onsets_detected": 306
+        },
+        {
+          "horizon": "T2",
+          "candidate": "endemic_channel_gated",
+          "alerts_emitted": 2419,
+          "onsets_detected": 308
         },
         {
           "horizon": "T2",

@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { enVolumen } from "@/lib/curva-retro";
 import type { DashboardViewModel, FilaRetro, PuntoCurva } from "@/lib/dashboard-view-model";
 
 /**
@@ -9,8 +10,8 @@ import type { DashboardViewModel, FilaRetro, PuntoCurva } from "@/lib/dashboard-
  * nunca mezclado con ella. Son dos evaluaciones distintas: la corrida mide
  * doce meses de 2025 con 86 inicios, esta mide siete anios con 647.
  *
- * Dos correcciones que esta vista existe para no repetir, las dos salidas de
- * una revision del equipo:
+ * Tres correcciones que esta vista existe para no repetir, las tres salidas de
+ * revisiones del equipo y no de releer el propio trabajo:
  *
  * 1. El costo se mide contra INICIO y no contra exceso. Contar una alerta
  *    como acertada porque el municipio ya estaba en exceso favorece al canal,
@@ -19,6 +20,11 @@ import type { DashboardViewModel, FilaRetro, PuntoCurva } from "@/lib/dashboard-
  * 2. Se muestra la curva y no un punto. Dos personas midiendo el mismo modelo
  *    a volumenes de alerta distintos sacan conclusiones distintas y las dos
  *    tienen razon en su punto; la curva hace visible de que depende.
+ * 3. La linea base es el canal CONDICIONADO: el que ademas solo alerta donde
+ *    el municipio no esta en exceso. Sin esa condicion el canal gasta su
+ *    presupuesto en filas donde anticipar un inicio es imposible por
+ *    definicion, y la ventaja del modelo sale inflada. Es la linea base justa
+ *    porque usa la misma informacion que el modelo tiene en X.
  */
 
 const coma = (v: number, d = 2) => v.toFixed(d).replace(".", ",");
@@ -26,7 +32,9 @@ const costo = (f: FilaRetro) => (f.detected ? f.falseAlertsOnset / f.detected : 
 
 const ORDEN = [
   "vigente_mas_g",
+  "vigente_mas_g_gated",
   "vigente",
+  "endemic_channel_gated",
   "endemic_channel_tuned",
   "endemic_channel",
   "persistence",
@@ -36,7 +44,15 @@ const COLOR: Record<string, string> = {
   vigente_mas_g: "var(--primary)",
   vigente: "var(--muted-foreground)",
   endemic_channel: "var(--zone-exceso)",
+  endemic_channel_gated: "var(--zone-exceso)",
 };
+
+const DISCONTINUA: Record<string, string> = {
+  vigente: "4 3",
+  endemic_channel_gated: "5 3",
+};
+
+const EN_LA_CURVA = ["endemic_channel", "endemic_channel_gated", "vigente", "vigente_mas_g"];
 
 function Curva({ puntos, filas }: { puntos: PuntoCurva[]; filas: FilaRetro[] }) {
   const W = 560;
@@ -54,17 +70,17 @@ function Curva({ puntos, filas }: { puntos: PuntoCurva[]; filas: FilaRetro[] }) 
   const x = (v: number) => ML + (v / maxX) * ix;
   const y = (v: number) => MT + iy - (v / maxY) * iy;
 
-  const series = ["endemic_channel", "vigente", "vigente_mas_g"]
-    .map((c) => ({
-      c,
-      pts: puntos.filter((p) => p.candidate === c).sort((a, b) => a.alerts - b.alerts),
-    }))
-    .filter((s) => s.pts.length > 1);
+  const series = EN_LA_CURVA.map((c) => ({
+    c,
+    pts: puntos.filter((p) => p.candidate === c).sort((a, b) => a.alerts - b.alerts),
+  })).filter((s) => s.pts.length > 1);
 
-  // Los puntos de operacion que las tablas citan, para poder leer la curva
-  // contra las cifras de al lado.
+  // Los puntos de operacion que la tabla cita, para poder leer la curva contra
+  // las cifras de al lado.
   const marcas = filas
-    .filter((f) => f.candidate === "endemic_channel" || f.candidate === "vigente_mas_g")
+    .filter((f) =>
+      ["endemic_channel", "endemic_channel_gated", "vigente_mas_g"].includes(f.candidate),
+    )
     .map((f) => ({ label: f.label, alerts: f.alerts, detected: f.detected, c: f.candidate }));
 
   const pasosY = [0, Math.round(maxY / 3), Math.round((2 * maxY) / 3), maxY];
@@ -82,7 +98,7 @@ function Curva({ puntos, filas }: { puntos: PuntoCurva[]; filas: FilaRetro[] }) 
         })
         .join(
           ". ",
-        )}. A igual volumen el modelo con el margen queda por encima del canal en todo el rango.`}
+        )}. La ventaja del modelo depende del volumen: a volúmenes bajos el canal condicionado va parejo, y la distancia se abre al subir.`}
       className="block max-w-full"
     >
       {pasosY.map((v) => (
@@ -130,7 +146,7 @@ function Curva({ puntos, filas }: { puntos: PuntoCurva[]; filas: FilaRetro[] }) 
           fill="none"
           stroke={COLOR[c] ?? "var(--muted-foreground)"}
           strokeWidth={c === "vigente_mas_g" ? 2.5 : 1.8}
-          strokeDasharray={c === "vigente" ? "4 3" : undefined}
+          strokeDasharray={DISCONTINUA[c]}
           strokeLinejoin="round"
         />
       ))}
@@ -173,11 +189,25 @@ export function Retroanalisis({ view }: { view: DashboardViewModel }) {
   if (acumulado.length === 0) return null;
 
   const canal = acumulado.find((f) => f.candidate === "endemic_channel");
-  const ajustado = acumulado.find((f) => f.candidate === "endemic_channel_tuned");
+  const condicionado = acumulado.find((f) => f.candidate === "endemic_channel_gated");
   const conMargen = acumulado.find((f) => f.candidate === "vigente_mas_g");
   const sinMargen = acumulado.find((f) => f.candidate === "vigente");
+  const conCompuerta = acumulado.find((f) => f.candidate === "vigente_mas_g_gated");
   const curva = retro.curva.filter((p) => p.horizon === horizonte);
   const reales = acumulado[0]?.onsets ?? 0;
+
+  const curvaCond = curva.filter((p) => p.candidate === "endemic_channel_gated");
+  const curvaModelo = curva.filter((p) => p.candidate === "vigente_mas_g");
+  // En el punto de operación de cada uno, cuánto anticipa el otro.
+  const modeloEnElPuntoDelCanal = condicionado ? enVolumen(curvaModelo, condicionado.alerts) : null;
+  const canalEnElPuntoDelModelo = conMargen ? enVolumen(curvaCond, conMargen.alerts) : null;
+  const techoCond = curvaCond.length
+    ? {
+        alertas: Math.max(...curvaCond.map((p) => p.alerts)),
+        inicios: Math.max(...curvaCond.map((p) => p.detected)),
+      }
+    : null;
+  const techoModelo = curvaModelo.length ? Math.max(...curvaModelo.map((p) => p.detected)) : null;
 
   return (
     <section
@@ -236,17 +266,43 @@ export function Retroanalisis({ view }: { view: DashboardViewModel }) {
               Modelo sin el margen
             </li>
             <li className="flex items-center gap-1.5">
+              <span
+                className="h-0.5 w-5"
+                style={{
+                  background:
+                    "repeating-linear-gradient(90deg,var(--zone-exceso) 0 5px,transparent 5px 8px)",
+                }}
+              />
+              Canal condicionado
+            </li>
+            <li className="flex items-center gap-1.5">
               <span className="h-0.5 w-5" style={{ background: "var(--zone-exceso)" }} />
               Canal endémico
             </li>
           </ul>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             <b className="font-semibold text-foreground">
-              A igual volumen de alertas el modelo queda por encima del canal en todo el rango.
+              Cuánto aporta el modelo depende de cuántas alertas se puedan atender.
             </b>{" "}
-            La ventaja se encoge a medida que se alerta más —al final todo converge, porque alertar
-            sobre todo detecta todo— pero no desaparece. Un punto suelto de esa curva no zanja la
-            comparación: depende de cuántas alertas esté dispuesta a atender una secretaría.
+            {condicionado && modeloEnElPuntoDelCanal !== null && (
+              <>
+                Con {condicionado.alerts} alertas el canal condicionado anticipa{" "}
+                {condicionado.detected} brotes y el modelo {modeloEnElPuntoDelCanal}.{" "}
+              </>
+            )}
+            {conMargen && canalEnElPuntoDelModelo !== null && (
+              <>
+                Con {conMargen.alerts}, que es donde está puesto el modelo, son{" "}
+                {canalEnElPuntoDelModelo} contra {conMargen.detected}.{" "}
+              </>
+            )}
+            {techoCond && techoModelo !== null && (
+              <>
+                Y el canal condicionado tiene techo: no puede emitir más de {techoCond.alertas}{" "}
+                alertas ni anticipar más de {techoCond.inicios} de {reales} brotes, mientras el
+                modelo llega a {techoModelo}. La ventaja del modelo es de escala, no de punto.
+              </>
+            )}
           </p>
         </div>
 
@@ -291,15 +347,32 @@ export function Retroanalisis({ view }: { view: DashboardViewModel }) {
           </table>
 
           <div className="mt-3 grid gap-2 text-xs leading-relaxed text-muted-foreground">
-            {canal && ajustado && (
+            {canal && condicionado && (
               <p>
-                <b className="font-semibold">Ajustar el umbral del canal ya ayuda mucho.</b> El
-                canal que se usa hoy alerta cuando los casos superan el P75. Si en vez de eso se
-                alerta a una fracción del P75, elegida con el año anterior, pasa de{" "}
-                <b className="font-semibold">{canal.detected}</b> a{" "}
-                <b className="font-semibold">{ajustado.detected}</b> brotes anticipados de {reales}.
-                Buena parte de lo que le falta al canal no es el método: es que el umbral está
-                puesto para confirmar, no para anticipar.
+                <b className="font-semibold">
+                  Qué es el canal condicionado, y por qué es la línea base correcta.
+                </b>{" "}
+                El canal que se usa hoy alerta cuando los casos superan el P75, esté el municipio
+                como esté. Buena parte de esas alertas cae sobre municipios que{" "}
+                <i>ya están en exceso</i>, donde anticipar un inicio es imposible por definición. El
+                canal condicionado alerta sólo donde el municipio no está en exceso y los casos
+                pasan una fracción del P75, elegida con el año anterior: misma regla, sin modelo, y
+                con la misma información que el modelo recibe. Con la condición anticipa{" "}
+                {condicionado.detected} brotes de {reales} con {condicionado.alerts} alertas, contra{" "}
+                {canal.detected} con {canal.alerts}, y pasa de{" "}
+                {coma(canal.falseAlertsOnset / Math.max(canal.detected, 1))} a{" "}
+                {coma(condicionado.falseAlertsOnset / Math.max(condicionado.detected, 1))} falsas
+                por acierto.{" "}
+                {condicionado.detected < canal.detected && (
+                  <>
+                    Anticipa menos brotes que el canal sin condicionar, no más: a este horizonte la
+                    condición también descarta municipios que están en exceso hoy y vuelven a
+                    empezar dentro del horizonte. Lo que mejora es el costo de cada acierto.{" "}
+                  </>
+                )}
+                <b className="font-semibold">Esta línea base no es nuestra:</b> la propuso una
+                revisión del equipo, y publicar la comparación contra el canal sin condicionar
+                exageraba la ventaja del modelo.
               </p>
             )}
             {conMargen && sinMargen && (
@@ -310,6 +383,23 @@ export function Retroanalisis({ view }: { view: DashboardViewModel }) {
                 mismas {conMargen.alerts} alertas.
               </p>
             )}
+            {conCompuerta && conMargen && (
+              <p>
+                <b className="font-semibold">La comparación simétrica.</b> Darle al modelo la misma
+                condición que al canal lo deja en {conCompuerta.detected} brotes contra{" "}
+                {conMargen.detected}
+                {conCompuerta.detected === conMargen.detected
+                  ? ": a un mes no cambia nada, porque el modelo ya sabía dónde no alertar."
+                  : ": a dos meses lo empeora, que es lo que se espera si la condición es la restricción equivocada a ese horizonte."}
+              </p>
+            )}
+            <p>
+              <b className="font-semibold">Qué puede mirar la condición, y qué no.</b> A un mes, el
+              mes anterior al brote es el mes en curso y se conoce al emitir. A dos meses no: el mes
+              anterior al brote todavía no ha ocurrido, así que la condición sólo puede mirar el
+              exceso del mes en curso. Usar el otro mes infla la línea base con información que
+              nadie tiene al decidir; la bitácora mide cuánto.
+            </p>
             <p>
               <b className="font-semibold">Cómo se cuenta una falsa acá.</b> Contra{" "}
               <i>inicio de brote</i>, no contra exceso. Una alerta sobre un municipio que ya está en

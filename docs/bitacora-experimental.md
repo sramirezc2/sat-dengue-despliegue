@@ -289,6 +289,22 @@ Sin estas reglas los resultados se ven bien y no valen nada.
    Corolario: ninguna diferencia de uno o dos inicios se reporta sin cinco
    semillas detrás.
 
+10. **Una línea base que no puede acertar no es una línea base.** Añadida tras
+    la tanda 9. Antes de publicar una comparación hay que preguntarse cuántas
+    de las alertas de la línea base caen sobre filas donde acertar es
+    imposible por definición de la etiqueta. Si son muchas, la línea base no
+    es débil por su método: está mal construida, y la ventaja que se publica
+    es de la construcción y no del modelo. La prueba es barata —contar— y
+    omitirla nos costó publicar un «+874 %» que no sobrevivió a la primera
+    revisión externa. Su reverso: toda restricción que se le ponga a la línea
+    base hay que ofrecérsela también al modelo, y reportar las dos lecturas.
+
+11. **Nada de extrapolar en silencio.** Añadida tras la tanda 9. Una curva
+    preguntada fuera del rango que se midió tiene que responder «no sé», no el
+    valor del extremo. `np.interp` y sus equivalentes hacen lo segundo sin
+    avisar, y eso ya produjo una tabla donde tres volúmenes de alerta
+    distintos imprimían la misma cifra presentada como tres mediciones.
+
 ---
 
 ## 5. Registro de tandas
@@ -1389,6 +1405,146 @@ tandas.** Es el tercer caso en dos días en que una revisión independiente
 encuentra un defecto real. Lo que no lo encontró nunca fue releer el propio
 trabajo.
 
+> **Corregido en la tanda 9.** La curva de esta tanda compara contra un canal
+> que gasta buena parte de sus alertas en municipios ya en exceso, donde
+> acertar un inicio es imposible por definición. Las ventajas de la tabla de
+> arriba —en particular el «+874 %» a 1 000 alertas— son de esa construcción y
+> no del modelo. La comparación vigente es contra el **canal condicionado** de
+> la tanda 9, y en el punto de operación publicado la ventaja real es de
+> +22 %. Esta sección se conserva sin reescribir porque el error también es
+> parte del registro.
+
+### Tanda 9, línea Q — El canal condicionado, y una línea base que no podía acertar
+
+**Origen.** Segunda crítica del mismo integrante, ahora sobre la curva que la
+tanda 8 publicó. Su argumento: en esa curva el canal gasta buena parte de sus
+alertas en municipios que **ya están en exceso**, y con la métrica corregida
+—falsas contra inicio— esas alertas le cuentan todas como falsas, mientras que
+el modelo aprendió a no alertar ahí. La línea base correcta sería un canal que
+además solo alerte donde el municipio **no** está en exceso: misma regla, sin
+modelo, y con la misma información que el modelo tiene en X. Reportó que así,
+a 1 000 alertas, el canal anticipa 369 inicios y el modelo 403.
+
+**Tenía razón, y el número era aún más grande de lo que él calculó.**
+
+#### Qué mide el canal condicionado
+
+Alertar solo donde el municipio no está en exceso y los casos pasan una
+fracción del P75, elegida por F1 sobre los doce meses anteriores. T+1,
+acumulado 2018-2024, 647 inicios:
+
+| Regla | Inicios | Alertas | Falsas por acierto |
+| --- | --- | --- | --- |
+| Canal endémico | 181 | 2 200 | 11,15 |
+| Canal con umbral ajustado | 365 | 3 294 | 8,02 |
+| **Canal condicionado** | **328** | **838** | **1,55** |
+| Modelo sin el margen | 388 | 1 852 | 3,77 |
+| Modelo con el margen | 467 | 1 852 | 2,97 |
+
+**El canal condicionado acierta más barato que el modelo publicado**: 1,55
+falsas por acierto contra 2,97, con menos de la mitad de las alertas. Que una
+regla sin modelo haga eso es el resultado más incómodo —y más útil— que ha
+producido el proyecto.
+
+A igual volumen, con el modelo bajo la **misma** condición:
+
+| Alertas | Canal condicionado | Modelo | Ventaja |
+| --- | --- | --- | --- |
+| 250 | 148 | 141 | −5 % |
+| 500 | 239 | 234 | −2 % |
+| 1 000 | 373 | 399 | +7 % |
+| 1 500 | 430 | 502 | +17 % |
+| 1 852 (el punto publicado) | 448 | 546 | +22 % |
+
+Nuestra réplica de su cifra: 373 contra 399, donde él reportó 369 contra 403.
+Es la segunda vez que dos implementaciones independientes coinciden al dígito.
+
+**El «+874 % a 1 000 alertas» de la tanda 8 no sobrevive.** No porque el modelo
+sea peor, sino porque la línea base contra la que se midió estaba gastando su
+presupuesto en filas donde anticipar un inicio es imposible por definición. De
+ahí sale la regla 4.10.
+
+#### Lo que sí queda a favor del modelo
+
+**El canal condicionado tiene techo y el modelo no.** La condición solo deja
+pasar 2 411 filas de alerta posibles en T+1, y con todas ellas anticipa como
+mucho 461 de 647 inicios. El modelo llega a 646. La ventaja del modelo es de
+escala: aparece cuando una secretaría puede atender más alertas, y a volúmenes
+bajos —unos cientos de alertas al mes— hoy no hay caso para el modelo en T+1.
+
+**Y darle la misma condición al modelo no lo cambia:** 467 contra 467 en T+1,
+con el costo bajando de 2,97 a 2,90. El modelo ya sabía dónde no alertar; la
+condición es información que ya tenía en `zona_canal_t`.
+
+#### Donde la crítica no se sostiene: T+2 es fuga
+
+El inicio exige exceso en el objetivo viniendo de un mes sin exceso. A T+1 ese
+mes anterior es el mes de origen y se conoce al emitir. **A T+2 es un mes que
+todavía no ha ocurrido.** Medido con las dos compuertas, T+2:
+
+| Compuerta | Inicios | Alertas | Falsas por acierto |
+| --- | --- | --- | --- |
+| Exceso del mes de origen (observable) | 209 | 1 190 | 4,69 |
+| Mes anterior al objetivo (no observable) | 329 | 942 | 1,86 |
+
+**120 inicios de diferencia: ese es el tamaño de la fuga.** Con la compuerta
+observable el modelo queda por encima en todo el rango de T+2 (+17 % a +27 %
+en la lectura simétrica), y darle esa compuerta al modelo lo **empeora**, de
+350 a 309, que es exactamente lo que se espera si la restricción es la
+equivocada a ese horizonte.
+
+#### Lo que encontró el auditor en nuestra primera versión
+
+La v1 de esta tanda se auditó antes de concluir, y la auditoría encontró seis
+defectos reales. Se registran porque el punto de la bitácora es que el error
+quede, no que quede bonito:
+
+1. **La curva extrapolaba en silencio.** `np.interp` devuelve el valor del
+   extremo fuera del rango medido, y como el barrido de fracciones terminaba
+   en 3,00 el canal no podía bajar de ~1 040 alertas: las filas de 500 y 838
+   reimprimían el mismo punto con tres etiquetas distintas. Regla 4.11.
+2. **Un volumen de la tabla salió de la propia corrida**, en un archivo que se
+   declaraba preinscrito antes de mirar resultados. Regla 4.8.
+3. **El assert que decía verificar la aritmética de índices no podía fallar**:
+   comparaba dos expresiones que a T+1 son la misma por construcción. Es el
+   segundo test vacuo del proyecto. Se reemplazó por la comprobación contra la
+   definición primitiva —exceso del mes `m` ⟺ casos\[m\] > P75 del mes `m`—,
+   que sí falla si el desplazamiento está mal: 12 388 de 12 388 filas.
+4. **La columna de ventaja comparaba el modelo sin compuerta contra el canal
+   con compuerta.** A T+2 eso casi duplicaba la ventaja. Ahora se publican las
+   dos lecturas y la simétrica va primero.
+5. **El «volumen máximo alcanzable» era el máximo del barrido**, no el de la
+   regla, y truncaba la tabla justo donde la línea base se satura, que es el
+   argumento más fuerte a favor del modelo.
+6. **Faltaban** la persistencia (regla 4.7), la tasa de falsas alarmas (la
+   métrica nueva se agrega, no reemplaza), las cinco semillas del corolario de
+   la regla 4.9 y el desglose por año (reglas 4.3 y 4.4).
+
+#### Un hallazgo sobre los datos, encontrado al corregir
+
+**153 de las 912 filas de un año tienen P75 = 0**: municipios donde el
+percentil histórico es cero y cualquier caso es exceso. En esas filas
+`casos > f · P75` es `casos > 0` para **cualquier** f, de modo que la fracción
+no las mueve, y con una rejilla suficientemente amplia la regla deja de ser
+«una fracción del P75» y se vuelve «solo los municipios con P75 = 0». En 2020 a
+T+2 eso hizo que la elección por F1 se fuera a f = 59,00 con F1 = 0,2151 contra
+0,2149 de f = 0,10: dos diezmilésimas decidiendo entre dos reglas
+completamente distintas. Por eso la rejilla de **selección** llega hasta 3,00 y
+la de **dibujo** se extiende: en la segunda no se elige nada, se describe.
+
+#### Lecciones de método
+
+**Una línea base mal construida exagera al modelo más que cualquier error de
+medición.** Las tandas 7 y 8 corrigieron la métrica y seguían comparando contra
+una regla que no podía acertar. La corrección de la métrica hizo ver mejor al
+modelo; la corrección de la línea base lo pone en su sitio.
+
+**Tres revisiones externas, tres defectos reales.** Un auditor sobre el código
+en la tanda 7, un integrante sobre la métrica en la 8 y el mismo integrante
+sobre la línea base en la 9. Releer el propio trabajo no encontró ninguno de
+los tres. La conclusión práctica: la auditoría va **antes** de concluir, no
+después de publicar.
+
 ---
 
 ## 6. Estado de las líneas de trabajo
@@ -1413,6 +1569,7 @@ trabajo.
 | N. Repartir el trabajo con el canal | **Cerrada**: rechazada en la tanda 7; el modelo con G ya no necesita al canal |
 | O. Banco de evaluación de origen móvil | **Confirmada** en la tanda 7; sostiene G sobre 647 inicios en siete años |
 | P. Canal con umbral ajustado como línea base | **Confirmada** en la tanda 8; lleva al canal de 181 a 365 inicios y pasa a ser línea base publicada |
+| Q. Canal condicionado a no estar en exceso | **Confirmada** en la tanda 9 a T+1 y **rechazada a T+2 por fuga**; pasa a ser la línea base principal y reduce la ventaja publicada del modelo a +22 % en el punto de operación |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres

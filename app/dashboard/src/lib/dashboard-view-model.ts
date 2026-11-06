@@ -74,6 +74,8 @@ const NOMBRE_CANDIDATO: Record<string, string> = {
   vigente: "Modelo sin el margen",
   vigente_mas_g: "Modelo con el margen",
   endemic_channel_tuned: "Canal con umbral ajustado",
+  endemic_channel_gated: "Canal condicionado",
+  vigente_mas_g_gated: "Modelo con la misma compuerta",
 };
 
 /** Una fila del retroanalisis de ventana expansiva. `year` nulo = acumulado. */

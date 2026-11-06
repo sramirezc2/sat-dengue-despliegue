@@ -361,6 +361,37 @@ describe("dashboard query integration", () => {
     expect(within(retro).getByText(/termina en 2024/)).toBeInTheDocument();
   });
 
+  it("publica el canal condicionado como línea base y no solo el canal sin condicionar", async () => {
+    // Sin la condición de no-exceso el canal gasta su presupuesto en filas
+    // donde anticipar un inicio es imposible por definición, y la ventaja del
+    // modelo sale inflada. Una revisión del equipo lo señaló y el tablero
+    // tiene que mostrar esa línea base, no solo mencionarla.
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) =>
+        response(
+          String(input).includes("department_code=50") ? fixture("meta") : fixture("tolima"),
+        ),
+      ),
+    );
+    renderDashboard();
+    await screen.findByRole("region", { name: /Detalle de Ibagué/ });
+    fireEvent.click(screen.getByRole("tab", { name: /Qué tan bien acierta/ }));
+    const retro = await screen.findByRole("region", { name: /Retroanálisis/ });
+
+    // Por celda y no por texto suelto: "Canal condicionado" tambien aparece en
+    // la leyenda del grafico, y la fila de la tabla es lo que esta prueba fija.
+    const fila = within(retro).getByRole("cell", { name: "Canal condicionado" }).closest("tr");
+    expect(fila).not.toBeNull();
+    expect(within(fila as HTMLElement).getByText(/328 de 647/)).toBeInTheDocument();
+    // Su costo por acierto es MENOR que el del modelo publicado: la pantalla
+    // no puede esconderlo aunque juegue en contra del modelo.
+    expect(within(fila as HTMLElement).getByText("1,55")).toBeInTheDocument();
+    // Y el techo de la línea base se dice, porque es lo que explica que la
+    // ventaja del modelo sea de escala y no de punto.
+    expect(within(retro).getByText(/tiene techo/)).toBeInTheDocument();
+  });
+
   it("omite el retroanálisis cuando el resultado no lo trae", async () => {
     // Los resultados publicados antes de noviembre de 2026 no lo traen y el
     // tablero tiene que seguir leyéndolos.
