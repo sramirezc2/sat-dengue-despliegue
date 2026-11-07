@@ -1,7 +1,7 @@
 # Arquitectura del pipeline E2E y transición a V3
 
 Estado: decisiones adoptadas para la implementación incremental. Fecha: 2026-11-07.
-Este paso solo documenta; no incorpora Kedro ni modifica el producto desplegado.
+Actualizada para DEC-015/016 y la tarea 13; el producto desplegado se conserva.
 
 ## Fuente oficial y situación actual
 
@@ -22,7 +22,8 @@ La distribución observada es compatible con una integración aditiva:
 | `docker/`, `scripts/` | Despliegue con Compose, proxy y operación de la instancia. |
 | `docs/`, `modelos/`, `notebooks/` | Documentación, referencias de artefactos y material histórico; se conservan. |
 
-Todavía no existe `pipeline/`. La API ya permite sincronizar resultados desde S3
+`pipeline/` ya contiene Kedro, adquisición neutral, dominio canónico, controles
+temporales, arnés experimental, evaluación y tracking local opt-in. La API permite sincronizar resultados desde S3
 a su directorio local mediante `SATD_BUCKET_S3`; esto transporta resultados
 publicados, no adquiere datos científicos ni ejecuta entrenamiento.
 
@@ -30,7 +31,8 @@ publicados, no adquiere datos científicos ni ejecuta entrenamiento.
 
 ```text
 app/                 producto desplegado existente
-pipeline/            futuro proyecto Kedro autocontenido
+pipeline/            proyecto Kedro autocontenido
+datos/datos-crudos/  entrada local privada, ignorada por Git
 datos/resultados/    único contrato entre pipeline y API
 docker/              despliegue existente
 scripts/             operación y envolturas temporales
@@ -91,31 +93,73 @@ un modelo ni modifica la política científica vigente.
 
 ## Adquisición desacoplada y almacenamiento
 
-Hugging Face será la fuente operativa inicial de datos científicos. Zenodo
-conservará las versiones académicas estables. La interfaz futura `DataSource`
+Hugging Face distribuirá exclusivamente las cinco fuentes crudas mediante un
+release privado fijado por revisión y hashes. Zenodo podrá conservar releases
+académicos aprobados. La interfaz `DataSource`
 encapsulará adquisición con adaptadores intercambiables para archivos locales,
 Hugging Face, Zenodo y, posteriormente, AWS S3 o almacenamiento compatible.
 
-Cada adaptador entregará datos a una etapa común de normalización. Entrenamiento
-y evaluación recibirán **solo un bundle local normalizado**: no conocerán el
+Cada adaptador entrega un `ResolvedBundle` de archivos crudos locales verificados.
+Desde esa frontera, normalización, entrenamiento y evaluación no conocen el
 proveedor, sus clientes, URLs ni credenciales. La selección del adaptador será
 configuración de adquisición, no una condición dentro del dominio científico.
-La definición concreta del bundle se hará en el paso correspondiente; deberá
-identificar archivos y esquema, cobertura temporal, versión de origen y hashes
-para comprobar integridad y reproducir una corrida. Se fijarán revisiones o
-versiones de origen; una referencia mutable por sí sola no basta.
+El contrato `release_kind: raw_sources` exige el inventario cerrado de cinco
+archivos, bytes y SHA-256 de la sección 4.1 de `plan.md`. Se rechazan derivados,
+features, matrices, `google_earth_engine-selected-columns.csv`, el Excel como
+insumo y revisiones mutables (`main`, `latest`). DIVIPOLA es el JSON aprobado en
+`Divipola-municipios.md` acompañado de su procedencia. El clima exige 18 columnas.
+`datos/datos-crudos/` es entrada local, nunca publicación; el inbox remoto y el
+trabajo local permanecen bajo `pipeline/data/`, ignorado por Git.
 
 La extensión hacia AWS sustituirá el adaptador y su configuración, manteniendo
 el bundle y el contrato publicado. El S3 de adquisición será una responsabilidad
 distinta de la sincronización de resultados ya existente en la API.
 AWS Academy seguirá siendo un entorno de laboratorio, **nunca almacenamiento
 definitivo**. No se presupone un bucket permanente ni se agregan credenciales.
-DVC es opcional: solo se incorporará si aporta valor para artefactos derivados
-costosos; no es requisito para iniciar el pipeline.
+DVC queda fuera de esta implementación. La nube no entrega tablas canónicas.
+
+## Construcción y certificación canónica
+
+Los nodos delgados de Kedro y funciones de dominio siguen este orden:
+`raw_contract_validation` → `raw_temporal_projection` →
+`raw_temporal_quarantine` → `geography_normalization` →
+`epidemiology_normalization` → `climate_daily_normalization` →
+`climate_monthly_aggregation` → `canonical_sources` → `canonical_panel` →
+`canonical_validation` → `canonical_serialization`.
+
+La proyección lee solo territorio/fecha; la cuarentena separa registros desde
+`2025-01` antes de normalizar o agregar valores. Solo se registran conteos y
+digests. Epidemiología mantiene eventos 210/220 separados, usa residencia e
+`INI_SIN`, sin fallback a `FEC_NOT` ni deduplicación por `CONSECUTIVE`. Los
+descartes se reconcilian por causa. Clima produce cuatro sumas y cinco medias;
+los meses incompletos quedan nulos, nunca se rellenan con cero.
+
+La dimensión aprobada tiene 1.122 municipios; la cuadrícula de desarrollo abarca
+163 meses (`2011-06`–`2024-12`), 182.886 claves únicas. Los joins declaran
+cardinalidad y conservan conteos y ausencias. Se reutiliza `domain/canonical.py`
+para canal, lags y predictores; `TemporalPolicy` y `guard_development` son las
+únicas autoridades temporales. T+1 admite orígenes hasta noviembre de 2024;
+T+2 hasta octubre. La serialización determinista incluye esquema, tipos, orden,
+claves, valores y nulos, digest semántico y SHA-256; usa temporal y rename atómico.
+
+Kedro expone `canonical_build` y `canonical_reproducibility`. Este último
+reconstruye N=3 en procesos y directorios aislados desde los crudos, sin compartir
+derivados. Cualquier diferencia bloquea al consumidor de entrenamiento; únicamente
+se libera una salida certificada. Las pruebas usan un perfil sintético explícito
+de menor tamaño, sin atribuirle los hashes ni la certificación del release real.
+La conexión y reproducción del release privado corresponden a la tarea 16.
+
+El observador local existente recibe solo agregados: manifiesto/hashes crudos,
+Git SHA, configuración y lock, cuarentena, cobertura, conteos/rechazos, digest
+canónico y las tres huellas con el resultado N=3. El linaje mínimo vincula
+`raw_manifest_digest + builder_git_sha + builder_config_digest + lock_digest`
+con `canonical_semantic_digest`; no contiene filas ni rutas privadas.
 
 ## Tratamiento de 2025
 
-Los datos de 2025 son **evaluación previamente utilizada y evidencia consumida**.
+El bundle crudo puede incluir 2025; su cuarentena ocurre antes de cualquier
+normalización, agregación, join, imputación o ajuste. Los datos de 2025 son
+**evaluación previamente utilizada y evidencia consumida**.
 No entrarán al desarrollo: entrenamiento, selección de variables o candidatos,
 ajuste de hiperparámetros, calibración o elección de umbrales y criterios.
 Tampoco se presentarán como holdout intacto ni como nueva confirmación.

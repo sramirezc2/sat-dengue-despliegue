@@ -2,7 +2,7 @@
 
 **Versión:** 1.1
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Listo para iniciar la tarea 13
+**Estado general:** Tarea 13 en curso
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -86,7 +86,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 10 | Implementar calibración, umbrales y líneas base | `COMPLETA` | 9 | Cinco roles disjuntos, disponibilidad estricta, sigmoide, grilla/umbral congelados y referencias de inicio; 25 pruebas nuevas antífuga. |
 | 11 | Implementar métricas e incertidumbre | `COMPLETA` | 10 | AP/AUROC/Brier, sensibilidad/FAR/volumen, soporte emparejado, estratos y bootstrap municipal descriptivo; 29 pruebas nuevas. |
 | 12 | Agregar trazabilidad de corridas | `COMPLETA` | 11 | MLflow local opt-in, manifiestos, linaje y 33 pruebas nuevas verdes; el bloqueo concurrente quedó resuelto sin versionar datos (DEC-015). |
-| 13 | Construir y certificar la tabla canónica desde fuentes crudas | `PENDIENTE` | 12 | Arquitectura versionada sincronizada; contrato `raw_sources`; cinco fuentes verificadas; cuarentena previa de 2025; productores DIVIPOLA, epidemiología y clima; `canonical_build` y `canonical_reproducibility` registrados; 182.886 claves de desarrollo; N=3 idéntico antes de entrenar. |
+| 13 | Construir y certificar la tabla canónica desde fuentes crudas | `EN CURSO` | 12 | Arquitectura versionada sincronizada; contrato `raw_sources`; cinco fuentes verificadas; cuarentena previa de 2025; productores DIVIPOLA, epidemiología y clima; `canonical_build` y `canonical_reproducibility` registrados; 182.886 claves de desarrollo; N=3 idéntico antes de entrenar. |
 | 14 | Migrar la publicación sin romper el despliegue | `PENDIENTE` | 13 | Lógica trasladada al pipeline; script temporal compatible; contrato API/tablero equivalente. |
 | 15 | Cerrar portabilidad | `PENDIENTE` | 14 | Adquisición cruda, construcción canónica, pruebas y E2E sintético verdes en macOS, Windows, Linux y Colab. |
 | 16 | Conectar el release crudo y ejecutar reproducción sintética y real | `PENDIENTE` | 15 | Fixture y release privado crudo fijado por revisión/hashes ejecutados; certificación N=3; `guard_development` demuestra que 2025 no llega a componentes aprendidos. |
@@ -185,7 +185,7 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 12/21 |
-| Tarea activa | Ninguna |
+| Tarea activa | 13 — Construcción canónica desde crudos |
 | Tareas bloqueadas | Ninguna |
 | Última tarea completada | 12 — Trazabilidad de corridas |
 | Última actualización | 7 de noviembre de 2026 |
