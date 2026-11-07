@@ -2,7 +2,7 @@
 
 **Versión:** 1.0
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Implementación en curso
+**Estado general:** Listo para tarea 5
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -63,7 +63,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 1 | Formalizar arquitectura y fronteras | `COMPLETA` | — | Documento central aprobado: `pipeline/`, contrato de publicación, fuentes y tratamiento de 2025. |
 | 2 | Activar gobernanza y CI por componentes | `COMPLETA` | 1 | Implementación y validaciones locales completas; CI remota y ruleset siguen pendientes antes del merge (DEC-006). |
 | 3 | Congelar y proteger la línea base del despliegue | `COMPLETA` | 2 | Compose arranca desde clon limpio; salud y consulta válida funcionan; brechas existentes quedan corregidas o documentadas. |
-| 4 | Crear el subproyecto `pipeline/` con Python, Kedro y uv | `EN CURSO` | 3 | Estructura autocontenida, lock, CLI, E2E sintético mínimo y `.github/workflows/pipeline-ci.yml` ejecutable y validado sin afectar `app/`. |
+| 4 | Crear el subproyecto `pipeline/` con Python, Kedro y uv | `COMPLETA` | 3 | Estructura autocontenida, lock, CLI, E2E sintético mínimo y `.github/workflows/pipeline-ci.yml` ejecutable y validado sin afectar `app/`. |
 | 5 | Implementar releases y adquisición desacoplada | `PENDIENTE` | 4 | `DataSource`, `ResolvedBundle`, manifiestos, caché, hashes y adaptadores local, Hugging Face, Zenodo y S3 simulado. |
 | 6 | Migrar el panel canónico desde V2 | `PENDIENTE` | 5 | Productores migrados con procedencia y equivalencia sobre una muestra aprobada. |
 | 7 | Implementar etiquetas y controles temporales | `PENDIENTE` | 6 | Etiquetas de inicio, elegibilidad, horizontes, ausencias y prueba centinela que rechaza 2025. |
@@ -111,10 +111,10 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 3/20 |
-| Tarea activa | 4 — Crear el subproyecto pipeline/ con Python, Kedro y uv |
+| Tareas completas | 4/20 |
+| Tarea activa | Ninguna |
 | Tareas bloqueadas | 0 |
-| Última tarea completada | 3 — Congelar y proteger la línea base del despliegue |
+| Última tarea completada | 4 — Crear el subproyecto pipeline/ con Python, Kedro y uv |
 | Última actualización | 7 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -124,6 +124,7 @@ Actualizar esta sección al cerrar cada tarea.
 | 2026-11-07 | 1 | COMPLETA | `e794bce` (arquitectura); `60692c3` (hoja de ruta y cierre, sustituye a `fd9eae7`) | Rutas y enlaces revisados; diff documental sin errores de espacios; plan versionado. | Arquitectura y hoja de ruta compartidas. |
 | 2026-11-07 | 2 | COMPLETA | `f67d1c6` | API: 22 pruebas; tablero: lint sin errores (6 advertencias), 33 pruebas y build; publicación: 22 JSON en API y prueba Zod verde; YAML, shell, filtros y diff validados localmente. | Implementación y validación local completas. GitHub Actions no fue ejecutado ni validado remotamente. CI remota, ruleset, aprobación independiente y checks requeridos siguen pendientes y son obligatorios antes del merge (DEC-006). |
 | 2026-11-07 | 3 | COMPLETA | `5ec813e` | API: 28 pruebas; tablero: instalación con lockfile congelado, lint sin errores (6 advertencias), 33 pruebas y build; Docker Compose construido sin caché desde checkout temporal, 3 servicios activos, 22 resultados, Meta y Tolima disponibles, consultas y smoke test verdes; volumen verificado tras recrear contenedores; diff sin errores. | El estado inicial arrancaba con volumen vacío, 0 resultados y consultas 404. La imagen ahora siembra el volumen; S3 descarga siempre a temporal, comprueba tamaño y contrato, y reemplaza atómicamente. SHA-256 queda diferido a la tarea 13 porque aún no existe un hash remoto confiable. Recursos Docker temporales eliminados. |
+| 2026-11-07 | 4 | COMPLETA | `20897e9` | `uv lock --check --project pipeline`, `uv sync --locked --project pipeline`, `uv run --directory pipeline ruff check .`, `uv run --directory pipeline pytest` (7 pruebas) y `uv run --directory pipeline kedro run --pipeline synthetic`: verdes, también desde clon temporal limpio del commit con entorno nuevo. Métricas sintéticas: 1 fila, MAE 5, MSE 25. Regresión: API 28 pruebas; tablero lint sin errores (6 advertencias), 33 pruebas y build node_server; YAML, shell, filtros, enlaces y diff válidos. | `Pipeline quality` implementado y validado localmente; no se ejecutó remotamente por DEC-006. Python 3.12, Kedro 1.7.0, pytest 9.2.0, Ruff 0.17.4 y uv 0.11.19. Adaptación CLI registrada en DEC-007. Avisos de deprecación de Kedro/OmegaConf sin fallos. Sin publicación, datos reales, secretos ni artefactos pesados generados fuera del entorno ignorado; árbol del clon limpio. |
 
 ## 7. Decisiones y desviaciones
 
@@ -137,6 +138,7 @@ Toda desviación debe registrarse antes de continuar.
 | DEC-004 | 2026-11-07 | Prohibir celdas Markdown hasta autorización formal. | Regla del proyecto. | Los notebooks no incorporarán narrativa Markdown inicialmente. | Aprobada |
 | DEC-005 | 2026-11-07 | El workflow pipeline-ci se incorporará en la tarea 4 junto con el proyecto Kedro, de modo que nazca ejecutable y validado, no como un placeholder. | Evitar sobreingeniería y checks rotos sobre archivos inexistentes. | Evidencia de tarea 4 ampliada; tarea 2 cubre componentes existentes. | Aprobada por el prompt 2 |
 | DEC-006 | 2026-11-07 | La validación remota de GitHub Actions y la activación del ruleset se aplazan hasta que se publique el único PR. Las validaciones locales de la tarea 2 fueron aprobadas. | No abrir un PR auxiliar ni afirmar una validación remota que no ocurrió. | CI remota, ruleset, aprobación independiente y checks requeridos siguen siendo condiciones obligatorias antes del merge. | Aprobada por el prompt 3 |
+| DEC-007 | 2026-11-07 | Ejecutar los comandos de herramientas desde la raíz con `uv run --directory pipeline ...`; mantener `--project pipeline` en lock y sync. | En uv 0.11.19, `--project` selecciona el entorno sin cambiar cwd: Kedro no descubre el subproyecto y responde No such command run. `--directory` funciona y limita Ruff y pytest al subproyecto. | Un único comando documentado para el E2E: `uv run --directory pipeline kedro run --pipeline synthetic`; sin wrapper ni configuración Kedro en la raíz. | Adaptación reproducible permitida por el prompt 4 |
 
 ## 8. Condición de finalización
 
