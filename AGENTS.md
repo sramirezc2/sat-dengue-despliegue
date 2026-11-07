@@ -31,6 +31,6 @@ uv lock --check --project pipeline
 uv sync --locked --project pipeline
 uv run --directory pipeline ruff check .
 uv run --directory pipeline pytest
-uv run --directory pipeline kedro run --pipeline synthetic
+uv run --directory pipeline kedro run --pipelines synthetic
 git diff --check origin/main...HEAD
 ```

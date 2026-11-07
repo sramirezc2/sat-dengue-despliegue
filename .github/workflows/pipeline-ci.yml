@@ -62,4 +62,4 @@ jobs:
         run: uv run --directory pipeline pytest
       - name: Run synthetic Kedro pipeline
         if: steps.paths.outputs.changed == 'true'
-        run: uv run --directory pipeline kedro run --pipeline synthetic
+        run: uv run --directory pipeline kedro run --pipelines synthetic

@@ -13,15 +13,15 @@ Desde la raíz del repositorio:
 ```sh
 uv lock --check --project pipeline
 uv sync --locked --project pipeline
-uv run --directory pipeline kedro run --pipeline synthetic
+uv run --directory pipeline kedro run --pipelines synthetic
 ```
 
 El comando único de ejecución es la última línea. `--directory pipeline` cambia
 el directorio para que Kedro encuentre su `pyproject.toml`; `--project pipeline`
 por sí solo selecciona el entorno de uv y no cambia el directorio del proceso.
 El entorno vive en `pipeline/.venv/` y no altera las dependencias de API o tablero.
-Kedro 1.7.0 todavía acepta `--pipeline`, aunque avisa que la opción se retirará
-en una versión futura. También emite avisos internos de deprecación de OmegaConf.
+Se usa la opción vigente `--pipelines` de Kedro 1.7.0. Persisten avisos internos
+de deprecación de OmegaConf.
 
 Validaciones desde la raíz:
 

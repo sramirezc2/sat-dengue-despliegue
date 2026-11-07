@@ -26,7 +26,7 @@ Los nombres de los jobs son los contextos que debe exigir el ruleset:
 | `api-ci.yml` | `API tests` | `python -m pip install -r app/api/requirements-dev.txt`; desde `app/api`, `python -m pytest`. |
 | `dashboard-ci.yml` | `Dashboard quality` | Desde `app/dashboard`, `bun install --frozen-lockfile`, `bun run lint`, `bun run test`, `NITRO_PRESET=node_server bun run build`. |
 | `publication-contract.yml` | `Publication contract` | Reutiliza `construir_indice` y `RepositorioDirectorio.get` para validar todos los JSON, sus nombres y claves; ejecuta la prueba Zod existente indicada abajo. |
-| `pipeline-ci.yml` | `Pipeline quality` | Desde la raíz: `uv lock --check --project pipeline`, `uv sync --locked --project pipeline`, `uv run --directory pipeline ruff check .`, `uv run --directory pipeline pytest` y `uv run --directory pipeline kedro run --pipeline synthetic`. |
+| `pipeline-ci.yml` | `Pipeline quality` | Desde la raíz: `uv lock --check --project pipeline`, `uv sync --locked --project pipeline`, `uv run --directory pipeline ruff check .`, `uv run --directory pipeline pytest` y `uv run --directory pipeline kedro run --pipelines synthetic`. |
 
 La validación del consumidor se ejecuta desde `app/dashboard` con:
 
@@ -123,8 +123,8 @@ restantes de `plan.md`; esta etapa no autoriza fusionar una implementación parc
 ## Evidencia local y límites
 
 - Pipeline (tarea 4): lock vigente, instalación bloqueada, Ruff, 7 pruebas y
-  ejecución Kedro sintética verdes localmente. Persisten avisos de deprecación
-  en Kedro/OmegaConf; `--pipeline` sigue aceptado por Kedro 1.7.0.
+  ejecución Kedro sintética verdes localmente. Se actualizó la CLI a
+  `--pipelines`; persisten avisos internos de deprecación de OmegaConf.
   No se ejecutó ni se esperó GitHub Actions (DEC-006).
 - API: 22 pruebas verdes; advertencia existente de deprecación de TestClient/httpx.
 - Tablero: 33 pruebas verdes; lint sin errores y seis advertencias de Fast Refresh;
