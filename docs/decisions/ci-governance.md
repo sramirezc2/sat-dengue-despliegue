@@ -1,6 +1,7 @@
 # Gobernanza y CI por componentes
 
-Fecha: 2026-11-07. Estado: controles locales validados; activación remota bloqueada.
+Fecha: 2026-11-07. Estado: controles locales implementados; activación remota
+pendiente antes del merge según DEC-006.
 La implementación continúa exclusivamente en `feature/pipeline-e2e` y terminará
 con un único PR hacia `main`. No se publica ni se abre ese PR en este paso.
 La arquitectura compartida está en [pipeline-e2e.md](../architecture/pipeline-e2e.md)
@@ -25,6 +26,7 @@ Los nombres de los jobs son los contextos que debe exigir el ruleset:
 | `api-ci.yml` | `API tests` | `python -m pip install -r app/api/requirements-dev.txt`; desde `app/api`, `python -m pytest`. |
 | `dashboard-ci.yml` | `Dashboard quality` | Desde `app/dashboard`, `bun install --frozen-lockfile`, `bun run lint`, `bun run test`, `NITRO_PRESET=node_server bun run build`. |
 | `publication-contract.yml` | `Publication contract` | Reutiliza `construir_indice` y `RepositorioDirectorio.get` para validar todos los JSON, sus nombres y claves; ejecuta la prueba Zod existente indicada abajo. |
+| `pipeline-ci.yml` | `Pipeline quality` | Desde la raíz: `uv lock --check --project pipeline`, `uv sync --locked --project pipeline`, `uv run --directory pipeline ruff check .`, `uv run --directory pipeline pytest` y `uv run --directory pipeline kedro run --pipeline synthetic`. |
 
 La validación del consumidor se ejecuta desde `app/dashboard` con:
 
@@ -39,7 +41,7 @@ no consume datos científicos externos ni convierte 2025 en un holdout intacto.
 El contrato no regenera ni certifica científicamente el retroanálisis: un cambio
 en `datos/retro/` dispara la validación de las publicaciones existentes.
 
-Los tres workflows se ejecutan en PR hacia `main` y permiten `workflow_dispatch`.
+Los cuatro workflows se ejecutan en PR hacia `main` y permiten `workflow_dispatch`.
 Filtran rutas **dentro del job**, conservando un check exitoso explícito cuando
 no aplica: filtrar el evento completo dejaría checks requeridos en pendiente.
 API cubre `app/api/`, resultados y su workflow; tablero cubre `app/dashboard/`
@@ -48,6 +50,10 @@ tablero y su workflow. El filtro de publicación es deliberadamente conservador
 para incluir schemas, loaders, contratos y configuración sin listas frágiles.
 La ejecución manual siempre valida todo el componente; GitHub solo ofrece
 `workflow_dispatch` cuando el workflow existe en la rama predeterminada.
+Pipeline cubre `pipeline/` y su propio workflow, con el mismo filtro dentro del job.
+Instala el entorno propio desde `uv.lock`, verifica su vigencia y ejecuta el E2E
+artificial sin datos externos. El comando usa `--directory pipeline` para que
+Kedro descubra la raíz del subproyecto; `--project` no cambia el directorio.
 
 Se usan Python 3.12, Node 22 y Bun 1.4.4 (alineado con Docker).
 Acciones oficiales verificadas: [checkout v7](https://github.com/actions/checkout),
@@ -55,7 +61,10 @@ Acciones oficiales verificadas: [checkout v7](https://github.com/actions/checkou
 [setup-node v7](https://github.com/actions/setup-node) y
 [setup-bun v2](https://github.com/oven-sh/setup-bun).
 Permisos: solo `contents: read`; sin secretos, matrices ni cachés añadidas.
-`pipeline-ci.yml` se incorporará en la tarea 4 junto con Kedro (DEC-005).
+`pipeline-ci.yml` se incorpora en la tarea 4 junto con Kedro (DEC-005).
+Usa Python 3.12 y [setup-uv v10.3.3](https://github.com/astral-sh/setup-uv/releases/tag/v10.3.3)
+con uv 0.11.19 y caché desactivada. `Pipeline quality` se valida localmente;
+su ejecución en GitHub Actions continúa pendiente por DEC-006.
 
 ## Estado remoto comprobado
 
@@ -70,9 +79,11 @@ Inspección de solo lectura con GitHub CLI el 7 de noviembre de 2026:
   HTTP 404. Con acceso limitado, ese 404 no demuestra por sí solo ausencia de
   protección clásica; no permite verificarla. No acredita los requisitos solicitados.
 
-**Bloqueo administrativo:** no existe un ruleset activo verificable y esta cuenta
-no puede administrarlo. La tarea 2 queda `BLOQUEADA`, con avance `1/20`.
-No se modificó configuración remota. Los workflows aún no se ejecutaron en
+**Pendiente administrativo antes del merge:** la inspección anterior no encontró
+un ruleset activo verificable y la cuenta no puede administrarlo. DEC-006 cerró
+la tarea 2 respecto a implementación y validación local, y aplazó la activación
+remota hasta publicar el único PR. No se modificó configuración remota ni se
+repitió esa inspección en la tarea 4. Los workflows aún no se ejecutaron en
 GitHub Actions porque no se ha publicado la rama ni abierto el PR.
 
 ## Activación manual exacta por el propietario
@@ -91,26 +102,30 @@ y las [reglas disponibles](https://docs.github.com/en/repositories/configuring-b
    **Dismiss stale pull request approvals when new commits are pushed**,
    **Require review from Code Owners** y **Require conversation resolution before merging**.
 6. Activar **Require status checks to pass** y **Require branches to be up to date
-   before merging**. Agregar exactamente `API tests`, `Dashboard quality` y
-   `Publication contract`, con origen GitHub Actions.
+   before merging**. Agregar exactamente `API tests`, `Dashboard quality`,
+   `Publication contract` y `Pipeline quality`, con origen GitHub Actions.
 7. Guardar con **Create** y volver a consultar las reglas efectivas de `main`.
    Verificar todos los campos anteriores, no solo la existencia del ruleset.
 
 Si los checks no aparecen en el selector, deberán registrarse mediante una
 primera ejecución del futuro **único PR**, cuando se autorice publicar la rama;
 no se abrirá un PR auxiliar. No desactivar la protección para fusionar.
-La tarea permanece bloqueada hasta que los tres contextos estén exigidos y se
+El merge permanece bloqueado hasta que los cuatro contextos estén exigidos y se
 pueda verificar la configuración completa. `CODEOWNERS` se interpreta desde la
 rama base: para este primer PR, el propietario deberá revisar explícitamente
 el diff aunque todavía no haya solicitud automática de code owner.
 
-Antes del merge: ruleset activo y verificado, tres checks verdes en el último
+Antes del merge: ruleset activo y verificado, cuatro checks verdes en el último
 estado del PR, rama actualizada, aprobación independiente válida, revisión de
 propiedad y conversaciones resueltas. También deben completarse las tareas
 restantes de `plan.md`; esta etapa no autoriza fusionar una implementación parcial.
 
 ## Evidencia local y límites
 
+- Pipeline (tarea 4): lock vigente, instalación bloqueada, Ruff, 7 pruebas y
+  ejecución Kedro sintética verdes localmente. Persisten avisos de deprecación
+  en Kedro/OmegaConf; `--pipeline` sigue aceptado por Kedro 1.7.0.
+  No se ejecutó ni se esperó GitHub Actions (DEC-006).
 - API: 22 pruebas verdes; advertencia existente de deprecación de TestClient/httpx.
 - Tablero: 33 pruebas verdes; lint sin errores y seis advertencias de Fast Refresh;
   build `node_server` correcto, con advertencia existente sobre tamaño de chunks.
