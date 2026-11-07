@@ -265,3 +265,57 @@ uv run --directory pipeline pytest tests/test_adapters.py
 
 Las únicas implementaciones actuales son dobles de tests. XGBoost, LightGBM, GAM
 y demás enfoques reales están pendientes, sin paridad atribuida a V2.
+
+## Calibración, umbral y referencias
+
+`experiments/roles.py` define cinco ventanas disjuntas por objetivo:
+`train → calibration_fit → calibration_selection → threshold_selection → evaluation`.
+Cada transición exige disponibilidad de etiquetas más embargo estrictamente
+anterior al primer origen consumidor. Los meses de embargo no se usan para
+ajustar. Soporte, claves y 2025 se comprueban antes de cualquier lector de y o fit.
+
+El candidato se ajusta una sola vez. La sigmoide sobre probabilidad original se
+ajusta solo en calibration_fit, con scikit-learn 1.7.2. SciPy 1.18.1 aplica los
+parámetros congelados mediante expit; ambas versiones están fijadas como en V2.
+calibration_selection elige sigmoide solo si mejora Brier más de 1e-12; empates
+conservan original. Ambas clases y soporte completo son obligatorios en los roles
+de ajuste/selección. No se buscan hiperparámetros ni se refit al evaluar.
+
+threshold_selection opera sobre esa representación congelada. La grilla ordenada
+y una cota FAR absoluta son argumentos explícitos, sin defaults científicos.
+Se maximiza sensibilidad de inicio bajo la cota, con desempates por menos falsas
+alertas, menor FAR y mayor umbral. Sin alertas, FAR permanece ausente. Sin umbral
+factible, se rechaza; no existe sustitución manual silenciosa.
+
+```python
+from sat_dengue_pipeline.experiments.decisions import ThresholdPolicy
+from sat_dengue_pipeline.experiments.procedure import fit_procedure, predict_frozen
+from sat_dengue_pipeline.experiments.roles import split_roles
+
+# plan debe declarar las cinco ventanas y el soporte, con disponibilidad válida.
+batches = split_roles(data, plan)
+# Ejemplo artificial, no política científica aprobada:
+policy = ThresholdPolicy(tuple(i / 10 for i in range(11)), max_false_alarm_ratio=1.0)
+fitted = fit_procedure(batches, plan, candidate, registry, policy)
+receipt = fitted.decisions.to_json()
+output = predict_frozen(fitted, batches["evaluation"], expected_digest=fitted.decisions.digest)
+```
+
+La salida separa claves, probabilidades originales/seleccionadas y decisiones.
+Las referencias comparten todas las claves: prevalencia solo de y_train y
+persistencia de no exceso observado, adaptada a “sin nuevo inicio” en la cohorte
+elegible. Persistencia es determinista; prevalencia no recibe silenciosamente el
+umbral del candidato. y de evaluación no se lee durante ajuste ni inferencia.
+La futura tarea 11 deberá contar ausencias y aplicar una máscara común a candidato
+y referencias al reportar métricas; no se calcula ese reporte aquí.
+
+```sh
+uv run --directory pipeline pytest tests/test_procedure.py
+```
+
+JSON/digest congela parámetros y decisiones sin pickle o modelos versionados.
+La cota absoluta, grilla fija, soporte mínimo de ingeniería y persistencia de
+inicio son adaptaciones explícitas. Bins/gap, utilidad relativa y protocolo exacto
+V2 quedan `NOT_REPRODUCED`, detallados en
+[la decisión temporal](../docs/decisions/temporal-experiments.md).
+El ejemplo artificial no demuestra suficiencia científica ni autoriza alertas.

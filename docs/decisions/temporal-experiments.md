@@ -95,3 +95,109 @@ históricos. No se agrega adaptador genérico de estimadores sin una necesidad
 concreta, ni se afirma paridad de predicciones con modelos V2. Los cuatro miembros
 pueden implementar el mismo Protocol sin incorporar calendarios, calibración,
 umbrales o métricas en sus adaptadores.
+
+## Tarea 10: decisiones anteriores a evaluación
+
+`experiments/roles.py` exige exactamente `train`, `calibration_fit`,
+`calibration_selection`, `threshold_selection`, `evaluation`, ordenados por
+objetivo y sin solapamientos. Cada ventana debe contener los meses declarados;
+el mínimo de ingeniería es dos meses y una fila por clase en cada rol de
+ajuste/selección, configurable al alza mediante el contrato. Las filas deben
+ser elegibles y completas, sin convertir ausencias en ceros ni reducir cohortes
+silenciosamente. No se leen etiquetas de evaluación para validar clases.
+
+Además de `max(objetivos anteriores) < min(objetivos siguientes)`, se comprueba
+`max(disponibilidad de etiquetas productoras) + embargo < min(orígenes consumidores)`.
+El embargo adicional es explícito y no se asigna a entrenamiento. Los huecos
+necesarios por horizonte también quedan fuera de los roles. Las cinco entradas
+pasan la compuerta de claves/soporte antes de invocar cualquier lector de y o
+constructor. `RoleBatch.read_y` difiere la lectura hasta la etapa que la consume;
+el callback de evaluación no se llama durante ajuste, selección ni inferencia.
+
+Un candidato predeclarado se ajusta una sola vez en train. No se seleccionan
+hiperparámetros ni candidatos. Sus predicciones alimentan los tres roles siguientes,
+sin refit. `LogisticRegression(solver="lbfgs", max_iter=1000, C=1, random_state=seed)`
+ajusta una sigmoide sobre la probabilidad original exclusivamente en
+calibration_fit. Se rechazan ausencia de clases, soporte insuficiente o falta
+de convergencia. Se retienen solo coeficiente/intercepto numéricos. En
+calibration_selection se elige sigmoide únicamente si mejora Brier en más de
+1e-12; en empate o sin mejora se conserva original. Estos Brier son estadísticas
+de selección, no una implementación de las métricas finales de tarea 11.
+
+Se agregan scikit-learn 1.7.2 y SciPy 1.18.1, las versiones del pyproject V2 fijado
+(huella ya registrada en la decisión de migración). scikit-learn evita programar
+un optimizador de calibración propio; SciPy, dependencia necesaria de sklearn,
+se declara también directamente porque se usa `special.expit` para inferencia
+numérica estable con parámetros congelados. Dependencias transitivas nuevas:
+joblib 1.6.0, threadpoolctl 3.8.0 y cloudpickle 3.1.2; no se usa persistencia pickle.
+Referencias de API:
+[LogisticRegression 1.7.2](https://scikit-learn.org/1.7/modules/generated/sklearn.linear_model.LogisticRegression.html)
+y [SciPy expit](https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.expit.html).
+
+`ThresholdPolicy` requiere una tupla ordenada y única con límites 0/1 y una cota
+absoluta FAR explícita, sin valor científico implícito. La muestra usa décimas y
+cota 1 solo como ejemplo artificial, no como política de alertas aprobada.
+Solo threshold_selection selecciona: máxima sensibilidad de inicio entre umbrales
+con `FP/alertas <= cota`; empates por menos falsas alertas, menor FAR y mayor
+umbral. Cero alertas mantiene FAR ausente y no puede ser factible. Si no existe
+umbral factible, se rechaza; no hay sustitución manual, fallback ni ajuste al
+evaluar. La representación probabilística ya está congelada antes de esa etapa.
+
+Las referencias comparten exactamente las claves y horizonte del candidato:
+prevalencia constante calculada solo con y_train, y persistencia de no exceso
+observado en T. Esta última predice **sin nuevo inicio** para ambos horizontes;
+es determinista, no una probabilidad calibrada. En la cohorte elegible es una
+referencia degenerada de ceros, consecuencia explícita de mantener el estado
+sin transición. Estado desconocido o exceso en T no se admite como elegible.
+La prevalencia se entrega como probabilidad sin inventar una decisión binaria
+con el umbral del candidato. No se coerciona FAR de persistencia sin alertas a 0.
+
+`FrozenDecisions` guarda parámetros, representación, política/grilla, umbral,
+prevalencia, disponibilidad, procedencia, auditoría y digests de las entradas
+de ajuste/selección. No incluye y ni valores X de evaluación. JSON y SHA-256
+permiten roundtrip verificado; el objeto es inmutable y `predict_frozen` exige
+el digest esperado, sin parámetro de override. Se conserva un único modelo
+ajustado en memoria, sin serializarlo ni versionarlo. La salida separa claves,
+probabilidad original, representación seleccionada, decisión y referencias.
+`fold_id=procedure-<digest>` enlaza la evaluación de ese plan congelado, distinto
+de los folds mensuales de prueba del arnés. Cada candidato/horizonte puede
+declarar su plan, sin duplicar calendarios o selección en el adaptador.
+
+La evaluación posterior conserva todas las claves declaradas; sus etiquetas
+siguen separadas, incluso si son ausentes. La futura tarea 11 deberá aplicar
+la misma máscara de evaluabilidad a candidato y referencias, contar ausencias
+y calcular métricas sin realimentar decisiones. Aquí no se calcula ese reporte.
+
+### Fuentes adicionales consultadas
+
+| Blob histórico | SHA-256 | Regla/adaptación o exclusión |
+|---|---|---|
+| `src/sat_dengue/model_training/references.py` | `e6434f0cdc069e1f22380a8d9176865e0dfc7b4cba750defe10f4a786baf4445` | Prevalencia solo train; persistencia de exceso adaptada explícitamente a persistencia sin inicio en cohorte no exceso. |
+| `src/sat_dengue/model_evaluation/calibration.py` | `4e9824befde37530e9929c6ff5b9b50440ffd29fd58d1d82637bf52b8c7bbf95` | `_fit_sigmoid`, aplicación numérica, elección por Brier y orden de desempates de umbral; solo reglas mínimas, no módulo completo. |
+| `src/sat_dengue/model_evaluation/contract.py` | `df818f8244079410dc85dec7bbb1b74b06da0a63a71672bd88ca445fc3de52e8` | Roles/soporte/disponibilidad previos; V3 usa cinco roles y anterioridad estricta. |
+| `src/sat_dengue/model_evaluation/decision_policy.py` | `61a784b46cd59968f62cfcb9135e51afbb024e25e57924c9c0e9a645117d8aa4` | No override silencioso ni autorización automática; no se migran ranking/knobs humanos/G5. |
+| `docs/product/stage-4/model_engineering_contract_v1.json` | `70f2d1e8a5fe8dd950b3be9bd453fc953b07187f5a092e692c3dfe8918e21862` | Definiciones de referencias y fronteras de contexto; grillas de familias y métricas completas excluidas. |
+| `docs/product/stage-5/README.md` | `a5042f29b8000de3c283ea7d510019fafa0149472aa9906ea304ceffc0d69d3e` | Disponibilidad por etiquetas y separación de roles; no se ejecutan procedimientos históricos o replay privado. |
+| `docs/product/stage-5/probability_calibration_thresholds_contract_v1.json` | `9ec4be02eee61bf546ed3127755dbcc78ab5a0511342d88165dbee3018a41bb3` | Original/sigmoide, funciones de roles y congelación. Adaptación mínima de soporte y grilla explícita. |
+| `docs/product/stage-5/model_evaluation_contract_v1.json` | `77222e8a2159f6bf68f32541c867e80b497a78fc2a8676950a923ebd91ed38a3` | Disponibilidad y mismo soporte de referencias; métricas completas, incertidumbre y bloque reservado excluidos. |
+| `docs/product/stage-5/champion_decision_policy_v1.json` | `29b5d6d7924c74d0c0b1f3cd2e588d1ab587a22c3f59b64d385469246f7a4ec8` | Contexto histórico de utilidad humana y no aprobación; no se adoptan valores como defaults V3. |
+| `tests/unit/test_model_evaluation.py` | `9529848f2e4652b9f7c1e5c983c59160ed36f1e599228f2817788d70db453fb0` | Tests de disponibilidad, denominadores y desempate; V3 añade lectores/consumidores espía y freeze sin evaluación. |
+
+`NOT_REPRODUCED`: calendarios internos/externos exactos V2, búsqueda y refit
+externo, calibración por bins soportados y desempate por gap, grilla derivada de
+probabilidades redondeadas y utilidad relativa a persistencia con knobs humanos.
+La persistencia de exceso no es la etiqueta de inicio; su versión de inicio
+es una adaptación explícita y su FAR sin alertas no define una cota relativa.
+Por eso V3 exige una cota absoluta declarada por el llamador y no atribuye paridad
+a las decisiones. El soporte mínimo artificial no sustituye los mínimos de bins
+históricos ni prueba suficiencia científica. No se reproducen componentes o
+resultados reales, no se leen observaciones/etiquetas científicas de 2025 y no se
+autoriza un modelo, un umbral operativo o un campeón.
+
+Los tests de ingeniería usan solo filas artificiales hasta 2024 y verifican
+ambos horizontes, fronteras por origen, clases, soporte, callbacks de evaluación
+prohibidos, ajustes únicos, estabilidad ante futuro, referencias, JSON y digest.
+No se agrega un pipeline operativo ni persistencia; `synthetic` permanece igual.
+Los JSON publicados solo intervienen en las regresiones de producto autorizadas
+(DEC-009), nunca como datos científicos. Tarea 15, revisión independiente, CI
+remota y ruleset siguen pendientes.
