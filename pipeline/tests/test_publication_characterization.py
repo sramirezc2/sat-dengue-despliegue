@@ -13,8 +13,8 @@ def test_legacy_frozen_documents_and_bytes(tmp_path, monkeypatch):
     paths = write_inputs(tmp_path / "inputs")
     outputs, source_sha = legacy_outputs(paths, tmp_path / "output", monkeypatch)
     fixture = Path(__file__).parent / "fixtures"
-    expected = json.loads((fixture / "publication_expected.json").read_text())
-    receipt = json.loads((fixture / "publication_receipt.json").read_text())
+    expected = json.loads((fixture / "publication_expected.json").read_text(encoding="utf-8"))
+    receipt = json.loads((fixture / "publication_receipt.json").read_text(encoding="utf-8"))
     assert len(outputs) == 2
     assert {name: json.loads(data) for name, data in outputs.items()} == expected
     assert {name: hashlib.sha256(data).hexdigest() for name, data in outputs.items()} == receipt[

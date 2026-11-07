@@ -31,7 +31,7 @@ def inputs(tmp_path: Path) -> tuple[Path, EvaluationReport, dict[str, Any]]:
     """Crear repositorio temporal y linaje verídico de una cohorte artificial."""
     repo = tmp_path / "workspace"
     (repo / "pipeline").mkdir(parents=True)
-    (repo / ".gitignore").write_text(".tracking/\n")
+    (repo / ".gitignore").write_text(".tracking/\n", encoding="utf-8")
     (repo / "pipeline/uv.lock").write_bytes((Path(__file__).parents[1] / "uv.lock").read_bytes())
     subprocess.run(["git", "init", "-q", "-b", "feature/pipeline-e2e", str(repo)], check=True)
     subprocess.run(["git", "-C", str(repo), "add", "."], check=True)
@@ -193,7 +193,7 @@ def test_enabled_disabled_identical_scientific_artifacts_and_new_ids(inputs) -> 
 def test_dirty_and_portable_multiple_stores(inputs) -> None:
     """No ocultar dirty; dos rutas relativas tienen backends independientes."""
     repo, report, lineage = inputs
-    (repo / "untracked.txt").write_text("artificial")
+    (repo / "untracked.txt").write_text("artificial", encoding="utf-8")
     source = repo.parent / "panel.txt"
     bundle = ResolvedBundle(
         "synthetic-v1",
@@ -299,25 +299,25 @@ def test_rejects_nonlocal_store(store: str) -> None:
         TrackingConfig(True, store)
 
 
-def test_symlink_escape_and_unignored_store_rejected(inputs) -> None:
+def test_symlink_escape_and_unignored_store_rejected(inputs, symlink_factory) -> None:
     """El SDK nunca recibe una ruta que escape por symlink o no esté ignorada."""
     repo, report, lineage = inputs
-    (repo / ".tracking").symlink_to(repo.parent, target_is_directory=True)
+    symlink_factory(repo / ".tracking", repo.parent, target_is_directory=True)
     with pytest.raises(ValueError, match="symlinks"):
         LocalTracker(repo, TrackingConfig(enabled=True)).record(report, lineage)
     (repo / ".tracking").unlink()
-    (repo / ".gitignore").write_text("")
+    (repo / ".gitignore").write_text("", encoding="utf-8")
     with pytest.raises(ValueError, match="ignorado"):
         LocalTracker(repo, TrackingConfig(enabled=True)).record(report, lineage)
 
 
 @pytest.mark.parametrize("component", ["tracking.sqlite", "artifacts", "staging"])
-def test_store_components_cannot_escape_by_symlink(inputs, component: str) -> None:
+def test_store_components_cannot_escape_by_symlink(inputs, component: str, symlink_factory) -> None:
     """Rechazar enlaces internos antes de importar o escribir el backend."""
     repo, report, lineage = inputs
     root = repo / ".tracking/local"
     root.mkdir(parents=True)
-    (root / component).symlink_to(repo.parent, target_is_directory=True)
+    symlink_factory(root / component, repo.parent, target_is_directory=True)
     with pytest.raises(ValueError, match="symlinks"):
         LocalTracker(repo, TrackingConfig(enabled=True)).record(report, lineage)
 
@@ -327,7 +327,7 @@ def test_scientific_modules_do_not_import_mlflow() -> None:
     root = Path(__file__).parents[1] / "src/sat_dengue_pipeline"
     for folder in ("evaluation", "experiments", "models", "domain"):
         for path in (root / folder).rglob("*.py"):
-            for node in ast.walk(ast.parse(path.read_text())):
+            for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
                 imports = (
                     [a.name for a in node.names]
                     if isinstance(node, ast.Import)
@@ -374,8 +374,8 @@ def test_cli_disabled_is_explicit_and_does_not_create_storage(inputs, monkeypatc
 
     repo, report, lineage = inputs
     report_path, lineage_path = repo / "report.json", repo / "lineage.json"
-    report_path.write_text(report.canonical_json)
-    lineage_path.write_text(json.dumps(lineage))
+    report_path.write_text(report.canonical_json, encoding="utf-8")
+    lineage_path.write_text(json.dumps(lineage), encoding="utf-8")
     monkeypatch.chdir(repo)
     monkeypatch.setattr(
         sys, "argv", ["tracking", "--report", "report.json", "--lineage", "lineage.json"]

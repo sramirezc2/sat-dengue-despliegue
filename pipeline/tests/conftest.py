@@ -60,3 +60,19 @@ def enforce_pipeline_boundaries(monkeypatch: pytest.MonkeyPatch) -> Iterator[Non
         yield
     finally:
         active = False
+
+
+@pytest.fixture(params=["native", "controlled"])
+def symlink_factory(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, request):
+    """Probar guards sin omitir cobertura cuando el SO niega enlaces nativos."""
+    from fixtures.links import TestLinks
+
+    if request.param == "controlled":
+        import errno
+
+        def denied(*args, **kwargs):
+            """Ejercitar todos los guards sin depender de privilegios del runner."""
+            raise OSError(errno.EPERM, "controlled capability denial")
+
+        monkeypatch.setattr(Path, "symlink_to", denied)
+    return TestLinks(monkeypatch, tmp_path)

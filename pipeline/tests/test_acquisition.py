@@ -310,7 +310,7 @@ def test_missing_local_file_is_explicit(manifest_data: dict[str, Any], tmp_path:
 
 
 def test_source_and_cache_symlinks_cannot_escape(
-    manifest_data: dict[str, Any], tmp_path: Path
+    manifest_data: dict[str, Any], tmp_path: Path, symlink_factory
 ) -> None:
     """Rechazar escapes por symlink aunque las rutas declaradas sean relativas."""
     manifest = parse(manifest_data)
@@ -318,12 +318,12 @@ def test_source_and_cache_symlinks_cannot_escape(
     outside.mkdir()
     cache = tmp_path / "cache"
     cache.mkdir()
-    (cache / manifest.release_id).symlink_to(outside, target_is_directory=True)
+    symlink_factory(cache / manifest.release_id, outside, target_is_directory=True)
     with pytest.raises(CacheError, match="escapa"):
         resolve_release(manifest, cache, create_source(manifest))
     local_file = Path(manifest.location) / manifest.files[0].remote_path
     local_file.unlink()
-    local_file.symlink_to(outside / "absent.txt")
+    symlink_factory(local_file, outside / "absent.txt")
     with pytest.raises(CacheError, match="escapa"):
         resolve_release(manifest, tmp_path / "other-cache", create_source(manifest))
 

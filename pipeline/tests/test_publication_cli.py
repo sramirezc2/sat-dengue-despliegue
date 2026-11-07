@@ -104,7 +104,7 @@ def test_cli_parse_codes(args, code, fragment, tmp_path):
 def test_cli_invalid_retro_preserves_failure_code(tmp_path, content):
     """Un retroanálisis inválido falla sin convertirlo silenciosamente en ausencia."""
     paths = write_inputs(tmp_path / "inputs")
-    paths["retroanalisis"].write_text(content)
+    paths["retroanalisis"].write_text(content, encoding="utf-8")
     out = tmp_path / "out"
     result = subprocess.run(command(paths, out), cwd=tmp_path, capture_output=True, text=True)
     assert result.returncode == 1

@@ -159,7 +159,7 @@ def test_scientific_modules_have_no_provider_imports():
     root = Path(__file__).parents[1] / "src/sat_dengue_pipeline"
     for directory in ("raw", "domain", "experiments", "models", "evaluation"):
         for path in (root / directory).glob("*.py"):
-            tree = ast.parse(path.read_text())
+            tree = ast.parse(path.read_text(encoding="utf-8"))
             for node in ast.walk(tree):
                 names = (
                     [a.name for a in node.names]
@@ -179,8 +179,8 @@ def tracking_payload(raw, tmp_path):
     """Capturar metadatos reales de un repositorio artificial local."""
     repo = tmp_path / "repo"
     (repo / "pipeline").mkdir(parents=True)
-    (repo / ".gitignore").write_text(".tracking/\n")
-    (repo / "pipeline/uv.lock").write_text("synthetic lock identity")
+    (repo / ".gitignore").write_text(".tracking/\n", encoding="utf-8")
+    (repo / "pipeline/uv.lock").write_text("synthetic lock identity", encoding="utf-8")
     subprocess.run(["git", "init", "-q", "-b", "feature/pipeline-e2e", str(repo)], check=True)
     subprocess.run(["git", "-C", str(repo), "add", "."], check=True)
     subprocess.run(

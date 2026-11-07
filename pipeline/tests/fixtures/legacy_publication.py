@@ -49,7 +49,11 @@ def legacy_outputs(paths: dict[str, Path], destination: Path, monkeypatch) -> tu
         argv.extend([f"--{name}", str(path)])
     monkeypatch.setattr(sys, "argv", argv)
     module.main()
-    outputs = {path.name: path.read_bytes() for path in destination.glob("*.json")}
+    # Normalize only the historical text writer transport; production hashes remain raw bytes.
+    outputs = {
+        path.name: path.read_text(encoding="utf-8").encode("utf-8")
+        for path in destination.glob("*.json")
+    }
     source = subprocess.check_output(
         ["git", "-C", str(Path(__file__).resolve().parents[3]), "show", f"{COMMIT}:{BLOB_PATH}"]
     )

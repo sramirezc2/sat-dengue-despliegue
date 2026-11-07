@@ -20,8 +20,8 @@ def main() -> None:
     args = parser.parse_args()
     if args.report.stat().st_size > 20_000_000 or args.lineage.stat().st_size > 64_000:
         raise ValueError("Recibo de entrada demasiado grande")
-    report = EvaluationReport(args.report.read_text())
-    lineage = json.loads(args.lineage.read_text())
+    report = EvaluationReport(args.report.read_text(encoding="utf-8"))
+    lineage = json.loads(args.lineage.read_text(encoding="utf-8"))
     receipt = LocalTracker(Path.cwd(), TrackingConfig(args.enable, args.store)).record(
         report, lineage
     )

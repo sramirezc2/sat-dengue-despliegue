@@ -37,7 +37,7 @@ def test_exact_synthetic_v2_reference() -> None:
         "predictors": frame_payload(predictor_matrix(table, schema)),
         "coverage": coverage_report(table, schema),
     }
-    receipt = json.loads((FIXTURES / "canonical_receipt.json").read_text())
+    receipt = json.loads((FIXTURES / "canonical_receipt.json").read_text(encoding="utf-8"))
     expected = (FIXTURES / "canonical_expected.json").read_bytes()
     assert (
         hashlib.sha256(canonical_bytes(frame_payload(panel))).hexdigest() == receipt["input_sha256"]

@@ -262,7 +262,7 @@ def test_rollback_removes_only_new_files(package, tmp_path, monkeypatch):
     """Conservar archivos ajenos y eliminar únicamente los creados por la transacción."""
     out, schema = tmp_path / "out", load_schema()
     out.mkdir()
-    (out / "notes.txt").write_text("preserve")
+    (out / "notes.txt").write_text("preserve", encoding="utf-8")
     before, original, calls = snapshot(out), io._replace, []
     gate = validate_staging(stage_package(package, out, schema), schema)
 
@@ -315,20 +315,21 @@ def test_invalid_json_preserves_previous(package, tmp_path, data):
 
 
 @pytest.mark.parametrize("where", ["destination", "ancestor", "result", "metadata", "stage"])
-def test_symlinks_never_followed(package, tmp_path, where):
+def test_symlinks_never_followed(package, tmp_path, where, symlink_factory):
     """Un symlink no puede dirigir lecturas/escrituras fuera de la frontera."""
     actual, out = tmp_path / "actual", tmp_path / "out"
     actual.mkdir()
-    (actual / "sentinel").write_text("preserve")
+    (actual / "sentinel").write_text("preserve", encoding="utf-8")
     before = snapshot(actual)
     if where == "destination":
-        out.symlink_to(actual, target_is_directory=True)
+        symlink_factory(out, actual, target_is_directory=True)
     elif where == "ancestor":
-        (tmp_path / "linked").symlink_to(actual, target_is_directory=True)
+        symlink_factory(tmp_path / "linked", actual, target_is_directory=True)
         out = tmp_path / "linked/out"
     elif where in {"result", "metadata"}:
         out.mkdir()
-        (out / (package.files[0].name if where == "result" else ".publication")).symlink_to(
+        symlink_factory(
+            out / (package.files[0].name if where == "result" else ".publication"),
             actual / "sentinel" if where == "result" else actual,
             target_is_directory=where == "metadata",
         )
@@ -336,7 +337,7 @@ def test_symlinks_never_followed(package, tmp_path, where):
         stage = stage_package(package, out, load_schema())
         path = stage.root / "new" / package.files[0].name
         path.unlink()
-        path.symlink_to(actual / "sentinel")
+        symlink_factory(path, actual / "sentinel")
         with pytest.raises(PublicationTransactionError):
             validate_staging(stage, load_schema())
         assert not stage.root.exists()
@@ -353,7 +354,7 @@ def test_staging_revalidated_before_promotion(package, tmp_path, mutation):
     out, schema = tmp_path / "out", load_schema()
     stage = stage_package(package, out, schema)
     if mutation == "extra_file":
-        (stage.root / "new/extra.json").write_text("{}")
+        (stage.root / "new/extra.json").write_text("{}", encoding="utf-8")
     elif mutation == "corrupt":
         (stage.root / "new" / package.files[0].name).write_bytes(b"partial")
     else:
@@ -443,12 +444,12 @@ def test_tamper_after_gate_is_rejected_at_promotion(package, tmp_path):
     assert not gate.stage.root.exists()
 
 
-def test_input_symlink_rejected(tmp_path):
+def test_input_symlink_rejected(tmp_path, symlink_factory):
     """Las entradas locales tampoco pueden resolver symlinks silenciosamente."""
     actual = tmp_path / "source.csv"
-    actual.write_text("fake,header\n1,2\n")
+    actual.write_text("fake,header\n1,2\n", encoding="utf-8")
     link = tmp_path / "linked.csv"
-    link.symlink_to(actual)
+    symlink_factory(link, actual)
     with pytest.raises(PublicationTransactionError):
         io.read_csv(link)
 
@@ -475,7 +476,7 @@ def test_production_import_boundaries_and_domain_purity():
     repo = Path(__file__).resolve().parents[2]
     root = repo / "pipeline/src/sat_dengue_pipeline/pipelines/deployment_publication"
     for path in root.glob("*.py"):
-        for node in ast.walk(ast.parse(path.read_text())):
+        for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
             names = (
                 [n.name for n in node.names]
                 if isinstance(node, ast.Import)
@@ -494,5 +495,7 @@ def test_production_import_boundaries_and_domain_purity():
                 )
     assert not any(
         isinstance(node, ast.FunctionDef)
-        for node in ast.walk(ast.parse((repo / "scripts/construir_resultados.py").read_text()))
+        for node in ast.walk(
+            ast.parse((repo / "scripts/construir_resultados.py").read_text(encoding="utf-8"))
+        )
     )

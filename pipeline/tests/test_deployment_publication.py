@@ -31,8 +31,8 @@ def package():
 def test_migrated_package_matches_legacy_exact_bytes(package):
     """Congelar equivalencia de los JSON; el manifiesto queda fuera del contrato HTTP."""
     fixtures = Path(__file__).parent / "fixtures"
-    expected = json.loads((fixtures / "publication_expected.json").read_text())
-    receipt = json.loads((fixtures / "publication_receipt.json").read_text())
+    expected = json.loads((fixtures / "publication_expected.json").read_text(encoding="utf-8"))
+    receipt = json.loads((fixtures / "publication_receipt.json").read_text(encoding="utf-8"))
     assert {file.name: json.loads(file.content) for file in package.files} == expected
     assert {
         file.name: hashlib.sha256(file.content).hexdigest() for file in package.files

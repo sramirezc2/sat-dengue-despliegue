@@ -182,17 +182,17 @@ def test_schema_rejected_even_with_synthetic_hash_updated(raw, which):
     root = bundle.files[0].path.parent
     if which in {"epi", "climate"}:
         path = root / ("dengue.csv" if which == "epi" else "google_earth_engine.csv")
-        text = path.read_text()
+        text = path.read_text(encoding="utf-8")
         text = (
             text.replace("INI_SIN", "MISSING")
             if which == "epi"
             else text.replace("wind_v_mean_ms,", "")
         )
-        path.write_text(text)
+        path.write_text(text, encoding="utf-8")
     elif which == "json":
-        (root / "Divipola-municipios.md").write_text("[]")
+        (root / "Divipola-municipios.md").write_text("[]", encoding="utf-8")
     else:
-        (root / "divipola-provenance.json").write_text('{"files": {}}')
+        (root / "divipola-provenance.json").write_text('{"files": {}}', encoding="utf-8")
     bundle, inventory = fixture_inventory(root)
     with pytest.raises(ValueError):
         raw_contract_validation(bundle, config, inventory)
@@ -430,14 +430,14 @@ def test_raw_reordering_exact_semantics_bytes_nulls_and_quarantine(raw, tmp_path
     for filename in ("dengue.csv", "dengue_grave.csv", "google_earth_engine.csv"):
         rewrite_csv(root / filename, lambda rows: rows[::-1])
     path = root / "Divipola-municipios.md"
-    catalog = json.loads(path.read_text())
+    catalog = json.loads(path.read_text(encoding="utf-8"))
     catalog["resultado"].reverse()
-    path.write_text(json.dumps(catalog))
+    path.write_text(json.dumps(catalog), encoding="utf-8")
     from sat_dengue_pipeline.raw.contract import sha256
 
-    provenance = json.loads((root / "divipola-provenance.json").read_text())
+    provenance = json.loads((root / "divipola-provenance.json").read_text(encoding="utf-8"))
     provenance["files"][path.name]["sha256"] = sha256(path)
-    (root / "divipola-provenance.json").write_text(json.dumps(provenance))
+    (root / "divipola-provenance.json").write_text(json.dumps(provenance), encoding="utf-8")
     b, i = fixture_inventory(root)
     second, audit2 = build(b, config, tmp_path / "second", i)
     assert b.manifest_sha256 != bundle.manifest_sha256
