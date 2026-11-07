@@ -2,7 +2,7 @@
 
 **Versión:** 1.0
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Listo para tarea 6
+**Estado general:** Implementación en curso
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -65,8 +65,8 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 3 | Congelar y proteger la línea base del despliegue | `COMPLETA` | 2 | Compose arranca desde clon limpio; salud y consulta válida funcionan; brechas existentes quedan corregidas o documentadas. |
 | 4 | Crear el subproyecto `pipeline/` con Python, Kedro y uv | `COMPLETA` | 3 | Estructura autocontenida, lock, CLI, E2E sintético mínimo y `.github/workflows/pipeline-ci.yml` ejecutable y validado sin afectar `app/`. |
 | 5 | Implementar releases y adquisición desacoplada | `COMPLETA` | 4 | `DataSource`, `ResolvedBundle`, manifiestos, caché, hashes y adaptadores local, Hugging Face, Zenodo y S3 simulado. |
-| 6 | Migrar el panel canónico desde V2 | `PENDIENTE` | 5 | Productores migrados con procedencia y equivalencia sobre una muestra aprobada. |
-| 7 | Implementar etiquetas y controles temporales | `PENDIENTE` | 6 | Etiquetas de inicio, elegibilidad, horizontes, ausencias y prueba centinela que rechaza 2025. |
+| 6 | Migrar el panel canónico desde V2 | `COMPLETA` | 5 | Productores migrados con procedencia y paridad exacta sobre muestra artificial de 167 filas (no reproducción real). |
+| 7 | Implementar etiquetas y controles temporales | `EN CURSO` | 6 | Etiquetas de inicio, elegibilidad, horizontes, ausencias y prueba centinela que rechaza 2025. |
 | 8 | Recuperar o reimplementar el arnés rolling-origin | `PENDIENTE` | 7 | Ventana expansiva 2018–2024 reproducible; diferencias registradas como `NOT_REPRODUCED`. |
 | 9 | Implementar adaptadores de modelos | `PENDIENTE` | 8 | Interfaz común para los enfoques del equipo sin duplicar evaluación. |
 | 10 | Implementar calibración, umbrales y líneas base | `PENDIENTE` | 9 | Separación temporal correcta, umbrales congelados y líneas base con información simétrica. |
@@ -111,10 +111,10 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 5/20 |
-| Tarea activa | Ninguna |
+| Tareas completas | 6/20 |
+| Tarea activa | 7 — Implementar etiquetas y controles temporales |
 | Tareas bloqueadas | 0 |
-| Última tarea completada | 5 — Implementar releases y adquisición desacoplada |
+| Última tarea completada | 6 — Migrar el panel canónico desde V2 |
 | Última actualización | 7 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -126,6 +126,8 @@ Actualizar esta sección al cerrar cada tarea.
 | 2026-11-07 | 3 | COMPLETA | `5ec813e` | API: 28 pruebas; tablero: instalación con lockfile congelado, lint sin errores (6 advertencias), 33 pruebas y build; Docker Compose construido sin caché desde checkout temporal, 3 servicios activos, 22 resultados, Meta y Tolima disponibles, consultas y smoke test verdes; volumen verificado tras recrear contenedores; diff sin errores. | El estado inicial arrancaba con volumen vacío, 0 resultados y consultas 404. La imagen ahora siembra el volumen; S3 descarga siempre a temporal, comprueba tamaño y contrato, y reemplaza atómicamente. SHA-256 queda diferido a la tarea 13 porque aún no existe un hash remoto confiable. Recursos Docker temporales eliminados. |
 | 2026-11-07 | 4 | COMPLETA | `20897e9` | `uv lock --check --project pipeline`, `uv sync --locked --project pipeline`, `uv run --directory pipeline ruff check .`, `uv run --directory pipeline pytest` (7 pruebas) y `uv run --directory pipeline kedro run --pipelines synthetic`: verdes, también desde clon temporal limpio del commit con entorno nuevo. Métricas sintéticas: 1 fila, MAE 5, MSE 25. Regresión: API 28 pruebas; tablero lint sin errores (6 advertencias), 33 pruebas y build node_server; YAML, shell, filtros, enlaces y diff válidos. | `Pipeline quality` implementado y validado localmente; no se ejecutó remotamente por DEC-006. Python 3.12, Kedro 1.7.0, pytest 9.2.0, Ruff 0.17.4 y uv 0.11.19. Adaptación CLI registrada en DEC-007. CLI actualizada en `1dad0ec`; solo persisten avisos internos de OmegaConf. Sin publicación, datos reales, secretos ni artefactos pesados generados fuera del entorno ignorado; árbol del clon limpio. |
 | 2026-11-07 | 5 | COMPLETA | `1dad0ec` (CLI Kedro vigente); `a308c78` (adquisición) | `uv lock --check --project pipeline`, `uv sync --locked --project pipeline`, Ruff, pytest (71 pruebas: 64 nuevas) y `kedro run --pipelines synthetic` verdes, también desde clon temporal limpio de `a308c78` con entorno nuevo. API: 28 pruebas; tablero: lint sin errores (6 advertencias), 33 pruebas y build node_server. YAML, filtros, shell, diff y exclusión de `pipeline/data/` verificados. | Contratos inmutables, fábrica única y caché común por release/digest; cada hit verifica tamaño y SHA-256; transferencias temporales y reemplazo atómico por archivo. Local, HF y Zenodo probados con archivos/dobles locales; S3 con cliente falso y claves bajo prefijo de revisión, sin AWS. Integración del resolver como nodo Kedro con configuración temporal, sin pipeline de adquisición pendiente de datos reales. Solo se agregó huggingface_hub 2.4.0 y sus dependencias transitivas; Zenodo usa HTTP de biblioteca estándar. Guard global de pytest bloquea red, DNS, imports inversos y acceso a publicaciones. No hubo descargas científicas reales ni credenciales. Identificadores, hashes e inventario del primer release público siguen pendientes; reproducción real en tarea 15. CI remota y ruleset pendientes por DEC-006. |
+
+| 2026-11-07 | 6 | COMPLETA | `3ff23a560388c24b6eabe3a1427f6376c867da87` | Lock/sync, Ruff, 92 pruebas y E2E sintético verdes; verificación optativa de referencia V2 exacta; API 28; tablero lint sin errores (6 advertencias), 33 pruebas y build; diff sin errores. | V2 `j-mauro-r/SAT-Dengue-V2@916a69f3bb73f2ffbb0ec038b8bef887ee91adf1`, blobs y SHA-256 documentados en `docs/decisions/v2-scientific-migration.md`. 167 filas artificiales 2018–2024, Meta/Tolima; igualdad de tabla, tipos, nulos, roles, X y cobertura. NumPy 2.5.4 y pandas 3.0.6 fijados. Pruebas normales bloquean V2/red/app/publicaciones; no CSV de 426 MB ni datos reales/2025. No se escribió en V2; cambios externos de ese árbol registrados en DEC-008. La evidencia es sintética; release real pendiente en tarea 15. |
 
 ## 7. Decisiones y desviaciones
 
@@ -140,6 +142,7 @@ Toda desviación debe registrarse antes de continuar.
 | DEC-005 | 2026-11-07 | El workflow pipeline-ci se incorporará en la tarea 4 junto con el proyecto Kedro, de modo que nazca ejecutable y validado, no como un placeholder. | Evitar sobreingeniería y checks rotos sobre archivos inexistentes. | Evidencia de tarea 4 ampliada; tarea 2 cubre componentes existentes. | Aprobada por el prompt 2 |
 | DEC-006 | 2026-11-07 | La validación remota de GitHub Actions y la activación del ruleset se aplazan hasta que se publique el único PR. Las validaciones locales de la tarea 2 fueron aprobadas. | No abrir un PR auxiliar ni afirmar una validación remota que no ocurrió. | CI remota, ruleset, aprobación independiente y checks requeridos siguen siendo condiciones obligatorias antes del merge. | Aprobada por el prompt 3 |
 | DEC-007 | 2026-11-07 | Ejecutar los comandos de herramientas desde la raíz con `uv run --directory pipeline ...`; mantener `--project pipeline` en lock y sync. | En uv 0.11.19, `--project` selecciona el entorno sin cambiar cwd: Kedro no descubre el subproyecto y responde No such command run. `--directory` funciona y limita Ruff y pytest al subproyecto. | Un único comando documentado para el E2E: `uv run --directory pipeline kedro run --pipelines synthetic`; sin wrapper ni configuración Kedro en la raíz. | Adaptación reproducible permitida por el prompt 4 |
+| DEC-008 | 2026-11-07 | Migrar desde blobs inmutables de V2 `916a69f3bb73f2ffbb0ec038b8bef887ee91adf1`, sin escribir en V2. | El árbol V2 ya estaba sucio y su inventario cambió externamente durante la tarea 6. | Se preservaron esos cambios; no se afirma identidad del árbol ajeno. Las huellas del commit y la paridad sintética permanecen verificables. No se usó el CSV local de 426 MB. | Fuente fijada y solo lectura autorizadas por el prompt de tareas 6–7; concurrencia registrada |
 
 ## 8. Condición de finalización
 
