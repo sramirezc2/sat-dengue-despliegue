@@ -1,8 +1,11 @@
-# Portabilidad — tarea 15 (EN CURSO)
+# Portabilidad — tarea 15 (COMPLETA)
 
 Solo fixtures artificiales. No habilita tarea 16 ni certifica reproducción
 científica real. El PR único es [#1](https://github.com/sramirezc2/sat-dengue-despliegue/pull/1).
-No hay autorización de push en este chat; los commits de tarea 15 son locales.
+El usuario autorizó explícitamente publicar los cinco commits hasta `61159d9` y
+ejecutar la matriz remota. Ese push normal se completó; no hubo force push, merge
+ni PR adicional. El cierre documental posterior permanece local, porque la
+autorización enumeró esos cinco commits.
 
 ## Evidencia y criterio
 
@@ -13,16 +16,17 @@ Los cambios documentales posteriores no se atribuyen a esa ejecución.
 | Entorno | Evidencia real disponible | Estado de tarea 15 |
 | --- | --- | --- |
 | Mac local | macOS 26.6.2 / Apple M2 Pro / Darwin arm64; Python 3.12.13; uv 0.11.19; revisión 5cb8b98: 463 + 12 específicas, cuatro CLI, 62,61 s, árbol limpio | APROBADA local; recibo en docs/evidence/task15/macos-arm64.json |
-| Ubuntu Actions | [run 42421879813](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879813), job 128551854736; ubuntu-26.04 x64, Python 3.12.16, uv 0.11.19, 440 pruebas/4 warnings/105 s; cuatro CLI ejecutados | Solo línea base 1bad249, matriz nueva pendiente |
-| Windows Actions | Ninguna ejecución de la matriz nueva | BLOQUEO: falta autorización de push y run real |
-| macOS Actions | Ninguna ejecución de la matriz nueva | BLOQUEO: falta autorización de push y run real |
+| Ubuntu Actions | [run 42424636145](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636145), job 128560175842; ubuntu-26.04 x86_64, Python 3.12.16, uv 0.11.19; 463 + 12, cuatro CLI, 147,85 s | APROBADA; ubuntu-actions.json |
+| Windows Actions | Mismo run, job 128560175981; imagen windows-2025-vs2026, Windows Server 2025/10.0.26100 AMD64, Python 3.12.10, uv 0.11.19; 463 + 12, cuatro CLI, 230,52 s | APROBADA; windows-actions.json |
+| macOS Actions | Mismo run, job 128560176027; imagen macos-26-arm64, macOS 26.7.2 arm64, Python 3.12.10, uv 0.11.19; 463 + 12, cuatro CLI, 121,65 s | APROBADA; macos-actions.json |
 | Colab | GCE real Linux x86_64, host 3.13.18; uv administró Python 3.12.13; 5cb8b98, 463 + 12 pruebas, cuatro CLI, 205,31 s, árbol limpio | APROBADA; recibo docs/evidence/task15/colab-x86_64.json |
 
 DEC-006/019 conservan ruleset, revisión independiente y checks verdes antes del
 merge. La lista de reviews del PR estaba vacía al inicio; mergeable=true es solo
-una condición técnica. Los cuatro checks originales estaban aprobados sobre
-`1bad249e396d2313ad160c6ab21b434cff57c452`; sus URLs están en
-[ci-governance.md](ci-governance.md). No se alteran las bitácoras de tareas 1–14.
+una condición técnica. Ahora los cuatro checks originales y los tres de matriz
+están aprobados sobre `61159d9b96c0bfd76cd1af7b5b6dc9e7cc4d4849`; sus URLs están en
+[ci-governance.md](ci-governance.md). El snapshot basal de 1bad249 se conserva;
+no se alteran las bitácoras de tareas 1–14.
 
 El clon temporal nuevo de `5cb8b98` instaló su propio entorno desde lock y pasó
 los mismos gates: 463 pruebas, 12 específicas, cuatro CLI y hashes exactos,
@@ -42,7 +46,8 @@ observando en la UI el backend Google Compute Engine conectado y PASSED. El
 kernel anfitrión `google.colab._shell` fue Python 3.13.18; el venv usó Python
 3.12.13 administrado por uv. Se transfirió un bundle incremental de 29.020 bytes
 con los cuatro commits locales, se aplicó fast-forward y se verificó el SHA
-completo. No hubo push, permisos de proveedores ni Drive montado.
+completo. En esa ejecución Colab previa no hubo push, permisos de proveedores
+ni Drive montado; la publicación posterior fue autorizada separadamente.
 El recibo descargado (3.237 bytes) conserva el UTC de finalización
 `2026-11-07T23:13:51.868602+00:00`, 463 pruebas sin fallos/errores/skips, 12
 específicas y cuatro advertencias Kedro ya existentes. Todos los gates devolvieron
@@ -51,11 +56,41 @@ hashes de publicación coinciden exactamente con los recibos macOS local/clon.
 Solo se versionan recibos pequeños y esta evidencia textual, sin notebook,
 entornos, logs pesados ni artefactos científicos.
 
-**Bloqueo de cierre:** no existe ejecución Windows real. Tampoco se ha ejecutado
-la matriz nueva Ubuntu/Windows/macOS ni repetido los cuatro checks originales
-sobre estos commits. Se necesita autorización explícita de push antes de
-publicarlos en el PR #1. Hasta entonces: tarea 15 EN CURSO, 14/21, tarea 16
-PENDIENTE. Linux real de Colab y Linux de CI basal no sustituyen esos runs.
+**Cierre verificado:** existen ejecuciones verdes de macOS local, Colab real y
+matriz nativa Ubuntu/Windows/macOS. Todos los siete checks están completed/success,
+sin cancelaciones ni fallos; se revisaron logs y artefactos. Tarea 15 COMPLETA,
+15/21, ninguna tarea activa; tarea 16 PENDIENTE.
+
+GitHub hizo checkout del merge temporal del PR
+`21346107449ff9fdec5aa425dc2bb75128d16eb6`. Su árbol
+`0e9d724682658a4ecd2870b430e28f6eeb237820` es idéntico al de 61159d9:
+no se confundió ese checkout con un merge a main. Los recibos locales/Colab
+registran 5cb8b98; entre esa revisión y 61159d9 solo cambiaron documentación y
+recibos, no código, pruebas, herramientas, workflow ni lock del pipeline.
+
+Los tres ZIP descargados contienen únicamente `receipt.json`; sus SHA-256 se
+contrastaron con los digests de la API de GitHub antes de leerlos. Todos registran
+árbol limpio antes/después, 463 pruebas sin fallos/errores/skips, 12 específicas,
+diez gates con código 0 y cuatro pipelines. Capacidad nativa de symlink disponible
+en los tres; la alternativa controlada se ejecutó también. Windows registró dos
+advertencias, Ubuntu/macOS cuatro; no afectan los resultados ni los contratos.
+Las seis ejecuciones documentadas (incluido clon local) comparten exactamente
+lock, tres SHA/digests N=3, métricas y hashes de publicación.
+
+| Artefacto remoto | ID | SHA-256 del ZIP |
+| --- | --- | --- |
+| pipeline-portability-Ubuntu | 13594821952 | d07ebadbd4a9863eba10a1599e9e34515f8b3ae2e4cff6bc1432881cc7b8beb0 |
+| pipeline-portability-Windows | 13594986854 | 7840e8fc188dad16fb3a8f801ce010481f5510fe2fbd860bdd0769b8d9dee8cb |
+| pipeline-portability-macOS | 13595301387 | 7a7a83235e6634b950378d4b0316be1509baf49b4f5444780a3c8f6da098ff5e |
+
+Recibos persistentes en `docs/evidence/task15/`; snapshot de siete checks, pasos,
+IDs y URLs sin firmar en `github-portability.json`. No se versionan los ZIP ni
+URLs temporales firmadas. Los artefactos de Actions tienen retención de 14 días.
+API remota: 28 pruebas/una advertencia; tablero remoto: 33, lint sin errores/seis
+advertencias existentes, build correcto; contrato remoto: Pydantic/Zod 24 válidos.
+La prueba Zod seleccionada del workflow de contrato omite intencionalmente otras
+24 pruebas; la suite completa del tablero ejecutó sus 33. No se ocultan omisiones
+en las suites de portabilidad, que tienen skipped=0.
 
 ## Auditoría del código versionado
 
@@ -71,15 +106,15 @@ cachés. Cada fila distingue evidencia concreta de riesgos todavía no ejecutado
 | Rutas absolutas, `/tmp`, HOME, `~`, separadores | Producción recibe workspaces explícitos y usa pathlib; rutas absolutas entre workers son referencias transitorias, nunca linaje. `/tmp/private` aparece como entrada negativa de prueba. Sin HOME ni `/tmp` obligatorio. `/` en URI lógicas/contratos y nombres relativos no es concatenación de rutas del SO. |
 | Permisos, fcntl, señales y Bash | Sin chmod/fcntl/señales POSIX en el pipeline/wrapper. Subprocesos usan listas, sin shell=True. Bash histórico del job Ubuntu se conserva solo allí; matriz ejecuta una línea Python con shell nativa. Git es prerrequisito explícito, ya instalado en runners/Colab. |
 | Nombres reservados y case | Inventario aprobado de cinco nombres, UUID/hex y publicaciones usan nombres válidos sin colisiones de case. No se amplía ni restringe el contrato de adquisición por anticipar nombres arbitrarios Windows. Ese espacio de entradas no queda certificado. |
-| Longitud de rutas | Workspaces relativos cortos, TemporaryDirectory y SHA de 64 caracteres. No se promete soporte universal de raíces profundas; ejecución Windows pendiente, incluido límite del filesystem y instalación del venv. |
+| Longitud de rutas | Workspaces relativos cortos, TemporaryDirectory y SHA de 64 caracteres. El runner Windows real instaló el venv y pasó N=3/cleanup en sus rutas. No se promete soporte universal de raíces arbitrariamente profundas fuera de los entornos probados. |
 | Archivos abiertos y os.replace | Adquisición/canónico cierran streams antes de reemplazar; publicación prepara/cierra archivos antes de promoción. Pruebas existentes cubren corrupción, fallos antes/después de rename y rollback. Ningún cambio especulativo. Windows puede negar reemplazo de un archivo abierto por terceros: el error debe propagarse, sin garantía de recuperación del SO. |
 | Atomicidad y locks | Reemplazo por archivo en el mismo filesystem; publicación usa lock exclusivo y rollback de excepciones. No garantiza aislamiento multiarchivo ni recuperación frente a apagado/fallo del filesystem (DEC-018). |
 | Orden del filesystem | Conjuntos de nombres/clave y serialización ordenada; glob del colector se convierte en mapping y JSON sort_keys. No se utiliza orden de directorio para ciencia o selección. |
 | Timestamps | Reloj operacional UTC explícito; fixture de publicación mantiene fecha congelada. UTC y duración no forman parte del hash científico. |
 | Procesos | N=3 usa `sys.executable -m ...` con listas y main guard, sin fork ni herencia implícita de objetos. Workers nuevos y directorios nuevos; guard existente bloquea red, proveedores, publicación, crudos reales y V2. |
 | TemporaryDirectory | Contextos cierran procesos/streams antes de cleanup; no se usan nombres de un archivo temporal todavía abierto para reabrirlo en Windows. N=3 copia el certificado fuera del temporal antes de salir. |
-| SQLite/MLflow | Backend explícito local opt-in, engine.dispose al cerrar y prueba existente de mover store cerrado/releer. No se cambia la URI ni el SDK por hipótesis; Windows real debe confirmar locks/cleanup. |
-| Wheels y dependencias | Lock existente conserva 94 resoluciones/hashes. Kedro, MLflow-skinny, jsonschema son universales; NumPy/pandas/SciPy/sklearn/SQLAlchemy/Ruff incluyen wheels de las familias Linux, Windows amd64 y macOS en el lock. Presencia estática no certifica instalación: solo los runs reales pueden hacerlo. |
+| SQLite/MLflow | Backend explícito local opt-in, engine.dispose al cerrar y prueba existente de mover store cerrado/releer. No se cambia la URI ni el SDK por hipótesis; la suite Windows real confirmó los casos existentes de locks, movimiento y cleanup con el store cerrado. |
+| Wheels y dependencias | Lock existente conserva 94 resoluciones/hashes. Kedro, MLflow-skinny, jsonschema son universales; NumPy/pandas/SciPy/sklearn/SQLAlchemy/Ruff incluyen wheels de las familias Linux, Windows amd64 y macOS en el lock. La presencia estática se complementó con instalación real desde lock y suite completa en los tres runners nativos y Colab. |
 | Encoding de herramientas | El colector escribe JSON en bytes UTF-8; logs binarios conservan salida original, sin depender del encoding de consola. Las herramientas externas Pydantic/Zod ya leen UTF-8 y transmiten JSON escapado. |
 | Red y datos | Tests bloquean sockets/DNS, imports inversos y acceso a árboles protegidos; tests de transporte usan clientes falsos. Cuatro CLI tienen configuración sintética explícita; colector adicional reutiliza `enforce_boundaries(synthetic=True)`. Solo instalación de herramientas/paquetes y clon Git usan red. Sin descarga HF/Zenodo/AWS ni credenciales. |
 
@@ -122,7 +157,7 @@ Se conserva el job/check `Pipeline quality`. Los nuevos checks son
 `Pipeline portability (macOS)`, con fail-fast=false, Python 3.12, uv 0.11.19,
 lock existente, caché deshabilitada, sin secretos/proveedores/datos reales.
 Solo se sube un JSON por plataforma durante 14 días, incluso ante gates fallidos.
-No se afirma que la definición YAML haya ejecutado esos checks.
+La definición fue ejecutada en run 42424636145; los tres checks completaron success y se inspeccionaron sus logs/recibos.
 La configuración usa la [acción oficial upload-artifact](https://github.com/actions/upload-artifact)
 y la [integración oficial uv](https://docs.astral.sh/uv/guides/integration/github/).
 

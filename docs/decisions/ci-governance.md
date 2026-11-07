@@ -1,22 +1,32 @@
 # Gobernanza y CI por componentes
 
-Fecha: 2026-11-07. Actualización de tarea 15: PR [#1](https://github.com/sramirezc2/sat-dengue-despliegue/pull/1)
-abierto en `feature/pipeline-e2e`, HEAD remoto `1bad249e396d2313ad160c6ab21b434cff57c452`.
-Consulta nueva: cuatro checks completados correctamente:
+Fecha: 2026-11-07. Cierre de tarea 15: PR [#1](https://github.com/sramirezc2/sat-dengue-despliegue/pull/1)
+abierto en `feature/pipeline-e2e`, HEAD remoto `61159d9b96c0bfd76cd1af7b5b6dc9e7cc4d4849`.
+Los cinco commits locales fueron publicados con autorización explícita del usuario,
+mediante push normal; no hubo merge, force push ni PR adicional.
 
-| Check | Run real de GitHub Actions |
+| Check aprobado | Run real de GitHub Actions |
 | --- | --- |
-| API tests | [42421879832](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879832) |
-| Dashboard quality | [42421879846](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879846) |
-| Pipeline quality | [42421879813](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879813) |
-| Publication contract | [42421879795](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879795) |
+| API tests | [42424636017](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636017) |
+| Dashboard quality | [42424636020](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636020) |
+| Publication contract | [42424636002](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636002) |
+| Pipeline quality | [42424636145](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636145) |
+| Pipeline portability (Ubuntu) | [42424636145](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636145) |
+| Pipeline portability (Windows) | [42424636145](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636145) |
+| Pipeline portability (macOS) | [42424636145](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636145) |
 
+Logs revisados y tres artefactos descargados/verificados por SHA-256. Los recibos
+registran el merge temporal del PR `21346107449ff9fdec5aa425dc2bb75128d16eb6`,
+cuyo árbol coincide exactamente con el HEAD remoto 61159d9; no fue un merge a main.
+El snapshot se conserva en `docs/evidence/task15/github-portability.json`.
 PR abierto, no fusionado, técnicamente fusionable; lista de revisiones vacía.
 Ruleset no verificado en esta consulta. Ruleset, aprobación independiente y checks
 verdes sobre la revisión final siguen siendo obligatorios antes del merge.
-No existe autorización de push para tarea 15: no se publica la matriz nueva.
+El cierre documental adicional es local: la autorización de push especificó los
+cinco commits hasta 61159d9. No se extiende a ese nuevo commit.
 Las referencias posteriores a CI remota pendiente describen evidencia histórica
-de tareas anteriores; no contradicen estos cuatro runs ya observados.
+de tareas anteriores; las notas basales de 1bad249 siguen en
+`docs/evidence/task15/github-baseline.json`.
 La arquitectura compartida está en [pipeline-e2e.md](../architecture/pipeline-e2e.md)
 y el avance en [plan.md](../../plan.md).
 

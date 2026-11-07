@@ -547,7 +547,7 @@ reexportar `DashboardResponse.model_json_schema()`, actualizar su hash fuente y
 revalidar invariantes y consumidores. Detalles de equivalencia y límites en
 [la decisión de publicación](../docs/decisions/deployment-publication.md).
 
-## Portabilidad (tarea 15 en curso)
+## Portabilidad (tarea 15 completa)
 
 Los ocho comandos oficiales anteriores siguen siendo la interfaz en todos los
 sistemas. Para ejecutarlos secuencialmente y recoger evidencia, desde un árbol
@@ -588,6 +588,10 @@ commits locales sin push, exige avance fast-forward y verifica el SHA final.
 Solo exportar el recibo; no montar Drive ni introducir tokens para los fixtures.
 
 La auditoría, limitaciones y evidencia concreta están en
-[portability.md](../docs/decisions/portability.md). Windows y los nuevos checks
-requieren autorización explícita de push y ejecución real en el PR existente.
-La tarea permanece EN CURSO hasta tener evidencia verde de las cuatro plataformas.
+[portability.md](../docs/decisions/portability.md). Tras el push autorizado hasta
+61159d9, la matriz nativa Ubuntu/Windows/macOS terminó correctamente en el run
+42424636145; los siete checks del PR están verdes. Recibos de esos runners,
+Mac local y Colab real conservados en `docs/evidence/task15/`, con igualdad exacta
+del lock y artefactos deterministas. Tarea 15 completa; tarea 16 pendiente.
+Cualquier publicación adicional requiere autorización acorde al alcance del chat;
+no se autorizó merge ni force push.
