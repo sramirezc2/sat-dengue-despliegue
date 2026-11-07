@@ -20,6 +20,24 @@ comprobar () {
   fi
 }
 
+comprobar_resultados () {
+  local salud="$1"
+  if printf '%s' "$salud" | python3 -c '
+import json
+import sys
+
+datos = json.load(sys.stdin)
+periodos = datos.get("periodos_por_departamento", {})
+if datos.get("resultados_cargados", 0) <= 0 or not periodos.get("50") or not periodos.get("73"):
+    raise SystemExit(1)
+'; then
+    printf '  OK    %-52s %s\n' "resultados iniciales de Meta y Tolima" "disponibles"
+  else
+    printf '  FALLA %-52s %s\n' "resultados iniciales de Meta y Tolima" "ausentes"
+    fallos=$((fallos + 1))
+  fi
+}
+
 echo "Verificando ${BASE}"
 comprobar "salud del servicio"                 200 "/api/salud"
 comprobar "tablero"                            200 "/"
@@ -34,7 +52,9 @@ comprobar "esquema OpenAPI"                    200 "/api/openapi.json"
 
 echo
 echo "Resultados cargados:"
-curl -s --max-time 15 "${BASE}/api/salud" | python3 -m json.tool 2>/dev/null || echo "  no se pudo leer la salud"
+salud=$(curl -s --max-time 15 "${BASE}/api/salud" || true)
+comprobar_resultados "$salud"
+printf '%s' "$salud" | python3 -m json.tool 2>/dev/null || echo "  no se pudo leer la salud"
 
 echo
 if [[ $fallos -eq 0 ]]; then

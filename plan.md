@@ -1,0 +1,185 @@
+# Hoja de ruta de implementación — Pipeline E2E SAT DENGUE
+
+**Versión:** 1.0
+**Fecha de creación:** 7 de noviembre de 2026
+**Estado general:** Cierre de tarea 12 bloqueado por cambio concurrente del árbol
+**Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
+**Rama única de implementación:** `feature/pipeline-e2e`
+**Entrega:** un único Pull Request
+
+## 1. Objetivo
+
+Implementar en el repositorio definitivo un pipeline E2E reproducible que permita
+adquirir, validar y preparar datos, entrenar candidatos, evaluarlos y publicar
+resultados compatibles con la API y el tablero existentes.
+
+La implementación debe conservar la separación:
+
+```text
+pipeline/ -> datos/resultados/ -> app/api/ -> app/dashboard/
+```
+
+`pipeline/` será un proyecto Kedro autocontenido. La adquisición de datos estará
+desacoplada mediante adaptadores intercambiables. Inicialmente se utilizarán
+Hugging Face y Zenodo, con una extensión compatible con AWS S3 para una migración
+futura.
+
+## 2. Reglas obligatorias
+
+- Toda la implementación se acumula en la misma rama y termina en un único PR.
+- Ningún cambio se realiza directamente sobre `main`.
+- Antes de cada tarea se revisan `AGENTS.md`, este documento y el estado de Git.
+- Se conservan los cambios preexistentes del usuario.
+- No se reorganizan innecesariamente `app/`, `docker/`, `datos/` ni `scripts/`.
+- Se evita el sobredimensionamiento y la sobreingeniería.
+- El código debe aplicar DRY, SOLID, tipado y responsabilidades claras.
+- El código Python debe usar docstrings estilo Google.
+- No se crean ni editan celdas Markdown en notebooks sin autorización formal.
+- Los archivos Markdown de documentación del repositorio sí están permitidos.
+- No se agregan datos, modelos, secretos o artefactos pesados a Git.
+- Cada cambio de comportamiento debe tener pruebas proporcionales.
+- Una tarea no se marca como completa si sus validaciones no están verdes.
+- `datos/resultados/` es la única frontera de publicación hacia la API.
+- La API no importa código de `pipeline/` y el pipeline no escribe dentro de
+  `app/`.
+- 2025 permanece excluido del desarrollo y se registra como evaluación utilizada.
+
+## 3. Estados permitidos
+
+| Estado | Significado |
+|---|---|
+| `PENDIENTE` | La tarea todavía no ha comenzado. |
+| `EN CURSO` | Es la única tarea activa en este momento. |
+| `BLOQUEADA` | No puede continuar; debe registrar causa y decisión requerida. |
+| `COMPLETA` | Cumple criterios, validaciones y evidencia. |
+
+Solo puede existir una tarea `EN CURSO`. Las tareas se ejecutan en orden. Para
+cambiar el alcance se debe registrar primero la decisión en la sección 7.
+
+## 4. Hoja de ruta
+
+| # | Tarea | Estado | Dependencia | Evidencia de cierre |
+|---:|---|---|---|---|
+| 1 | Formalizar arquitectura y fronteras | `COMPLETA` | — | Documento central aprobado: `pipeline/`, contrato de publicación, fuentes y tratamiento de 2025. |
+| 2 | Activar gobernanza y CI por componentes | `COMPLETA` | 1 | Implementación y validaciones locales completas; CI remota y ruleset siguen pendientes antes del merge (DEC-006). |
+| 3 | Congelar y proteger la línea base del despliegue | `COMPLETA` | 2 | Compose arranca desde clon limpio; salud y consulta válida funcionan; brechas existentes quedan corregidas o documentadas. |
+| 4 | Crear el subproyecto `pipeline/` con Python, Kedro y uv | `COMPLETA` | 3 | Estructura autocontenida, lock, CLI, E2E sintético mínimo y `.github/workflows/pipeline-ci.yml` ejecutable y validado sin afectar `app/`. |
+| 5 | Implementar releases y adquisición desacoplada | `COMPLETA` | 4 | `DataSource`, `ResolvedBundle`, manifiestos, caché, hashes y adaptadores local, Hugging Face, Zenodo y S3 simulado. |
+| 6 | Migrar el panel canónico desde V2 | `COMPLETA` | 5 | Productores migrados con procedencia y paridad exacta sobre muestra artificial de 167 filas (no reproducción real). |
+| 7 | Implementar etiquetas y controles temporales | `COMPLETA` | 6 | Inicio T+1/T+2, elegibilidad solo en T, ausencias, roles y compuerta previa a etiquetas/consumidor; 47 pruebas nuevas. |
+| 8 | Recuperar o reimplementar el arnés rolling-origin | `COMPLETA` | 7 | Arnés mensual expansivo, madurez estricta, digest y 19 pruebas nuevas; protocolo histórico de ocho ventanas `NOT_REPRODUCED`. |
+| 9 | Implementar adaptadores de modelos | `COMPLETA` | 8 | Protocol, configuración/semilla, registro neutral, protección de entradas y probabilidades; 28 pruebas nuevas. Estimadores reales pendientes. |
+| 10 | Implementar calibración, umbrales y líneas base | `COMPLETA` | 9 | Cinco roles disjuntos, disponibilidad estricta, sigmoide, grilla/umbral congelados y referencias de inicio; 25 pruebas nuevas antífuga. |
+| 11 | Implementar métricas e incertidumbre | `COMPLETA` | 10 | AP/AUROC/Brier, sensibilidad/FAR/volumen, soporte emparejado, estratos y bootstrap municipal descriptivo; 29 pruebas nuevas. |
+| 12 | Agregar trazabilidad de corridas | `BLOQUEADA` | 11 | Implementación y 33 pruebas nuevas verdes; cierre bloqueado por carpeta no versionada concurrente en ruta protegida (DEC-014). |
+| 13 | Migrar la publicación sin romper el despliegue | `PENDIENTE` | 12 | Lógica trasladada al pipeline; script temporal compatible; contrato API/tablero equivalente. |
+| 14 | Cerrar portabilidad | `PENDIENTE` | 13 | Ejecución sintética verde en macOS, Windows, Linux y Colab. |
+| 15 | Ejecutar reproducción sintética y real | `PENDIENTE` | 14 | Fixture y release público 2018–2024 ejecutados; 2025 no fue leído. |
+| 16 | Realizar revisión científica independiente | `PENDIENTE` | 15 | Auditoría de etiquetas, fuga, folds, líneas base, métricas y correspondencia con la bitácora. |
+| 17 | Documentar operación, límites y migraciones | `PENDIENTE` | 16 | Guía de un comando, Colab, troubleshooting, publicación y migración Hugging Face/Zenodo hacia AWS. |
+| 18 | Ejecutar revisión de seguridad | `PENDIENTE` | 17 | Revisión de datos, licencias, tokens, secretos, dependencias y superficies de red. |
+| 19 | Registrar capacidades reutilizables | `PENDIENTE` | 18 | Skills, agentes o herramientas útiles identificados y documentados. |
+| 20 | Elaborar reporte ejecutivo | `PENDIENTE` | 19 | Resumen final de entregables, validaciones, limitaciones y decisiones pendientes. |
+
+## 5. Secuencia de integración
+
+Aunque toda la implementación terminará en un solo PR, los commits deben conservar
+esta secuencia lógica:
+
+```text
+arquitectura y gobernanza
+        -> línea base del despliegue
+        -> esqueleto de pipeline
+        -> adquisición y contratos
+        -> preparación científica
+        -> entrenamiento y evaluación
+        -> publicación
+        -> portabilidad y reproducción
+        -> revisión, documentación y cierre
+```
+
+No se mezclará en un mismo commit:
+
+- estabilización del despliegue con creación de Kedro;
+- cambios de modelos con migración del publicador;
+- refactorizaciones cosméticas con cambios científicos;
+- correcciones de API con adquisición de datos de entrenamiento.
+
+## 6. Control de avance
+
+Actualizar esta sección al cerrar cada tarea.
+
+| Indicador | Valor |
+|---|---:|
+| Tareas completas | 11/20 |
+| Tarea activa | Ninguna |
+| Tareas bloqueadas | 1 — Cierre de tarea 12 (DEC-014) |
+| Última tarea completada | 11 — Métricas e incertidumbre |
+| Última actualización | 7 de noviembre de 2026 |
+
+### Registro de ejecución
+
+| Fecha | Tarea | Estado nuevo | Commit | Validaciones | Observaciones |
+|---|---:|---|---|---|---|
+| 2026-11-07 | 1 | COMPLETA | `e794bce` (arquitectura); `60692c3` (hoja de ruta y cierre, sustituye a `fd9eae7`) | Rutas y enlaces revisados; diff documental sin errores de espacios; plan versionado. | Arquitectura y hoja de ruta compartidas. |
+| 2026-11-07 | 2 | COMPLETA | `f67d1c6` | API: 22 pruebas; tablero: lint sin errores (6 advertencias), 33 pruebas y build; publicación: 22 JSON en API y prueba Zod verde; YAML, shell, filtros y diff validados localmente. | Implementación y validación local completas. GitHub Actions no fue ejecutado ni validado remotamente. CI remota, ruleset, aprobación independiente y checks requeridos siguen pendientes y son obligatorios antes del merge (DEC-006). |
+| 2026-11-07 | 3 | COMPLETA | `5ec813e` | API: 28 pruebas; tablero: instalación con lockfile congelado, lint sin errores (6 advertencias), 33 pruebas y build; Docker Compose construido sin caché desde checkout temporal, 3 servicios activos, 22 resultados, Meta y Tolima disponibles, consultas y smoke test verdes; volumen verificado tras recrear contenedores; diff sin errores. | El estado inicial arrancaba con volumen vacío, 0 resultados y consultas 404. La imagen ahora siembra el volumen; S3 descarga siempre a temporal, comprueba tamaño y contrato, y reemplaza atómicamente. SHA-256 queda diferido a la tarea 13 porque aún no existe un hash remoto confiable. Recursos Docker temporales eliminados. |
+| 2026-11-07 | 4 | COMPLETA | `20897e9` | `uv lock --check --project pipeline`, `uv sync --locked --project pipeline`, `uv run --directory pipeline ruff check .`, `uv run --directory pipeline pytest` (7 pruebas) y `uv run --directory pipeline kedro run --pipelines synthetic`: verdes, también desde clon temporal limpio del commit con entorno nuevo. Métricas sintéticas: 1 fila, MAE 5, MSE 25. Regresión: API 28 pruebas; tablero lint sin errores (6 advertencias), 33 pruebas y build node_server; YAML, shell, filtros, enlaces y diff válidos. | `Pipeline quality` implementado y validado localmente; no se ejecutó remotamente por DEC-006. Python 3.12, Kedro 1.7.0, pytest 9.2.0, Ruff 0.17.4 y uv 0.11.19. Adaptación CLI registrada en DEC-007. CLI actualizada en `1dad0ec`; solo persisten avisos internos de OmegaConf. Sin publicación, datos reales, secretos ni artefactos pesados generados fuera del entorno ignorado; árbol del clon limpio. |
+| 2026-11-07 | 5 | COMPLETA | `1dad0ec` (CLI Kedro vigente); `a308c78` (adquisición) | `uv lock --check --project pipeline`, `uv sync --locked --project pipeline`, Ruff, pytest (71 pruebas: 64 nuevas) y `kedro run --pipelines synthetic` verdes, también desde clon temporal limpio de `a308c78` con entorno nuevo. API: 28 pruebas; tablero: lint sin errores (6 advertencias), 33 pruebas y build node_server. YAML, filtros, shell, diff y exclusión de `pipeline/data/` verificados. | Contratos inmutables, fábrica única y caché común por release/digest; cada hit verifica tamaño y SHA-256; transferencias temporales y reemplazo atómico por archivo. Local, HF y Zenodo probados con archivos/dobles locales; S3 con cliente falso y claves bajo prefijo de revisión, sin AWS. Integración del resolver como nodo Kedro con configuración temporal, sin pipeline de adquisición pendiente de datos reales. Solo se agregó huggingface_hub 2.4.0 y sus dependencias transitivas; Zenodo usa HTTP de biblioteca estándar. Guard global de pytest bloquea red, DNS, imports inversos y acceso a publicaciones. No hubo descargas científicas reales ni credenciales. Identificadores, hashes e inventario del primer release público siguen pendientes; reproducción real en tarea 15. CI remota y ruleset pendientes por DEC-006. |
+| 2026-11-07 | 6 | COMPLETA | `3ff23a560388c24b6eabe3a1427f6376c867da87` (implementación); `d5355e9` (cierre e inicio de 7) | Lock/sync, Ruff, 92 pruebas y E2E sintético verdes; verificación optativa de referencia V2 exacta; API 28; tablero lint sin errores (6 advertencias), 33 pruebas y build; diff sin errores. | V2 `j-mauro-r/SAT-Dengue-V2@916a69f3bb73f2ffbb0ec038b8bef887ee91adf1`, blobs y SHA-256 documentados en `docs/decisions/v2-scientific-migration.md`. 167 filas artificiales 2018–2024, Meta/Tolima; igualdad de tabla, tipos, nulos, roles, X y cobertura. NumPy 2.5.4 y pandas 3.0.6 fijados. Pruebas normales bloquean V2/red/app/publicaciones; no CSV de 426 MB ni datos científicos reales/2025. No se escribió en V2; cambios externos de ese árbol registrados en DEC-008. La evidencia es sintética; release real pendiente en tarea 15. |
+| 2026-11-07 | 7 | COMPLETA | `8ed8293391620a955f8756c92b8a0b64a74eb0e9` | Lock/sync, Ruff, 139 pruebas (47 nuevas), E2E y siete centinelas explícitos verdes; clon temporal con entorno nuevo, árbol idéntico al commit de implementación, instalación, Ruff, 139 pruebas, centinelas y E2E verdes. API 28; tablero lint sin errores (6 advertencias), 33 pruebas y build; cuatro YAML, filtros y 19 bloques shell válidos; diff/imports/patrones de secretos/tamaños revisados. | Mismo commit histórico V2; referencia adicional de siete estados artificiales hasta junio de 2024 con paridad exacta en ambos horizontes. Inicio = anterior 0 y objetivo 1; ausencia preservada, elegibilidad solo en T. Rechazo por objetivo antes de leer etiquetas o invocar consumidor; no se leyó ni utilizó ninguna observación/etiqueta científica de 2025 en el pipeline. Centinelas solo con claves/marcadores artificiales. X/y separados, disponibilidad explícita, selecciones fijas sin rolling-origin ni reserva rígida de 2024. Ninguna escritura en V2; estado externo final documentado en DEC-008. Las regresiones de producto consultan JSON publicados históricos (DEC-009). Sin CSV de 426 MB, modelos, datos reales nuevos, notebooks, push o PR. Reproducción real pendiente en tarea 15; CI remota y ruleset pendientes (DEC-006); CLI conserva DEC-007. Tarea 8 no iniciada. |
+| 2026-11-07 | 8 | COMPLETA | `672c8aaf1d863d6562686b67d560af7625876999` | Estado inicial exacto `f5c8768`, árbol limpio y 139 pruebas verdes; gate de tarea: lock/sync, Ruff, 158 pruebas (19 nuevas), suite específica y E2E sintético verdes; diff sin errores. | Fuente histórica fijada `916a69f3bb73f2ffbb0ec038b8bef887ee91adf1`, archivos/hashes/reglas en `docs/decisions/temporal-experiments.md`. Desarrollo artificial 2018–2024: 2018 calentamiento, folds mensuales desde 2019, T+1/T+2 separados, etiquetas disponibles estrictamente antes del consumo. Protocolo de ocho ventanas/cohortes/preparadores históricos `NOT_REPRODUCED`; sin paridad ni reproducción real. Sin nuevas dependencias, datos reales/2025, modelos científicos, notebooks, acceso a publicaciones o escrituras V2. Tarea 15, CI remota y ruleset pendientes. |
+| 2026-11-07 | 9 | COMPLETA | `1b16058e3975b0003ade9fd4e7ccff61a542f8e7` | Lock/sync, Ruff, 186 pruebas (28 nuevas), 47 pruebas específicas de tareas 8–9 y E2E sintético verdes; diff sin errores. | Contrato neutral con identidad/configuración JSON/semilla, instancia nueva por fold, esquema/orden/tipos congelados, inferencia solo X, probabilidades y enlaces validados. Backend mutante rechazado y entrada original protegida. Misma ejecución rolling-origin para dos familias dobles. Procedencia/hashes históricos en `docs/decisions/temporal-experiments.md`. Sin dependencias nuevas ni estimadores reales; XGBoost/LightGBM/GAM, preparación y replay históricos pendientes/NOT_REPRODUCED. No modelos entrenados versionados, escrituras V2, publicaciones ni datos reales/2025. |
+| 2026-11-07 | 10 | COMPLETA | `651fcabaacddaed1c546680af0f4f8d376c8de4f` | Lock/sync, Ruff, 211 pruebas (25 nuevas), 72 específicas de tareas 8–10 y 11 centinelas explícitos verdes; E2E sintético verde. Checkout temporal con entorno nuevo y árbol idéntico al commit: instalación bloqueada, Ruff, 211 pruebas, 72 específicas y E2E verdes. API 28; tablero instalación con lock congelado, lint sin errores (6 advertencias), 33 pruebas y build. Cuatro YAML, filtros y 19 bloques shell válidos; 20 hashes V2 verificados, imports/diff/patrones de secretos/tamaños revisados. | Roles por objetivo train/calibration_fit/calibration_selection/threshold_selection/evaluation, disponibilidad estricta y embargo explícito; lectores espía prueban cero accesos a evaluation.y durante ajuste/selección/inferencia. Modelo y sigmoide ajustados una vez; configuración, representación y umbral congelados antes de evaluación. JSON/digest estable sin pickle o modelos versionados. Muestra artificial T+1/T+2 selecciona sigmoide y 0,3 con grilla/cota de test, sin valor operativo. Prevalencia solo train y persistencia adaptada a no inicio con soporte común. scikit-learn 1.7.2/SciPy 1.18.1 fijados; justificación y NOT_REPRODUCED en `docs/decisions/temporal-experiments.md` (DEC-010/011). V2 conservó árbol limpio; ninguna escritura V2 ni CSV de 426 MB/datos científicos reales/2025. Regresiones de publicaciones solo contractuales (DEC-009). Tarea 11 no iniciada; tarea 15, CI remota/ruleset, aprobación independiente y único PR pendientes. Sin push/PR. |
+| 2026-11-07 | 11 | COMPLETA | `92d81305c98b029dc698be9e05d5d3b83b93b5a6` | Estado inicial exacto 4646316/10 de 20/árbol limpio; 211 pruebas, Ruff, lock y E2E verdes. Gate final: lock/sync, Ruff, 240 pruebas (29 nuevas), suite específica 29 y E2E verdes; diff sin errores. | Evaluación posterior al freeze, claves explícitas, soporte común, ausencias visibles y denominador de inicios intacto ante predicciones ausentes. AP agrupada, AUROC medio crédito, Brier, sensibilidad/FAR/volumen; diferencias emparejadas, global/horizonte/departamento, curvas diagnostic_only. Bootstrap por municipio con réplicas comunes, semilla, percentiles y estados insuficientes/indefinidos; sin intervalos calibrados ni campeón. Procedencia/hashes y NOT_REPRODUCED en docs/decisions/paired-evaluation.md; ocho ventanas históricas y bootstrap de cuatro ventanas no reproducidos. Sin dependencias nuevas ni datos reales/2025; tarea 15 y revisión científica siguen pendientes. |
+| 2026-11-07 | 12 | COMPLETA | `293e6481db392ce89a3068d25a54c2c4424b088d` | Gate final: lock/sync, Ruff, 273 pruebas (33 nuevas), 62 específicas de evaluación/tracking y E2E verdes. Checkout temporal con entorno nuevo/árbol idéntico: instalación sin dev, SDK MLflow ausente y E2E verde; luego instalación completa desde lock, Ruff, 273 pruebas, 62 específicas y E2E verdes. API 28; tablero instalación congelada, lint sin errores (6 advertencias), 33 pruebas y build. Cuatro YAML/filtros y 19 bloques shell válidos; once nuevas huellas V2 verificadas; imports, secretos, rutas/SQLite/artefactos, tamaños y exclusión de stores revisados. | SDK oficial mínimo mlflow-skinny 3.17.2 + SQLAlchemy 2.0.57/Alembic 1.20.1/sqlparse 0.6.1 en grupo opcional tracking incluido en dev. Un padre real por invocación; recibo separado con ID real, lifecycle FINISHED/FAILED/KILLED y DISABLED sin almacenamiento. Solo agregados/configuración/linaje e inventario SHA-256; nada de X/y/filas/códigos/modelos/secretos/rutas privadas. Git/dirty, release/hash/proveedor de orquestación, cobertura, semillas/configuración/digests/bootstrap/lock/versiones/UTC registrados. Igualdad exacta de bytes científicos encendido/apagado y repetición con ID distinto; store recuperable tras mover workspace. Sin API fluida/autologging/registry global; SDK opt-outs explícitos y guard de red/DNS. Protecciones de symlinks y fallos tras rename probadas. NOT_REPRODUCED y riesgos de APIs SDK fijadas en docs/decisions/local-mlflow.md. Sin escrituras V2 (solo blobs), CSV de 426 MB, datos científicos reales/2025, notebooks o publicaciones. Tareas 13–20 pendientes; CI remota/ruleset, revisión independiente y único PR pendientes antes de merge. Sin push/PR. |
+| 2026-11-07 | 12 | BLOQUEADA | `293e648` (implementación verde); `a450c52` (cierre seguido de cambio concurrente) | Tras a450c52, git status estaba vacío. En la comprobación final apareció `?? datos/resultados/datos-crudos/`; persistió en una segunda consulta. Solo se leyó metadato del directorio: mtime UTC 2026-11-07T18:26:48.727294+00:00; no se abrió contenido. No hay referencias a datos-crudos en app/pipeline/src/scripts/docker/docs antes de registrar este incidente. | Los gates de código (273 pruebas, 62 específicas, checkout limpio, SDK opcional y regresiones) permanecen verdes. La condición final de árbol limpio ya no se cumple. No se incorpora, ignora, borra, mueve o lee la carpeta ajena en ruta protegida. Se detiene el cierre; tarea 13 no iniciada. Resolver el cambio concurrente fuera de esta implementación y comprobar árbol limpio antes de volver a cerrar 12; no es necesario atribuir o reproducir datos. |
+
+Cierres documentales independientes: tarea 8 en `39ba8d8`; tarea 9 en `9ce154d`;
+tarea 10 en `4646316`; tarea 11 en `31f1e4b`. El cierre de tarea 12 es el commit
+documental `a450c52`, posteriormente invalidado como cierre por DEC-014.
+
+## 7. Decisiones y desviaciones
+
+Toda desviación debe registrarse antes de continuar.
+
+| ID | Fecha | Decisión o desviación | Motivo | Impacto | Aprobación |
+|---|---|---|---|---|---|
+| DEC-001 | 2026-11-07 | Implementar todo en una sola rama y un único PR. | Regla del proyecto. | Exige commits pequeños y validaciones acumulativas. | Aprobada |
+| DEC-002 | 2026-11-07 | Usar inicialmente Hugging Face y Zenodo con adquisición desacoplada. | Acceso público, reproducibilidad y migración futura. | Requiere manifiestos y adaptadores comunes. | Aprobada |
+| DEC-003 | 2026-11-07 | Crear el E2E bajo `pipeline/` sin reorganizar el despliegue existente. | Mantener el repositorio ordenado y reducir riesgo. | Dependencias y pruebas separadas. | Aprobada |
+| DEC-004 | 2026-11-07 | Prohibir celdas Markdown hasta autorización formal. | Regla del proyecto. | Los notebooks no incorporarán narrativa Markdown inicialmente. | Aprobada |
+| DEC-005 | 2026-11-07 | El workflow pipeline-ci se incorporará en la tarea 4 junto con el proyecto Kedro, de modo que nazca ejecutable y validado, no como un placeholder. | Evitar sobreingeniería y checks rotos sobre archivos inexistentes. | Evidencia de tarea 4 ampliada; tarea 2 cubre componentes existentes. | Aprobada por el prompt 2 |
+| DEC-006 | 2026-11-07 | La validación remota de GitHub Actions y la activación del ruleset se aplazan hasta que se publique el único PR. Las validaciones locales de la tarea 2 fueron aprobadas. | No abrir un PR auxiliar ni afirmar una validación remota que no ocurrió. | CI remota, ruleset, aprobación independiente y checks requeridos siguen siendo condiciones obligatorias antes del merge. | Aprobada por el prompt 3 |
+| DEC-007 | 2026-11-07 | Ejecutar los comandos de herramientas desde la raíz con `uv run --directory pipeline ...`; mantener `--project pipeline` en lock y sync. | En uv 0.11.19, `--project` selecciona el entorno sin cambiar cwd: Kedro no descubre el subproyecto y responde No such command run. `--directory` funciona y limita Ruff y pytest al subproyecto. | Un único comando documentado para el E2E: `uv run --directory pipeline kedro run --pipelines synthetic`; sin wrapper ni configuración Kedro en la raíz. | Adaptación reproducible permitida por el prompt 4 |
+| DEC-008 | 2026-11-07 | Migrar desde blobs inmutables de V2 `916a69f3bb73f2ffbb0ec038b8bef887ee91adf1`, sin escribir en V2. | El árbol V2 ya estaba sucio y su inventario cambió externamente durante la tarea 6. | Se preservaron esos cambios; no se afirma identidad del árbol ajeno. Al control posterior estaba limpio, HEAD externo `e5fc87ae79efa87e8526643626ecb494d1dcbb76`, origin/main aún en el commit autorizado. Esta implementación no creó ese commit ni cambió referencias V2. Huellas y paridad verificadas; no se usó el CSV local de 426 MB. | Fuente fijada y solo lectura autorizadas por el prompt de tareas 6–7; concurrencia registrada |
+| DEC-009 | 2026-11-07 | Distinguir exclusión científica de 2025 y regresiones del producto publicado. | Las suites existentes de API/tablero, cuya ejecución completa es obligatoria, leen JSON históricos publicados de 2025 para validar contratos y servicio. | No se afirma ausencia global de lecturas de esos artefactos. El pipeline y sus tests bloquean publicaciones y no leen/utilizan observaciones o etiquetas científicas de 2025; esos JSON no participan en preparación, selección o ajuste. | Alcance de regresiones exigido por el prompt y separación científica de la arquitectura; distinción registrada |
+| DEC-010 | 2026-11-07 | Adoptar arnés mensual mínimo con calentamiento 2018, folds desde 2019 y disponibilidad estrictamente anterior al origen. | Las fuentes V2 describen ocho ventanas y permiten igualdad al cierre mensual, sin reconstrucción autorizada de cohortes/preparadores privados en estas tareas. | Protocolo V3 reproducible sobre datos artificiales 2018–2024; ocho ventanas, selección interna y replay originales NOT_REPRODUCED. No se atribuye paridad científica. | Contrato mínimo y declaración NOT_REPRODUCED autorizados por el prompt de tareas 8–10 |
+| DEC-011 | 2026-11-07 | Calibración mínima original/sigmoide, Brier con empate a original, grilla fija y cota FAR absoluta explícita; persistencia de no exceso adaptada a no nuevo inicio. | La etiqueta es inicio y la persistencia de exceso histórica no define una referencia equivalente; sin alertas, FAR es ausente. El contrato mínimo no migra bins/gap ni utilidad relativa humana de V2. | Sin defaults operativos ni override silencioso. scikit-learn 1.7.2 evita optimizador casero; SciPy 1.18.1 aplica expit estable y es dependencia de sklearn, ambas fijadas como en V2. Diferencias y soporte artificial NOT_REPRODUCED documentados; decisiones sintéticas no autorizan modelos/umbrales/campeón. | Implementación mínima y adaptación explícita autorizadas por el prompt; sin aprobación científica u operativa |
+| DEC-012 | 2026-11-07 | Evaluar sobre soporte común de etiquetas conocidas/contexto explícito, conservando predicciones ausentes como invalidez compartida, y bootstrap municipal descriptivo. | Evitar denominadores distintos, cambios de umbral en evaluación e intervalos engañosos con pocos conglomerados. | AP/AUROC/Brier/sensibilidad/FAR/volumen, estratos y curvas solo diagnósticas. Mínimo configurable de cinco municipios por defecto; réplicas indefinidas no se sustituyen. Bootstrap histórico por cuatro ventanas/cohortes V2 NOT_REPRODUCED; revisión y reproducción real pendientes. | Protocolo municipal y límites solicitados por prompt tareas 11–12; sin aprobación científica |
+| DEC-013 | 2026-11-07 | Tracking local opt-in con mlflow-skinny y backend SQL mínimo fijado; store/repositorio SDK explícitos y URI lógicas sin rutas privadas. | La API fluida/URI file estándar añade estado implícito y normaliza rutas; no se requieren servidores, UI o modelos. | Ciencia no importa MLflow; allowlists y agregados inmutables, recibo separado, telemetría desactivada y errores propagados. Grupo opcional, E2E probado sin SDK. APIs de store/repositorio requieren revalidación en upgrades; recuperación por adaptador, no UI/resolver genérico. Experimentos/jerarquías/replay V2 NOT_REPRODUCED, sin backend remoto. | Adaptador local mínimo autorizado por prompt, probado con instalación limpia; sin validación científica |
+| DEC-014 | 2026-11-07 | Reabrir como BLOQUEADA la tarea 12 por cambio concurrente posterior al commit de cierre. | Apareció una carpeta no versionada datos/resultados/datos-crudos/ después de verificar árbol limpio en a450c52. No pertenece a los cambios preparados/validados y está bajo una ruta protegida que puede contener datos no autorizados. | Se conservan código, commits y pruebas verdes; no se toca ni inspecciona contenido de la carpeta, no se oculta su estado Git y no se declara árbol limpio. Progreso vuelve a 11/20; tarea 13 pendiente. Se requiere resolver el cambio externo antes del cierre documental definitivo. | Detención y preservación exigidas por las restricciones del prompt; sin autorización para alterar datos ajenos |
+
+## 8. Condición de finalización
+
+El trabajo solo puede considerarse terminado cuando:
+
+- las 20 tareas estén `COMPLETA`;
+- el clon limpio ejecute el E2E sintético con un comando;
+- el release público se adquiera sin credenciales;
+- el pipeline funcione con proveedor local, Hugging Face, Zenodo y S3 simulado;
+- el desarrollo rechace cualquier dato de 2025;
+- el despliegue existente continúe funcionando;
+- el publicador produzca JSON aceptados por API y tablero;
+- las pruebas de pipeline, API y tablero estén verdes;
+- no existan secretos ni archivos pesados en Git;
+- la revisión científica y la revisión de seguridad estén aprobadas;
+- el único PR contenga una descripción verificable de cambios, pruebas y riesgos.
+
+## 9. Referencia de diseño
+
+La fuente arquitectónica versionada y disponible para todos los integrantes es
+[docs/architecture/pipeline-e2e.md](docs/architecture/pipeline-e2e.md).
+
+Si existe contradicción entre ambos documentos, se debe detener la implementación,
+registrar la discrepancia en la sección 7 y resolverla antes de continuar.

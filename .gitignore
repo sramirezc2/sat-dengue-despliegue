@@ -29,3 +29,9 @@ modelos/*.joblib
 # Material de trabajo personal: no se versiona ni se publica.
 prompt_a_seguir.md
 experimentos/
+
+# Plan detallado local de trabajo; la hoja de ruta compartida es plan.md.
+PLAN_pipeline_e2e_experimentos_sat_dengue.md
+
+# Datos crudos locales
+/datos/datos-crudos/
