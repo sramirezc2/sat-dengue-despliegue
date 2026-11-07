@@ -1,0 +1,70 @@
+{
+  "checked_at_utc": "2026-11-07 23:13:16 UTC",
+  "pr": {
+    "url": "https://github.com/sramirezc2/sat-dengue-despliegue/pull/1",
+    "state": "open",
+    "merged": false,
+    "mergeable": true,
+    "head_sha": "1bad249e396d2313ad160c6ab21b434cff57c452",
+    "reviews_count": 0,
+    "ruleset": "not_verified"
+  },
+  "checks": [
+    {
+      "workflow": "Dashboard CI",
+      "run_id": 42421879846,
+      "url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879846",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 128551854842,
+          "name": "Dashboard quality",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "workflow": "API CI",
+      "run_id": 42421879832,
+      "url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879832",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 128551854735,
+          "name": "API tests",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "workflow": "Publication Contract",
+      "run_id": 42421879795,
+      "url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879795",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 128551854756,
+          "name": "Publication contract",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "workflow": "Pipeline CI",
+      "run_id": 42421879813,
+      "url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879813",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 128551854736,
+          "name": "Pipeline quality",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ]
+}

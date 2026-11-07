@@ -12,17 +12,50 @@ Los cambios documentales posteriores no se atribuyen a esa ejecución.
 
 | Entorno | Evidencia real disponible | Estado de tarea 15 |
 | --- | --- | --- |
-| Mac local | Darwin arm64; Python 3.12.13; uv 0.11.19; línea base 440 y revisión local 463 pruebas verdes | Recibo final pendiente |
+| Mac local | macOS 26.6.2 / Apple M2 Pro / Darwin arm64; Python 3.12.13; uv 0.11.19; revisión 5cb8b98: 463 + 12 específicas, cuatro CLI, 62,61 s, árbol limpio | APROBADA local; recibo en docs/evidence/task15/macos-arm64.json |
 | Ubuntu Actions | [run 42421879813](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879813), job 128551854736; ubuntu-26.04 x64, Python 3.12.16, uv 0.11.19, 440 pruebas/4 warnings/105 s; cuatro CLI ejecutados | Solo línea base 1bad249, matriz nueva pendiente |
 | Windows Actions | Ninguna ejecución de la matriz nueva | BLOQUEO: falta autorización de push y run real |
 | macOS Actions | Ninguna ejecución de la matriz nueva | BLOQUEO: falta autorización de push y run real |
-| Colab | Notebook de código creado y runtime GCE conectado: Linux x86_64, host Python 3.13.18 | Gates desde lock pendientes; conectar un runtime no equivale a aprobarlos |
+| Colab | GCE real Linux x86_64, host 3.13.18; uv administró Python 3.12.13; 5cb8b98, 463 + 12 pruebas, cuatro CLI, 205,31 s, árbol limpio | APROBADA; recibo docs/evidence/task15/colab-x86_64.json |
 
 DEC-006/019 conservan ruleset, revisión independiente y checks verdes antes del
 merge. La lista de reviews del PR estaba vacía al inicio; mergeable=true es solo
 una condición técnica. Los cuatro checks originales estaban aprobados sobre
 `1bad249e396d2313ad160c6ab21b434cff57c452`; sus URLs están en
 [ci-governance.md](ci-governance.md). No se alteran las bitácoras de tareas 1–14.
+
+El clon temporal nuevo de `5cb8b98` instaló su propio entorno desde lock y pasó
+los mismos gates: 463 pruebas, 12 específicas, cuatro CLI y hashes exactos,
+112,26 s, árbol limpio antes/después. Recibo:
+`docs/evidence/task15/macos-clean-clone.json`.
+
+Validaciones externas finales locales: API 28 (una advertencia Starlette), tablero
+33, lint sin errores/seis advertencias existentes y build node_server; wrapper
+con dos hashes congelados; Pydantic y Zod aceptan dos generados y 22 históricos.
+Cuatro workflows YAML y 26 bloques run revisados sintácticamente con Bash donde
+aplica; scripts shell válidos. Esto no ejecuta PowerShell ni certifica Windows.
+AST de 95 Python/imports, patrones de secretos, tamaños de archivos cambiados,
+exclusión de crudos/cachés/stores, 22 JSON idénticos en bytes y diff verificados.
+
+Colab real se ejecutó desde el [notebook operativo de código](https://colab.research.google.com/drive/1uUR3QPnYFV2xO_18-rG5wX-oJ9Z2BZBs),
+observando en la UI el backend Google Compute Engine conectado y PASSED. El
+kernel anfitrión `google.colab._shell` fue Python 3.13.18; el venv usó Python
+3.12.13 administrado por uv. Se transfirió un bundle incremental de 29.020 bytes
+con los cuatro commits locales, se aplicó fast-forward y se verificó el SHA
+completo. No hubo push, permisos de proveedores ni Drive montado.
+El recibo descargado (3.237 bytes) conserva el UTC de finalización
+`2026-11-07T23:13:51.868602+00:00`, 463 pruebas sin fallos/errores/skips, 12
+específicas y cuatro advertencias Kedro ya existentes. Todos los gates devolvieron
+0. El lock, tres SHA canónicos, tres digests semánticos, hash de métricas y dos
+hashes de publicación coinciden exactamente con los recibos macOS local/clon.
+Solo se versionan recibos pequeños y esta evidencia textual, sin notebook,
+entornos, logs pesados ni artefactos científicos.
+
+**Bloqueo de cierre:** no existe ejecución Windows real. Tampoco se ha ejecutado
+la matriz nueva Ubuntu/Windows/macOS ni repetido los cuatro checks originales
+sobre estos commits. Se necesita autorización explícita de push antes de
+publicarlos en el PR #1. Hasta entonces: tarea 15 EN CURSO, 14/21, tarea 16
+PENDIENTE. Linux real de Colab y Linux de CI basal no sustituyen esos runs.
 
 ## Auditoría del código versionado
 
