@@ -234,3 +234,34 @@ El protocolo histórico de ocho ventanas está `NOT_REPRODUCED`: este arnés mí
 mensual no afirma paridad ni validación científica real. Procedencia, diferencias
 y regla estricta de disponibilidad en
 [la decisión temporal](../docs/decisions/temporal-experiments.md).
+
+## Adaptadores de modelos
+
+`models/adapters.py` expone `ModelAdapter`: `spec`, `fitted`, `fit(X, y)` y
+`predict_positive(X)`. `AdapterSpec` contiene familia, versión, configuración
+JSON canónica y semilla. Un `ModelRegistry` vacío recibe constructores explícitos;
+no carga modelos/frameworks implícitos. Cada constructor debe crear una instancia
+nueva sin ajustar, con la misma identidad declarada.
+
+```python
+from sat_dengue_pipeline.models.adapters import AdapterSpec, ModelRegistry, run_candidate
+
+registry = ModelRegistry()
+# registry.register("familia_equipo", "1", constructor_del_adaptador)
+candidate = AdapterSpec("familia_equipo", "1", config_json='{}', seed=42)
+# predictions, audit = run_candidate(data, spec, candidate, registry)
+```
+
+El ejecutor usa el calendario rolling-origin común; protege copias, detecta
+mutaciones y comprueba esquema, orden, tipos y probabilidades. La inferencia no
+recibe y. La salida separada conserva municipio, origen, objetivo, horizonte,
+fold, candidato y probabilidad positiva original. Los modelos no conocen Kedro,
+proveedores, calibración, umbrales ni publicación. Configuración y procedencia son
+serializables; no se versionan estimadores ajustados.
+
+```sh
+uv run --directory pipeline pytest tests/test_adapters.py
+```
+
+Las únicas implementaciones actuales son dobles de tests. XGBoost, LightGBM, GAM
+y demás enfoques reales están pendientes, sin paridad atribuida a V2.

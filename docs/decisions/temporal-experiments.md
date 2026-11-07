@@ -61,3 +61,37 @@ No procede del CSV local de 426 MB. Las pruebas normales bloquean acceso a V2,
 red, app y publicaciones. La reproducción con release público sigue pendiente
 en tarea 15, y la revisión científica independiente no se sustituye por estas
 pruebas. CI remota y ruleset conservan DEC-006.
+
+## Tarea 9: contrato neutral de adaptadores
+
+`models/adapters.py` define `ModelAdapter`, `AdapterSpec`, registro explícito y
+`CheckedAdapter`. La identidad contiene familia, versión, JSON canónico y semilla;
+el candidato incluye su digest. El registro está vacío por defecto y rechaza
+reemplazos silenciosos, identidades diferentes o instancias previamente ajustadas.
+`run_candidate` reutiliza exactamente el arnés de tarea 8 y comprueba también
+que un constructor no reutilice el backend dentro de wrappers distintos.
+
+`fit(X, y)` exige esquema canónico completo/ordenado, ambas clases, índices
+alineados y valores finitos. La inferencia acepta exclusivamente X con tipos
+congelados, sin y, controles ni claves. Cada llamada entrega copias y detecta
+mutaciones del backend. Se rechazan probabilidades ausentes, no numéricas, no
+finitas, fuera de [0,1] o con índice/longitud incorrectos. La salida común contiene
+municipio, origen, objetivo, horizonte, fold, candidato y `raw_probability`;
+las etiquetas permanecen en el objeto separado de entrada. La procedencia registra
+implementación, configuración, semilla, esquema y estado ajustado.
+
+| Blob histórico | SHA-256 | Regla/adaptación |
+|---|---|---|
+| `src/sat_dengue/model_training/contract.py` | `c8b7527f92c6cb5807c0f49f5ab9f8133abec229b610dce68d93f52663d85d9a` | Fallo cerrado ante contrato inválido; V3 usa ValueError y configuración explícita, sin autoridad JSON histórica implícita. |
+| `src/sat_dengue/model_training/candidate_families.py` | `0b96f5069cc805e9ad274b1eba91c36e6a62280433b95bc9394792ef8d47e77e` | Despacho compartido de familias e interfaz fit/predicción; V3 usa Protocol y registro vacío sin importar frameworks. |
+| `src/sat_dengue/model_training/candidate_preparation.py` | `7c7a328e84370da8e196d56f610d44d710625e0fdec580595f931cb13b2ca78c` | Alineación, ambas clases y exclusión de controles retrospectivos. No se migra preparación/ablation de estimadores. |
+| `src/sat_dengue/model_training/reference_workflow.py` | `92e0c57f86f7adeb31f84b327c4839eedb05898d8b2fd78342386d09dd017a2a` | Enlaces ventana/municipio/origen/objetivo/horizonte y probabilidad separada; sin métricas o publicación heredadas. |
+| `tests/unit/test_model_training.py` | `a081ddc0a6e31f25df8749a9ade019a7189523ccdca2eec3f77f5c41c30e56b1` | Pruebas de alineación y columnas futuras; V3 añade mutación, backend nuevo y contratos de probabilidad. |
+
+Sin dependencias nuevas. Dos familias de dobles viven exclusivamente en tests,
+sin interpretación científica. `NOT_REPRODUCED`: adaptadores XGBoost/LightGBM/GAM,
+representaciones, búsquedas, ablations, formatos nativos y replay de componentes
+históricos. No se agrega adaptador genérico de estimadores sin una necesidad
+concreta, ni se afirma paridad de predicciones con modelos V2. Los cuatro miembros
+pueden implementar el mismo Protocol sin incorporar calendarios, calibración,
+umbrales o métricas en sus adaptadores.
