@@ -32,3 +32,6 @@ experimentos/
 
 # Plan detallado local de trabajo; la hoja de ruta compartida es plan.md.
 PLAN_pipeline_e2e_experimentos_sat_dengue.md
+
+# Datos crudos locales
+/datos/datos-crudos/
