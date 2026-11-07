@@ -7,15 +7,71 @@ declarado el servicio usa solo lo que haya en el directorio.
 from __future__ import annotations
 
 import logging
+import os
+import tempfile
 from pathlib import Path
+from typing import Protocol
 
 from .configuracion import Configuracion
+from .contrato.loader import FixtureValidationError, load_dashboard_fixture
 
 registro = logging.getLogger(__name__)
 
 
 class ErrorDeSincronizacion(RuntimeError):
     """No se pudo recuperar los resultados del almacenamiento durable."""
+
+
+class ClienteDeDescarga(Protocol):
+    """Capacidad minima requerida del cliente remoto."""
+
+    def download_file(self, bucket: str, clave: str, destino: str) -> None:
+        """Descargar un objeto remoto en una ruta local."""
+
+
+def _descargar_resultado(
+    cliente: ClienteDeDescarga,
+    bucket: str,
+    clave: str,
+    archivo: Path,
+    tamano: int,
+) -> None:
+    """Descargar, validar y publicar un resultado mediante reemplazo atomico.
+
+    Args:
+        cliente: Cliente S3 compatible con ``download_file``.
+        bucket: Nombre del bucket de origen.
+        clave: Clave del objeto remoto.
+        archivo: Ruta final del resultado publicado.
+        tamano: Tamano remoto declarado en bytes.
+
+    Raises:
+        ErrorDeSincronizacion: Si la descarga queda incompleta o el JSON no
+            satisface el contrato de resultados.
+    """
+    descriptor, nombre_temporal = tempfile.mkstemp(
+        dir=archivo.parent,
+        prefix=f".{archivo.name}.",
+        suffix=".tmp",
+    )
+    os.close(descriptor)
+    temporal = Path(nombre_temporal)
+    try:
+        cliente.download_file(bucket, clave, str(temporal))
+        recibido = temporal.stat().st_size
+        if recibido != tamano:
+            raise ErrorDeSincronizacion(
+                f"La descarga de {clave} quedo incompleta: {recibido} de {tamano} bytes"
+            )
+        try:
+            load_dashboard_fixture(temporal)
+        except FixtureValidationError as error:
+            raise ErrorDeSincronizacion(
+                f"El resultado remoto {clave} no cumple el contrato publicado"
+            ) from error
+        os.replace(temporal, archivo)
+    finally:
+        temporal.unlink(missing_ok=True)
 
 
 def _cliente_s3(configuracion: Configuracion):
@@ -41,9 +97,9 @@ def _cliente_s3(configuracion: Configuracion):
 def sincronizar_desde_s3(configuracion: Configuracion) -> int:
     """Descargar al directorio local los resultados publicados en el bucket.
 
-    Descarga solo objetos `.json` bajo el prefijo configurado y omite los que
-    ya estan en disco con el mismo tamano, para que reiniciar la instancia no
-    vuelva a bajar todo.
+    Descarga todos los objetos `.json` bajo el prefijo configurado. Cada objeto
+    se escribe y valida en un temporal antes de reemplazar atomicamente el
+    resultado visible.
 
     Returns:
         Cuantos archivos de resultado quedaron en el directorio.
@@ -73,9 +129,13 @@ def sincronizar_desde_s3(configuracion: Configuracion) -> int:
                 if not clave.endswith(".json"):
                     continue
                 archivo = destino / Path(clave).name
-                if archivo.is_file() and archivo.stat().st_size == objeto["Size"]:
-                    continue
-                cliente.download_file(configuracion.bucket_s3, clave, str(archivo))
+                _descargar_resultado(
+                    cliente,
+                    configuracion.bucket_s3,
+                    clave,
+                    archivo,
+                    objeto["Size"],
+                )
                 descargados += 1
     except Exception as error:  # boto3 expone muchas excepciones distintas
         raise ErrorDeSincronizacion(f"La sincronizacion desde {origen} fallo: {error}") from error

@@ -421,12 +421,18 @@ Aquí el disco local es una **caché**, no la fuente. El diseño tiene tres capa
    limpio ya arranca con datos;
 2. el volumen con nombre `resultados` sobrevive al reinicio del contenedor y al
    apagado de la instancia;
-3. si hay bucket declarado, al arrancar el servicio sincroniza desde S3 y
-   descarga solo lo que falta o cambió de tamaño.
+3. si hay bucket declarado, al arrancar el servicio sincroniza desde S3. Cada
+   objeto se descarga a un temporal, se valida con el contrato existente y
+   reemplaza atómicamente la copia local, incluso si conserva el mismo tamaño.
 
 Si la sincronización falla pero ya hay resultados locales, el servicio registra
 la advertencia y arranca con la última copia conocida. Servir el dato anterior
 es mejor que no responder.
+
+La sincronización comprueba el tamaño remoto y la validez semántica del JSON.
+La integridad criptográfica SHA-256 se incorporará cuando el contrato de
+publicación produzca hashes verificables en la tarea 13; un ETag de S3 no se
+trata como MD5 universal.
 
 ---
 

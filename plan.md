@@ -2,7 +2,7 @@
 
 **Versión:** 1.0
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Bloqueada en tarea 2 por activación administrativa del ruleset
+**Estado general:** Listo para tarea 4
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -61,8 +61,8 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | # | Tarea | Estado | Dependencia | Evidencia de cierre |
 |---:|---|---|---|---|
 | 1 | Formalizar arquitectura y fronteras | `COMPLETA` | — | Documento central aprobado: `pipeline/`, contrato de publicación, fuentes y tratamiento de 2025. |
-| 2 | Activar gobernanza y CI por componentes | `BLOQUEADA` | 1 | Ruleset, CODEOWNERS, plantilla de PR y checks para API, tablero y publicación; pipeline-ci se incorpora en la tarea 4 (DEC-005). |
-| 3 | Congelar y proteger la línea base del despliegue | `PENDIENTE` | 2 | Compose arranca desde clon limpio; salud y consulta válida funcionan; brechas existentes quedan corregidas o documentadas. |
+| 2 | Activar gobernanza y CI por componentes | `COMPLETA` | 1 | Implementación y validaciones locales completas; CI remota y ruleset siguen pendientes antes del merge (DEC-006). |
+| 3 | Congelar y proteger la línea base del despliegue | `COMPLETA` | 2 | Compose arranca desde clon limpio; salud y consulta válida funcionan; brechas existentes quedan corregidas o documentadas. |
 | 4 | Crear el subproyecto `pipeline/` con Python, Kedro y uv | `PENDIENTE` | 3 | Estructura autocontenida, lock, CLI, E2E sintético mínimo y `.github/workflows/pipeline-ci.yml` ejecutable y validado sin afectar `app/`. |
 | 5 | Implementar releases y adquisición desacoplada | `PENDIENTE` | 4 | `DataSource`, `ResolvedBundle`, manifiestos, caché, hashes y adaptadores local, Hugging Face, Zenodo y S3 simulado. |
 | 6 | Migrar el panel canónico desde V2 | `PENDIENTE` | 5 | Productores migrados con procedencia y equivalencia sobre una muestra aprobada. |
@@ -111,10 +111,10 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 1/20 |
+| Tareas completas | 3/20 |
 | Tarea activa | Ninguna |
-| Tareas bloqueadas | 1 |
-| Última tarea completada | 1 — Formalizar arquitectura y fronteras |
+| Tareas bloqueadas | 0 |
+| Última tarea completada | 3 — Congelar y proteger la línea base del despliegue |
 | Última actualización | 7 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -122,7 +122,8 @@ Actualizar esta sección al cerrar cada tarea.
 | Fecha | Tarea | Estado nuevo | Commit | Validaciones | Observaciones |
 |---|---:|---|---|---|---|
 | 2026-11-07 | 1 | COMPLETA | `e794bce` (arquitectura); `60692c3` (hoja de ruta y cierre, sustituye a `fd9eae7`) | Rutas y enlaces revisados; diff documental sin errores de espacios; plan versionado. | Arquitectura y hoja de ruta compartidas. |
-| 2026-11-07 | 2 | BLOQUEADA | Commit `ci(governance): add repository quality gates` | API: 22 pruebas; tablero: lint sin errores (6 advertencias), 33 pruebas y build; publicación: 22 JSON en API y prueba Zod verde; YAML y shell válidos; filtros verificados; diff sin errores de espacios. | Sin rulesets ni reglas efectivas en main; cuenta sin administración. Propietario debe activar el ruleset y exigir `API tests`, `Dashboard quality`, `Publication contract`. Evidencia y pasos en [ci-governance.md](docs/decisions/ci-governance.md). actionlint ausente; no se ejecutó CI remota. No continuar a tarea 3 hasta resolver y verificar el bloqueo. |
+| 2026-11-07 | 2 | COMPLETA | `f67d1c6` | API: 22 pruebas; tablero: lint sin errores (6 advertencias), 33 pruebas y build; publicación: 22 JSON en API y prueba Zod verde; YAML, shell, filtros y diff validados localmente. | Implementación y validación local completas. GitHub Actions no fue ejecutado ni validado remotamente. CI remota, ruleset, aprobación independiente y checks requeridos siguen pendientes y son obligatorios antes del merge (DEC-006). |
+| 2026-11-07 | 3 | COMPLETA | Commit `fix(deployment): preserve clean-clone baseline` | API: 28 pruebas; tablero: instalación con lockfile congelado, lint sin errores (6 advertencias), 33 pruebas y build; Docker Compose construido sin caché desde checkout temporal, 3 servicios activos, 22 resultados, Meta y Tolima disponibles, consultas y smoke test verdes; volumen verificado tras recrear contenedores; diff sin errores. | El estado inicial arrancaba con volumen vacío, 0 resultados y consultas 404. La imagen ahora siembra el volumen; S3 descarga siempre a temporal, comprueba tamaño y contrato, y reemplaza atómicamente. SHA-256 queda diferido a la tarea 13 porque aún no existe un hash remoto confiable. Recursos Docker temporales eliminados. |
 
 ## 7. Decisiones y desviaciones
 
@@ -135,6 +136,7 @@ Toda desviación debe registrarse antes de continuar.
 | DEC-003 | 2026-11-07 | Crear el E2E bajo `pipeline/` sin reorganizar el despliegue existente. | Mantener el repositorio ordenado y reducir riesgo. | Dependencias y pruebas separadas. | Aprobada |
 | DEC-004 | 2026-11-07 | Prohibir celdas Markdown hasta autorización formal. | Regla del proyecto. | Los notebooks no incorporarán narrativa Markdown inicialmente. | Aprobada |
 | DEC-005 | 2026-11-07 | El workflow pipeline-ci se incorporará en la tarea 4 junto con el proyecto Kedro, de modo que nazca ejecutable y validado, no como un placeholder. | Evitar sobreingeniería y checks rotos sobre archivos inexistentes. | Evidencia de tarea 4 ampliada; tarea 2 cubre componentes existentes. | Aprobada por el prompt 2 |
+| DEC-006 | 2026-11-07 | La validación remota de GitHub Actions y la activación del ruleset se aplazan hasta que se publique el único PR. Las validaciones locales de la tarea 2 fueron aprobadas. | No abrir un PR auxiliar ni afirmar una validación remota que no ocurrió. | CI remota, ruleset, aprobación independiente y checks requeridos siguen siendo condiciones obligatorias antes del merge. | Aprobada por el prompt 3 |
 
 ## 8. Condición de finalización
 
