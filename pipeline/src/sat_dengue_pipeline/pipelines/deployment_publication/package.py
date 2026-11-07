@@ -5,6 +5,7 @@ import json
 import math
 import re
 from collections import defaultdict
+from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
@@ -147,6 +148,66 @@ def validate_inputs(panel: list[dict], predictions: list[dict], comparison: list
         ) from None
 
 
+def ordered_retro(retro: dict | None) -> dict | None:
+    """Ordenar listas y claves del retroanálisis sin cambiar valores o mutar la entrada."""
+    if retro is None:
+        return None
+
+    def ordered(row: dict, fields: list[str]) -> dict:
+        """Mantener el orden caracterizado y conservar campos desconocidos para rechazarlos."""
+        return {key: row[key] for key in [*fields, *sorted(set(row) - set(fields))] if key in row}
+
+    try:
+        result = deepcopy(retro)
+        fields = [
+            "horizon",
+            "year",
+            "candidate",
+            "label",
+            "role",
+            "onsets_detected",
+            "actual_onsets",
+            "alerts_emitted",
+            "false_alerts",
+            "false_alerts_onset",
+        ]
+        result["rows"] = [ordered(row, fields) for row in result["rows"]]
+        result["rows"].sort(
+            key=lambda row: (
+                row["horizon"],
+                row.get("year") or 0,
+                row["candidate"],
+                json.dumps(row, sort_keys=True),
+            )
+        )
+        result["seeds_checked"] = sorted(result["seeds_checked"])
+        if "curve" in result:
+            fields = ["horizon", "candidate", "alerts_emitted", "onsets_detected"]
+            result["curve"] = [ordered(row, fields) for row in result["curve"]]
+            result["curve"].sort(
+                key=lambda row: (
+                    row["horizon"],
+                    row["candidate"],
+                    row["alerts_emitted"],
+                    row["onsets_detected"],
+                )
+            )
+        return ordered(
+            result,
+            [
+                "method",
+                "period_start",
+                "period_end",
+                "provenance",
+                "seeds_checked",
+                "rows",
+                "curve",
+            ],
+        )
+    except (KeyError, TypeError, ValueError) as exc:
+        raise PublicationInputError("ERROR: esquema de retroanalisis inválido") from exc
+
+
 def build_package(
     panel_rows: list[dict],
     prediction_rows: list[dict],
@@ -167,6 +228,7 @@ def build_package(
         Documentos serializados, manifiesto y auditoría de selección/omisiones.
     """
     validate_inputs(panel_rows, prediction_rows, comparison_rows)
+    retroanalisis = ordered_retro(retroanalisis)
     panel = d.leer_panel(panel_rows)
     if config.candidato == "auto":
         candidate, reason = d.elegir_candidato(comparison_rows)
@@ -176,7 +238,14 @@ def build_package(
     comparison = d.leer_comparacion(comparison_rows, candidate)
     candidates = d.leer_todos_los_candidatos(comparison_rows, candidate)
     candidates += d.canal_endemico(panel, predictions)
-    candidates.sort(key=lambda r: (r["horizon"], -(r["onsets_detected"] or 0)))
+    candidates.sort(
+        key=lambda r: (
+            r["horizon"],
+            -(r["onsets_detected"] or 0),
+            r["source"] == "computed_from_panel",
+            r["candidate"],
+        )
+    )
     model_version = config.version_modelo or f"{candidate}-{config.procedimiento[:12]}"
     horizons: dict[str, set[str]] = defaultdict(set)
     for _, period, horizon in predictions:

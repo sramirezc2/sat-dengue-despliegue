@@ -231,7 +231,10 @@ def elegir_candidato(filas: list[dict[str, str]]) -> tuple[str, str]:
         det = _entero(f.get("detected_onsets")) or 0
         return (_entero(f.get("false_alerts")) or 0) / det if det else float("inf")
 
-    aspirantes = [f for f in filas if (f.get("result") or "") != "reference"]
+    aspirantes = sorted(
+        (f for f in filas if (f.get("result") or "") != "reference"),
+        key=lambda f: f["candidate"],
+    )
     if not aspirantes:
         raise PublicationError("ERROR: la comparacion no trae ningun candidato evaluable en T+1")
 
