@@ -30,7 +30,7 @@ def enforce_pipeline_boundaries(monkeypatch: pytest.MonkeyPatch) -> Iterator[Non
 
     def isolated_import(name: str, *args: Any, **kwargs: Any) -> Any:
         """Impedir dependencias inversas con el producto desplegado."""
-        assert name.split(".")[0] not in {"app", "sat_api"}, name
+        assert name.split(".")[0] not in {"app", "sat_api", "sat_dengue"}, name
         return original_import(name, *args, **kwargs)
 
     monkeypatch.setattr(builtins, "__import__", isolated_import)
@@ -41,12 +41,15 @@ def enforce_pipeline_boundaries(monkeypatch: pytest.MonkeyPatch) -> Iterator[Non
     monkeypatch.setenv("DO_NOT_TRACK", "1")
     monkeypatch.setenv("HF_HUB_DISABLE_TELEMETRY", "1")
     protected = Path(__file__).resolve().parents[2] / "datos" / "resultados"
+    v2 = Path(__file__).resolve().parents[3] / "SAT-Dengue-V2"
     active = True
 
     def audit(event: str, args: tuple[Any, ...]) -> None:
         """Bloquear acceso de archivos de publicación por cualquier open de Python."""
         if active and event == "open" and isinstance(args[0], (str, bytes)):
-            assert not Path(os.fsdecode(args[0])).resolve().is_relative_to(protected)
+            path = Path(os.fsdecode(args[0])).resolve()
+            assert not path.is_relative_to(protected)
+            assert not path.is_relative_to(v2)
 
     sys.addaudithook(audit)
     try:
