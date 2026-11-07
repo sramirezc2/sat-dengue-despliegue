@@ -319,3 +319,44 @@ inicio son adaptaciones explícitas. Bins/gap, utilidad relativa y protocolo exa
 V2 quedan `NOT_REPRODUCED`, detallados en
 [la decisión temporal](../docs/decisions/temporal-experiments.md).
 El ejemplo artificial no demuestra suficiencia científica ni autoriza alertas.
+
+## Evaluación emparejada e incertidumbre
+
+`evaluation/paired.py` recibe `EvaluationTables`: claves, etiquetas, probabilidades,
+decisiones, contexto y estratos en tablas separadas, todas enlazadas uno a uno
+por municipio/origen/objetivo/horizonte/fold/candidato. Se exige el digest de
+decisiones congeladas. `evaluate_procedure` es el puente que consulta evaluation.y
+solo después de verificar freeze e inferencia de tarea 10.
+
+```python
+from sat_dengue_pipeline.evaluation.paired import EvaluationConfig, evaluate_procedure
+
+# strata es una tabla de las seis claves más department_code declarado.
+report = evaluate_procedure(
+    fitted, batches["evaluation"], strata,
+    expected_digest=fitted.decisions.digest,
+    config=EvaluationConfig(bootstrap_replicates=200, seed=42, min_clusters=5),
+)
+# report.canonical_json y report.digest son agregados inmutables, sin filas.
+```
+
+Se calculan AP no interpolada, AUROC con empates, Brier, sensibilidad de inicio,
+FAR, volumen y fracción de alertas. Hay un único soporte de etiquetas conocidas
+y contexto válido; ausencias se cuentan, no se imputan. Una predicción ausente
+invalida las métricas aplicables de todos los métodos sin reducir el denominador
+de inicios. Persistencia no tiene Brier y prevalencia no tiene política de alertas.
+
+Las diferencias emparejadas, vistas global/horizonte/departamento y curvas sobre
+grilla predeclarada son descriptivas; las curvas nunca cambian el umbral.
+El bootstrap sortea municipios completos con las mismas réplicas para métodos
+y referencias. Con pocos municipios no emite límites; conserva réplicas no
+evaluables y no las reemplaza. No se declara superioridad ni campeón.
+
+```sh
+uv run --directory pipeline pytest tests/test_evaluation.py
+```
+
+Definiciones, denominadores, procedencia y límites en
+[la decisión de evaluación](../docs/decisions/paired-evaluation.md).
+El bootstrap histórico de cuatro ventanas queda `NOT_REPRODUCED`; la muestra
+artificial adicional solo prueba ingeniería, sin intervalos científicamente calibrados.
