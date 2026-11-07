@@ -1,9 +1,22 @@
 # Gobernanza y CI por componentes
 
-Fecha: 2026-11-07. Estado: controles locales implementados; activación remota
-pendiente antes del merge según DEC-006.
-La implementación continúa exclusivamente en `feature/pipeline-e2e` y terminará
-con un único PR hacia `main`. No se publica ni se abre ese PR en este paso.
+Fecha: 2026-11-07. Actualización de tarea 15: PR [#1](https://github.com/sramirezc2/sat-dengue-despliegue/pull/1)
+abierto en `feature/pipeline-e2e`, HEAD remoto `1bad249e396d2313ad160c6ab21b434cff57c452`.
+Consulta nueva: cuatro checks completados correctamente:
+
+| Check | Run real de GitHub Actions |
+| --- | --- |
+| API tests | [42421879832](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879832) |
+| Dashboard quality | [42421879846](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879846) |
+| Pipeline quality | [42421879813](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879813) |
+| Publication contract | [42421879795](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42421879795) |
+
+PR abierto, no fusionado, técnicamente fusionable; lista de revisiones vacía.
+Ruleset no verificado en esta consulta. Ruleset, aprobación independiente y checks
+verdes sobre la revisión final siguen siendo obligatorios antes del merge.
+No existe autorización de push para tarea 15: no se publica la matriz nueva.
+Las referencias posteriores a CI remota pendiente describen evidencia histórica
+de tareas anteriores; no contradicen estos cuatro runs ya observados.
 La arquitectura compartida está en [pipeline-e2e.md](../architecture/pipeline-e2e.md)
 y el avance en [plan.md](../../plan.md).
 
