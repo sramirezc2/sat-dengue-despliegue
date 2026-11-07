@@ -9,6 +9,7 @@ from .calendar import add_months, history_periods_for_target, validate_period
 from .endemic_channel import CHANNEL, compute_current_endemic_channel, percentile_type7
 
 KEYS = ["municipality_code", "year_month"]
+ROLE_ORDER = ["key", "metadata", "feature", "target", "control"]
 COUNTS = [
     "dengue_notifications_count",
     "dengue_grave_notifications_count",
@@ -208,7 +209,7 @@ def predictor_matrix(table: pd.DataFrame, schema: dict[str, Any]) -> pd.DataFram
     roles = schema["column_roles"]
     assigned = [n for columns in roles.values() for n in columns]
     if (
-        list(roles) != ["key", "metadata", "feature", "target", "control"]
+        list(roles) != ROLE_ORDER
         or roles.get("feature") != PREDICTORS
         or roles.get("key") != KEYS
         or len(assigned) != len(set(assigned))

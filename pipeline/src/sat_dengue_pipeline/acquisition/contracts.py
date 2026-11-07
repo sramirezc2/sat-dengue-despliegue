@@ -73,6 +73,7 @@ class ReleaseManifest:
     coverage_start: str
     coverage_end: str
     files: tuple[ReleaseFile, ...]
+    release_kind: str = "legacy"
 
     def __post_init__(self) -> None:
         """Validar esquema, cobertura declarada y unicidad del release."""
@@ -80,6 +81,10 @@ class ReleaseManifest:
             raise ManifestError("Versión de esquema no soportada")
         _identifier(self.release_id)
         _identifier(self.provider)
+        if self.release_kind not in {"legacy", "raw_sources"}:
+            raise ManifestError("Tipo de release inválido")
+        if self.release_kind == "raw_sources" and self.revision.lower() in {"main", "latest"}:
+            raise ManifestError("La revisión cruda debe ser inmutable")
         for value in (self.location, self.revision):
             if not isinstance(value, str) or not value.strip() or "\x00" in value:
                 raise ManifestError("Origen o revisión inválidos")
@@ -129,8 +134,12 @@ class ReleaseManifest:
     @property
     def manifest_sha256(self) -> str:
         """Calcular el digest sobre JSON canónico UTF-8, sin espacios."""
+        payload = asdict(self)
+        if self.release_kind == "legacy":
+            # Conservar identidades/cachés de contratos previos a raw_sources.
+            payload.pop("release_kind")
         canonical = json.dumps(
-            asdict(self), sort_keys=True, separators=(",", ":"), ensure_ascii=False
+            payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False
         )
         return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
@@ -154,6 +163,7 @@ class ResolvedBundle:
     coverage_start: str
     coverage_end: str
     files: tuple[ResolvedFile, ...]
+    release_kind: str = "legacy"
 
 
 class DataSource(Protocol):

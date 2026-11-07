@@ -97,7 +97,9 @@ def test_manifest_canonical_hash_and_neutral_immutable_bundle(
         "coverage_start",
         "coverage_end",
         "files",
+        "release_kind",
     }
+    assert bundle.release_kind == "legacy"
     assert {f.name for f in fields(ResolvedFile)} == {
         "logical_name",
         "path",

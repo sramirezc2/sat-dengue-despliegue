@@ -1,8 +1,8 @@
 # Pipeline SAT DENGUE: adquisición y preparación
 
-Subproyecto Kedro independiente del despliegue. Actualmente prueba cinco etapas
-en memoria: generar observaciones artificiales, validarlas, ajustar una constante,
-evaluarla y producir métricas. No es un modelo científico ni autoriza alertas.
+Subproyecto Kedro independiente del despliegue. Incluye el smoke de cinco etapas,
+dominio científico y construcción/certificación desde crudos con fixtures
+artificiales. No es un modelo aprobado ni autoriza alertas.
 
 Requisitos: Python 3.12 y uv (validado con 0.11.19). Dependencias fijadas en
 `pyproject.toml` y resueltas en `uv.lock`: Kedro 1.7.0, pytest 9.2.0 y Ruff 0.17.4.
@@ -426,3 +426,52 @@ No se registra tracking automático ni un pipeline operativo nuevo. El proveedor
 se añade a ResolvedBundle ni a los módulos científicos. Límites, decisiones de SDK,
 procedencia y `NOT_REPRODUCED` en
 [la decisión de tracking](../docs/decisions/local-mlflow.md). No es validación científica.
+
+## Construcción desde crudos y certificación N=3 (tarea 13)
+
+La entrada científica nueva exige `release_kind: raw_sources` y los cinco archivos,
+bytes y SHA-256 aprobados en `plan.md`. Rechaza derivados, matrices, el Excel como
+insumo, el clima de columnas seleccionadas y revisiones mutables. Los productores
+reciben solo `ResolvedBundle`, sin proveedor, URL o credencial. La ruta anterior
+de panel mensual se conserva para contratos históricos; no alimenta estos flujos.
+
+Desde la raíz:
+
+```sh
+uv run --directory pipeline kedro run --pipelines canonical_build
+uv run --directory pipeline kedro run --pipelines canonical_reproducibility
+uv run --directory pipeline pytest tests/test_raw_canonical.py tests/test_raw_reproducibility.py
+```
+
+Ambos CLI generan exclusivamente cinco crudos artificiales bajo el workspace
+ignorado `pipeline/data/canonical-fixture/`. `conf/base/parameters.yml` declara
+`canonical.mode: synthetic`, workspace y tracking. No habilita una entrada real.
+El fixture tiene dos municipios ficticios, 84 meses y 168 claves; una prueba
+separada verifica 1.122 × 163 = 182.886 claves sobre dimensión artificial.
+
+`canonical_build` produce un archivo provisional direccionado por digest.
+`canonical_reproducibility` reconstruye desde los crudos en tres procesos e inboxes
+nuevos, sin consumir el provisional. Compara esquema, tipos, orden, claves, valores,
+nulos y bytes exactos, y libera un solo `certified/<digest>/canonical.json` tras
+aprobar N=3. Divergencias o fallos bloquean `certify_then_consume`; ningún modelo
+se entrena en estos pipelines. No utilices un provisional como entrada entrenable.
+
+La cuarentena excluye fechas desde enero de 2025 antes de normalizar valores.
+Fechas inválidas o ausentes se rechazan, sin fallback a FEC_NOT. Los guards V3
+conservan diciembre de 2024 como observación y limitan los orígenes a noviembre
+para T+1 y octubre para T+2. Epidemiología usa residencia/eventos separados, sin
+deduplicar consecutivos. Clima incompleto permanece nulo y nunca se llena con cero.
+
+Tracking se mantiene opt-in y no cambia la tabla. Para observar una certificación
+con el SDK opcional instalado:
+
+```sh
+uv run --directory pipeline kedro run --pipelines canonical_reproducibility --params canonical.tracking=true
+```
+
+El run guarda únicamente agregados, hashes y linaje, incluido el resultado N=3.
+Sin opt-in no abre store ni importa MLflow. Ante un error ejecuta primero
+`canonical_build` para localizar el contrato/etapa que falla; no omitas controles
+ni reutilices una salida anterior como certificación de la corrida fallida.
+La conexión privada, cobertura/formatos y N=3 sobre el volumen real pertenecen a
+tarea 16. Detalles y límites en [la decisión canónica](../docs/decisions/raw-canonical-build.md).

@@ -43,6 +43,7 @@ def enforce_pipeline_boundaries(monkeypatch: pytest.MonkeyPatch) -> Iterator[Non
     monkeypatch.setenv("MLFLOW_DISABLE_TELEMETRY", "true")
     monkeypatch.setenv("MLFLOW_DISABLE_AGENT_HINT", "1")
     protected = Path(__file__).resolve().parents[2] / "datos" / "resultados"
+    raw_data = protected.parent / "datos-crudos"
     v2 = Path(__file__).resolve().parents[3] / "SAT-Dengue-V2"
     active = True
 
@@ -51,6 +52,7 @@ def enforce_pipeline_boundaries(monkeypatch: pytest.MonkeyPatch) -> Iterator[Non
         if active and event == "open" and isinstance(args[0], (str, bytes)):
             path = Path(os.fsdecode(args[0])).resolve()
             assert not path.is_relative_to(protected)
+            assert not path.is_relative_to(raw_data)
             assert not path.is_relative_to(v2)
 
     sys.addaudithook(audit)

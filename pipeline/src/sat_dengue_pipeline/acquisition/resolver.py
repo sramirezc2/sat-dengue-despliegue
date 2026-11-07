@@ -56,6 +56,10 @@ def resolve_release(
         DownloadError: Si la materialización se interrumpe.
         CacheError: Si la caché no permite una escritura segura.
     """
+    if manifest.release_kind == "raw_sources":
+        from .raw_manifest import validate_raw_manifest
+
+        validate_raw_manifest(manifest)
     root = cache_root.resolve()
     bundle_root = contained_path(root, f"{manifest.release_id}/{manifest.manifest_sha256}")
     resolved: list[ResolvedFile] = []
@@ -96,4 +100,5 @@ def resolve_release(
         manifest.coverage_start,
         manifest.coverage_end,
         tuple(resolved),
+        manifest.release_kind,
     )

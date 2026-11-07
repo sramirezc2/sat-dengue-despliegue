@@ -27,6 +27,7 @@ ARTIFACTS = {
     "configuration.json",
     "lineage.json",
     "inventory.json",
+    "canonical_build.json",
 }
 
 
@@ -170,6 +171,34 @@ class LocalTracker:
         """
         artifacts = aggregate_artifacts(report)
         validate_lineage(lineage, report)
+        assert set(lineage) == LINEAGE_FIELDS
+        metrics = [
+            (row["metric"], row["value"])
+            for row in report.payload["metrics"]
+            if row["stratum"] == "global"
+            and row["reference"] == "candidate"
+            and row["evaluable"]
+        ]
+        return self._record(artifacts, lineage, report.digest, metrics)
+
+    def record_canonical(self, payload: dict[str, Any]) -> TrackingReceipt:
+        """Observar construcción/certificación con la misma persistencia local opt-in."""
+        from .canonical import validate_canonical_tracking
+
+        validate_canonical_tracking(payload)
+        lineage = {name: payload[name] for name in (
+            "raw_manifest_digest", "builder_git_sha", "builder_config_digest", "lock_digest",
+            "canonical_semantic_digest", "certification",
+        )}
+        return self._record(
+            {"canonical_build.json": payload}, lineage, payload["canonical_semantic_digest"], []
+        )
+
+    def _record(
+        self, artifacts: dict[str, Any], lineage: dict[str, Any], scientific_digest: str,
+        metric_values: list[tuple[str, float]],
+    ) -> TrackingReceipt:
+        """Persistir agregados previamente validados con un único lifecycle compartido."""
         digest = stable_digest(
             {
                 name: hashlib.sha256(canonical_bytes(value)).hexdigest()
@@ -185,7 +214,7 @@ class LocalTracker:
 
         tags = {
             "mlflow.runName": self.config.experiment_name,
-            "scientific_digest": report.digest,
+            "scientific_digest": scientific_digest,
             "artifact_digest": digest,
             "tracking_schema": "local-aggregates-v1",
         }
@@ -202,13 +231,9 @@ class LocalTracker:
             if run.info.artifact_uri != LOGICAL_ROOT + "/" + run_id + "/artifacts":
                 raise ValueError("MLflow generó una URI no portable")
             params = [Param(key, canonical_bytes(value).decode()) for key, value in lineage.items()]
-            assert {param.key for param in params} == LINEAGE_FIELDS
             metrics = [
-                Metric(row["metric"], row["value"], int(time.time() * 1000), 0)
-                for row in report.payload["metrics"]
-                if row["stratum"] == "global"
-                and row["reference"] == "candidate"
-                and row["evaluable"]
+                Metric(name, value, int(time.time() * 1000), 0)
+                for name, value in metric_values
             ]
             self.store.log_batch(run_id, metrics=metrics, params=params, tags=[])
             artifacts["lineage.json"] = {**lineage, "run_id": run_id}

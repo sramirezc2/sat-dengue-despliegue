@@ -63,3 +63,9 @@ jobs:
       - name: Run synthetic Kedro pipeline
         if: steps.paths.outputs.changed == 'true'
         run: uv run --directory pipeline kedro run --pipelines synthetic
+      - name: Build canonical synthetic fixture
+        if: steps.paths.outputs.changed == 'true'
+        run: uv run --directory pipeline kedro run --pipelines canonical_build
+      - name: Certify canonical fixture N=3
+        if: steps.paths.outputs.changed == 'true'
+        run: uv run --directory pipeline kedro run --pipelines canonical_reproducibility

@@ -186,7 +186,7 @@ autorizado en este paso:
    publicación del pipeline, comprobando equivalencia contractual antes de
    sustituirla; conservar temporalmente una envoltura si hace falta.
 6. Verificar el flujo E2E y la compatibilidad con el despliegue; añadir el
-   adaptador S3 o DVC solo cuando exista una necesidad concreta.
+   transporte S3 de adquisición cuando exista una necesidad concreta, sin DVC.
 
 En las primeras etapas se preservan rutas, configuración y comportamiento de
 API, tablero, Docker y operación. No se mueven ni renombran `app/`, `docker/`,

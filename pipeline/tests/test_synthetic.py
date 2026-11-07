@@ -27,7 +27,9 @@ def test_registry_and_discovery() -> None:
     bootstrap_project(PROJECT)
     registered = register_pipelines()
     assert "synthetic" in find_pipelines()
-    assert set(registered) == {"synthetic", "__default__"}
+    assert set(registered) == {
+        "synthetic", "__default__", "canonical_build", "canonical_reproducibility"
+    }
     assert len(registered["synthetic"].nodes) == 5
     assert registered["synthetic"].inputs() == {"params:synthetic_smoke.years"}
     assert registered["synthetic"].outputs() == {"synthetic_metrics"}
