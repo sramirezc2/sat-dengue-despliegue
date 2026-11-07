@@ -2,7 +2,7 @@
 
 **Versión:** 1.0
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Implementación de tarea 9 en curso
+**Estado general:** Implementación de tarea 10 en curso
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -68,8 +68,8 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 6 | Migrar el panel canónico desde V2 | `COMPLETA` | 5 | Productores migrados con procedencia y paridad exacta sobre muestra artificial de 167 filas (no reproducción real). |
 | 7 | Implementar etiquetas y controles temporales | `COMPLETA` | 6 | Inicio T+1/T+2, elegibilidad solo en T, ausencias, roles y compuerta previa a etiquetas/consumidor; 47 pruebas nuevas. |
 | 8 | Recuperar o reimplementar el arnés rolling-origin | `COMPLETA` | 7 | Arnés mensual expansivo, madurez estricta, digest y 19 pruebas nuevas; protocolo histórico de ocho ventanas `NOT_REPRODUCED`. |
-| 9 | Implementar adaptadores de modelos | `EN CURSO` | 8 | Interfaz común para los enfoques del equipo sin duplicar evaluación. |
-| 10 | Implementar calibración, umbrales y líneas base | `PENDIENTE` | 9 | Separación temporal correcta, umbrales congelados y líneas base con información simétrica. |
+| 9 | Implementar adaptadores de modelos | `COMPLETA` | 8 | Protocol, configuración/semilla, registro neutral, protección de entradas y probabilidades; 28 pruebas nuevas. Estimadores reales pendientes. |
+| 10 | Implementar calibración, umbrales y líneas base | `EN CURSO` | 9 | Separación temporal correcta, umbrales congelados y líneas base con información simétrica. |
 | 11 | Implementar métricas e incertidumbre | `PENDIENTE` | 10 | Métricas emparejadas, estratos, curvas de volumen e intervalos definidos. |
 | 12 | Agregar trazabilidad de corridas | `PENDIENTE` | 11 | MLflow, Git SHA, release, hashes, proveedor, parámetros, entorno y `run_id`. |
 | 13 | Migrar la publicación sin romper el despliegue | `PENDIENTE` | 12 | Lógica trasladada al pipeline; script temporal compatible; contrato API/tablero equivalente. |
@@ -111,10 +111,10 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 8/20 |
-| Tarea activa | 9 — Adaptadores de modelos |
+| Tareas completas | 9/20 |
+| Tarea activa | 10 — Calibración, umbrales y líneas base |
 | Tareas bloqueadas | 0 |
-| Última tarea completada | 8 — Arnés rolling-origin |
+| Última tarea completada | 9 — Adaptadores de modelos |
 | Última actualización | 7 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -131,6 +131,8 @@ Actualizar esta sección al cerrar cada tarea.
 | 2026-11-07 | 7 | COMPLETA | `8ed8293391620a955f8756c92b8a0b64a74eb0e9` | Lock/sync, Ruff, 139 pruebas (47 nuevas), E2E y siete centinelas explícitos verdes; clon temporal con entorno nuevo, árbol idéntico al commit de implementación, instalación, Ruff, 139 pruebas, centinelas y E2E verdes. API 28; tablero lint sin errores (6 advertencias), 33 pruebas y build; cuatro YAML, filtros y 19 bloques shell válidos; diff/imports/patrones de secretos/tamaños revisados. | Mismo commit histórico V2; referencia adicional de siete estados artificiales hasta junio de 2024 con paridad exacta en ambos horizontes. Inicio = anterior 0 y objetivo 1; ausencia preservada, elegibilidad solo en T. Rechazo por objetivo antes de leer etiquetas o invocar consumidor; no se leyó ni utilizó ninguna observación/etiqueta científica de 2025 en el pipeline. Centinelas solo con claves/marcadores artificiales. X/y separados, disponibilidad explícita, selecciones fijas sin rolling-origin ni reserva rígida de 2024. Ninguna escritura en V2; estado externo final documentado en DEC-008. Las regresiones de producto consultan JSON publicados históricos (DEC-009). Sin CSV de 426 MB, modelos, datos reales nuevos, notebooks, push o PR. Reproducción real pendiente en tarea 15; CI remota y ruleset pendientes (DEC-006); CLI conserva DEC-007. Tarea 8 no iniciada. |
 
 | 2026-11-07 | 8 | COMPLETA | `672c8aaf1d863d6562686b67d560af7625876999` | Estado inicial exacto `f5c8768`, árbol limpio y 139 pruebas verdes; gate de tarea: lock/sync, Ruff, 158 pruebas (19 nuevas), suite específica y E2E sintético verdes; diff sin errores. | Fuente histórica fijada `916a69f3bb73f2ffbb0ec038b8bef887ee91adf1`, archivos/hashes/reglas en `docs/decisions/temporal-experiments.md`. Desarrollo artificial 2018–2024: 2018 calentamiento, folds mensuales desde 2019, T+1/T+2 separados, etiquetas disponibles estrictamente antes del consumo. Protocolo de ocho ventanas/cohortes/preparadores históricos `NOT_REPRODUCED`; sin paridad ni reproducción real. Sin nuevas dependencias, datos reales/2025, modelos científicos, notebooks, acceso a publicaciones o escrituras V2. Tarea 15, CI remota y ruleset pendientes. |
+
+| 2026-11-07 | 9 | COMPLETA | `1b16058e3975b0003ade9fd4e7ccff61a542f8e7` | Lock/sync, Ruff, 186 pruebas (28 nuevas), 47 pruebas específicas de tareas 8–9 y E2E sintético verdes; diff sin errores. | Contrato neutral con identidad/configuración JSON/semilla, instancia nueva por fold, esquema/orden/tipos congelados, inferencia solo X, probabilidades y enlaces validados. Backend mutante rechazado y entrada original protegida. Misma ejecución rolling-origin para dos familias dobles. Procedencia/hashes históricos en `docs/decisions/temporal-experiments.md`. Sin dependencias nuevas ni estimadores reales; XGBoost/LightGBM/GAM, preparación y replay históricos pendientes/NOT_REPRODUCED. No modelos entrenados versionados, escrituras V2, publicaciones ni datos reales/2025. |
 
 ## 7. Decisiones y desviaciones
 
