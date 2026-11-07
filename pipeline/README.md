@@ -546,3 +546,48 @@ El snapshot/recibo registra el contrato API inicial. Si cambia intencionalmente,
 reexportar `DashboardResponse.model_json_schema()`, actualizar su hash fuente y
 revalidar invariantes y consumidores. Detalles de equivalencia y límites en
 [la decisión de publicación](../docs/decisions/deployment-publication.md).
+
+## Portabilidad (tarea 15 en curso)
+
+Los ocho comandos oficiales anteriores siguen siendo la interfaz en todos los
+sistemas. Para ejecutarlos secuencialmente y recoger evidencia, desde un árbol
+limpio en la raíz:
+
+```text
+uv run --directory pipeline python tools/check_portability.py
+```
+
+El coordinador añade reportes JUnit y la suite específica; registra OS/CPU,
+versiones, commit/árbol/lock, gates, duración, conteos y hashes. Comprueba árbol
+limpio antes/después. `pipeline/data/portability/receipt.json` es el único
+artefacto para compartir; logs, XML, datos, venv y tracking permanecen ignorados.
+El colector recertifica N=3 usando las APIs existentes para recoger sus tres
+huellas; no basta con escribir una configuración o imitar variables del SO.
+
+En GitHub se conserva `Pipeline quality` y se añaden los checks inequívocos
+`Pipeline portability (Ubuntu)`, `(Windows)` y `(macOS)`. Cada runner instala
+Python 3.12 y uv 0.11.19 con caché deshabilitada, sin credenciales de proveedores.
+La existencia del workflow no significa que haya sido ejecutado.
+
+Para Colab, después de disponer de un clon de la revisión que contiene el runner,
+una celda **solo de código** delega al script reutilizable (sustituir el SHA por
+los 40 caracteres del commit revisado):
+
+```python
+import runpy
+from pathlib import Path
+run_colab = runpy.run_path("sat-dengue/pipeline/tools/colab_runner.py")["run_colab"]
+receipt = run_colab(Path("sat-dengue"), expected_commit="SHA_COMPLETO_REVISADO")
+```
+
+El script se ejecuta desde el kernel anfitrión real de Colab; instala uv fijado y,
+si el host no es 3.12, instala Python 3.12 administrado por uv. El entorno científico
+es el venv aislado del lock, sin alterar los paquetes científicos del notebook.
+Admite un bundle Git incremental revisado mediante `bundle=Path(...)` para validar
+commits locales sin push, exige avance fast-forward y verifica el SHA final.
+Solo exportar el recibo; no montar Drive ni introducir tokens para los fixtures.
+
+La auditoría, limitaciones y evidencia concreta están en
+[portability.md](../docs/decisions/portability.md). Windows y los nuevos checks
+requieren autorización explícita de push y ejecución real en el PR existente.
+La tarea permanece EN CURSO hasta tener evidencia verde de las cuatro plataformas.
