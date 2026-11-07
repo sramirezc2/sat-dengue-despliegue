@@ -1,4 +1,4 @@
-# Pipeline SAT DENGUE: sintético y adquisición desacoplada
+# Pipeline SAT DENGUE: adquisición y preparación
 
 Subproyecto Kedro independiente del despliegue. Actualmente prueba cinco etapas
 en memoria: generar observaciones artificiales, validarlas, ajustar una constante,
@@ -6,7 +6,8 @@ evaluarla y producir métricas. No es un modelo científico ni autoriza alertas.
 
 Requisitos: Python 3.12 y uv (validado con 0.11.19). Dependencias fijadas en
 `pyproject.toml` y resueltas en `uv.lock`: Kedro 1.7.0, pytest 9.2.0 y Ruff 0.17.4.
-La adquisición agrega `huggingface_hub` 2.4.0. No se requieren AWS, credenciales,
+La adquisición agrega `huggingface_hub` 2.4.0; la preparación usa NumPy 2.5.4
+y pandas 3.0.6. No se requieren AWS, credenciales,
 datos externos ni servicios desplegados para ejecutar las pruebas o el sintético.
 
 Desde la raíz del repositorio:
@@ -39,10 +40,10 @@ solo escribe a consola y `.telemetry` desactiva la telemetría de Kedro.
 
 La instalación necesita acceso al índice de paquetes; la ejecución del smoke test
 no usa red ni lee archivos reales del repositorio. Las comprobaciones del fixture
-no sustituyen los controles temporales científicos de la tarea 7.
+son independientes de los controles temporales de preparación.
 
-Quedan aplazados: migración de V2, preparación científica, modelos definitivos,
-MLflow, DVC y publicación en `datos/resultados/`. Los límites completos están en
+Quedan aplazados: rolling-origin, modelos definitivos, MLflow, DVC y publicación
+en `datos/resultados/`. Los límites completos están en
 [la arquitectura](../docs/architecture/pipeline-e2e.md).
 
 ## Adquisición de entradas científicas
@@ -136,3 +137,62 @@ verificados, cobertura temporal y procedencia/licencia confirmadas. No se ha
 descargado ni validado un release remoto real. La reproducción real corresponde
 a la tarea 15; el manual de operación, a la 17. Todas las pruebas actuales usan
 archivos temporales y bloquean conexiones reales, DNS y acceso a publicaciones.
+
+## Panel canónico y preparación temporal
+
+`canonical_input.canonical_from_bundle(bundle)` recibe el archivo lógico local
+`panel` en CSV mensual, comprueba tamaño/SHA-256 y cobertura y devuelve tabla y
+esquema. `domain/canonical.py` valida conteos separados, cobertura, días climáticos
+y claves; agrega canal H5, rezagos calendario y umbrales históricos al origen.
+`predictor_matrix` exige roles exclusivos y una allowlist ordenada. Los códigos
+DANE son cadenas de cinco dígitos. Ausencia y cero observado son distintos.
+
+`preparation.prepare_horizon` recibe la tabla, esquema, orígenes explícitos,
+horizonte 1/2 y disponibilidad de predictores. Los orígenes se separan de la
+historia: observaciones de noviembre/diciembre de 2024 pueden evaluar un origen
+de octubre T+2. La compuerta usa claves y calendario antes de leer etiquetas y
+rechaza observaciones/orígenes desde 2025 y objetivos desde enero de 2025.
+Una configuración más restrictiva puede adelantar ese límite.
+
+Inicio significa no exceso en el mes anterior al objetivo y exceso en el
+objetivo; si alguno falta, y es ausente. La elegibilidad de ambos horizontes solo
+consulta no exceso observado en T. Se distinguen elegibilidad operativa,
+evaluabilidad y completitud de X. `PreparedSet` entrega claves, X e y separados;
+no ajusta modelos. Los offsets de disponibilidad son conceptuales: las latencias
+operativas reales siguen sin demostrarse.
+
+Ejemplo con una tabla canónica ya obtenida de un bundle autorizado:
+
+```python
+from sat_dengue_pipeline.domain.temporal import select_origins
+from sat_dengue_pipeline.preparation import PREDICTOR_AVAILABILITY, prepare_horizon
+
+origins = select_origins(table, "2023-01", "2024-12", horizon=2)
+controls, labels, prepared, audit = prepare_horizon(
+    table, schema, origins, horizon=2, availability=PREDICTOR_AVAILABILITY
+)
+# prepared.keys, prepared.X y prepared.y están alineados y separados.
+```
+
+El grafo `pipelines/preparation.create_pipeline()` expone compuerta y preparación
+de ambos horizontes con seis salidas: controles, etiquetas T+1/T+2, auditoría y
+conjuntos utilizables separados. Los tests suministran un catálogo en memoria;
+no se registra como pipeline operativo. `synthetic` sigue siendo el único flujo
+CLI registrado junto con su alias predeterminado.
+
+Procedencia, hashes, adaptaciones y límites en
+[la decisión de migración](../docs/decisions/v2-scientific-migration.md).
+Las referencias pequeñas se generaron ejecutando funciones puras de V2 fijado
+en datos artificiales hasta 2024; los tests normales no acceden a V2. Verificación
+optativa de procedencia, fuera de la suite normal:
+
+```sh
+uv run --directory pipeline python tools/generate_v2_reference.py \
+  --v2 /ruta/local/SAT-Dengue-V2 --verify
+uv run --directory pipeline pytest tests/test_onset.py -k sentinel_2025
+```
+
+Esta paridad sintética es evidencia de ingeniería, sin reproducción real ni
+validación científica. El release público y su validación continúan en tarea 15.
+No se usan datos de 2025; los centinelas contienen solo claves artificiales para
+comprobar su rechazo antes del consumidor.

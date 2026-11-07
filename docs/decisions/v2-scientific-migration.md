@@ -51,6 +51,67 @@ ni políticas de partición. El perfil de predictores es el canónico de V2; no 
 importa otro perfil histórico de entrenamiento ni la reserva de estrés de 2024.
 Las etiquetas y controles se implementan separadamente en la tarea 7.
 
+## Tarea 7: inicio y frontera temporal
+
+De `experiments/onset.py` se adoptan `operational_eligibility` y la semántica
+de `labels`: inicio es anterior al objetivo `0` y objetivo `1`; si falta uno,
+la etiqueta es ausente. Ambas búsquedas son de meses calendario exactos. Ambos
+horizontes exigen no exceso observado en T para elegibilidad. T+2 conserva
+`earlier_onset_t1`; un episodio que inicia en T+1 y continúa en T+2 produce un
+negativo T+2, con esa marca explícita. El exceso observado se deriva de la zona
+contemporánea validada; una zona desconocida permanece desconocida.
+
+Se adopta la disponibilidad relativa de `predictor_projection`, junto con la
+allowlist canónica cerrada y roles no solapados de la tarea 6. Los umbrales
+`p25_h5_t*`/`p75_h5_t*` usan solo historia al origen y están permitidos;
+`p75_t*`, estados/conteos futuros, etiquetas y controles no son predictores.
+Los offsets conceptuales se comprueban explícitamente; no certifican latencia
+operativa de registros o clima del futuro release. Se conservan como no probadas
+las condiciones de disponibilidad histórica operativa.
+
+De `training_preparation/contract.py` y `validation.py` se adoptan los principios
+de roles exclusivos, calendario objetivo, binariedad y coherencia entre etiqueta
+y evaluabilidad. Los metadatos recibidos se verifican contra el inicio calculado,
+sin reutilizar ciegamente etiquetas de otro perfil. La evaluabilidad de inicio
+requiere dos estados observados; no se adopta la equivalencia histórica entre
+disponibilidad de un único `p75_t*` y evaluabilidad. Se permiten huecos para
+representarlos como ausencias, en vez de imponer el soporte mensual completo del
+perfil histórico de preparación. Ningún hueco se trata como contiguo.
+
+Adaptaciones V3: selección explícita de orígenes separada de la tabla de
+observaciones; nombres `target_period_t*`/`y_t*`; estados de ausencia explícitos;
+compuerta anterior a cualquier lectura de etiquetas; y X/y/claves separados en
+`PreparedSet`. El conjunto utilizable combina elegibilidad al origen, X completo
+y etiqueta evaluable, sin modificar la elegibilidad operativa. La auditoría
+contabiliza cada condición separadamente.
+
+`TemporalPolicy.reserved_start` empieza en `2025-01` y puede adelantarse para
+reservar una ventana adicional; no puede retrasarse y habilitar 2025 consumido.
+Rechaza cualquier observación/origen reservado y cualquier objetivo que cruce el
+límite. Octubre de 2024 T+2 puede evaluar diciembre; noviembre T+2 y diciembre
+T+1 se rechazan antes de consultar etiquetas. No se importan la reserva rígida de
+2024 ni las particiones experimentales de V2. `select_origins` solo selecciona
+una ventana fija por objetivo y, opcionalmente, impide cruzar el rol anterior con
+el origen (principio de embargo de `partitions`); no construye rolling-origin.
+
+El grafo `pipelines/preparation` tiene compuerta y preparación, se prueba con
+`MemoryDataset` y no se registra para operación ni supone un release real.
+Los centinelas usan únicamente claves artificiales y marcadores, nunca datos ni
+etiquetas científicas de 2025: fallan ante lectura de una etiqueta reservada y
+comprueban cero invocaciones al consumidor posterior y a la construcción de
+etiquetas. La preparación directa repite la protección. Las etapas futuras
+deberán consumir esta frontera; aquí no se implementan modelos ni ajustes.
+
+La referencia adicional `onset_expected.json` ejecuta las definiciones puras V2
+en siete estados artificiales hasta junio de 2024 y compara ambos horizontes
+exactamente, incluidos tipos y ausencias. Su recibo `onset_receipt.json` registra
+commit/fuente/método, entrada SHA-256
+`d8a563eb35d55de6f33c8d5bc57be7130862143cd3f909a2cd6f6f578a99a1d5`
+y salida SHA-256
+`b047dd7ed8ed259beaf1238851fc5f4bad21519d49ed02e2c36823f1ccff2550`.
+El mismo generador optativo verifica ambas referencias; los tests normales no
+necesitan V2.
+
 ## Referencia de ingeniería
 
 La muestra construida en `canonical_fixture.py` contiene 167 filas artificiales,
@@ -83,6 +144,9 @@ Durante el trabajo su estado Git mostró cambios externos adicionales respecto a
 inventario inicial; no se restauraron ni sobrescribieron. Por ello no se afirma
 que ese árbol permaneciera idéntico: la procedencia comprobable son los blobs
 inmutables del commit fijado, cuyas huellas se verificaron nuevamente.
+Al control posterior, el árbol V2 estaba limpio con HEAD externo
+`e5fc87ae79efa87e8526643626ecb494d1dcbb76`; `origin/main` seguía en el commit
+autorizado. Esta implementación no creó ese commit ni cambió referencias V2.
 Esta evidencia demuestra paridad sintética de ingeniería;
 **no demuestra equivalencia científica ni reproducción con datos reales**.
 La validación con un release público permanece pendiente en la tarea 15.

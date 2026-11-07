@@ -125,6 +125,35 @@ def main() -> None:
                 raise ValueError(f"Referencia sintética diferente: {filename}")
         else:
             path.write_bytes(content)
+    onset_fixture = runpy.run_path(str(PROJECT / "tests/fixtures/onset_fixture.py"))
+    selected_namespace(
+        sources[SOURCE_PATHS[2]], {"validate_keys", "operational_eligibility", "labels"}, namespace
+    )
+    states = onset_fixture["make_states"]()
+    onset_output = encode(
+        {f"t{h}": fixture["frame_payload"](namespace["labels"](states, h)) for h in (1, 2)}
+    )
+    onset_receipt = encode(
+        {
+            "commit": COMMIT,
+            "source_sha256": {
+                SOURCE_PATHS[2]: hashlib.sha256(sources[SOURCE_PATHS[2]]).hexdigest()
+            },
+            "input_sha256": hashlib.sha256(encode(fixture["frame_payload"](states))).hexdigest(),
+            "output_sha256": hashlib.sha256(onset_output).hexdigest(),
+            "method": "AST de labels y operational_eligibility de V2; siete estados artificiales",
+        }
+    )
+    for filename, content in (
+        ("onset_expected.json", onset_output),
+        ("onset_receipt.json", onset_receipt),
+    ):
+        path = PROJECT / "tests/fixtures" / filename
+        if args.verify:
+            if path.read_bytes() != content:
+                raise ValueError(f"Referencia sintética diferente: {filename}")
+        else:
+            path.write_bytes(content)
     print(json.loads(receipt))
 
 
