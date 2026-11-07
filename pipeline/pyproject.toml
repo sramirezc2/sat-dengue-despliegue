@@ -14,7 +14,13 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pytest==9.2.0", "ruff==0.17.4"]
+dev = ["pytest==9.2.0", "ruff==0.17.4", {include-group = "tracking"}]
+tracking = [
+    "mlflow-skinny==3.17.2",
+    "sqlalchemy==2.0.57",
+    "alembic==1.20.1",
+    "sqlparse==0.6.1",
+]
 
 [build-system]
 requires = ["uv_build==0.11.19"]

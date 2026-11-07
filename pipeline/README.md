@@ -42,7 +42,7 @@ La instalación necesita acceso al índice de paquetes; la ejecución del smoke 
 no usa red ni lee archivos reales del repositorio. Las comprobaciones del fixture
 son independientes de los controles temporales de preparación.
 
-Quedan aplazados: modelos definitivos, MLflow, DVC y publicación
+Quedan aplazados: modelos definitivos, tracking remoto, DVC y publicación
 en `datos/resultados/`. Los límites completos están en
 [la arquitectura](../docs/architecture/pipeline-e2e.md).
 
@@ -360,3 +360,69 @@ Definiciones, denominadores, procedencia y límites en
 [la decisión de evaluación](../docs/decisions/paired-evaluation.md).
 El bootstrap histórico de cuatro ventanas queda `NOT_REPRODUCED`; la muestra
 artificial adicional solo prueba ingeniería, sin intervalos científicamente calibrados.
+
+## Tracking local optativo
+
+El grupo `tracking` instala mlflow-skinny 3.17.2 y el soporte SQLite mínimo fijado:
+SQLAlchemy 2.0.57, Alembic 1.20.1 y sqlparse 0.6.1. Dev incluye ese grupo para
+ejecutar la suite; el runtime sin dev no necesita MLflow:
+
+```sh
+uv sync --locked --project pipeline
+uv run --directory pipeline pytest tests/test_tracking.py
+# Runtime científico/sintético sin SDK de tracking:
+uv sync --locked --no-dev --project pipeline
+uv run --no-dev --directory pipeline kedro run --pipelines synthetic
+# Tracking explícito sin herramientas dev:
+uv sync --locked --no-dev --group tracking --project pipeline
+```
+
+`LocalTracker` recibe el workspace y `TrackingConfig`; por defecto está apagado,
+sin imports SDK o creación de store. Para resultados/recibos ya existentes:
+
+```python
+from pathlib import Path
+from sat_dengue_pipeline.tracking.local import LocalTracker, TrackingConfig
+from sat_dengue_pipeline.tracking.privacy import collect_lineage
+
+repo_root = Path.cwd().parent  # ejemplo ejecutado desde pipeline/
+lineage = collect_lineage(
+    repo_root, bundle, provider=manifest.provider, spec=candidate,
+    protocol_digest=audit["digest"], report=report,
+)
+tracker = LocalTracker(Path.cwd(), TrackingConfig(enabled=True, store=".tracking/local"))
+receipt = tracker.record(report, lineage)
+run = tracker.get_run(receipt.run_id)
+artifacts = tracker.artifacts(receipt.run_id)
+tracker.close()
+```
+
+Cuando esos agregados y el linaje se hayan guardado bajo `pipeline/data/`
+(ignorado; no se incluyen archivos de entrada ficticios en Git), el comando es:
+
+```sh
+uv run --directory pipeline python -m sat_dengue_pipeline.tracking \
+  --report data/evaluation/report.json --lineage data/evaluation/lineage.json \
+  --enable --store .tracking/local
+```
+
+Omitir `--enable` desactiva tracking y no crea almacenamiento. El store configurable
+queda bajo `.tracking/<nombre>`, ignorado por Git, con SQLite y artefactos locales.
+No inicia servidor ni usa red, S3 o credenciales. Guarda URI lógicas, sin rutas
+absolutas/usuarios; su recuperación se realiza con el adaptador explícito y funciona
+tras mover el workspace. No se configura la resolución genérica de esas URI en UI
+o API fluida. Los opt-outs de telemetría/hints del SDK se activan antes de importarlo.
+
+Una corrida padre por invocación contiene candidato/horizonte/referencias y devuelve
+un run_id real; no se añaden jerarquías. Se registran Git/dirty, release/manifiesto/
+hashes/proveedor de orquestación, cobertura, configuración/semillas, digests de
+protocolo/freeze/definiciones/claves, bootstrap, lock y versiones/entorno/UTC.
+Solo se aceptan agregados de métricas, diferencias, estratos, curvas, incertidumbre,
+configuración y linaje con inventario SHA-256. Nunca X, y, filas, códigos municipales,
+modelos, secretos o rutas. El SDK solo observa: los bytes científicos son idénticos
+encendido/apagado. Fallos se propagan y cierran FAILED/KILLED, sin artefactos completos.
+
+No se registra tracking automático ni un pipeline operativo nuevo. El proveedor no
+se añade a ResolvedBundle ni a los módulos científicos. Límites, decisiones de SDK,
+procedencia y `NOT_REPRODUCED` en
+[la decisión de tracking](../docs/decisions/local-mlflow.md). No es validación científica.

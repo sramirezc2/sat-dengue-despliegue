@@ -40,6 +40,8 @@ def enforce_pipeline_boundaries(monkeypatch: pytest.MonkeyPatch) -> Iterator[Non
     monkeypatch.setattr(socket, "getaddrinfo", no_network)
     monkeypatch.setenv("DO_NOT_TRACK", "1")
     monkeypatch.setenv("HF_HUB_DISABLE_TELEMETRY", "1")
+    monkeypatch.setenv("MLFLOW_DISABLE_TELEMETRY", "true")
+    monkeypatch.setenv("MLFLOW_DISABLE_AGENT_HINT", "1")
     protected = Path(__file__).resolve().parents[2] / "datos" / "resultados"
     v2 = Path(__file__).resolve().parents[3] / "SAT-Dengue-V2"
     active = True
