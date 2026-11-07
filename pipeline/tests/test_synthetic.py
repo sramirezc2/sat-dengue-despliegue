@@ -28,7 +28,8 @@ def test_registry_and_discovery() -> None:
     registered = register_pipelines()
     assert "synthetic" in find_pipelines()
     assert set(registered) == {
-        "synthetic", "__default__", "canonical_build", "canonical_reproducibility"
+        "synthetic", "__default__", "canonical_build", "canonical_reproducibility",
+        "deployment_publication",
     }
     assert len(registered["synthetic"].nodes) == 5
     assert registered["synthetic"].inputs() == {"params:synthetic_smoke.years"}
