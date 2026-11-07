@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Smoke test sintético del futuro pipeline E2E SAT DENGUE"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
-dependencies = ["kedro==1.7.0"]
+dependencies = ["kedro==1.7.0", "huggingface_hub==2.4.0"]
 
 [dependency-groups]
 dev = ["pytest==9.2.0", "ruff==0.17.4"]
