@@ -2,7 +2,7 @@
 
 **Versión:** 1.0
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Listo para tarea 11 (no iniciada)
+**Estado general:** Implementación de tarea 12 en curso
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -70,8 +70,8 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 8 | Recuperar o reimplementar el arnés rolling-origin | `COMPLETA` | 7 | Arnés mensual expansivo, madurez estricta, digest y 19 pruebas nuevas; protocolo histórico de ocho ventanas `NOT_REPRODUCED`. |
 | 9 | Implementar adaptadores de modelos | `COMPLETA` | 8 | Protocol, configuración/semilla, registro neutral, protección de entradas y probabilidades; 28 pruebas nuevas. Estimadores reales pendientes. |
 | 10 | Implementar calibración, umbrales y líneas base | `COMPLETA` | 9 | Cinco roles disjuntos, disponibilidad estricta, sigmoide, grilla/umbral congelados y referencias de inicio; 25 pruebas nuevas antífuga. |
-| 11 | Implementar métricas e incertidumbre | `PENDIENTE` | 10 | Métricas emparejadas, estratos, curvas de volumen e intervalos definidos. |
-| 12 | Agregar trazabilidad de corridas | `PENDIENTE` | 11 | MLflow, Git SHA, release, hashes, proveedor, parámetros, entorno y `run_id`. |
+| 11 | Implementar métricas e incertidumbre | `COMPLETA` | 10 | AP/AUROC/Brier, sensibilidad/FAR/volumen, soporte emparejado, estratos y bootstrap municipal descriptivo; 29 pruebas nuevas. |
+| 12 | Agregar trazabilidad de corridas | `EN CURSO` | 11 | MLflow, Git SHA, release, hashes, proveedor, parámetros, entorno y `run_id`. |
 | 13 | Migrar la publicación sin romper el despliegue | `PENDIENTE` | 12 | Lógica trasladada al pipeline; script temporal compatible; contrato API/tablero equivalente. |
 | 14 | Cerrar portabilidad | `PENDIENTE` | 13 | Ejecución sintética verde en macOS, Windows, Linux y Colab. |
 | 15 | Ejecutar reproducción sintética y real | `PENDIENTE` | 14 | Fixture y release público 2018–2024 ejecutados; 2025 no fue leído. |
@@ -111,10 +111,10 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 10/20 |
-| Tarea activa | Ninguna |
+| Tareas completas | 11/20 |
+| Tarea activa | 12 — Trazabilidad local MLflow |
 | Tareas bloqueadas | 0 |
-| Última tarea completada | 10 — Calibración, umbrales y líneas base |
+| Última tarea completada | 11 — Métricas e incertidumbre |
 | Última actualización | 7 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -131,6 +131,8 @@ Actualizar esta sección al cerrar cada tarea.
 | 2026-11-07 | 8 | COMPLETA | `672c8aaf1d863d6562686b67d560af7625876999` | Estado inicial exacto `f5c8768`, árbol limpio y 139 pruebas verdes; gate de tarea: lock/sync, Ruff, 158 pruebas (19 nuevas), suite específica y E2E sintético verdes; diff sin errores. | Fuente histórica fijada `916a69f3bb73f2ffbb0ec038b8bef887ee91adf1`, archivos/hashes/reglas en `docs/decisions/temporal-experiments.md`. Desarrollo artificial 2018–2024: 2018 calentamiento, folds mensuales desde 2019, T+1/T+2 separados, etiquetas disponibles estrictamente antes del consumo. Protocolo de ocho ventanas/cohortes/preparadores históricos `NOT_REPRODUCED`; sin paridad ni reproducción real. Sin nuevas dependencias, datos reales/2025, modelos científicos, notebooks, acceso a publicaciones o escrituras V2. Tarea 15, CI remota y ruleset pendientes. |
 | 2026-11-07 | 9 | COMPLETA | `1b16058e3975b0003ade9fd4e7ccff61a542f8e7` | Lock/sync, Ruff, 186 pruebas (28 nuevas), 47 pruebas específicas de tareas 8–9 y E2E sintético verdes; diff sin errores. | Contrato neutral con identidad/configuración JSON/semilla, instancia nueva por fold, esquema/orden/tipos congelados, inferencia solo X, probabilidades y enlaces validados. Backend mutante rechazado y entrada original protegida. Misma ejecución rolling-origin para dos familias dobles. Procedencia/hashes históricos en `docs/decisions/temporal-experiments.md`. Sin dependencias nuevas ni estimadores reales; XGBoost/LightGBM/GAM, preparación y replay históricos pendientes/NOT_REPRODUCED. No modelos entrenados versionados, escrituras V2, publicaciones ni datos reales/2025. |
 | 2026-11-07 | 10 | COMPLETA | `651fcabaacddaed1c546680af0f4f8d376c8de4f` | Lock/sync, Ruff, 211 pruebas (25 nuevas), 72 específicas de tareas 8–10 y 11 centinelas explícitos verdes; E2E sintético verde. Checkout temporal con entorno nuevo y árbol idéntico al commit: instalación bloqueada, Ruff, 211 pruebas, 72 específicas y E2E verdes. API 28; tablero instalación con lock congelado, lint sin errores (6 advertencias), 33 pruebas y build. Cuatro YAML, filtros y 19 bloques shell válidos; 20 hashes V2 verificados, imports/diff/patrones de secretos/tamaños revisados. | Roles por objetivo train/calibration_fit/calibration_selection/threshold_selection/evaluation, disponibilidad estricta y embargo explícito; lectores espía prueban cero accesos a evaluation.y durante ajuste/selección/inferencia. Modelo y sigmoide ajustados una vez; configuración, representación y umbral congelados antes de evaluación. JSON/digest estable sin pickle o modelos versionados. Muestra artificial T+1/T+2 selecciona sigmoide y 0,3 con grilla/cota de test, sin valor operativo. Prevalencia solo train y persistencia adaptada a no inicio con soporte común. scikit-learn 1.7.2/SciPy 1.18.1 fijados; justificación y NOT_REPRODUCED en `docs/decisions/temporal-experiments.md` (DEC-010/011). V2 conservó árbol limpio; ninguna escritura V2 ni CSV de 426 MB/datos científicos reales/2025. Regresiones de publicaciones solo contractuales (DEC-009). Tarea 11 no iniciada; tarea 15, CI remota/ruleset, aprobación independiente y único PR pendientes. Sin push/PR. |
+
+| 2026-11-07 | 11 | COMPLETA | `92d81305c98b029dc698be9e05d5d3b83b93b5a6` | Estado inicial exacto 4646316/10 de 20/árbol limpio; 211 pruebas, Ruff, lock y E2E verdes. Gate final: lock/sync, Ruff, 240 pruebas (29 nuevas), suite específica 29 y E2E verdes; diff sin errores. | Evaluación posterior al freeze, claves explícitas, soporte común, ausencias visibles y denominador de inicios intacto ante predicciones ausentes. AP agrupada, AUROC medio crédito, Brier, sensibilidad/FAR/volumen; diferencias emparejadas, global/horizonte/departamento, curvas diagnostic_only. Bootstrap por municipio con réplicas comunes, semilla, percentiles y estados insuficientes/indefinidos; sin intervalos calibrados ni campeón. Procedencia/hashes y NOT_REPRODUCED en docs/decisions/paired-evaluation.md; ocho ventanas históricas y bootstrap de cuatro ventanas no reproducidos. Sin dependencias nuevas ni datos reales/2025; tarea 15 y revisión científica siguen pendientes. |
 
 Cierres documentales independientes: tarea 8 en `39ba8d8`; tarea 9 en `9ce154d`.
 El cierre documental de tarea 10 es el commit que incorpora este estado final.
