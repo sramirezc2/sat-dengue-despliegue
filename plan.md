@@ -2,7 +2,7 @@
 
 **Versión:** 1.1
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Tarea 13 completa; tarea 14 pendiente
+**Estado general:** Tarea 14 en curso
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -87,7 +87,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 11 | Implementar métricas e incertidumbre | `COMPLETA` | 10 | AP/AUROC/Brier, sensibilidad/FAR/volumen, soporte emparejado, estratos y bootstrap municipal descriptivo; 29 pruebas nuevas. |
 | 12 | Agregar trazabilidad de corridas | `COMPLETA` | 11 | MLflow local opt-in, manifiestos, linaje y 33 pruebas nuevas verdes; el bloqueo concurrente quedó resuelto sin versionar datos (DEC-015). |
 | 13 | Construir y certificar la tabla canónica desde fuentes crudas | `COMPLETA` | 12 | Arquitectura sincronizada; contrato crudo cerrado y productores registrados; 83 pruebas nuevas/356 totales. N=3 exacto sobre 168 claves artificiales y prueba de cuadrícula artificial de 182.886 claves (DEC-017). Cuarentena previa, guards T+1/T+2, conservación/nulos, atomicidad y tracking agregado verificados. Reproducción real pendiente en tarea 16. |
-| 14 | Migrar la publicación sin romper el despliegue | `PENDIENTE` | 13 | Lógica trasladada al pipeline; script temporal compatible; contrato API/tablero equivalente. |
+| 14 | Migrar la publicación sin romper el despliegue | `EN CURSO` | 13 | Lógica trasladada al pipeline; script temporal compatible; contrato API/tablero equivalente. |
 | 15 | Cerrar portabilidad | `PENDIENTE` | 14 | Adquisición cruda, construcción canónica, pruebas y E2E sintético verdes en macOS, Windows, Linux y Colab. |
 | 16 | Conectar el release crudo y ejecutar reproducción sintética y real | `PENDIENTE` | 15 | Fixture y release privado crudo fijado por revisión/hashes ejecutados; certificación N=3; `guard_development` demuestra que 2025 no llega a componentes aprendidos. |
 | 17 | Realizar revisión científica independiente | `PENDIENTE` | 16 | Auditoría de fuentes, construcción canónica, determinismo, etiquetas, fuga, folds, líneas base, métricas y correspondencia con la bitácora. |
@@ -185,7 +185,7 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 13/21 |
-| Tarea activa | Ninguna |
+| Tarea activa | 14 — Migración de publicación |
 | Tareas bloqueadas | Ninguna |
 | Última tarea completada | 13 — Construcción y certificación canónica desde crudos |
 | Última actualización | 7 de noviembre de 2026 |
