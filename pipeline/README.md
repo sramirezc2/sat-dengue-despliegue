@@ -42,7 +42,7 @@ La instalación necesita acceso al índice de paquetes; la ejecución del smoke 
 no usa red ni lee archivos reales del repositorio. Las comprobaciones del fixture
 son independientes de los controles temporales de preparación.
 
-Quedan aplazados: rolling-origin, modelos definitivos, MLflow, DVC y publicación
+Quedan aplazados: modelos definitivos, MLflow, DVC y publicación
 en `datos/resultados/`. Los límites completos están en
 [la arquitectura](../docs/architecture/pipeline-e2e.md).
 
@@ -196,3 +196,41 @@ Esta paridad sintética es evidencia de ingeniería, sin reproducción real ni
 validación científica. El release público y su validación continúan en tarea 15.
 No se usan datos de 2025; los centinelas contienen solo claves artificiales para
 comprobar su rechazo antes del consumidor.
+
+## Arnés rolling-origin
+
+`experiments/rolling.py` recibe `ExperimentData` con claves, X, y nullable y
+controles separados. `from_prepared` enlaza el conjunto utilizable de tarea 7;
+la disponibilidad de etiquetas es el objetivo más una demora declarada.
+`ExperimentSpec(horizon=1)` fija calentamiento 2018 y folds mensuales enero de
+2019–noviembre de 2024 (T+2 acaba en octubre). Los objetivos llegan a diciembre
+de 2024. La ventana de entrenamiento es expansiva y solo usa etiquetas maduras
+estrictamente antes del origen consumidor. No se hace shuffle ni partición aleatoria.
+
+```python
+from sat_dengue_pipeline.experiments.rolling import (
+    ExperimentSpec, build_folds, calendar_audit, from_prepared, run_rolling,
+)
+
+spec = ExperimentSpec(horizon=2, label_delay_months=0)
+data = from_prepared(prepared, horizon=2)
+folds = build_folds(spec)
+audit = calendar_audit(spec)
+# predictions, audit = run_rolling(data, spec, factory_de_instancia_nueva)
+```
+
+La fuente debe aportar historia utilizable para cada fold: una preparación que
+empieza en 2023 requiere configurar un primer origen posterior, no inventar
+entrenamiento de 2018. El ejecutor no lee y de validación, no calcula métricas
+finales y rechaza claves reservadas antes de crear modelos. Cada fold usa una
+instancia nueva. Las pruebas emplean solo un doble determinista.
+IDs y digest provienen del protocolo/calendario; las filas se ordenan por claves.
+
+```sh
+uv run --directory pipeline pytest tests/test_rolling.py
+```
+
+El protocolo histórico de ocho ventanas está `NOT_REPRODUCED`: este arnés mínimo
+mensual no afirma paridad ni validación científica real. Procedencia, diferencias
+y regla estricta de disponibilidad en
+[la decisión temporal](../docs/decisions/temporal-experiments.md).
