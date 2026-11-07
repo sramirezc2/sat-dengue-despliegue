@@ -1,0 +1,125 @@
+# Gobernanza y CI por componentes
+
+Fecha: 2026-11-07. Estado: controles locales validados; activación remota bloqueada.
+La implementación continúa exclusivamente en `feature/pipeline-e2e` y terminará
+con un único PR hacia `main`. No se publica ni se abre ese PR en este paso.
+La arquitectura compartida está en [pipeline-e2e.md](../architecture/pipeline-e2e.md)
+y el avance en [plan.md](../../plan.md).
+
+## Propiedad y revisión
+
+El propietario inicial verificado es `@sramirezc2` (cuenta GitHub y propietario
+del repositorio). `CODEOWNERS` lo asigna a todas las rutas. Los demás integrantes
+se agregarán al confirmar sus usuarios y acceso de escritura; no se inventan equipos.
+La política exige al menos **una aprobación independiente**, revisión del dueño
+del código, conversaciones resueltas y aprobaciones invalidadas si cambia el diff.
+El autor no puede aprobar su propio PR: si el autor es el único code owner,
+se deberá incorporar otro integrante verificado con escritura antes del merge.
+
+## Checks y comandos
+
+Los nombres de los jobs son los contextos que debe exigir el ruleset:
+
+| Workflow | Check requerido | Validación |
+| --- | --- | --- |
+| `api-ci.yml` | `API tests` | `python -m pip install -r app/api/requirements-dev.txt`; desde `app/api`, `python -m pytest`. |
+| `dashboard-ci.yml` | `Dashboard quality` | Desde `app/dashboard`, `bun install --frozen-lockfile`, `bun run lint`, `bun run test`, `NITRO_PRESET=node_server bun run build`. |
+| `publication-contract.yml` | `Publication contract` | Reutiliza `construir_indice` y `RepositorioDirectorio.get` para validar todos los JSON, sus nombres y claves; ejecuta la prueba Zod existente indicada abajo. |
+
+La validación del consumidor se ejecuta desde `app/dashboard` con:
+
+```sh
+bun run test -- src/test/dashboard-integration.test.tsx -t 'todos los resultados publicados cumplen el contrato'
+```
+
+La prueba recorre todos los JSON publicados. El paso Python del workflow usa el
+contrato existente, sin copiar esquemas ni lógica científica. La lectura de
+resultados históricos de 2025 comprueba compatibilidad; no desarrolla modelos,
+no consume datos científicos externos ni convierte 2025 en un holdout intacto.
+El contrato no regenera ni certifica científicamente el retroanálisis: un cambio
+en `datos/retro/` dispara la validación de las publicaciones existentes.
+
+Los tres workflows se ejecutan en PR hacia `main` y permiten `workflow_dispatch`.
+Filtran rutas **dentro del job**, conservando un check exitoso explícito cuando
+no aplica: filtrar el evento completo dejaría checks requeridos en pendiente.
+API cubre `app/api/`, resultados y su workflow; tablero cubre `app/dashboard/`
+y su workflow; publicación cubre resultados, retroanálisis, generador, API,
+tablero y su workflow. El filtro de publicación es deliberadamente conservador
+para incluir schemas, loaders, contratos y configuración sin listas frágiles.
+La ejecución manual siempre valida todo el componente; GitHub solo ofrece
+`workflow_dispatch` cuando el workflow existe en la rama predeterminada.
+
+Se usan Python 3.12, Node 22 y Bun 1.4.4 (alineado con Docker).
+Acciones oficiales verificadas: [checkout v7](https://github.com/actions/checkout),
+[setup-python v7](https://github.com/actions/setup-python),
+[setup-node v7](https://github.com/actions/setup-node) y
+[setup-bun v2](https://github.com/oven-sh/setup-bun).
+Permisos: solo `contents: read`; sin secretos, matrices ni cachés añadidas.
+`pipeline-ci.yml` se incorporará en la tarea 4 junto con Kedro (DEC-005).
+
+## Estado remoto comprobado
+
+Inspección de solo lectura con GitHub CLI el 7 de noviembre de 2026:
+
+- `gh api repos/sramirezc2/sat-dengue-despliegue`: propietario `sramirezc2`, rama
+  predeterminada `main`; cuenta disponible con `pull=true`, `push=false`, `admin=false`.
+- `gh api repos/sramirezc2/sat-dengue-despliegue/rulesets`: `[]`.
+- `gh api repos/sramirezc2/sat-dengue-despliegue/rules/branches/main`: `[]`;
+  no hay reglas efectivas de ruleset para `main`.
+- `gh api repos/sramirezc2/sat-dengue-despliegue/branches/main/protection`:
+  HTTP 404. Con acceso limitado, ese 404 no demuestra por sí solo ausencia de
+  protección clásica; no permite verificarla. No acredita los requisitos solicitados.
+
+**Bloqueo administrativo:** no existe un ruleset activo verificable y esta cuenta
+no puede administrarlo. La tarea 2 queda `BLOQUEADA`, con avance `1/20`.
+No se modificó configuración remota. Los workflows aún no se ejecutaron en
+GitHub Actions porque no se ha publicado la rama ni abierto el PR.
+
+## Activación manual exacta por el propietario
+
+Seguir la [guía oficial de creación de rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository)
+y las [reglas disponibles](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets):
+
+1. En `sramirezc2/sat-dengue-despliegue`, abrir **Settings → Rules → Rulesets →
+   New ruleset → New branch ruleset**. Nombre: `main-quality-gates`.
+2. Seleccionar **Enforcement status: Active**. Mantener **Bypass list vacía**,
+   sin administradores, roles o apps con bypass rutinario.
+3. En **Target branches → Add target → Include by pattern**, escribir `main`;
+   no agregar exclusiones.
+4. Activar **Restrict deletions** y **Block force pushes**.
+5. Activar **Require a pull request before merging**; fijar **Required approvals: 1**,
+   **Dismiss stale pull request approvals when new commits are pushed**,
+   **Require review from Code Owners** y **Require conversation resolution before merging**.
+6. Activar **Require status checks to pass** y **Require branches to be up to date
+   before merging**. Agregar exactamente `API tests`, `Dashboard quality` y
+   `Publication contract`, con origen GitHub Actions.
+7. Guardar con **Create** y volver a consultar las reglas efectivas de `main`.
+   Verificar todos los campos anteriores, no solo la existencia del ruleset.
+
+Si los checks no aparecen en el selector, deberán registrarse mediante una
+primera ejecución del futuro **único PR**, cuando se autorice publicar la rama;
+no se abrirá un PR auxiliar. No desactivar la protección para fusionar.
+La tarea permanece bloqueada hasta que los tres contextos estén exigidos y se
+pueda verificar la configuración completa. `CODEOWNERS` se interpreta desde la
+rama base: para este primer PR, el propietario deberá revisar explícitamente
+el diff aunque todavía no haya solicitud automática de code owner.
+
+Antes del merge: ruleset activo y verificado, tres checks verdes en el último
+estado del PR, rama actualizada, aprobación independiente válida, revisión de
+propiedad y conversaciones resueltas. También deben completarse las tareas
+restantes de `plan.md`; esta etapa no autoriza fusionar una implementación parcial.
+
+## Evidencia local y límites
+
+- API: 22 pruebas verdes; advertencia existente de deprecación de TestClient/httpx.
+- Tablero: 33 pruebas verdes; lint sin errores y seis advertencias de Fast Refresh;
+  build `node_server` correcto, con advertencia existente sobre tamaño de chunks.
+- Publicación: 22 JSON aceptados por la API y prueba Zod sobre todos los publicados verde.
+- Bun 1.4.4 probado desde caché local aislada, sin cambiar la instalación global.
+  Vitest se ejecuta con Node según su comando normal; forzarlo con `--bun` falló
+  al importar Zod y no corresponde al comando configurado en CI.
+- `actionlint` no está instalado: no se instaló globalmente. Se validó YAML con
+  Ruby/Psych disponible, estructura, permisos, eventos y nombres de checks;
+  esto no sustituye actionlint ni una ejecución remota en Linux.
+- Se verificaron filtros de rutas, sintaxis shell y el diff; sin cambios de
+  producto, datos, dependencias versionadas, scripts, Docker o notebooks.

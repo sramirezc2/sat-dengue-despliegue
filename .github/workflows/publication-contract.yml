@@ -1,0 +1,81 @@
+name: Publication Contract
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Publication contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # Filter steps rather than the workflow so required checks always report.
+      - name: Detect relevant paths
+        id: paths
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif git diff --name-only "$BASE_SHA...$HEAD_SHA" > /tmp/changed-paths; then
+            if grep -E '^(datos/(resultados|retro)/|scripts/construir_resultados\.py$|app/api/|app/dashboard/|\.github/workflows/publication-contract\.yml$)' /tmp/changed-paths; then
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "changed=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            exit 1
+          fi
+      - uses: actions/setup-python@v7
+        if: steps.paths.outputs.changed == 'true'
+        with:
+          python-version: '3.12'
+      - name: Install API dependencies
+        if: steps.paths.outputs.changed == 'true'
+        run: python -m pip install -r app/api/requirements-dev.txt
+      - name: Validate every published result with the API contract
+        if: steps.paths.outputs.changed == 'true'
+        env:
+          PYTHONPATH: app/api
+        run: |
+          python - <<'PYTHON'
+          from pathlib import Path
+          from sat_api.repositorio import RepositorioDirectorio, construir_indice
+
+          directory = Path("datos/resultados")
+          files = list(directory.glob("*.json"))
+          index = construir_indice(directory)
+          assert files, "No published results found"
+          assert len(index) == len(files), "Unrecognized published filename"
+          repository = RepositorioDirectorio(directory, ("50", "73"))
+          for department, period in index:
+              assert repository.get(department, period) is not None
+          print(f"Validated {len(files)} published results")
+          PYTHON
+      - uses: actions/setup-node@v7
+        if: steps.paths.outputs.changed == 'true'
+        with:
+          node-version: '22'
+      - uses: oven-sh/setup-bun@v2
+        if: steps.paths.outputs.changed == 'true'
+        with:
+          bun-version: '1.4.4'
+      - name: Install locked dashboard dependencies
+        if: steps.paths.outputs.changed == 'true'
+        working-directory: app/dashboard
+        run: bun install --frozen-lockfile
+      - name: Validate every published result with the dashboard contract
+        if: steps.paths.outputs.changed == 'true'
+        working-directory: app/dashboard
+        run: bun run test -- src/test/dashboard-integration.test.tsx -t 'todos los resultados publicados cumplen el contrato'

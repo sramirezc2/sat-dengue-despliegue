@@ -2,7 +2,7 @@
 
 **Versión:** 1.0
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Implementación iniciada
+**Estado general:** Bloqueada en tarea 2 por activación administrativa del ruleset
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -61,9 +61,9 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | # | Tarea | Estado | Dependencia | Evidencia de cierre |
 |---:|---|---|---|---|
 | 1 | Formalizar arquitectura y fronteras | `COMPLETA` | — | Documento central aprobado: `pipeline/`, contrato de publicación, fuentes y tratamiento de 2025. |
-| 2 | Activar gobernanza y CI por componentes | `PENDIENTE` | 1 | Ruleset, CODEOWNERS, plantilla de PR y checks para pipeline, API, tablero y publicación. |
+| 2 | Activar gobernanza y CI por componentes | `BLOQUEADA` | 1 | Ruleset, CODEOWNERS, plantilla de PR y checks para API, tablero y publicación; pipeline-ci se incorpora en la tarea 4 (DEC-005). |
 | 3 | Congelar y proteger la línea base del despliegue | `PENDIENTE` | 2 | Compose arranca desde clon limpio; salud y consulta válida funcionan; brechas existentes quedan corregidas o documentadas. |
-| 4 | Crear el subproyecto `pipeline/` con Python, Kedro y uv | `PENDIENTE` | 3 | Estructura autocontenida, lock, CLI y E2E sintético mínimo sin afectar `app/`. |
+| 4 | Crear el subproyecto `pipeline/` con Python, Kedro y uv | `PENDIENTE` | 3 | Estructura autocontenida, lock, CLI, E2E sintético mínimo y `.github/workflows/pipeline-ci.yml` ejecutable y validado sin afectar `app/`. |
 | 5 | Implementar releases y adquisición desacoplada | `PENDIENTE` | 4 | `DataSource`, `ResolvedBundle`, manifiestos, caché, hashes y adaptadores local, Hugging Face, Zenodo y S3 simulado. |
 | 6 | Migrar el panel canónico desde V2 | `PENDIENTE` | 5 | Productores migrados con procedencia y equivalencia sobre una muestra aprobada. |
 | 7 | Implementar etiquetas y controles temporales | `PENDIENTE` | 6 | Etiquetas de inicio, elegibilidad, horizontes, ausencias y prueba centinela que rechaza 2025. |
@@ -113,7 +113,7 @@ Actualizar esta sección al cerrar cada tarea.
 |---|---:|
 | Tareas completas | 1/20 |
 | Tarea activa | Ninguna |
-| Tareas bloqueadas | 0 |
+| Tareas bloqueadas | 1 |
 | Última tarea completada | 1 — Formalizar arquitectura y fronteras |
 | Última actualización | 7 de noviembre de 2026 |
 
@@ -121,7 +121,8 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Fecha | Tarea | Estado nuevo | Commit | Validaciones | Observaciones |
 |---|---:|---|---|---|---|
-| 2026-11-07 | 1 | COMPLETA | `e794bce` (arquitectura); commit `docs(plan): add implementation roadmap` (cierre, sustituye a `fd9eae7`) | Rutas y enlaces revisados; diff documental sin errores de espacios; plan versionado. | Arquitectura y hoja de ruta compartidas. |
+| 2026-11-07 | 1 | COMPLETA | `e794bce` (arquitectura); `60692c3` (hoja de ruta y cierre, sustituye a `fd9eae7`) | Rutas y enlaces revisados; diff documental sin errores de espacios; plan versionado. | Arquitectura y hoja de ruta compartidas. |
+| 2026-11-07 | 2 | BLOQUEADA | Commit `ci(governance): add repository quality gates` | API: 22 pruebas; tablero: lint sin errores (6 advertencias), 33 pruebas y build; publicación: 22 JSON en API y prueba Zod verde; YAML y shell válidos; filtros verificados; diff sin errores de espacios. | Sin rulesets ni reglas efectivas en main; cuenta sin administración. Propietario debe activar el ruleset y exigir `API tests`, `Dashboard quality`, `Publication contract`. Evidencia y pasos en [ci-governance.md](docs/decisions/ci-governance.md). actionlint ausente; no se ejecutó CI remota. No continuar a tarea 3 hasta resolver y verificar el bloqueo. |
 
 ## 7. Decisiones y desviaciones
 
@@ -133,6 +134,7 @@ Toda desviación debe registrarse antes de continuar.
 | DEC-002 | 2026-11-07 | Usar inicialmente Hugging Face y Zenodo con adquisición desacoplada. | Acceso público, reproducibilidad y migración futura. | Requiere manifiestos y adaptadores comunes. | Aprobada |
 | DEC-003 | 2026-11-07 | Crear el E2E bajo `pipeline/` sin reorganizar el despliegue existente. | Mantener el repositorio ordenado y reducir riesgo. | Dependencias y pruebas separadas. | Aprobada |
 | DEC-004 | 2026-11-07 | Prohibir celdas Markdown hasta autorización formal. | Regla del proyecto. | Los notebooks no incorporarán narrativa Markdown inicialmente. | Aprobada |
+| DEC-005 | 2026-11-07 | El workflow pipeline-ci se incorporará en la tarea 4 junto con el proyecto Kedro, de modo que nazca ejecutable y validado, no como un placeholder. | Evitar sobreingeniería y checks rotos sobre archivos inexistentes. | Evidencia de tarea 4 ampliada; tarea 2 cubre componentes existentes. | Aprobada por el prompt 2 |
 
 ## 8. Condición de finalización
 
