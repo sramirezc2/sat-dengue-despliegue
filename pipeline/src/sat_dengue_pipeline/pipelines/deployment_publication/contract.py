@@ -3,13 +3,12 @@
 import hashlib
 import json
 import re
-from datetime import datetime
 
 from jsonschema import Draft202012Validator, FormatChecker, ValidationError
 
 from .domain import _mes_siguiente
 from .errors import PublicationContractError
-from .package import PublicationPackage
+from .package import PublicationPackage, valid_timestamp
 
 NAME = re.compile(r"resultado_(50|73)_([0-9]{4}-(?:0[1-9]|1[0-2]))\.json")
 COUNTS = {"50": 29, "73": 47}
@@ -61,7 +60,7 @@ def validate_document(document: dict, schema: dict, name: str) -> None:
         for value in (meta["generated_at"], meta["data_updated_at"]):
             if value is not None:
                 _require(
-                    len(value) <= 35 and datetime.fromisoformat(value).utcoffset() is not None,
+                    valid_timestamp(value),
                     "Fecha RFC3339 sin zona o inválida",
                 )
         towns = document["municipalities"]

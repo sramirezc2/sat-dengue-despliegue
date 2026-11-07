@@ -23,6 +23,7 @@ def load_schema() -> dict:
 def read_csv(path: Path) -> list[dict[str, str]]:
     """Leer CSV local con encabezado único y errores de entrada explícitos."""
     try:
+        _safe_path(path)
         with path.open(encoding="utf-8", newline="") as stream:
             reader = csv.DictReader(stream)
             header = reader.fieldnames
@@ -35,7 +36,10 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 
 def read_retro(path: Path | None) -> dict | None:
     """Omitir retroanálisis ausente, conservando el comportamiento del CLI legado."""
-    if path is None or not path.exists():
+    if path is None:
+        return None
+    _safe_path(path)
+    if not path.exists():
         return None
     try:
         return decode_json(path.read_bytes())

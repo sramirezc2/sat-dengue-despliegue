@@ -31,7 +31,7 @@ jobs:
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           elif git diff --name-only "$BASE_SHA...$HEAD_SHA" > /tmp/changed-paths; then
-            if grep -E '^(pipeline/|\.github/workflows/pipeline-ci\.yml$)' /tmp/changed-paths; then
+            if grep -E '^(pipeline/|scripts/construir_resultados\.py$|datos/resultados/|app/api/sat_api/contrato/|app/dashboard/src/lib/dashboard-contract\.ts$|\.github/workflows/pipeline-ci\.yml$)' /tmp/changed-paths; then
               echo "changed=true" >> "$GITHUB_OUTPUT"
             else
               echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -69,3 +69,6 @@ jobs:
       - name: Certify canonical fixture N=3
         if: steps.paths.outputs.changed == 'true'
         run: uv run --directory pipeline kedro run --pipelines canonical_reproducibility
+      - name: Publish synthetic deployment fixture
+        if: steps.paths.outputs.changed == 'true'
+        run: uv run --directory pipeline kedro run --pipelines deployment_publication

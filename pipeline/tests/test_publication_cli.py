@@ -100,6 +100,36 @@ def test_cli_parse_codes(args, code, fragment, tmp_path):
     assert fragment in result.stdout + result.stderr
 
 
+@pytest.mark.parametrize("content", ["{}", "[]", "invalid"])
+def test_cli_invalid_retro_preserves_failure_code(tmp_path, content):
+    """Un retroanálisis inválido falla sin convertirlo silenciosamente en ausencia."""
+    paths = write_inputs(tmp_path / "inputs")
+    paths["retroanalisis"].write_text(content)
+    out = tmp_path / "out"
+    result = subprocess.run(command(paths, out), cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 1
+    assert "ERROR:" in result.stderr
+    assert not out.exists()
+
+
+def test_cli_default_clock_is_utc_at_command_boundary(tmp_path):
+    """Solo el comando resuelve la hora predeterminada, con zona UTC explícita."""
+    from datetime import datetime, timezone
+
+    paths, out = write_inputs(tmp_path / "inputs"), tmp_path / "out"
+    args = command(paths, out)
+    index = args.index("--generado")
+    del args[index : index + 2]
+    before = datetime.now(timezone.utc).replace(microsecond=0)
+    result = subprocess.run(args, cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    generated = datetime.fromisoformat(
+        json.loads((out / ".publication/manifest.json").read_bytes())["generated_at"]
+    )
+    assert before <= generated <= datetime.now(timezone.utc)
+    assert generated.utcoffset().total_seconds() == 0
+
+
 def test_cli_unknown_candidate_error_code_and_message(tmp_path):
     """El error observable de candidato ausente sigue siendo código 1 y ERROR específico."""
     paths = write_inputs(tmp_path / "inputs")

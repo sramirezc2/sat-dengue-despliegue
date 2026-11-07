@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .errors import PublicationInputError
-from .io import read_csv, read_retro, stage_package
+from .io import StagedPackage, read_csv, read_retro, stage_package
 from .package import PublicationConfig, PublicationPackage, build_package
 from .synthetic import write_inputs
 
@@ -70,7 +70,7 @@ def construct(source: PublicationInputs) -> PublicationPackage:
     )
 
 
-def stage(package: PublicationPackage, source: PublicationInputs, schema: dict) -> object:
+def stage(package: PublicationPackage, source: PublicationInputs, schema: dict) -> StagedPackage:
     """Preparar el paquete completo fuera del directorio publicado."""
     return stage_package(package, source.destination, schema)
 

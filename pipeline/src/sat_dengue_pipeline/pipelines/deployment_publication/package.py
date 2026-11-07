@@ -13,6 +13,25 @@ from . import domain as d
 from .errors import PublicationInputError
 
 
+def valid_timestamp(value: object, *, utc: bool = False) -> bool:
+    """Exigir RFC3339 explícito sin depender de extras opcionales del validador JSON."""
+    if (
+        not isinstance(value, str)
+        or len(value) > 35
+        or not re.fullmatch(
+            r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
+            r"(?:\.[0-9]+)?(?:Z|[+-][0-9]{2}:[0-9]{2})",
+            value,
+        )
+    ):
+        return False
+    try:
+        offset = datetime.fromisoformat(value).utcoffset()
+        return offset is not None and (not utc or offset == timedelta(0))
+    except ValueError:
+        return False
+
+
 @dataclass(frozen=True)
 class PublicationConfig:
     """Identidad explícita; el dominio no consulta reloj, entorno o Git."""
@@ -26,11 +45,7 @@ class PublicationConfig:
 
     def __post_init__(self) -> None:
         """Exigir identidades y fecha UTC antes de construir documentos."""
-        try:
-            parsed = datetime.fromisoformat(self.generado)
-            if parsed.utcoffset() != timedelta(0):
-                raise ValueError
-        except (ValueError, TypeError):
+        if not valid_timestamp(self.generado, utc=True):
             raise PublicationInputError(
                 "ERROR: generado debe ser una fecha UTC explícita"
             ) from None

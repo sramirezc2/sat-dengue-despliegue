@@ -1,7 +1,7 @@
 # Arquitectura del pipeline E2E y transición a V3
 
 Estado: decisiones adoptadas para la implementación incremental. Fecha: 2026-11-07.
-Actualizada para DEC-015/016 y la tarea 13; el producto desplegado se conserva.
+Actualizada para DEC-015/016/018 y tareas 13–14; el producto desplegado se conserva.
 
 ## Fuente oficial y situación actual
 
@@ -18,7 +18,7 @@ La distribución observada es compatible con una integración aditiva:
 | `app/dashboard/` | Producto que consume el contrato HTTP de la API. |
 | `datos/resultados/` | JSON publicados por departamento y mes, incluidos resultados de evaluación de 2025. |
 | `datos/retro/` | Evidencia de retroanálisis que el generador incorpora a los resultados. |
-| `scripts/construir_resultados.py` | Generador actual desde panel, predicciones y comparación de corridas científicas externas. |
+| `scripts/construir_resultados.py` | Envoltura compatible; la lógica de publicación reside en `pipeline/.../deployment_publication/`. |
 | `docker/`, `scripts/` | Despliegue con Compose, proxy y operación de la instancia. |
 | `docs/`, `modelos/`, `notebooks/` | Documentación, referencias de artefactos y material histórico; se conservan. |
 
@@ -90,6 +90,21 @@ una segunda dependencia de la API.
 Los resultados históricos y sus estados `G5 = NOT_APPROVED` y
 `champion_status = NOT_SELECTED` se preservan. Incorporar el pipeline no autoriza
 un modelo ni modifica la política científica vigente.
+
+La tarea 14 incorpora `deployment_publication`, fuera del pipeline predeterminado.
+Consume entradas locales ya calculadas, construye documentos con fecha inyectada,
+valida un snapshot JSON Schema derivado y las invariantes del producto, y prepara
+staging fuera del destino. Solo tras validar el conjunto promueve mediante
+reemplazos atómicos por archivo, backups y rollback ante excepciones. El
+manifiesto SHA-256 vive en `.publication/manifest.json`; los nombres consumidos
+por la API permanecen iguales. Las pruebas externas usan los contratos Pydantic
+y Zod reales; el código productivo no importa consumidores.
+
+Los nuevos periodos requieren recargar el índice del repositorio o reiniciar la
+API; los reemplazos están sujetos al TTL HTTP existente. No se cambia ese
+comportamiento ni se promete aislamiento multiarchivo frente a lectores activos.
+Procedimiento, límites y equivalencia en
+[la decisión de publicación](../decisions/deployment-publication.md).
 
 ## Adquisición desacoplada y almacenamiento
 

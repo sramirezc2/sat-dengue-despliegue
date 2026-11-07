@@ -42,8 +42,8 @@ La instalación necesita acceso al índice de paquetes; la ejecución del smoke 
 no usa red ni lee archivos reales del repositorio. Las comprobaciones del fixture
 son independientes de los controles temporales de preparación.
 
-Quedan aplazados: modelos definitivos, tracking remoto, DVC y publicación
-en `datos/resultados/`. Los límites completos están en
+Quedan aplazados los modelos definitivos y el tracking remoto; DVC permanece fuera
+del alcance. La publicación local explícita se implementó en tarea 14. Los límites están en
 [la arquitectura](../docs/architecture/pipeline-e2e.md).
 
 ## Adquisición de entradas científicas
@@ -128,8 +128,8 @@ El digest del manifiesto cambia y crea una caché independiente. Los futuros nod
 científicos mantienen su interfaz `ResolvedBundle`.
 
 Esta caché contiene **entradas científicas**; no escribe ni valida resultados
-publicados en `datos/resultados/`. El SHA-256 de publicaciones continúa aplazado
-a la tarea 13. No se importan módulos de `app/` ni se reutiliza su sincronizador.
+publicados en `datos/resultados/`. El publicador de tarea 14 produce su propio
+manifiesto SHA-256; no se importan módulos de `app/` ni se reutiliza su sincronizador.
 
 Faltan para registrar el primer release público: repo_id y commit reales de HF,
 registro versionado de Zenodo, inventario de archivos y rutas, tamaños y hashes
@@ -475,3 +475,74 @@ Sin opt-in no abre store ni importa MLflow. Ante un error ejecuta primero
 ni reutilices una salida anterior como certificación de la corrida fallida.
 La conexión privada, cobertura/formatos y N=3 sobre el volumen real pertenecen a
 tarea 16. Detalles y límites en [la decisión canónica](../docs/decisions/raw-canonical-build.md).
+
+## Publicación del despliegue (tarea 14)
+
+El módulo `sat_dengue_pipeline.pipelines.deployment_publication` contiene las
+funciones puras migradas del publicador de V3 `32b6d06`. No entrena, modifica
+predicciones o selecciona champion. Conserva G5 `NOT_APPROVED` / `NOT_SELECTED`.
+Los contratos se verifican con snapshot JSON Schema e invariantes autónomos;
+pruebas externas contrastan Pydantic y Zod sin imports de `app/` en producción.
+
+Smoke independiente, desde la raíz:
+
+```sh
+uv run --directory pipeline kedro run --pipelines deployment_publication
+```
+
+La configuración base usa solo fixtures artificiales y escribe bajo
+`pipeline/data/deployment-publication/`: entradas locales, dos resultados para
+76 municipios ficticios y manifiesto. No escribe en `datos/resultados/` ni se
+ejecuta al solicitar el pipeline predeterminado. Kedro devuelve
+`publication_manifest` y `publication_receipt`; solo un recibo `COMMITTED`
+confirma que terminó la promoción.
+
+Para entradas ya calculadas, el wrapper conserva sus banderas y defaults.
+Ejecutarlo desde la raíz preserva rutas relativas, incluida la omisión del
+retroanálisis si no existe:
+
+```sh
+uv sync --locked --project pipeline
+uv run --project pipeline python scripts/construir_resultados.py \
+  --panel RUTA/panel.csv --predicciones RUTA/predictions.csv \
+  --comparacion RUTA/comparison.csv --procedimiento ID_CORRIDA \
+  --version-datos VERSION_DATOS --salida DIRECTORIO_RESULTADOS
+```
+
+Aquí `--project` es intencional: conserva el cwd de la envoltura histórica.
+Kedro, pytest y Ruff siguen usando `--directory pipeline` (DEC-007).
+`--generado 2024-07-01T12:00:00+00:00` permite repetir bytes; si se omite, solo el
+CLI consulta el reloj UTC. `--candidato auto` conserva cobertura/coste en T+1;
+`--candidato NOMBRE --justificacion TEXTO` registra el override en el manifiesto
+y conserva el aviso histórico. Un empate exacto se resuelve por identificador,
+corrección separada y caracterizada en DEC-018. Ninguna selección es aprobación.
+
+Kedro también admite `publication.mode: local`, con configuración explícita de
+`inputs` (claves `panel`, `predicciones`, `comparacion`, `retroanalisis` opcional),
+`destination`, `generated_at`, `procedure`, `data_version` y, opcionalmente,
+`candidate`, `model_version`, `justification`. No conecta releases ni entrenamiento.
+
+La publicación prepara un staging hermano del destino, valida el conjunto y
+sus nombres/hashes, conserva backups y reemplaza archivos completos. El
+manifiesto queda en `.publication/manifest.json`, fuera del índice de la API.
+Ante excepciones se restaura lo anterior y se eliminan temporales controlados.
+Un lock excluye otros publicadores cooperantes. No se garantiza una lectura
+aislada de varios archivos ni recuperación automática si falla el filesystem
+durante rollback; en ese caso el error conserva la ruta de backups para recuperar.
+
+Para nuevos periodos, reiniciar la API o recargar su repositorio incorpora las
+claves al índice. Los reemplazos de periodos existentes respetan el TTL HTTP
+configurado; coordinar la publicación con recarga e invalidación/expiración de
+caché. La migración no cambia API, tablero, Docker o sincronización S3.
+
+Validación externa de producto (requiere dependencias de API y tablero instaladas):
+
+```sh
+uv run --directory pipeline python tools/validate_publication_consumers.py \
+  --directory data/deployment-publication/results --directory ../datos/resultados
+```
+
+El snapshot/recibo registra el contrato API inicial. Si cambia intencionalmente,
+reexportar `DashboardResponse.model_json_schema()`, actualizar su hash fuente y
+revalidar invariantes y consumidores. Detalles de equivalencia y límites en
+[la decisión de publicación](../docs/decisions/deployment-publication.md).

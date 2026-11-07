@@ -235,11 +235,12 @@ convención de nombre `resultado_<departamento>_<AAAA-MM>.json`. Publicar un
 periodo nuevo es dejar un archivo; no hay que editar código ni volver a
 construir la imagen.
 
-Esos archivos se generan con `scripts/construir_resultados.py` a partir de las
-corridas de Kedro del repositorio científico:
+`scripts/construir_resultados.py` es la envoltura compatible del publicador de
+`pipeline/`, que recibe panel, predicciones y comparación locales ya calculados.
+Desde la raíz, con el entorno bloqueado:
 
 ```bash
-python scripts/construir_resultados.py \
+uv run --project pipeline python scripts/construir_resultados.py \
   --panel       <corrida>/stages/data/<id>/bundle/panel.csv \
   --predicciones <corrida>/predictions.csv \
   --comparacion  <corrida>/comparison.csv \
@@ -431,8 +432,9 @@ la advertencia y arranca con la última copia conocida. Servir el dato anterior
 es mejor que no responder.
 
 La sincronización comprueba el tamaño remoto y la validez semántica del JSON.
-La integridad criptográfica SHA-256 se incorporará cuando el contrato de
-publicación produzca hashes verificables en la tarea 13; un ETag de S3 no se
+El publicador local genera tamaños y SHA-256 en `.publication/manifest.json`
+desde la tarea 14. La verificación de ese manifiesto durante sincronización S3
+sigue pendiente; esta tarea no cambia el transporte remoto. Un ETag de S3 no se
 trata como MD5 universal.
 
 ---

@@ -29,7 +29,7 @@ jobs:
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           elif git diff --name-only "$BASE_SHA...$HEAD_SHA" > /tmp/changed-paths; then
-            if grep -E '^(datos/(resultados|retro)/|scripts/construir_resultados\.py$|app/api/|app/dashboard/|\.github/workflows/publication-contract\.yml$)' /tmp/changed-paths; then
+            if grep -E '^(pipeline/(src/sat_dengue_pipeline/pipelines/deployment_publication/|tools/validate_publication_consumers\.py$|tests/.*publication|pyproject\.toml$|uv\.lock$)|datos/(resultados|retro)/|scripts/construir_resultados\.py$|app/api/|app/dashboard/|\.github/workflows/publication-contract\.yml$)' /tmp/changed-paths; then
               echo "changed=true" >> "$GITHUB_OUTPUT"
             else
               echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -79,3 +79,19 @@ jobs:
         if: steps.paths.outputs.changed == 'true'
         working-directory: app/dashboard
         run: bun run test -- src/test/dashboard-integration.test.tsx -t 'todos los resultados publicados cumplen el contrato'
+      - uses: astral-sh/setup-uv@v10.3.3
+        if: steps.paths.outputs.changed == 'true'
+        with:
+          version: '0.11.19'
+          enable-cache: false
+      - name: Install locked publication environment
+        if: steps.paths.outputs.changed == 'true'
+        run: uv sync --locked --project pipeline
+      - name: Build and promote synthetic package
+        if: steps.paths.outputs.changed == 'true'
+        env:
+          DO_NOT_TRACK: '1'
+        run: uv run --directory pipeline kedro run --pipelines deployment_publication
+      - name: Validate generated and existing documents with both consumers
+        if: steps.paths.outputs.changed == 'true'
+        run: uv run --directory pipeline python tools/validate_publication_consumers.py --directory data/deployment-publication/results --directory ../datos/resultados --api-python "$(command -v python)"
