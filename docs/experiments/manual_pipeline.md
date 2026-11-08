@@ -239,3 +239,34 @@ El equipo quiere saber si aumentar la profundidad máxima de XGBoost mejora la d
 5. Si desea comprobar que `EXP011` puede repetirse, crea `EXP012` con la misma receta de `EXP011`. No sobrescribe `EXP011`. Compara hashes de datos y código, métricas y evidencia, y registra cualquier diferencia.
 
 Este procedimiento conserva las decisiones previas, hace auditables los cambios y evita elegir una receta después de mirar la evaluación.
+
+## Uso de las skills de la fábrica
+
+Una skill es una guía reutilizable que ayuda a un agente compatible con Agent
+Skills a escoger el procedimiento y los límites correctos. Puede activarse
+automáticamente por su descripción o invocarse explícitamente. La skill guía al
+agente; no reemplaza la aprobación humana.
+
+- `$sat-dengue-experiment` prepara, registra, ejecuta, repite, concluye o compara
+  experimentos usando este manual y la fábrica existente.
+- `$sat-dengue-scientific-review` revisa una receta antes de aprobarla o las
+  conclusiones después de ejecutar, sin entrenar ni modificar la receta.
+- `$sat-dengue-verification` selecciona y ejecuta los gates requeridos antes de
+  declarar cambios terminados, preparar un commit o proponer un push.
+- `$sat-dengue-recovery` diagnostica descargas, locks, evidencia o ejecuciones
+  fallidas e identifica la recuperación mínima que debe autorizarse.
+
+Invocaciones explícitas:
+
+```text
+Usa $sat-dengue-experiment para preparar EXP003.
+Usa $sat-dengue-scientific-review para revisar EXP003 antes de aprobarlo.
+Usa $sat-dengue-verification para validar los cambios.
+Usa $sat-dengue-recovery para diagnosticar la ejecución bloqueada.
+```
+
+Para una revisión científica independiente conviene usar otro chat o revisor
+distinto del que preparó o ejecutó el experimento. Ninguna skill autoriza por sí
+sola un push, merge, acceso a secretos, aprobación científica, publicación o
+selección de campeón. El [catálogo de skills](../agents/skills-catalog.md) resume
+cuándo elegir cada una y enlaza su fuente canónica.
