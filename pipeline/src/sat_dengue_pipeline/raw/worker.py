@@ -6,6 +6,7 @@ import os
 import shutil
 import socket
 import sys
+import time
 from pathlib import Path
 
 
@@ -49,6 +50,8 @@ def enforce_boundaries(synthetic: bool) -> None:
 def main() -> None:
     """Copiar solo crudos a un inbox nuevo, reconstruir y devolver recibo agregado."""
     path = Path(sys.argv[1])
+    started = time.perf_counter()
+    cpu_started = time.process_time()
     request = json.loads(path.read_bytes())
     enforce_boundaries(request["config"]["profile"] == "synthetic")
     from sat_dengue_pipeline.acquisition.contracts import ResolvedBundle, ResolvedFile
@@ -68,7 +71,17 @@ def main() -> None:
     inventory = request["inventory"]
     if inventory is not None:
         inventory = {name: tuple(value) for name, value in inventory.items()}
-    artifact, audit = build(bundle, BuildConfig(**request["config"]), path.parent, inventory)
+    stages = {}
+    artifact, audit = build(
+        bundle, BuildConfig(**request["config"]), path.parent, inventory, measurements=stages
+    )
+    try:
+        import resource
+
+        rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        rss_bytes = int(rss if sys.platform == "darwin" else rss * 1024)
+    except ImportError:
+        rss_bytes = None
     atomic_write(
         path.parent / "receipt.json",
         canonical_bytes(
@@ -77,6 +90,12 @@ def main() -> None:
                 "serialized_sha256": artifact.serialized_sha256,
                 "audit": audit,
                 "pid": os.getpid(),
+                "measurements": {
+                    "wall_seconds": time.perf_counter() - started,
+                    "cpu_seconds": time.process_time() - cpu_started,
+                    "peak_rss_bytes": rss_bytes,
+                    "stages_seconds": stages,
+                },
             }
         ),
     )

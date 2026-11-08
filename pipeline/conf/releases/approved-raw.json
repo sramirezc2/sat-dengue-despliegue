@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "release_id": "satd-raw-a1a7f237",
+  "provider": "huggingface",
+  "location": "sat-dengue/data_raw",
+  "revision": "a1a7f237a4baa6ffa848fabeef474f811f3b3f33",
+  "coverage_start": "2011-06-01",
+  "coverage_end": "2025-12-31",
+  "files": [
+    {
+      "logical_name": "divipola_catalog",
+      "remote_path": "datos-crudos/Divipola-municipios.md",
+      "relative_path": "Divipola-municipios.md",
+      "size_bytes": 209867,
+      "sha256": "72eabcea0ff26370d23b9688e8d8f2246946cc815c040ccf1a6966b37a1de9f3"
+    },
+    {
+      "logical_name": "divipola_provenance",
+      "remote_path": "datos-crudos/divipola-provenance.json",
+      "relative_path": "divipola-provenance.json",
+      "size_bytes": 925,
+      "sha256": "92091306f0130910f27de999776b5cf4ed36b7dd7c89bd724d58caeb74f8c158"
+    },
+    {
+      "logical_name": "dengue_notifications",
+      "remote_path": "datos-crudos/dengue.csv",
+      "relative_path": "dengue.csv",
+      "size_bytes": 875694283,
+      "sha256": "58d277cfef7a60c28d488eefe4e7a1a7bf0f7b0df3dd88245971cd7b3d32c84b"
+    },
+    {
+      "logical_name": "severe_dengue_notifications",
+      "remote_path": "datos-crudos/dengue_grave.csv",
+      "relative_path": "dengue_grave.csv",
+      "size_bytes": 24537734,
+      "sha256": "3d60e96ccbedc35a19a8f5f54be8d786aa599813259c914f131522bf17dd1d70"
+    },
+    {
+      "logical_name": "daily_climate",
+      "remote_path": "datos-crudos/google_earth_engine.csv",
+      "relative_path": "google_earth_engine.csv",
+      "size_bytes": 1714544311,
+      "sha256": "dfe20fa02b6d6068c04744b5c86f44112048400a7fde637368c0d4effc88cb3f"
+    }
+  ],
+  "release_kind": "raw_sources"
+}

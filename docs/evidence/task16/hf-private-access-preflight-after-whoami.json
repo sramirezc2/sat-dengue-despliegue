@@ -1,0 +1,40 @@
+{
+  "recorded_at_utc": "2026-11-08T00:13:42.179279+00:00",
+  "dataset_id": "sat-dengue/data_raw",
+  "requested_revision": "a1a7f237a4baa6ffa848fabeef474f811f3b3f33",
+  "token_available": true,
+  "identity_context": {
+    "source": "User reports prior successful whoami; not repeated by agent",
+    "account": "mauro114",
+    "organization": "sat-dengue"
+  },
+  "source": "HfApi.dataset_info(files_metadata=True), explicit environment HF_TOKEN",
+  "checks": [
+    {
+      "recorded_at_utc": "2026-11-08T00:13:22.719733+00:00",
+      "check": "dataset_privacy",
+      "requested_revision": null,
+      "private": null,
+      "resolved_revision": null,
+      "http_status": 401,
+      "error_type": "RepositoryNotFoundError"
+    },
+    {
+      "recorded_at_utc": "2026-11-08T00:13:42.179279+00:00",
+      "check": "approved_commit",
+      "requested_revision": "a1a7f237a4baa6ffa848fabeef474f811f3b3f33",
+      "private": null,
+      "resolved_revision": null,
+      "http_status": 401,
+      "error_type": "RepositoryNotFoundError"
+    }
+  ],
+  "sandbox_attempt": {
+    "recorded_at_utc": "2026-11-08T00:13:01.169873+00:00",
+    "error_type": "ConnectError",
+    "http_status": null
+  },
+  "data_files_downloaded": 0,
+  "status": "BLOCKED_ACCESS_PRIVATE_UNVERIFIED",
+  "interpretation": "Both authenticated metadata requests returned HTTP 401 outside the sandbox. Current privacy and approved commit access remain unverified; this does not establish repository or revision nonexistence. No anonymous requests, cached credentials or file downloads attempted."
+}

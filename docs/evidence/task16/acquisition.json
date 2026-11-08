@@ -1,0 +1,37 @@
+{
+  "at_utc": "2026-11-08T00:25:29.892318+00:00",
+  "status": "VERIFIED",
+  "private": true,
+  "revision": "a1a7f237a4baa6ffa848fabeef474f811f3b3f33",
+  "dataset": "sat-dengue/data_raw",
+  "manifest_sha256": "4570e1647ace845c95ba967c97cb1f133ffd4f0fc883055a487a3db302d8d074",
+  "files": [
+    {
+      "name": "Divipola-municipios.md",
+      "size_bytes": 209867,
+      "sha256": "72eabcea0ff26370d23b9688e8d8f2246946cc815c040ccf1a6966b37a1de9f3"
+    },
+    {
+      "name": "divipola-provenance.json",
+      "size_bytes": 925,
+      "sha256": "92091306f0130910f27de999776b5cf4ed36b7dd7c89bd724d58caeb74f8c158"
+    },
+    {
+      "name": "dengue.csv",
+      "size_bytes": 875694283,
+      "sha256": "58d277cfef7a60c28d488eefe4e7a1a7bf0f7b0df3dd88245971cd7b3d32c84b"
+    },
+    {
+      "name": "dengue_grave.csv",
+      "size_bytes": 24537734,
+      "sha256": "3d60e96ccbedc35a19a8f5f54be8d786aa599813259c914f131522bf17dd1d70"
+    },
+    {
+      "name": "google_earth_engine.csv",
+      "size_bytes": 1714544311,
+      "sha256": "dfe20fa02b6d6068c04744b5c86f44112048400a7fde637368c0d4effc88cb3f"
+    }
+  ],
+  "excel_downloaded": false,
+  "elapsed_seconds": 43.63047141700372
+}

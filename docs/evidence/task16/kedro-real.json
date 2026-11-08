@@ -1,0 +1,15 @@
+{
+  "status": "PASSED",
+  "pipeline": "canonical_build",
+  "mode": "approved",
+  "nodes_completed": 14,
+  "wall_seconds": 258.17,
+  "user_seconds": 248.62,
+  "system_seconds": 8.3,
+  "peak_rss_bytes": 12259475456,
+  "measurement_tool": "macOS /usr/bin/time -l",
+  "credential_removed_from_environment": true,
+  "serialized_sha256": "8fc8355af11644412b1d32a41f00ab3c369bd4de980bb0acd963c3a8c64e652c",
+  "matches_n3_certified_bytes": true,
+  "command": "env -u HF_TOKEN /usr/bin/time -l uv run --directory pipeline kedro run --pipelines canonical_build --params canonical.mode=approved,canonical.workspace=data/task16-kedro,canonical.tracking=true"
+}

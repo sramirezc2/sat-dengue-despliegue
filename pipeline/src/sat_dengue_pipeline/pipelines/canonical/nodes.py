@@ -5,7 +5,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from sat_dengue_pipeline.acquisition.contracts import ResolvedBundle
+from sat_dengue_pipeline.acquisition.contracts import ReleaseManifest, ResolvedBundle, ResolvedFile
+from sat_dengue_pipeline.acquisition.raw_manifest import validate_raw_manifest
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy
 from sat_dengue_pipeline.raw import build as io
 from sat_dengue_pipeline.raw.contract import BuildConfig, raw_contract_validation
@@ -23,15 +24,18 @@ class BuildInput:
 
     bundle: ResolvedBundle
     config: BuildConfig
-    inventory: dict
+    inventory: dict | None
     workspace: Path
     tracking: bool
 
 
-def fixture_input(parameters: dict) -> BuildInput:
-    """Materializar solo el fixture; la conexión real pertenece a tarea 16."""
-    if set(parameters) != {"mode", "workspace", "tracking"} or parameters["mode"] != "synthetic":
-        raise ValueError("Este flujo solo habilita el fixture sintético de tarea 13")
+def build_input(parameters: dict) -> BuildInput:
+    """Elegir fixture o caché aprobada verificada; nunca descargar desde ciencia."""
+    if set(parameters) != {"mode", "workspace", "tracking"} or parameters["mode"] not in {
+        "synthetic",
+        "approved",
+    }:
+        raise ValueError("Modo canónico desconocido")
     workspace = Path(parameters["workspace"])
     if (
         workspace.is_absolute()
@@ -39,8 +43,28 @@ def fixture_input(parameters: dict) -> BuildInput:
         or type(parameters["tracking"]) is not bool
     ):
         raise ValueError("Workspace relativo bajo data/ requerido")
-    bundle, inventory = synthetic_bundle(workspace / "raw")
-    return BuildInput(bundle, fixture_config(), inventory, workspace, parameters["tracking"])
+    if parameters["mode"] == "synthetic":
+        bundle, inventory = synthetic_bundle(workspace / "raw")
+        return BuildInput(bundle, fixture_config(), inventory, workspace, parameters["tracking"])
+    manifest = ReleaseManifest.from_json(Path("conf/releases/approved-raw.json").read_text())
+    validate_raw_manifest(manifest)
+    cache = Path("data/01_raw/inbox") / manifest.release_id / manifest.manifest_sha256
+    if cache.is_symlink() or any(part.is_symlink() for part in cache.parents):
+        raise ValueError("Caché enlazada no permitida")
+    if {p.name for p in cache.iterdir()} != {f.relative_path for f in manifest.files}:
+        raise ValueError("La caché científica debe contener exclusivamente cinco archivos")
+    bundle = ResolvedBundle(
+        manifest.release_id,
+        manifest.manifest_sha256,
+        manifest.coverage_start,
+        manifest.coverage_end,
+        tuple(
+            ResolvedFile(f.logical_name, cache / f.relative_path, f.size_bytes, f.sha256)
+            for f in manifest.files
+        ),
+        manifest.release_kind,
+    )
+    return BuildInput(bundle, BuildConfig(), None, workspace, parameters["tracking"])
 
 
 def validate_input(source: BuildInput) -> ResolvedBundle:

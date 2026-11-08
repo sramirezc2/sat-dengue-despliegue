@@ -1,7 +1,11 @@
 """Orquestación de I/O local; las reglas de normalización viven en funciones puras."""
 
 import json
+import time
+from bisect import bisect_left
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any, TypeVar
 
 import pandas as pd
 
@@ -16,8 +20,10 @@ from .producers import (
     epidemiology_normalization,
     geography_normalization,
 )
-from .serialization import CanonicalArtifact, canonical_serialization
+from .serialization import CanonicalArtifact, atomic_write, canonical_bytes, canonical_serialization
 from .temporal import Quarantine, raw_temporal_projection, raw_temporal_quarantine
+
+T = TypeVar("T")
 
 
 def geography(bundle: ResolvedBundle, config: BuildConfig, quarantine: Quarantine) -> pd.DataFrame:
@@ -36,10 +42,15 @@ def geography(bundle: ResolvedBundle, config: BuildConfig, quarantine: Quarantin
 def retained_frame(bundle: ResolvedBundle, quarantine: Quarantine, name: str) -> pd.DataFrame:
     """Cargar strings por chunks y filtrar filas ANTES de interpretar valores."""
     path = next(file.path for file in bundle.files if file.logical_name == name)
-    allowed = set(quarantine.retained[name])
+    allowed = quarantine.retained[name]
     chunks = []
-    for chunk in pd.read_csv(path, dtype=str, keep_default_na=False, chunksize=50_000):
-        chunks.append(chunk.loc[chunk.index.isin(allowed)].copy())
+    columns = ["COD_EVE", "COD_DPTO_R", "COD_MUN_R", "INI_SIN"] if name != "daily_climate" else None
+    for chunk in pd.read_csv(
+        path, usecols=columns, dtype=str, keep_default_na=False, chunksize=50_000
+    ):
+        start = bisect_left(allowed, int(chunk.index.start))
+        end = bisect_left(allowed, int(chunk.index.stop))
+        chunks.append(chunk.loc[list(allowed[start:end])].copy())
     return pd.concat(chunks, ignore_index=True)
 
 
@@ -67,22 +78,53 @@ def daily_climate(
 
 
 def build(
-    bundle: ResolvedBundle, config: BuildConfig, root: Path, inventory: dict | None = None
+    bundle: ResolvedBundle,
+    config: BuildConfig,
+    root: Path,
+    inventory: dict | None = None,
+    *,
+    measurements: dict | None = None,
 ) -> tuple[CanonicalArtifact, dict]:
     """Reconstruir sin caché canónica, fit, proveedor o reutilización de derivados."""
-    verified = raw_contract_validation(bundle, config, inventory)
-    projection = raw_temporal_projection(verified)
-    quarantine = raw_temporal_quarantine(projection, TemporalPolicy(config.reserved_start))
-    dimension = geography(verified, config, quarantine)
-    epi, epi_audit = epidemiology(verified, quarantine, dimension, config)
-    daily, climate_audit = daily_climate(verified, quarantine, dimension, config)
-    monthly = climate_monthly_aggregation(daily)
+
+    def measured(name: str, function: Callable[..., T], *args: Any) -> T:
+        """Separar tiempos operativos de la auditoría determinista."""
+        started = time.perf_counter()
+        if measurements is not None:
+            atomic_write(
+                root / "progress.json",
+                canonical_bytes({"stage": name, "stages_seconds": measurements}),
+            )
+        value = function(*args)
+        if measurements is not None:
+            measurements[name] = time.perf_counter() - started
+            atomic_write(
+                root / "progress.json",
+                canonical_bytes({"completed": name, "stages_seconds": measurements}),
+            )
+        return value
+
+    verified = measured("integrity_before", raw_contract_validation, bundle, config, inventory)
+    projection = measured("projection", raw_temporal_projection, verified)
+    quarantine = measured(
+        "quarantine", raw_temporal_quarantine, projection, TemporalPolicy(config.reserved_start)
+    )
+    del projection
+    dimension = measured("geography", geography, verified, config, quarantine)
+    epi, epi_audit = measured("epidemiology", epidemiology, verified, quarantine, dimension, config)
+    daily, climate_audit = measured(
+        "daily_climate", daily_climate, verified, quarantine, dimension, config
+    )
+    monthly = measured("monthly_climate", climate_monthly_aggregation, daily)
+    del daily
+    monthly_rows = len(monthly)
     sources = canonical_sources(dimension, epi, monthly, config)
-    result = canonical_validation(canonical_panel(sources, config), config, epi_audit)
+    result = measured("panel", canonical_panel, sources, config)
+    result = measured("validation", canonical_validation, result, config, epi_audit)
     # Vincular la salida a los mismos bytes, incluso ante cambios externos durante la corrida.
-    raw_contract_validation(bundle, config, inventory)
-    artifact = canonical_serialization(result, root)
-    return artifact, build_audit(result, quarantine, epi_audit, climate_audit, len(monthly))
+    measured("integrity_after", raw_contract_validation, bundle, config, inventory)
+    artifact = measured("serialization", canonical_serialization, result, root)
+    return artifact, build_audit(result, quarantine, epi_audit, climate_audit, monthly_rows)
 
 
 def build_audit(

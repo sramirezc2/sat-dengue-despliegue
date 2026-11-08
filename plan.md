@@ -2,7 +2,7 @@
 
 **Versión:** 1.1
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Tarea 15 completa; tarea 16 bloqueada en precondiciones
+**Estado general:** Tarea 16 EN CURSO — validación de fábrica T16-FACTORY-XGB-S53-v1 autorizada; 15/21; tarea 17 PENDIENTE
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -89,7 +89,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 13 | Construir y certificar la tabla canónica desde fuentes crudas | `COMPLETA` | 12 | Arquitectura sincronizada; contrato crudo cerrado y productores registrados; 83 pruebas nuevas/356 totales. N=3 exacto sobre 168 claves artificiales y prueba de cuadrícula artificial de 182.886 claves (DEC-017). Cuarentena previa, guards T+1/T+2, conservación/nulos, atomicidad y tracking agregado verificados. Reproducción real pendiente en tarea 16. |
 | 14 | Migrar la publicación sin romper el despliegue | `COMPLETA` | 13 | Publicador puro, wrapper compatible y deployment_publication registrados; equivalencia byte a byte en cuatro casos caracterizados. Staging, contrato, manifiesto SHA-256 y rollback probados; 84 pruebas nuevas/440 totales. Los 22 JSON originales conservan sus hashes y Pydantic/Zod aceptan los generados. |
 | 15 | Cerrar portabilidad | `COMPLETA` | 14 | macOS local y Colab real verdes; matriz nativa Ubuntu/Windows/macOS sobre 61159d9 aprobada en run 42424636145. Cada runner: 463 pruebas, 12 específicas, cuatro CLI, árbol limpio y hashes idénticos. Siete checks del PR verdes; recibos/logs revisados. DEC-019; docs/decisions/portability.md. |
-| 16 | Conectar el release crudo y ejecutar reproducción sintética y real | `BLOQUEADA` | 15 | Precondición 8 incumplida: HF_TOKEN ausente en el entorno del agente. La configuración versionada solo declara modo sintético y no identifica el nuevo dataset privado ni su revisión inmutable; disponibilidad/acceso no verificados. Sin implementar ni descargar; ver DEC-020. El cierre sigue exigiendo adquisición privada, canónico/N=3 reales, guard temporal y experimento real. |
+| 16 | Conectar el release crudo y ejecutar reproducción sintética y real | `EN CURSO` | 15 | Se conservan construcción real/N=3 canónico y evidencia técnica previa. Equipo autoriza T16-FACTORY-XGB-S53-v1: XGBoost fijo semilla 53, soportes por rol, FAR 0.80 y tres ejecuciones E2E aisladas. Implementación, pruebas y validación de fábrica en curso; sin G, presupuesto de canal, campeón o autorización operativa. Evidencia nueva solo en docs/evidence/task16/factory-experiment/. Tarea 17 PENDIENTE. |
 | 17 | Realizar revisión científica independiente | `PENDIENTE` | 16 | Auditoría de fuentes, construcción canónica, determinismo, etiquetas, fuga, folds, líneas base, métricas y correspondencia con la bitácora. |
 | 18 | Documentar operación, límites y migraciones | `PENDIENTE` | 17 | Guía de un comando, Colab, troubleshooting, release crudo, reconstrucción canónica y migración Hugging Face/Zenodo hacia AWS. |
 | 19 | Ejecutar revisión de seguridad | `PENDIENTE` | 18 | Revisión de clasificación y privacidad de datos crudos, tokens, secretos, dependencias y superficies de red. |
@@ -111,7 +111,11 @@ metadatos neutrales.
 | `severe_dengue_notifications` | `dengue_grave.csv` | 24.537.734 | `3d60e96ccbedc35a19a8f5f54be8d786aa599813259c914f131522bf17dd1d70` |
 | `daily_climate` | `google_earth_engine.csv` | 1.714.544.311 | `dfe20fa02b6d6068c04744b5c86f44112048400a7fde637368c0d4effc88cb3f` |
 
-`Listados_DIVIPOLA.xlsx` queda como evidencia, no como insumo. El archivo
+`Listados_DIVIPOLA.xlsx` queda como evidencia auxiliar del release, no como insumo.
+DEC-021 autoriza ignorarlo durante la descarga; se elige no descargarlo. El
+inventario del repositorio remoto puede incluirlo, pero el manifiesto científico
+y el bundle entregado a Kedro contienen exclusivamente los cinco archivos de la
+tabla. El Excel no participa en construcción canónica ni aprendizaje. El archivo
 `google_earth_engine-selected-columns.csv`, el release derivado existente en
 Hugging Face y cualquier tabla canónica remota se rechazan como entradas. Los
 microdatos epidemiológicos completos permanecen privados aunque el equipo haya
@@ -185,8 +189,8 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 15/21 |
-| Tarea activa | Ninguna |
-| Tareas bloqueadas | 16 — HF_TOKEN ausente; identidad/revisión privada por confirmar |
+| Tarea activa | 16 — Validación de fábrica T16-FACTORY-XGB-S53-v1 |
+| Tareas bloqueadas | Ninguna al inicio; detener si falla un gate de la receta aprobada |
 | Última tarea completada | 15 — Portabilidad nativa y Colab real |
 | Última actualización | 7 de noviembre de 2026 |
 
@@ -219,6 +223,24 @@ Actualizar esta sección al cerrar cada tarea.
 
 
 | 2026-11-07 | 16 | BLOQUEADA | Base `48f3d666fd9b1d0bd7e0a434f3200b8a6b856dae`; solo registro documental local | Preflight: rama feature/pipeline-e2e sincronizada y árbol inicialmente limpio; tarea 15 COMPLETA/15 de 21; recibos reales macOS/Windows/Linux/Colab PASSED. Consulta nueva: PR #1 abierto, no fusionado y HEAD 48f3d66; siete checks completed/success, Pipeline CI run 42425574475 y API/tablero/contrato runs 42425574467, 42425574507, 42425574505. Los 22 SHA-256 publicados coinciden con HEAD. Recursos preliminares: Apple M2 Pro, 32 GiB RAM total y 640,38 GiB de disco libre; memoria disponible/pico y estrategia de bloques no diagnosticados. Se comprobó solo la presencia booleana de HF_TOKEN, sin revelar valor: ausente o vacío. parameters.yml mantiene modo synthetic y no declara un nuevo dataset/revisión privada. | Se detiene por la precondición 8 antes del preámbulo de implementación y de la línea base local completa; no se afirma haber repetido esas suites en esta tarea. Sin identidad aprobada ni HF_TOKEN no se consulta/descarga ningún release ni se prueba acceso anónimo/autenticado; existencia, privacidad y revisión remotas quedan sin verificar, no se declaran inexistentes. No se usan credenciales implícitas/cacheadas ni release derivado anterior; no se leen microdatos locales. Sin cambios de código/configuración, ejecución científica, N=3 real, experimentos o tracking. No se acredita reproducción real ni suficiencia de memoria a partir de RAM total. Para reanudar: identificar el nuevo dataset privado aprobado y su SHA completo, y disponer de HF_TOKEN en el entorno del agente sin escribirlo en archivos/argumentos/chat; repetir preflight y luego el preámbulo completo, incluido diagnóstico de recursos y suficiencia de la especificación experimental. Progreso permanece 15/21; ninguna tarea activa; tarea 17 PENDIENTE. Sin push, merge ni force push; datos, credenciales, publicación/API/tablero/Docker intactos. |
+
+| 2026-11-07 | 16 | EN CURSO | Base `aed6346`; inicio documental local | Rama feature/pipeline-e2e y árbol inicialmente limpio. AGENTS.md, plan y arquitectura revisados; DEC-020 retomada. HF_TOKEN disponible: comprobación booleana de variable no vacía, sin imprimir ni almacenar el valor ni consultar credenciales cacheadas. | El pedido incluye literalmente <DATASET_ID> y <COMMIT_SHA>, sin valores concretos. Se solicita aclaración de ambos; no se infiere identidad/revisión ni se consulta el proveedor. La precondición de identidad inmutable continúa pendiente antes del preámbulo de implementación. |
+
+| 2026-11-07 | 16 | BLOQUEADA | Base `aed6346`; cierre documental local de esta reanudación | HF_TOKEN disponible; bloqueo de credencial anterior resuelto. Identidad/revisión no verificables porque <DATASET_ID> y <COMMIT_SHA> son marcadores literales. git diff --check verde para el registro documental de inicio. | Se conserva DEC-020: pendiente recibir organización/dataset y SHA completo explícitos. No se consultó HF ni se descargaron datos, leyeron microdatos o ejecutaron experimentos/tracking. No se implementó código ni configuración; línea base local completa, diagnóstico de recursos, adquisición privada y N=3 real siguen pendientes. Progreso 15/21; tarea 17 PENDIENTE. Solo plan.md modificado, sin commit/push/PR/merge. |
+
+| 2026-11-07 | 16 | EN CURSO | Base `aed6346`; conserva el registro documental previo local | Dataset y SHA completos recibidos explícitamente. DEC-020 permite reanudar el preflight de identidad/acceso y el preámbulo. | DEC-021 registrada antes de adquirir: ignorar Listados_DIVIPOLA.xlsx; no ampliar el contrato científico de cinco archivos. Evidencia detallada en docs/decisions/task16-reproduction.md. |
+
+| 2026-11-07 | 16 | BLOQUEADA | Base `aed6346`; cierre documental local de reanudación | Primer preflight autenticado: revisión exacta, private=false; cinco tamaños y tres SHA LFS CSV coinciden; hashes de archivos pequeños sin verificar. Tras informar el usuario cambio a privado, segunda consulta autenticada al mismo dataset/SHA devuelve RepositoryNotFoundError/HTTP 404; no permite confirmar private=true ni inferir inexistencia. HF_TOKEN comprobado solo como disponible, sin revelar/persistir valor. Lock/sync/Ruff y pytest: 463 passed, cuatro advertencias Kedro, 51,64 s. git diff --check verde antes del cierre. | Acceso privado por resolver; se solicitó verificar cuenta/permisos de lectura del token en el entorno, sin compartirlo. Cero descargas y cero procesamiento de crudos; sin credenciales cacheadas, acceso anónimo, cambios de visibilidad o código/configuración. DEC-021 documenta Excel auxiliar ignorado y bundle científico cerrado de cinco fuentes. Metadatos/recibos y diagnóstico preliminar en docs/decisions/task16-reproduction.md y docs/evidence/task16/. No se completó el preámbulo local de API/tablero/CLI ni diagnóstico de pico/estrategia de memoria. Sin N=3 real, experimentos, modelos o tracking. Progreso 15/21; tarea 17 PENDIENTE. Sin commit/push/PR/merge. |
+
+| 2026-11-07 | 16 | BLOQUEADA | Base `aed6346`; conserva cambios documentales previos | Nuevo preflight autenticado con HF_TOKEN del entorno al dataset/SHA aprobado: HTTP 404, RepositoryNotFoundError. Consulta de metadatos fuera del sandbox autorizada tras ConnectError de red dentro del sandbox. private=true y acceso al commit siguen sin confirmar; cero archivos descargados. Recibo separado: docs/evidence/task16/hf-private-access-preflight-retry.json. git diff --check verde; sin repetir suites de la reanudación anterior. | Se mantiene 15/21, tarea 17 PENDIENTE. Revisar permiso de lectura del token sobre el dataset privado y revisión aprobada antes de reintentar. Sin credenciales cacheadas, acceso anónimo, procesamiento, cambios de código/configuración, commit, push, PR ni merge. |
+
+| 2026-11-07 | 16 | BLOQUEADA | Base `aed6346`; conserva cambios documentales previos | Usuario informa whoami validado para mauro114 y organización sat-dengue; no se repite identidad. HF_TOKEN no vacío del entorno pasado explícitamente a HfApi. Tras ConnectError del sandbox, dos consultas de metadatos autorizadas fuera de él: dataset sin revisión y SHA aprobado, ambas RepositoryNotFoundError/HTTP 401 (2026-11-08 00:13:22/00:13:42 UTC). private y SHA resuelto ausentes; cero descargas. Recibo: docs/evidence/task16/hf-private-access-preflight-after-whoami.json. JSON y git diff --check verificados; uv lock --check no llegó a ejecutarse por restricción de acceso a caché. Sin suites repetidas. | Mantener 15/21 y tarea 17 PENDIENTE. Resolver acceso con la credencial efectiva del proceso antes de confirmar private=true y SHA; whoami informado no acredita acceso observado al dataset. Sin imprimir/persistir token, credenciales cacheadas, solicitudes anónimas, descargas, procesamiento, cambios de código/configuración, commit, push, PR ni merge. |
+
+| 2026-11-07 | 16 | EN CURSO | Base `aed6346`; conserva cambios documentales previos | whoami observado con HF_TOKEN: mauro114/sat-dengue. Preflight dataset y commit exitoso: private=true, SHA exacto aprobado; cinco tamaños y tres hashes LFS CSV coinciden. | Usuario autoriza adquisición exclusiva de cinco archivos y reproducción real con controles temporales, N=3, mediciones y validaciones. Excel ignorado; token nunca impreso ni persistido. Detenerse antes de tarea 17. |
+
+| 2026-11-07 | 16 | BLOQUEADA | Base `aed6346`; implementación y cierre locales sin commit | Dataset privado y commit exacto; cinco archivos completos con tamaño/SHA-256 y encabezados/JSON correctos. Construcción medida 258,45 s; Kedro real 14 nodos/258,17 s y bytes iguales al certificado. N=3: 248,25/248,30/248,76 s, total 757,55 s, tres procesos y huellas/auditorías idénticas; máximo RSS 11,43 GiB. 182.886 claves únicas, 1.122 municipios/163 meses; 529.927 filas desde 2025 y 136 fechas inválidas en cuarentena previa. Roundtrip exacto; T+1/T+2 terminan en origen 2024-11/2024-10 y objetivo 2024-12, rechazan cruces a 2025; 89.143/88.470 ejemplos utilizables en 1.120 municipios. Lock/sync/Ruff, 469 pruebas pipeline, API 28, tablero 33/lint/build, cuatro CLI y 24 contratos verdes; 22 JSON idénticos; JSON/diff/secretos/pesos revisados. | DEC-022 adapta medianoche localizada con evidencia día/mes y bloqueo de fuentes sin fechas válidas; optimización de selectores/fechas preserva las reglas. Fuente de verdad: docs/decisions/task16-reproduction.md y recibos agregados. Falta candidato real predeclarado, hiperparámetros, calendario de roles/disponibilidad/embargo/soporte y grilla/cota FAR; no sustituir por parámetros sintéticos ni inventados. Por ello 16 no se marca COMPLETA; progreso 15/21 y 17 PENDIENTE. Excel ignorado; token no impreso/persistido; sin modelos, publicación, commit, push, PR ni merge. |
+
+| 2026-11-07 | 16 | BLOQUEADA | Cambio documental local; sin commit | Se revisaron solo blobs V2 del commit 916a69f3bb73f2ffbb0ec038b8bef887ee91adf1, contratos/guards V3 y agregados certificados existentes. Propuesta científica creada con procedencia HEREDADO, ADAPTACIÓN_PROPUESTA, DECISIÓN_REQUERIDA y NO_REPRODUCIDO, sin atribuir fixtures como políticas. Gates técnicos previos aprobados; evidencia docs/evidence/task16/ conservada sin sobrescritura. git diff --check y git status --short al cierre. | [task16-experiment-specification.md](docs/decisions/task16-experiment-specification.md) es la única fuente humana para discutir/aprobar el experimento, estado PROPUESTA — NO APROBADA, ejecución NO. Único bloqueo: aprobación de candidato, hiperparámetros, calendario de roles, disponibilidad/embargo/soporte y grilla/cota FAR. Mantener 15/21, 16 BLOQUEADA y 17 PENDIENTE; no crear parameters_experiment.yml, registrar candidato, entrenar, evaluar, modificar publicaciones, push, merge ni otro PR. Esperar aprobación explícita del equipo. |
 
 Cierres documentales independientes: tarea 8 en `39ba8d8`; tarea 9 en `9ce154d`;
 tarea 10 en `4646316`; tarea 11 en `31f1e4b`. El cierre de tarea 12 es el commit
@@ -255,6 +277,10 @@ Toda desviación debe registrarse antes de continuar.
 
 | DEC-020 | 2026-11-07 | Bloquear tarea 16 antes de implementar o adquirir datos por precondiciones incompletas. | HF_TOKEN no está disponible en el entorno del agente; la configuración versionada sigue siendo sintética y no fija el nuevo dataset privado/revisión. La disponibilidad, autorización e inventario remotos no pueden acreditarse. | Mantener 15/21 y tarea 17 PENDIENTE. No inferir identidad/revisión, recuperar tokens cacheados ni sustituir por el release derivado prohibido. Solo registrar el bloqueo; preámbulo, línea base local completa, diagnóstico de memoria, adquisición y reproducción real pendientes. Reanudar cuando estén declaradas identidad inmutable y credencial de entorno; la suficiencia experimental se verificará antes de cualquier experimento. | Detención y registro exigidos explícitamente por las precondiciones del prompt de tarea 16 |
 
+| DEC-021 | 2026-11-07 | Fijar tarea 16 a `sat-dengue/data_raw@a1a7f237a4baa6ffa848fabeef474f811f3b3f33` y admitir Listados_DIVIPOLA.xlsx solo como auxiliar remoto. | Identidad y revisión aprobadas por el usuario; Excel presente en el release, sin autorización de uso científico. | Se elige ignorar su descarga. El adaptador adquiere exclusivamente los cinco archivos aprobados y Kedro rechaza cualquier sexto archivo en el bundle/manifiesto científico. Ninguna lectura del Excel para construcción canónica, transformaciones o aprendizaje; hashes/tamaños del contrato se conservan. | Autorización explícita del usuario en la reanudación de tarea 16 |
+
+| DEC-022 | 2026-11-07 | Admitir estrictamente fechas epidemiológicas día/mes/año con medianoche localizada `12:00:00 a. m.` y espacio normal o NBSP. Bloquear una fuente no vacía sin ninguna fecha interpretable. | Perfil completo de INI_SIN: dengue 1.705.471 fechas localizadas + 133 vacías; grave 50.098 + 3 vacías. En 1.042.282 registros el primer componente supera 12; ninguno tiene segundo componente mayor que 12. La convención es día/mes, sin inferencia ni fallback. | Se conserva INI_SIN y cuarentena previa; fechas imposibles o formatos distintos siguen inválidos. Parser puro con caché acotada dentro de cada proceso; ninguna caché derivada compartida por N=3. Se reinicia la construcción; no se certifican los pilotos interrumpidos. | Adaptación de formato sustentada por inspección de claves y autorizada por la ejecución/diagnóstico de tarea 16; sin cambio de política científica |
+
 ## 8. Condición de finalización
 
 El trabajo solo puede considerarse terminado cuando:
@@ -289,3 +315,15 @@ release derivado o público como entrada científica.
 
 Si existe contradicción entre ambos documentos, se debe detener la implementación,
 registrar la discrepancia en la sección 7 y resolverla antes de continuar.
+
+
+### Reanudación de tarea 16: fábrica autorizada
+
+El equipo autorizó explícitamente T16-FACTORY-XGB-S53-v1 para reproducibilidad
+E2E de fábrica. La [especificación normativa V3](docs/decisions/task16-experiment-specification.md)
+y `pipeline/conf/base/parameters_experiment.yml` fijan la receta, sin campeón,
+uso operativo o tarea 17. Se conserva la evidencia anterior. Los nombres de
+integrantes y fecha formal del acta no se comunicaron; el documento registra el
+mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
+Esta autorización resuelve el bloqueo de aprobación anterior; 16 EN CURSO,
+15/21 y 17 PENDIENTE hasta comprobar todos los gates y N=3 de la fábrica.

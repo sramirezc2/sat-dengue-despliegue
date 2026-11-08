@@ -1,0 +1,693 @@
+{
+  "status": "PASSED",
+  "rows": 182886,
+  "municipalities": 1122,
+  "months": 163,
+  "period_start": "2011-06",
+  "period_end": "2024-12",
+  "duplicate_keys": 0,
+  "reserved_observations": 0,
+  "format": "satd-canonical-json-v1",
+  "roundtrip_bytes_identical": true,
+  "columns": [
+    {
+      "dtype": "string",
+      "name": "municipality_code",
+      "nullable": false,
+      "role": "key",
+      "source": "stage2"
+    },
+    {
+      "dtype": "string",
+      "name": "year_month",
+      "nullable": false,
+      "role": "key",
+      "source": "stage2"
+    },
+    {
+      "dtype": "string",
+      "name": "department_code",
+      "nullable": false,
+      "role": "metadata",
+      "source": "stage2"
+    },
+    {
+      "dtype": "string",
+      "name": "municipality_name",
+      "nullable": false,
+      "role": "metadata",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "dengue_notifications_count",
+      "nullable": false,
+      "role": "feature",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "dengue_grave_notifications_count",
+      "nullable": false,
+      "role": "feature",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "total_notifications_count",
+      "nullable": false,
+      "role": "feature",
+      "source": "stage2"
+    },
+    {
+      "dtype": "boolean",
+      "name": "in_epi_coverage",
+      "nullable": false,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "string",
+      "name": "epi_count_status",
+      "nullable": false,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "expected_days_in_month",
+      "nullable": false,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "climate_days_observed",
+      "nullable": true,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Float64",
+      "name": "rain_mm_month_sum",
+      "nullable": true,
+      "role": "feature",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Float64",
+      "name": "surface_runoff_mm_month_sum",
+      "nullable": true,
+      "role": "feature",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Float64",
+      "name": "total_evaporation_mm_month_sum_ecmwf",
+      "nullable": true,
+      "role": "feature",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Float64",
+      "name": "solar_radiation_mj_m2_month_sum",
+      "nullable": true,
+      "role": "feature",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Float64",
+      "name": "temp_mean_c_month_mean",
+      "nullable": true,
+      "role": "feature",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Float64",
+      "name": "dewpoint_mean_c_month_mean",
+      "nullable": true,
+      "role": "feature",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Float64",
+      "name": "soil_water_l1_month_mean",
+      "nullable": true,
+      "role": "feature",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Float64",
+      "name": "wind_u_ms_month_mean",
+      "nullable": true,
+      "role": "feature",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Float64",
+      "name": "wind_v_ms_month_mean",
+      "nullable": true,
+      "role": "feature",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "rain_mm_month_sum_valid_days",
+      "nullable": true,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "surface_runoff_mm_month_sum_valid_days",
+      "nullable": true,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "total_evaporation_mm_month_sum_ecmwf_valid_days",
+      "nullable": true,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "solar_radiation_mj_m2_month_sum_valid_days",
+      "nullable": true,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "temp_mean_c_month_mean_valid_days",
+      "nullable": true,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "dewpoint_mean_c_month_mean_valid_days",
+      "nullable": true,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "soil_water_l1_month_mean_valid_days",
+      "nullable": true,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "wind_u_ms_month_mean_valid_days",
+      "nullable": true,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "Int64",
+      "name": "wind_v_ms_month_mean_valid_days",
+      "nullable": true,
+      "role": "control",
+      "source": "stage2"
+    },
+    {
+      "dtype": "float64",
+      "name": "p25_canal_t",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "float64",
+      "name": "p50_canal_t",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "float64",
+      "name": "p75_canal_t",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "string",
+      "name": "zona_canal_t",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "int64",
+      "name": "month_of_year",
+      "nullable": false,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "dengue_notifications_count_lag1",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "dengue_notifications_count_lag2",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "dengue_notifications_count_lag3",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "dengue_notifications_count_lag12",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "dengue_grave_notifications_count_lag1",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "dengue_grave_notifications_count_lag2",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "dengue_grave_notifications_count_lag3",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "dengue_grave_notifications_count_lag12",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "total_notifications_count_lag1",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "total_notifications_count_lag2",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "total_notifications_count_lag3",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "total_notifications_count_lag12",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "int64",
+      "name": "history_valid_years_h5_t1",
+      "nullable": false,
+      "role": "control",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "p25_h5_t1",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "p75_h5_t1",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "int64",
+      "name": "history_valid_years_h5_t2",
+      "nullable": false,
+      "role": "control",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "p25_h5_t2",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    },
+    {
+      "dtype": "Float64",
+      "name": "p75_h5_t2",
+      "nullable": true,
+      "role": "feature",
+      "source": "derived_at_origin"
+    }
+  ],
+  "complete_climate_rows": 181516,
+  "complete_predictor_rows": 114316,
+  "counts": {
+    "dengue_notifications_count": 1308130,
+    "dengue_grave_notifications_count": 20022,
+    "total_notifications_count": 1328152
+  },
+  "departments": {
+    "05": {
+      "rows": 20375,
+      "municipalities": 125,
+      "complete_climate_rows": 20250,
+      "zero_epi_rows": 13161
+    },
+    "08": {
+      "rows": 3749,
+      "municipalities": 23,
+      "complete_climate_rows": 3726,
+      "zero_epi_rows": 1391
+    },
+    "11": {
+      "rows": 163,
+      "municipalities": 1,
+      "complete_climate_rows": 162,
+      "zero_epi_rows": 0
+    },
+    "13": {
+      "rows": 7498,
+      "municipalities": 46,
+      "complete_climate_rows": 7452,
+      "zero_epi_rows": 3782
+    },
+    "15": {
+      "rows": 20049,
+      "municipalities": 123,
+      "complete_climate_rows": 19926,
+      "zero_epi_rows": 17939
+    },
+    "17": {
+      "rows": 4401,
+      "municipalities": 27,
+      "complete_climate_rows": 4374,
+      "zero_epi_rows": 3073
+    },
+    "18": {
+      "rows": 2608,
+      "municipalities": 16,
+      "complete_climate_rows": 2592,
+      "zero_epi_rows": 1179
+    },
+    "19": {
+      "rows": 6846,
+      "municipalities": 42,
+      "complete_climate_rows": 6804,
+      "zero_epi_rows": 4582
+    },
+    "20": {
+      "rows": 4075,
+      "municipalities": 25,
+      "complete_climate_rows": 4050,
+      "zero_epi_rows": 995
+    },
+    "23": {
+      "rows": 4890,
+      "municipalities": 30,
+      "complete_climate_rows": 4860,
+      "zero_epi_rows": 1549
+    },
+    "25": {
+      "rows": 18908,
+      "municipalities": 116,
+      "complete_climate_rows": 18792,
+      "zero_epi_rows": 13279
+    },
+    "27": {
+      "rows": 5053,
+      "municipalities": 31,
+      "complete_climate_rows": 5022,
+      "zero_epi_rows": 3532
+    },
+    "41": {
+      "rows": 6031,
+      "municipalities": 37,
+      "complete_climate_rows": 5994,
+      "zero_epi_rows": 2028
+    },
+    "44": {
+      "rows": 2445,
+      "municipalities": 15,
+      "complete_climate_rows": 2430,
+      "zero_epi_rows": 920
+    },
+    "47": {
+      "rows": 4890,
+      "municipalities": 30,
+      "complete_climate_rows": 4860,
+      "zero_epi_rows": 2665
+    },
+    "50": {
+      "rows": 4727,
+      "municipalities": 29,
+      "complete_climate_rows": 4727,
+      "zero_epi_rows": 1187
+    },
+    "52": {
+      "rows": 10432,
+      "municipalities": 64,
+      "complete_climate_rows": 10368,
+      "zero_epi_rows": 8833
+    },
+    "54": {
+      "rows": 6520,
+      "municipalities": 40,
+      "complete_climate_rows": 6480,
+      "zero_epi_rows": 3269
+    },
+    "63": {
+      "rows": 1956,
+      "municipalities": 12,
+      "complete_climate_rows": 1944,
+      "zero_epi_rows": 741
+    },
+    "66": {
+      "rows": 2282,
+      "municipalities": 14,
+      "complete_climate_rows": 2268,
+      "zero_epi_rows": 1252
+    },
+    "68": {
+      "rows": 14181,
+      "municipalities": 87,
+      "complete_climate_rows": 14094,
+      "zero_epi_rows": 8670
+    },
+    "70": {
+      "rows": 4238,
+      "municipalities": 26,
+      "complete_climate_rows": 4212,
+      "zero_epi_rows": 1491
+    },
+    "73": {
+      "rows": 7661,
+      "municipalities": 47,
+      "complete_climate_rows": 7661,
+      "zero_epi_rows": 2355
+    },
+    "76": {
+      "rows": 6846,
+      "municipalities": 42,
+      "complete_climate_rows": 6804,
+      "zero_epi_rows": 2145
+    },
+    "81": {
+      "rows": 1141,
+      "municipalities": 7,
+      "complete_climate_rows": 1134,
+      "zero_epi_rows": 296
+    },
+    "85": {
+      "rows": 3097,
+      "municipalities": 19,
+      "complete_climate_rows": 3078,
+      "zero_epi_rows": 1207
+    },
+    "86": {
+      "rows": 2119,
+      "municipalities": 13,
+      "complete_climate_rows": 2106,
+      "zero_epi_rows": 731
+    },
+    "88": {
+      "rows": 326,
+      "municipalities": 2,
+      "complete_climate_rows": 0,
+      "zero_epi_rows": 167
+    },
+    "91": {
+      "rows": 1793,
+      "municipalities": 11,
+      "complete_climate_rows": 1782,
+      "zero_epi_rows": 1473
+    },
+    "94": {
+      "rows": 1304,
+      "municipalities": 8,
+      "complete_climate_rows": 1296,
+      "zero_epi_rows": 1099
+    },
+    "95": {
+      "rows": 652,
+      "municipalities": 4,
+      "complete_climate_rows": 648,
+      "zero_epi_rows": 234
+    },
+    "97": {
+      "rows": 978,
+      "municipalities": 6,
+      "complete_climate_rows": 972,
+      "zero_epi_rows": 869
+    },
+    "99": {
+      "rows": 652,
+      "municipalities": 4,
+      "complete_climate_rows": 648,
+      "zero_epi_rows": 290
+    }
+  },
+  "horizons": {
+    "1": {
+      "horizon": 1,
+      "reserved_start": "2025-01",
+      "origin_rows": 181764,
+      "eligible_at_t_rows": 89963,
+      "evaluable_rows": 114444,
+      "predictor_complete_rows": 113196,
+      "usable_rows": 89143,
+      "last_origin": "2024-11",
+      "last_target": "2024-12",
+      "predictor_availability": {
+        "dengue_notifications_count": 0,
+        "dengue_grave_notifications_count": 0,
+        "total_notifications_count": 0,
+        "rain_mm_month_sum": 0,
+        "surface_runoff_mm_month_sum": 0,
+        "total_evaporation_mm_month_sum_ecmwf": 0,
+        "solar_radiation_mj_m2_month_sum": 0,
+        "temp_mean_c_month_mean": 0,
+        "dewpoint_mean_c_month_mean": 0,
+        "soil_water_l1_month_mean": 0,
+        "wind_u_ms_month_mean": 0,
+        "wind_v_ms_month_mean": 0,
+        "p25_canal_t": 0,
+        "p50_canal_t": 0,
+        "p75_canal_t": 0,
+        "zona_canal_t": 0,
+        "month_of_year": 0,
+        "dengue_notifications_count_lag1": -1,
+        "dengue_notifications_count_lag2": -2,
+        "dengue_notifications_count_lag3": -3,
+        "dengue_notifications_count_lag12": -12,
+        "dengue_grave_notifications_count_lag1": -1,
+        "dengue_grave_notifications_count_lag2": -2,
+        "dengue_grave_notifications_count_lag3": -3,
+        "dengue_grave_notifications_count_lag12": -12,
+        "total_notifications_count_lag1": -1,
+        "total_notifications_count_lag2": -2,
+        "total_notifications_count_lag3": -3,
+        "total_notifications_count_lag12": -12,
+        "p25_h5_t1": 0,
+        "p75_h5_t1": 0,
+        "p25_h5_t2": 0,
+        "p75_h5_t2": 0
+      },
+      "operational_historical_availability": "UNPROVEN; retrospective consolidated data",
+      "positive_usable_labels": 8536,
+      "negative_usable_labels": 80607,
+      "municipalities_with_usable_rows": 1120,
+      "reserved_target_rejected_before_preparation": true
+    },
+    "2": {
+      "horizon": 2,
+      "reserved_start": "2025-01",
+      "origin_rows": 180642,
+      "eligible_at_t_rows": 89289,
+      "evaluable_rows": 114444,
+      "predictor_complete_rows": 112076,
+      "usable_rows": 88470,
+      "last_origin": "2024-10",
+      "last_target": "2024-12",
+      "predictor_availability": {
+        "dengue_notifications_count": 0,
+        "dengue_grave_notifications_count": 0,
+        "total_notifications_count": 0,
+        "rain_mm_month_sum": 0,
+        "surface_runoff_mm_month_sum": 0,
+        "total_evaporation_mm_month_sum_ecmwf": 0,
+        "solar_radiation_mj_m2_month_sum": 0,
+        "temp_mean_c_month_mean": 0,
+        "dewpoint_mean_c_month_mean": 0,
+        "soil_water_l1_month_mean": 0,
+        "wind_u_ms_month_mean": 0,
+        "wind_v_ms_month_mean": 0,
+        "p25_canal_t": 0,
+        "p50_canal_t": 0,
+        "p75_canal_t": 0,
+        "zona_canal_t": 0,
+        "month_of_year": 0,
+        "dengue_notifications_count_lag1": -1,
+        "dengue_notifications_count_lag2": -2,
+        "dengue_notifications_count_lag3": -3,
+        "dengue_notifications_count_lag12": -12,
+        "dengue_grave_notifications_count_lag1": -1,
+        "dengue_grave_notifications_count_lag2": -2,
+        "dengue_grave_notifications_count_lag3": -3,
+        "dengue_grave_notifications_count_lag12": -12,
+        "total_notifications_count_lag1": -1,
+        "total_notifications_count_lag2": -2,
+        "total_notifications_count_lag3": -3,
+        "total_notifications_count_lag12": -12,
+        "p25_h5_t1": 0,
+        "p75_h5_t1": 0,
+        "p25_h5_t2": 0,
+        "p75_h5_t2": 0
+      },
+      "operational_historical_availability": "UNPROVEN; retrospective consolidated data",
+      "positive_usable_labels": 6242,
+      "negative_usable_labels": 82228,
+      "municipalities_with_usable_rows": 1120,
+      "reserved_target_rejected_before_preparation": true
+    }
+  },
+  "scientific_experiment": "PENDING_APPROVED_SPECIFICATION",
+  "learned_components_invoked": 0,
+  "operational_availability": "UNPROVEN; retrospective consolidated data",
+  "wall_seconds": 30.106955790994107
+}

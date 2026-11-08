@@ -14,13 +14,16 @@ from sklearn.linear_model import LogisticRegression
 from sat_dengue_pipeline.models.adapters import validate_probabilities
 
 
-def fit_sigmoid(probability: pd.Series, y: pd.Series, seed: int) -> tuple[float, float]:
+def fit_sigmoid(
+    probability: pd.Series, y: pd.Series, seed: int, *, parameters: dict[str, Any] | None = None
+) -> tuple[float, float]:
     """Ajustar LogisticRegression sobre probabilidad original, como V2.
 
     Args:
         probability: Solo predicciones de calibration_fit.
         y: Etiquetas completas del mismo rol, con ambas clases.
         seed: Semilla congelada.
+        parameters: Configuración completa de fábrica, o compatibilidad histórica.
 
     Returns:
         Coeficiente e intercepto finitos; sin guardar un estimador ni pickle.
@@ -28,7 +31,10 @@ def fit_sigmoid(probability: pd.Series, y: pd.Series, seed: int) -> tuple[float,
     validate_probabilities(probability, y.index)
     if y.isna().any() or set(y.unique()) != {0, 1}:
         raise ValueError("Sigmoide requiere ambas clases completas")
-    model = LogisticRegression(solver="lbfgs", max_iter=1000, random_state=seed, C=1.0)
+    settings = parameters or {"solver": "lbfgs", "max_iter": 1000, "random_state": seed, "C": 1.0}
+    if settings.get("random_state") != seed:
+        raise ValueError("Semilla de calibración diferente de la aprobada")
+    model = LogisticRegression(**settings)
     with warnings.catch_warnings():
         warnings.simplefilter("error", ConvergenceWarning)
         model.fit(probability.to_numpy(dtype=float).reshape(-1, 1), y.to_numpy(dtype=int))
@@ -62,7 +68,7 @@ def apply_sigmoid(probability: pd.Series, coefficient: float, intercept: float) 
 
 
 def choose_representation(
-    raw: pd.Series, calibrated: pd.Series, y: pd.Series
+    raw: pd.Series, calibrated: pd.Series, y: pd.Series, *, tolerance: float = 1e-12
 ) -> tuple[str, dict[str, float]]:
     """Elegir por Brier en calibration_selection; empate conserva original.
 
@@ -70,6 +76,7 @@ def choose_representation(
         raw: Probabilidades originales del rol de selección.
         calibrated: Mismas claves con sigmoide ya congelada.
         y: Solo etiquetas de calibration_selection.
+        tolerance: Mejora mínima aprobada de Brier.
 
     Returns:
         original/sigmoid y Brier mínimo de selección, sin métricas finales.
@@ -82,7 +89,9 @@ def choose_representation(
     sigmoid_brier = float(
         np.mean((calibrated.to_numpy(dtype=float) - y.to_numpy(dtype=float)) ** 2)
     )
-    selected = "sigmoid" if sigmoid_brier + 1e-12 < raw_brier else "original"
+    if not isfinite(tolerance) or tolerance < 0:
+        raise ValueError("Tolerancia Brier inválida")
+    selected = "sigmoid" if sigmoid_brier + tolerance < raw_brier else "original"
     return selected, {"original_brier": raw_brier, "sigmoid_brier": sigmoid_brier}
 
 

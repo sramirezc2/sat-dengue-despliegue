@@ -18,7 +18,9 @@ def validate_raw_manifest(manifest: ReleaseManifest) -> None:
     if pinned is None:
         raise ValueError("Revisión cruda mutable o no fijada por contenido/registro")
     actual = {f.logical_name: (f.relative_path, f.size_bytes, f.sha256) for f in manifest.files}
-    if actual != INVENTORY or any(
-        file.remote_path != INVENTORY[file.logical_name][0] for file in manifest.files
+    prefixes = ("", "datos-crudos/") if manifest.provider == "huggingface" else ("",)
+    if actual != INVENTORY or not any(
+        all(file.remote_path == prefix + INVENTORY[file.logical_name][0] for file in manifest.files)
+        for prefix in prefixes
     ):
         raise ValueError("Inventario crudo no aprobado")

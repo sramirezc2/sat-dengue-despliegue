@@ -25,6 +25,21 @@ class RoleWindow:
 
 
 @dataclass(frozen=True)
+class RoleSupport:
+    """Mínimos de fábrica por clase/municipios y número exacto de meses."""
+
+    n0: int
+    n1: int
+    municipalities: int
+    months: int
+
+    def __post_init__(self) -> None:
+        """Rechazar soportes ambiguos antes de consultar datos."""
+        if any(type(v) is not int or v < 1 for v in asdict(self).values()):
+            raise ValueError("Soporte de rol inválido")
+
+
+@dataclass(frozen=True)
 class TemporalPlan:
     """Cinco roles ordenados, soporte mínimo y embargo adicional explícito."""
 
@@ -34,10 +49,16 @@ class TemporalPlan:
     min_months: int = 2
     min_class_rows: int = 1
     reserved_start: str = "2025-01"
+    supports: dict[str, RoleSupport] | None = None
 
     def __post_init__(self) -> None:
         """Validar calendario y política antes de recibir etiquetas."""
         TemporalPolicy(self.reserved_start)
+        if self.supports is not None and (
+            set(self.supports) != set(ROLES)
+            or any(not isinstance(v, RoleSupport) for v in self.supports.values())
+        ):
+            raise ValueError("Se requiere soporte para exactamente cinco roles")
         if (
             type(self.horizon) is not int
             or self.horizon not in (1, 2)
@@ -152,6 +173,13 @@ def preflight_roles(batches: dict[str, RoleBatch], plan: TemporalPlan) -> dict[s
             or not batch.controls.eligible_at_t.all()
         ):
             raise ValueError("Soporte incompleto, roles solapados o filas no elegibles")
+        if plan.supports is not None:
+            requirement = plan.supports[window.role]
+            if (
+                len(months) != requirement.months
+                or keys.municipality_code.nunique() < requirement.municipalities
+            ):
+                raise ValueError("Soporte de meses/municipios insuficiente antes de etiquetas")
         targets_seen |= months
         links_seen |= links
         validate_features(batch.X)
@@ -176,6 +204,7 @@ def preflight_roles(batches: dict[str, RoleBatch], plan: TemporalPlan) -> dict[s
         support[window.role] = {
             "rows": len(keys),
             "months": len(months),
+            "municipalities": int(keys.municipality_code.nunique()),
             "first_origin": first_origin,
             "available": available,
             "keys_digest": stable_digest(keys.to_dict("records")),
@@ -207,7 +236,37 @@ def role_labels(batch: RoleBatch, plan: TemporalPlan) -> pd.Series:
         or not y.index.equals(batch.X.index)
         or y.isna().any()
         or not y.isin([0, 1]).all()
-        or min(int(y.eq(0).sum()), int(y.eq(1).sum())) < plan.min_class_rows
     ):
         raise ValueError("Etiquetas ausentes, inválidas o soporte insuficiente de ambas clases")
+    counts = observed_support(batch, y)
+    if not support_passes(counts, plan, batch.role):
+        raise ValueError("Etiquetas: soporte por clase/municipio insuficiente")
     return y.copy(deep=True)
+
+
+def observed_support(batch: RoleBatch, y: pd.Series | None = None) -> dict[str, Any]:
+    """Contar solo claves, o clases cuando su lectura ya esté autorizada."""
+    if y is not None and (
+        not y.index.equals(batch.keys.index) or y.isna().any() or not y.isin([0, 1]).all()
+    ):
+        raise ValueError("Etiquetas ausentes, inválidas o desalineadas")
+    return {
+        "rows": len(batch.keys),
+        "months": int(batch.keys.target_period.nunique()),
+        "municipalities": int(batch.keys.municipality_code.nunique()),
+        "n0": None if y is None else int(y.eq(0).sum()),
+        "n1": None if y is None else int(y.eq(1).sum()),
+    }
+
+
+def support_passes(counts: dict[str, Any], plan: TemporalPlan, role: str) -> bool:
+    """Comprobar mínimos de fábrica sin leer callbacks ni cambiar cohortes."""
+    if plan.supports is None:
+        return counts["n0"] >= plan.min_class_rows and counts["n1"] >= plan.min_class_rows
+    required = plan.supports[role]
+    return (
+        counts["months"] == required.months
+        and counts["municipalities"] >= required.municipalities
+        and (counts["n0"] is None or counts["n0"] >= required.n0)
+        and (counts["n1"] is None or counts["n1"] >= required.n1)
+    )

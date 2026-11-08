@@ -4,6 +4,7 @@ import json
 import re
 from dataclasses import dataclass
 from datetime import date, datetime
+from functools import lru_cache
 
 import pandas as pd
 
@@ -18,14 +19,19 @@ PROJECTION = {
 }
 
 
+@lru_cache(maxsize=16_384)
 def parse_date(value: str) -> date | None:
-    """Interpretar ISO o día/mes/año explícitos; nunca inferir otra columna."""
+    """Interpretar ISO o día/mes/año, incluido el midnight localizado aprobado."""
     value = value.strip()
     try:
         if re.fullmatch(r"\d{4}-\d{2}-\d{2}(?:[ T]00:00:00)?", value):
             return date.fromisoformat(value[:10])
         if re.fullmatch(r"\d{2}/\d{2}/\d{4}(?: 00:00:00)?", value):
             return datetime.strptime(value[:10], "%d/%m/%Y").date()
+        localized = re.fullmatch(r"(\d{1,2})/(\d{1,2})/(\d{4}) 12:00:00 a\.[ \u00a0]m\.", value)
+        if localized:
+            day, month, year = map(int, localized.groups())
+            return date(year, month, day)
     except ValueError:
         pass
     return None
@@ -63,13 +69,14 @@ def raw_temporal_quarantine(
         Selectores internos y conteos/digests; nunca filas en la auditoría.
     """
     retained, audit = {}, {}
+    reserved_start = date.fromisoformat(policy.reserved_start + "-01")
     for name, keys in projection.items():
         date_column = "date" if name == "daily_climate" else "INI_SIN"
         dates = keys[date_column].map(parse_date)
         invalid = dates.isna()
-        reserved = dates.map(
-            lambda d: d is not None and d.strftime("%Y-%m") >= policy.reserved_start
-        )
+        if len(keys) and invalid.all():
+            raise ValueError("Fuente sin ninguna fecha interpretable; no se pueden inferir ceros")
+        reserved = dates.map(lambda d: d is not None and d >= reserved_start)
         retained[name] = tuple(keys.index[~invalid & ~reserved])
         excluded = keys.loc[invalid | reserved].astype(str).values.tolist()
         # Orden multiconjunto: no depende del orden de archivo y conserva duplicados.

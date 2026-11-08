@@ -11,7 +11,7 @@ def create_pipeline() -> Pipeline:
     """Construir desde cinco fuentes artificiales con nodos inspeccionables."""
     return pipeline(
         [
-            node(n.fixture_input, "params:canonical", "raw_input", name="synthetic_raw_input"),
+            node(n.build_input, "params:canonical", "raw_input", name="raw_input"),
             node(n.validate_input, "raw_input", "raw_verified", name="raw_contract_validation"),
             node(
                 raw_temporal_projection,
@@ -100,7 +100,7 @@ def create_reproducibility_pipeline() -> Pipeline:
     """Certificar N=3 sin reutilizar canonical_build."""
     return pipeline(
         [
-            node(n.fixture_input, "params:canonical", "raw_input", name="synthetic_raw_input"),
+            node(n.build_input, "params:canonical", "raw_input", name="raw_input"),
             node(n.certify, "raw_input", "canonical_certificate", name="canonical_reproducibility"),
             node(
                 n.observe_certificate,

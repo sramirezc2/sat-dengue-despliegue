@@ -88,12 +88,13 @@ def epidemiology_normalization(
         frame = frames[name]
         rejected: Counter = Counter({reason: 0 for reason in sorted(REJECTIONS)})
         accepted = 0
-        for row in frame.to_dict("records"):
+        for values in frame.itertuples(index=False, name=None):
+            row = dict(zip(frame.columns, values, strict=True))
             department, municipality = _code(row["COD_DPTO_R"], 2), _code(row["COD_MUN_R"], 3)
             onset = parse_date(row["INI_SIN"])
             if onset is None:
                 raise ValueError("La cuarentena debe rechazar INI_SIN ausente o inválida")
-            period = onset.strftime("%Y-%m")
+            period = onset.isoformat()[:7]
             code = department + municipality if department and municipality else None
             if row["COD_EVE"].strip() != event:
                 reason = "wrong_event"
@@ -127,11 +128,12 @@ def climate_daily_normalization(
     """Validar fechas redundantes, claves y valores después de cuarentena."""
     records, outside = [], 0
     known = set(geography.municipality_code)
-    for row in frame.to_dict("records"):
+    for values in frame.itertuples(index=False, name=None):
+        row = dict(zip(frame.columns, values, strict=True))
         day = parse_date(row["date"])
         if day is None:
             raise ValueError("Fecha climática fuera del contrato de cuarentena")
-        period = day.strftime("%Y-%m")
+        period = day.isoformat()[:7]
         code = _code(row["mpio_cdpmp"], 5)
         if (
             code not in known

@@ -9,6 +9,9 @@ from sat_dengue_pipeline.pipelines.canonical.pipeline import (
     create_reproducibility_pipeline,
 )
 from sat_dengue_pipeline.pipelines.deployment_publication import create_pipeline as publication
+from sat_dengue_pipeline.pipelines.factory_validation.pipeline import (
+    create_pipeline as factory_validation,
+)
 from sat_dengue_pipeline.pipelines.synthetic.pipeline import create_pipeline
 
 
@@ -20,8 +23,10 @@ def register_pipelines() -> dict[str, Pipeline]:
     """
     synthetic = create_pipeline()
     return {
-        "__default__": synthetic, "synthetic": synthetic,
+        "__default__": synthetic,
+        "synthetic": synthetic,
         "canonical_build": canonical_build(),
         "canonical_reproducibility": create_reproducibility_pipeline(),
         "deployment_publication": publication(),
+        "factory_validation": factory_validation(),
     }

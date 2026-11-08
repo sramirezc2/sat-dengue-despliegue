@@ -1,0 +1,95 @@
+{
+  "method": "Read only temporal keys in chunks; count identical strings, parse each unique date via DEC-022, aggregate by year; no scientific values read",
+  "sources": {
+    "dengue_notifications": {
+      "input_rows": 1705604,
+      "invalid_date_rows": 133,
+      "first_observed_period": "2006-01",
+      "last_observed_period": "2026-01",
+      "rows_by_year": {
+        "2006": 237,
+        "2007": 34915,
+        "2008": 32593,
+        "2009": 45044,
+        "2010": 147467,
+        "2011": 29511,
+        "2012": 52852,
+        "2013": 122937,
+        "2014": 103235,
+        "2015": 95320,
+        "2016": 100981,
+        "2017": 25100,
+        "2018": 44018,
+        "2019": 124394,
+        "2020": 75031,
+        "2021": 49259,
+        "2022": 65975,
+        "2023": 127165,
+        "2024": 310299,
+        "2025": 118234,
+        "2026": 904
+      }
+    },
+    "severe_dengue_notifications": {
+      "input_rows": 50101,
+      "invalid_date_rows": 3,
+      "first_observed_period": "2006-01",
+      "last_observed_period": "2026-01",
+      "rows_by_year": {
+        "2006": 56,
+        "2007": 6877,
+        "2008": 4268,
+        "2009": 7047,
+        "2010": 9814,
+        "2011": 1313,
+        "2012": 1428,
+        "2013": 3124,
+        "2014": 2584,
+        "2015": 1419,
+        "2016": 908,
+        "2017": 238,
+        "2018": 526,
+        "2019": 1359,
+        "2020": 839,
+        "2021": 938,
+        "2022": 1347,
+        "2023": 1735,
+        "2024": 3019,
+        "2025": 1246,
+        "2026": 13
+      }
+    },
+    "daily_climate": {
+      "input_rows": 7754254,
+      "invalid_date_rows": 0,
+      "first_observed_period": "2007-01",
+      "last_observed_period": "2025-12",
+      "rows_by_year": {
+        "2007": 409530,
+        "2008": 410652,
+        "2009": 409530,
+        "2010": 409530,
+        "2011": 409530,
+        "2012": 410652,
+        "2013": 409530,
+        "2014": 409530,
+        "2015": 409530,
+        "2016": 410652,
+        "2017": 409530,
+        "2018": 409530,
+        "2019": 409530,
+        "2020": 378226,
+        "2021": 409530,
+        "2022": 409530,
+        "2023": 409530,
+        "2024": 410652,
+        "2025": 409530
+      }
+    }
+  },
+  "declared_manifest_coverage": [
+    "2011-06-01",
+    "2025-12-31"
+  ],
+  "coverage_scope": "Declared interval is not the observed raw min/max; files contain earlier and later dates. BuildConfig independently restricts development to 2011-06..2024-12 and TemporalPolicy quarantines all dates >=2025-01."
+}

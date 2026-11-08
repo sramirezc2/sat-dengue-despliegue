@@ -1,0 +1,14 @@
+{
+  "recorded_at_utc": "2026-11-07T23:58:31.538371+00:00",
+  "source": "HfApi.dataset_info(files_metadata=True), authenticated with environment HF_TOKEN",
+  "dataset_id": "sat-dengue/data_raw",
+  "requested_revision": "a1a7f237a4baa6ffa848fabeef474f811f3b3f33",
+  "user_report": "Dataset changed to private before this second request",
+  "resolved_revision": null,
+  "private": null,
+  "http_status": 404,
+  "error_type": "RepositoryNotFoundError",
+  "status": "BLOCKED_ACCESS_PRIVATE_UNVERIFIED",
+  "data_files_downloaded": 0,
+  "interpretation": "Authenticated metadata request failed; existence, revision and private=true cannot be confirmed by this request. No anonymous access or cached credentials attempted."
+}

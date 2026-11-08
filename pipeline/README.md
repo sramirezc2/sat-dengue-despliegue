@@ -88,7 +88,7 @@ las pruebas construyen JSON temporales con hashes de bytes artificiales.
 | Proveedor | Configuración y transferencia |
 | --- | --- |
 | Local | `location` es el directorio configurado y `remote_path` su ruta relativa. La revisión identifica el snapshot local; los hashes detectan alteraciones. |
-| Hugging Face | `location` es el repo_id; `revision` debe ser un commit completo de 40 hexadecimales. El SDK oficial usa `repo_type="dataset"`, `token=False` y una caché SDK temporal, que se elimina tras copiar al temporal común. |
+| Hugging Face | `location` es el repo_id; `revision` debe ser un commit completo de 40 hexadecimales. El SDK oficial usa `repo_type="dataset"` y una caché temporal. Por defecto `token=False`; `use_env_token=True` habilita únicamente `HF_TOKEN` del entorno, sin login ni token cacheado. |
 | Zenodo | `location` y `revision` contienen el mismo ID numérico de registro versionado, no el DOI conceptual. Se verifica `id` frente a `conceptrecid` en la API, con metadatos acotados a 1 MiB; el archivo se lee en bloques de 64 KiB. HTTPS, timeout de 30 segundos y sin seguir redirecciones. |
 | S3 simulado | `location` es el bucket; `revision` es el prefijo de release que debe mantenerse inmutable. La clave es `<revision>/<remote_path>`. El cliente `S3Client` se inyecta; no se crea boto3 ni se buscan credenciales. |
 
@@ -131,12 +131,12 @@ Esta caché contiene **entradas científicas**; no escribe ni valida resultados
 publicados en `datos/resultados/`. El publicador de tarea 14 produce su propio
 manifiesto SHA-256; no se importan módulos de `app/` ni se reutiliza su sincronizador.
 
-Faltan para registrar el primer release público: repo_id y commit reales de HF,
-registro versionado de Zenodo, inventario de archivos y rutas, tamaños y hashes
-verificados, cobertura temporal y procedencia/licencia confirmadas. No se ha
-descargado ni validado un release remoto real. La reproducción real corresponde
-a la tarea 15; el manual de operación, a la 17. Todas las pruebas actuales usan
-archivos temporales y bloquean conexiones reales, DNS y acceso a publicaciones.
+El release crudo privado de HF, su commit inmutable y los cinco tamaños/hashes
+aprobados están fijados para la tarea 16. Su adquisición y reproducción real se
+registran en `docs/decisions/task16-reproduction.md`; el depósito académico de
+Zenodo sigue pendiente. Las suites unitarias usan archivos temporales y bloquean
+conexiones reales, DNS y acceso a publicaciones. El manual operativo corresponde
+a la tarea 18.
 
 ## Panel canónico y preparación temporal
 
@@ -445,7 +445,9 @@ uv run --directory pipeline pytest tests/test_raw_canonical.py tests/test_raw_re
 
 Ambos CLI generan exclusivamente cinco crudos artificiales bajo el workspace
 ignorado `pipeline/data/canonical-fixture/`. `conf/base/parameters.yml` declara
-`canonical.mode: synthetic`, workspace y tracking. No habilita una entrada real.
+`canonical.mode: synthetic`, workspace y tracking. El modo explícito `approved`
+consume exclusivamente la caché verificada del manifiesto crudo aprobado; no
+descarga desde los nodos científicos.
 El fixture tiene dos municipios ficticios, 84 meses y 168 claves; una prueba
 separada verifica 1.122 × 163 = 182.886 claves sobre dimensión artificial.
 
@@ -473,8 +475,28 @@ El run guarda únicamente agregados, hashes y linaje, incluido el resultado N=3.
 Sin opt-in no abre store ni importa MLflow. Ante un error ejecuta primero
 `canonical_build` para localizar el contrato/etapa que falla; no omitas controles
 ni reutilices una salida anterior como certificación de la corrida fallida.
-La conexión privada, cobertura/formatos y N=3 sobre el volumen real pertenecen a
-tarea 16. Detalles y límites en [la decisión canónica](../docs/decisions/raw-canonical-build.md).
+La conexión privada, cobertura/formatos y N=3 reales se registran en
+[la evidencia de tarea 16](../docs/decisions/task16-reproduction.md).
+
+El manifiesto `conf/releases/approved-raw.json` fija el dataset privado y commit
+aprobados. Con `HF_TOKEN` disponible en el entorno, desde la raíz:
+
+```sh
+pipeline/.venv/bin/python pipeline/tools/acquire_private_raw.py
+pipeline/.venv/bin/python pipeline/tools/reproduce_private_raw.py build
+pipeline/.venv/bin/python pipeline/tools/reproduce_private_raw.py certify
+pipeline/.venv/bin/python pipeline/tools/validate_private_canonical.py
+```
+
+La adquisición comprueba privacidad/SHA y descarga solo los cinco archivos;
+`Listados_DIVIPOLA.xlsx` queda excluido. Los siguientes comandos son locales,
+retiran `HF_TOKEN` de su entorno y bloquean la red. El modo Kedro equivalente
+se selecciona con `--params canonical.mode=approved,canonical.workspace=data/task16-kedro`.
+No reutilices el provisional como salida certificada. La certificación compara
+N=3 desde nuevos procesos e inboxes y registra tiempos/RSS por proceso; el RSS
+no mide la memoria física conjunta ni garantiza recursos en otra máquina.
+La preparación posterior mide soporte T+1/T+2 y rechaza cruces de 2025; no elige
+candidatos, calendarios de roles o políticas FAR científicas.
 
 ## Publicación del despliegue (tarea 14)
 
@@ -592,6 +614,38 @@ La auditoría, limitaciones y evidencia concreta están en
 61159d9, la matriz nativa Ubuntu/Windows/macOS terminó correctamente en el run
 42424636145; los siete checks del PR están verdes. Recibos de esos runners,
 Mac local y Colab real conservados en `docs/evidence/task15/`, con igualdad exacta
-del lock y artefactos deterministas. Tarea 15 completa; tarea 16 pendiente.
+del lock y artefactos deterministas. Tarea 15 completa; el estado vigente de tarea 16 está en `plan.md`.
 Cualquier publicación adicional requiere autorización acorde al alcance del chat;
 no se autorizó merge ni force push.
+
+
+## Fábrica autorizada de tarea 16
+
+La receta [T16-FACTORY-XGB-S53-v1](../docs/decisions/task16-experiment-specification.md)
+se consume desde `conf/base/parameters_experiment.yml`, sin decisiones científicas
+ocultas. Incluye XGBoost 3.0.5 CPU/hist/un hilo/semilla 53, 33 predictores
+canónicos (36 columnas internas por one-hot fijo), dos modelos independientes y
+cinco roles definidos por objetivo. No selecciona campeón ni publica resultados.
+
+```sh
+uv run --directory pipeline kedro run --pipelines factory_validation
+```
+
+Antes de este comando deben estar verdes lock/sync, Ruff, suite completa,
+regresiones API/tablero, contratos y verificaciones de integridad. El recibo local
+ignorado `data/factory-validation/preflight-validation.json` identifica código,
+lock y configuración de esos gates. La adquisición verifica privacidad y revisión
+inmutable usando solo HF_TOKEN del entorno. Los hijos no reciben la credencial,
+bloquean red/proveedores y reconstruyen desde las cinco fuentes en directorios
+nuevos; no comparten derivados, matrices, modelos, decisiones, resultados o tracking.
+
+Los soportes de los ocho roles productores se comprueban antes del primer ajuste;
+evaluación comprueba claves/meses/municipios sin construir y. Ambas predicciones
+se congelan antes de construir sus etiquetas, comprobar clases y calcular métricas.
+N=3 compara identidades exactas de datos, matrices, modelos JSON completos,
+probabilidades, decisiones, métricas, configuración y linaje. No hay cuarto intento.
+Un fallo produce evidencia BLOCKED y se detiene sin cambiar parámetros. Los siete
+recibos agregados en `docs/evidence/task16/factory-experiment/` se crean de forma
+exclusiva; su existencia impide sobrescribirlos o repetir el comando sobre ellos.
+No se versionan filas, modelos ni rutas privadas. 2025 conserva el estado
+`consumed_retrospective_evidence`. Tarea 17 y autorización operativa quedan fuera.

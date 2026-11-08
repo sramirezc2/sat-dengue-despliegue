@@ -114,6 +114,13 @@ académicos aprobados. La interfaz `DataSource`
 encapsulará adquisición con adaptadores intercambiables para archivos locales,
 Hugging Face, Zenodo y, posteriormente, AWS S3 o almacenamiento compatible.
 
+DEC-021 precisa que el repositorio remoto puede conservar
+`Listados_DIVIPOLA.xlsx` como auxiliar: la adquisición selectiva lo ignora y el
+bundle científico de Kedro contiene únicamente las cinco fuentes aprobadas.
+El Excel no interviene en construcción canónica ni aprendizaje. El release
+autorizado y la evidencia de privacidad se registran en
+[la documentación de tarea 16](../decisions/task16-reproduction.md).
+
 Cada adaptador entrega un `ResolvedBundle` de archivos crudos locales verificados.
 Desde esa frontera, normalización, entrenamiento y evaluación no conocen el
 proveedor, sus clientes, URLs ni credenciales. La selección del adaptador será
@@ -169,6 +176,24 @@ Git SHA, configuración y lock, cuarentena, cobertura, conteos/rechazos, digest
 canónico y las tres huellas con el resultado N=3. El linaje mínimo vincula
 `raw_manifest_digest + builder_git_sha + builder_config_digest + lock_digest`
 con `canonical_semantic_digest`; no contiene filas ni rutas privadas.
+
+## Validación de fábrica de tarea 16
+
+La especificación V3 [T16-FACTORY-XGB-S53-v1](../decisions/task16-experiment-specification.md)
+autoriza `factory_validation`: adquisición privada fijada de cinco fuentes,
+construcción canónica nueva, cinco roles por objetivo, dos XGBoost CPU/hist
+independientes, calibración, umbrales y evaluación diferida. Kedro consume
+`pipeline/conf/base/parameters_experiment.yml`; las pruebas exigen conformidad
+exacta con el documento normativo. No hay búsqueda, refit, G, presupuesto del
+canal, campeón ni habilitación operativa.
+
+Cada uno de tres procesos secuenciales usa inbox, derivados y tracking nuevos.
+La certificación previa canónica permanece aprobada; esta nueva certificación
+compara toda la fábrica, incluido JSON completo de modelos. Los ocho soportes
+productores y las claves de evaluación pasan antes del primer ajuste. Las etiquetas
+de evaluación se construyen después de congelar y predecir ambos horizontes.
+Un gate fallido o divergencia detiene el procedimiento sin otra receta ni cuarta
+corrida. Solo se emiten agregados/huellas, preservando la evidencia existente.
 
 ## Tratamiento de 2025
 

@@ -137,6 +137,9 @@ def fit_procedure(
     spec: AdapterSpec,
     registry: ModelRegistry,
     threshold_policy: ThresholdPolicy,
+    *,
+    calibration_parameters: dict[str, Any] | None = None,
+    brier_tolerance: float = 1e-12,
 ) -> FittedProcedure:
     """Ajustar y congelar etapas usando exclusivamente su rol autorizado.
 
@@ -146,25 +149,41 @@ def fit_procedure(
         spec: Candidato predeclarado; no se hace búsqueda de hiperparámetros.
         registry: Constructor neutral del candidato.
         threshold_policy: Cuadrícula y límite explícitos, definidos antes del ajuste.
+        calibration_parameters: Parámetros completos aprobados, sin decisiones implícitas.
+        brier_tolerance: Mejora mínima aprobada antes de escoger sigmoide.
 
     Returns:
         Procedimiento listo para inferencia posterior, sin consumir evaluación.
     """
     audit = preflight_roles(batches, plan)
+    labels = {
+        name: role_labels(batches[name], plan)
+        for name in ("train", "calibration_fit", "calibration_selection", "threshold_selection")
+    }
     train = batches["train"]
-    y_train = role_labels(train, plan)
+    y_train = labels["train"]
     model = CheckedAdapter(registry.create(spec))
     model.fit(train.X, y_train)
     prevalence = float(y_train.mean())
     fit = batches["calibration_fit"]
     raw_fit = model.predict_positive(fit.X)
-    y_fit = role_labels(fit, plan)
-    coefficient, intercept = fit_sigmoid(raw_fit, y_fit, spec.seed)
+    y_fit = labels["calibration_fit"]
+    if calibration_parameters is None:
+        coefficient, intercept = fit_sigmoid(raw_fit, y_fit, spec.seed)
+    else:
+        coefficient, intercept = fit_sigmoid(
+            raw_fit, y_fit, spec.seed, parameters=calibration_parameters
+        )
     selection = batches["calibration_selection"]
     raw_selection = model.predict_positive(selection.X)
     calibrated = apply_sigmoid(raw_selection, coefficient, intercept)
-    y_selection = role_labels(selection, plan)
-    representation, scores = choose_representation(raw_selection, calibrated, y_selection)
+    y_selection = labels["calibration_selection"]
+    if brier_tolerance == 1e-12:
+        representation, scores = choose_representation(raw_selection, calibrated, y_selection)
+    else:
+        representation, scores = choose_representation(
+            raw_selection, calibrated, y_selection, tolerance=brier_tolerance
+        )
     threshold_batch = batches["threshold_selection"]
     raw_threshold = model.predict_positive(threshold_batch.X)
     probability = (
@@ -172,7 +191,7 @@ def fit_procedure(
         if representation == "sigmoid"
         else raw_threshold
     )
-    y_threshold = role_labels(threshold_batch, plan)
+    y_threshold = labels["threshold_selection"]
     threshold, grid = select_threshold(probability, y_threshold, threshold_policy)
     labels = {
         "train": y_train,

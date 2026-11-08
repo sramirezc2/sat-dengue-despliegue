@@ -1,6 +1,7 @@
 """Adaptadores intercambiables; la fábrica concentra la selección de proveedor."""
 
 import json
+import os
 import re
 import shutil
 from collections.abc import Callable
@@ -70,11 +71,12 @@ class LocalSource:
 
 @dataclass(frozen=True)
 class HuggingFaceSource:
-    """Dataset público fijado a un commit completo, sin autenticación implícita."""
+    """Dataset fijado a commit; credencial de entorno únicamente por opt-in."""
 
     repo_id: str
     revision: str
     download: HubDownload = _hub_download
+    use_env_token: bool = False
 
     def __post_init__(self) -> None:
         """Exigir repositorio y commit, excluyendo ramas y etiquetas mutables."""
@@ -91,16 +93,31 @@ class HuggingFaceSource:
             destination: Temporal que verificará el resolver.
         """
         with TemporaryDirectory(dir=destination.parent, prefix=".hf-") as sdk_cache:
+            if self.use_env_token and not os.environ.get("HF_TOKEN"):
+                raise DownloadError("HF_TOKEN requerido en el entorno")
             path = self.download(
                 repo_id=self.repo_id,
                 filename=file.remote_path,
                 repo_type="dataset",
                 revision=self.revision,
-                token=False,
+                token=os.environ["HF_TOKEN"] if self.use_env_token else False,
                 force_download=True,
                 cache_dir=sdk_cache,
             )
             shutil.copyfile(path, destination)
+
+    def verify_private(self) -> None:
+        """Confirmar privacidad y revisión con HF_TOKEN sin login o token cacheado."""
+        from huggingface_hub import HfApi
+
+        if not self.use_env_token or not os.environ.get("HF_TOKEN"):
+            raise DownloadError("HF_TOKEN requerido en el entorno")
+        info = HfApi().dataset_info(
+            self.repo_id, revision=self.revision, files_metadata=False,
+            token=os.environ["HF_TOKEN"],
+        )
+        if info.private is not True or info.sha != self.revision:
+            raise DownloadError("Privacidad o commit de release incumplidos")
 
 
 @dataclass(frozen=True)
@@ -204,6 +221,8 @@ def create_source(
     hub_download: HubDownload = _hub_download,
     open_http: HTTPStream = _open_zenodo,
     s3_client: S3Client | None = None,
+    use_env_token: bool = False,
+    require_private: bool = False,
 ) -> DataSource:
     """Seleccionar el proveedor exclusivamente dentro de adquisición.
 
@@ -212,6 +231,8 @@ def create_source(
         hub_download: Función oficial o doble local de Hugging Face.
         open_http: Abridor HTTPS por bloques o doble local para Zenodo.
         s3_client: Cliente versionado inyectado; no se crea un SDK implícito.
+        use_env_token: Usar exclusivamente HF_TOKEN del entorno para Hugging Face.
+        require_private: Verificar acceso privado en el adaptador remoto apropiado.
 
     Returns:
         Adaptador con la misma interfaz independiente del proveedor.
@@ -220,11 +241,18 @@ def create_source(
         UnknownProviderError: Si el proveedor no está implementado.
         ManifestError: Si falta configuración o la revisión es mutable.
     """
+    if require_private and manifest.provider != "huggingface":
+        raise ManifestError("El adaptador actual no acredita privacidad remota")
     match manifest.provider:
         case "local":
             return LocalSource(Path(manifest.location).resolve())
         case "huggingface":
-            return HuggingFaceSource(manifest.location, manifest.revision, hub_download)
+            source = HuggingFaceSource(
+                manifest.location, manifest.revision, hub_download, use_env_token
+            )
+            if require_private:
+                source.verify_private()
+            return source
         case "zenodo":
             return ZenodoSource(manifest.location, manifest.revision, open_http)
         case "s3":

@@ -1,0 +1,53 @@
+{
+  "recorded_at_utc": "2026-11-07T23:56:38.562434+00:00",
+  "source": "HfApi.dataset_info(files_metadata=True), authenticated with environment HF_TOKEN",
+  "dataset_id": "sat-dengue/data_raw",
+  "requested_revision": "a1a7f237a4baa6ffa848fabeef474f811f3b3f33",
+  "resolved_revision": "a1a7f237a4baa6ffa848fabeef474f811f3b3f33",
+  "private": false,
+  "status": "BLOCKED_PRIVACY",
+  "data_files_downloaded": 0,
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size_bytes": 2775,
+      "lfs_sha256": null
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 28,
+      "lfs_sha256": null
+    },
+    {
+      "path": "datos-crudos/Divipola-municipios.md",
+      "size_bytes": 209867,
+      "lfs_sha256": null
+    },
+    {
+      "path": "datos-crudos/Listados_DIVIPOLA.xlsx",
+      "size_bytes": 1271196,
+      "lfs_sha256": "6ebc390481bd11c26f410aa566f4606e5e97b8f2cd3bc39f86e3c03ede480ab6"
+    },
+    {
+      "path": "datos-crudos/dengue.csv",
+      "size_bytes": 875694283,
+      "lfs_sha256": "58d277cfef7a60c28d488eefe4e7a1a7bf0f7b0df3dd88245971cd7b3d32c84b"
+    },
+    {
+      "path": "datos-crudos/dengue_grave.csv",
+      "size_bytes": 24537734,
+      "lfs_sha256": "3d60e96ccbedc35a19a8f5f54be8d786aa599813259c914f131522bf17dd1d70"
+    },
+    {
+      "path": "datos-crudos/divipola-provenance.json",
+      "size_bytes": 925,
+      "lfs_sha256": null
+    },
+    {
+      "path": "datos-crudos/google_earth_engine.csv",
+      "size_bytes": 1714544311,
+      "lfs_sha256": "dfe20fa02b6d6068c04744b5c86f44112048400a7fde637368c0d4effc88cb3f"
+    }
+  ],
+  "integrity_scope": "Remote metadata only. Five scientific file sizes match the approved inventory; three CSV LFS SHA-256 match. Two small file SHA-256 and all local bytes remain unverified."
+}

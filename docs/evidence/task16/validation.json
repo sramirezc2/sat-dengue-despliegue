@@ -1,0 +1,64 @@
+{
+  "pipeline_pytest": {
+    "tests": 469,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0
+  },
+  "pipeline_seconds": 50.796,
+  "api_pytest": {
+    "passed": 28,
+    "warnings": 1
+  },
+  "dashboard": {
+    "install": "frozen lockfile, no changes",
+    "lint_errors": 0,
+    "lint_warnings": 6,
+    "tests_passed": 33,
+    "node_server_build": "PASSED"
+  },
+  "publication_consumers": {
+    "pydantic_documents": 24,
+    "zod_documents": 24
+  },
+  "lock_check": "PASSED",
+  "locked_sync": "PASSED",
+  "ruff": "PASSED",
+  "synthetic_clis": [
+    "synthetic",
+    "canonical_build",
+    "canonical_reproducibility",
+    "deployment_publication"
+  ],
+  "validation_scope": "Local engineering validations; remote CI for current working tree not executed",
+  "published_results_unchanged_documents": 22,
+  "published_results_hashes": {
+    "datos/resultados/resultado_50_2024-12.json": "59d6105a68a19ac7e29f15c37119e44d17ab0b8afd8100532da3f25ac30b1283",
+    "datos/resultados/resultado_50_2025-01.json": "af95337727fbe078d837bb6a60e48d0ea143d0f40944439bf4bf0781c13df697",
+    "datos/resultados/resultado_50_2025-02.json": "5a03262bbbf30e8b9bbb5d699ce7855df5bb05e542edc04ba4b1cdf80f39e7c9",
+    "datos/resultados/resultado_50_2025-03.json": "44ef336c23517c68e925d2dd0ff2a36c87b3d6462cd75953ed6a62cc1071b920",
+    "datos/resultados/resultado_50_2025-04.json": "c38792936827743cffd3032dae1259094049643806ba4aa7fcaba8b3d01fa292",
+    "datos/resultados/resultado_50_2025-05.json": "44ddfb72e926a2c4f2ac0702c3aa937838c08ce8127b26051c38343c75e13916",
+    "datos/resultados/resultado_50_2025-06.json": "c27369b67ed3ce4e3bcb919262a65bd921baee771432b14f0c9ea73819f2309a",
+    "datos/resultados/resultado_50_2025-07.json": "446892804400f1f1fc8fd9619fc29f127c1d3104ac06c917ece0222c747dbbe8",
+    "datos/resultados/resultado_50_2025-08.json": "2d9a53f0dba1259719a49decbcfbb68fc4c98bdbfa11f5cde41e19481e4922ab",
+    "datos/resultados/resultado_50_2025-09.json": "7195c49dbe3e60db07f330cccfb4731b4842d579e6b149a48520c4830c9a53f0",
+    "datos/resultados/resultado_50_2025-10.json": "627fe3e08add024337f73bcf466fecb489d63dd788c721aebf3f586b7bec3703",
+    "datos/resultados/resultado_73_2024-12.json": "bfda5b2fea98035157e5c1ab5f44185aafc894dc122888582faea8cbd38eb436",
+    "datos/resultados/resultado_73_2025-01.json": "f1ea821b43be3a96e998b75402ca3512df1071dfdb7a0de1d438da908a9d468b",
+    "datos/resultados/resultado_73_2025-02.json": "d63c394963cad8fe92f821b9dc2762354f5ee81738af572e8cf9cff5b08d8a7b",
+    "datos/resultados/resultado_73_2025-03.json": "e3da98628da108441a7d09e727766add82496bcf9a8edeb9301d9d516d3a191e",
+    "datos/resultados/resultado_73_2025-04.json": "9c4f1de5052bca49a7bcdb29a1099f26863806f22ac557d40a9040eab564bb2e",
+    "datos/resultados/resultado_73_2025-05.json": "98acd79c488ee973bcb97728a799a6e73fdcf1ca46b87208993f2be902996f3d",
+    "datos/resultados/resultado_73_2025-06.json": "4d6627f58289e589384fb5182e1f365e6ff4bd40e1bcb19e49acf05bc993de82",
+    "datos/resultados/resultado_73_2025-07.json": "de99aff9df6b5c799cdf79fd01ad6d03be49bcd107087a728220f60284c58f81",
+    "datos/resultados/resultado_73_2025-08.json": "61a05757b243d23412f617c5682603fcde25b1f1071dbe552e42dba0c23eb6c5",
+    "datos/resultados/resultado_73_2025-09.json": "cf20496d1f17b473a9c666f22ab1b8a6217d5cb61a8918a35b3a8e41ff1641d5",
+    "datos/resultados/resultado_73_2025-10.json": "40b7959b849207d0dfa4eb529e6518f3481e02f07985b77af0d42c67aa2a95a6"
+  },
+  "real_canonical_gate": "PASSED",
+  "real_kedro_graph": "PASSED",
+  "real_format_temporal_preparation": "PASSED",
+  "real_learned_experiment": "BLOCKED_MISSING_SCIENTIFIC_SPECIFICATION",
+  "task17": "NOT_STARTED"
+}

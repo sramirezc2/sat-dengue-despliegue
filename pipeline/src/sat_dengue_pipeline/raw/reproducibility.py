@@ -1,11 +1,12 @@
 """Certificación N=3 en procesos/directorios nuevos, previa al consumidor."""
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
 from collections.abc import Callable
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import TypeVar
 
@@ -24,6 +25,7 @@ class Reconstruction:
     artifact: CanonicalArtifact
     audit: dict
     pid: int
+    measurements: dict = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -35,6 +37,7 @@ class CertifiedCanonical:
     semantic_digests: tuple[str, ...]
     worker_pids: tuple[int, ...]
     audit: dict
+    measurements: tuple[dict, ...] = ()
 
 
 def isolated_build(
@@ -55,8 +58,9 @@ def isolated_build(
         [sys.executable, "-m", "sat_dengue_pipeline.raw.worker", str(path)],
         capture_output=True,
         check=False,
-        timeout=1200,
+        timeout=7200,
         cwd=root,
+        env={name: value for name, value in os.environ.items() if name != "HF_TOKEN"},
     )
     if completed.returncode:
         raise ValueError("La reconstrucción aislada falló; no se libera salida")
@@ -67,7 +71,9 @@ def isolated_build(
         receipt["serialized_sha256"],
     )
     verify_artifact(artifact)
-    return Reconstruction(artifact, receipt["audit"], receipt["pid"])
+    return Reconstruction(
+        artifact, receipt["audit"], receipt["pid"], receipt.get("measurements", {})
+    )
 
 
 def canonical_reproducibility(
@@ -119,6 +125,7 @@ def canonical_reproducibility(
             tuple(result.artifact.semantic_digest for result in results),
             tuple(result.pid for result in results),
             first.audit,
+            tuple(result.measurements for result in results),
         )
 
 
