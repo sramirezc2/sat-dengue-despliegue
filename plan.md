@@ -7,6 +7,25 @@
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
 
+### Corrección de CI posterior al cierre de tarea 16
+
+El run [42441799695](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42441799695)
+de `4a3a803` aprobó Ubuntu/Pipeline quality, pero falló en macOS por ausencia de
+`libomp` al importar XGBoost y en Windows por UnicodeEncodeError al mostrar el
+log de pytest, ocultando su fallo original. La lectura del documento normativo
+con encoding implícito también falla bajo CP1252 (byte UTF-8 0x81), reproducido
+mediante una regresión controlada; no se atribuye ese ensayo a un runner Windows.
+
+Corrección: instalar OpenMP solo en el runner macOS; leer la especificación y
+el YAML de pruebas en UTF-8; emitir logs con escapes reversibles cuando la
+consola no admite sus caracteres y fijar UTF-8 solo para stdio de procesos hijos.
+Se conservan fallos/códigos de los gates, parámetros, lock y evidencia científica
+existente. Cuatro regresiones inicialmente rojas, ahora verdes; 491 pruebas
+locales aprobadas (seis avisos OmegaConf), lock/sync y Ruff verdes. Los 22 hashes
+publicados permanecen intactos. La comprobación nativa de la corrección en
+Windows/macOS queda pendiente de publicar y ejecutar la nueva revisión; no se
+repite ninguna reproducción privada ni se inicia tarea 17.
+
 ## 1. Objetivo
 
 Implementar en el repositorio definitivo un pipeline E2E reproducible que permita

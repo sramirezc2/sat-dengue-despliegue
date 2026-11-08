@@ -107,6 +107,11 @@ jobs:
           enable-cache: false
       # A single Python coordinator calls the unchanged CLI on each native shell.
       # No Bash, environment dump, provider credentials or scientific source data.
+      - name: Install macOS OpenMP runtime
+        if: runner.os == 'macOS'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: '1'
+        run: brew install libomp
       - name: Run locked portability gates
         run: python pipeline/tools/check_portability.py
       - name: Upload small environment receipt

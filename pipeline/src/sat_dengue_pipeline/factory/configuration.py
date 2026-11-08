@@ -23,7 +23,7 @@ def validate_configuration(configuration: dict[str, Any]) -> dict[str, Any]:
     """Exigir conformidad documental exacta, excepto ubicaciones operacionales."""
     config = copy.deepcopy(configuration)
     document = project_root().parent / "docs/decisions/task16-experiment-specification.md"
-    text = document.read_text()
+    text = document.read_text(encoding="utf-8")
     match = re.search(r"```json\n(.*?)\n```", text, re.S)
     if not text.startswith("Estado: APROBADA PARA VALIDACIÓN DE FÁBRICA\n") or match is None:
         raise ValueError("La especificación de fábrica no está aprobada")

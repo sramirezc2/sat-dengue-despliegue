@@ -10,6 +10,11 @@ La adquisición agrega `huggingface_hub` 2.4.0; la preparación usa NumPy 2.5.4
 y pandas 3.0.6. No se requieren AWS, credenciales,
 datos externos ni servicios desplegados para ejecutar las pruebas o el sintético.
 
+En macOS, XGBoost 3.0.5 necesita el runtime nativo OpenMP de Homebrew:
+`brew install libomp`. El lock de Python no instala esta biblioteca del sistema.
+La matriz de CI la instala solo en el runner macOS antes de ejecutar los gates;
+la suite completa conserva las pruebas del adaptador XGBoost real.
+
 Desde la raíz del repositorio:
 
 ```sh

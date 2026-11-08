@@ -19,6 +19,14 @@ ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = ROOT / "pipeline/data/portability"
 
 
+def print_log_tail(path: Path) -> None:
+    """Mostrar diagnósticos sin perder la causa por el encoding de la consola."""
+    tail = path.read_bytes()[-12000:].decode("utf-8", errors="backslashreplace")
+    encoding = getattr(sys.stdout, "encoding", None) or "utf-8"
+    printable = tail.encode(encoding, errors="backslashreplace").decode(encoding)
+    print(printable, flush=True)
+
+
 def native_symlink_capability() -> dict:
     """Medir la capacidad real separadamente de los dobles de pruebas de guards."""
     with tempfile.TemporaryDirectory(prefix="satd-link-") as temporary:
@@ -60,6 +68,7 @@ def run(uv: list[str]) -> int:
         "MLFLOW_DISABLE_TELEMETRY": "true",
         "MLFLOW_DISABLE_AGENT_HINT": "1",
         "NO_COLOR": "1",
+        "PYTHONIOENCODING": "utf-8",
     }
     receipt = {
         "runtime": "github-actions" if env.get("GITHUB_ACTIONS") == "true" else "local",
@@ -144,12 +153,7 @@ def run(uv: list[str]) -> int:
                 }
             )
             if completed.returncode:
-                print(
-                    (OUTPUT / f"{name}.log")
-                    .read_bytes()[-12000:]
-                    .decode("utf-8", errors="replace"),
-                    flush=True,
-                )
+                print_log_tail(OUTPUT / f"{name}.log")
                 raise ValueError(f"Gate {name} falló: consultar su log local")
             if name in PIPELINES:
                 receipt["pipelines"].append(name)

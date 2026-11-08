@@ -25,7 +25,7 @@ from sat_dengue_pipeline.models.xgboost import XGBoostOnsetAdapter
 def config():
     """Leer la configuración aprobada, sin adquirir datos ni abrir el caché real."""
     path = Path(__file__).parents[1] / "conf/base/parameters_experiment.yml"
-    return yaml.safe_load(path.read_text())["factory_experiment"]
+    return yaml.safe_load(path.read_text(encoding="utf-8"))["factory_experiment"]
 
 
 def test_document_configuration_and_recipe_are_identical(config):

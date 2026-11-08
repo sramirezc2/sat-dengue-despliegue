@@ -167,3 +167,70 @@ def test_receipt_counts_completed_suite(tmp_path):
     report = tmp_path / "report.xml"
     report.write_bytes(b"<testsuites><testsuite tests='7' failures='0' errors='0'/></testsuites>")
     assert counts(report) == {"tests": 7, "failures": 0, "errors": 0, "skipped": 0}
+
+
+def test_factory_specification_uses_utf8_in_non_utf8_locale(monkeypatch):
+    """La aprobación normativa conserva sus caracteres al leer bajo un locale cp1252."""
+    import yaml
+
+    from sat_dengue_pipeline.factory.configuration import validate_configuration
+
+    config = yaml.safe_load((REPO / "pipeline/conf/base/parameters_experiment.yml").read_bytes())[
+        "factory_experiment"
+    ]
+    original = Path.read_text
+
+    def cp1252(path, encoding=None, errors=None):
+        """Reproducir solo una lectura de texto dependiente del locale."""
+        return original(path, encoding=encoding or "cp1252", errors=errors)
+
+    monkeypatch.setattr(Path, "read_text", cp1252)
+    assert validate_configuration(config) == config
+
+
+@pytest.mark.parametrize("console_encoding", ["cp1252", "ascii", "utf-8"])
+def test_failed_gate_preserves_cause_on_legacy_console(tmp_path, monkeypatch, console_encoding):
+    """Un log Unicode/inválido no debe ocultar la causa ni el código de pytest."""
+    import io
+    import runpy
+
+    run = runpy.run_path(str(REPO / "pipeline/tools/check_portability.py"))["run"]
+    output = tmp_path / "pipeline/data/portability"
+    (tmp_path / "pipeline").mkdir()
+    (tmp_path / "pipeline/uv.lock").write_bytes(b"fixture lock")
+    monkeypatch.setitem(run.__globals__, "ROOT", tmp_path)
+    monkeypatch.setitem(run.__globals__, "OUTPUT", output)
+    monkeypatch.setitem(run.__globals__, "native_symlink_capability", lambda: {"available": True})
+
+    def metadata(command, **kwargs):
+        """Metadatos locales controlados: nunca consultar remotos o credenciales."""
+        if command[0] == "git":
+            return b"" if "status" in command else b"a" * 40
+        assert command == ["uv", "--version"]
+        return b"uv 0.11.19"
+
+    def gate(command, **kwargs):
+        """Hacer fallar pytest con una flecha, acentos y un byte no UTF-8."""
+        failed = "pytest" in command
+        if failed:
+            kwargs["stdout"].write("pytest failed → configuración\n".encode() + b"\xff\n")
+        return subprocess.CompletedProcess(command, 1 if failed else 0)
+
+    monkeypatch.setattr(subprocess, "check_output", metadata)
+    monkeypatch.setattr(subprocess, "run", gate)
+    buffer = io.BytesIO()
+    console = io.TextIOWrapper(
+        buffer, encoding=console_encoding, errors="strict", write_through=True
+    )
+    monkeypatch.setattr(sys, "stdout", console)
+    assert run(["uv"]) == 1
+    receipt = json.loads((output / "receipt.json").read_bytes())
+    assert receipt["result"] == "FAILED"
+    assert receipt["failure_type"] == "ValueError"
+    assert receipt["gates"][-1]["name"] == "pytest"
+    assert receipt["gates"][-1]["exit_code"] == 1
+    assert receipt["pipelines"] == []
+    printed = buffer.getvalue().decode(console_encoding)
+    assert "pytest failed" in printed and "UnicodeEncodeError" not in printed
+    assert "\\xff" in printed
+    assert "→" in printed if console_encoding == "utf-8" else "\\u2192" in printed
