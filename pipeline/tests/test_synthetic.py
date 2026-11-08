@@ -35,6 +35,7 @@ def test_registry_and_discovery() -> None:
         "deployment_publication",
         "factory_validation",
         "experiment_run",
+        "retroanalisis",
     }
     assert len(registered["synthetic"].nodes) == 5
     assert registered["synthetic"].inputs() == {"params:synthetic_smoke.years"}
