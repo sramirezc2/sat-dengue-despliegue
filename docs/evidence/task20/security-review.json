@@ -1,0 +1,91 @@
+{
+  "baseline_commit": "498583b",
+  "conclusion": "APPROVED_WITH_LIMITATIONS",
+  "dependency_review": {
+    "api_resolved_packages": 29,
+    "remaining_moderate_advisories": [
+      "GHSA-qxg6-89mg-rqv8",
+      "GHSA-xp26-3454-mjgp",
+      "GHSA-9wx9-5pv9-3349",
+      "GHSA-f86p-h4j2-7qgj",
+      "GHSA-g3hv-75wg-m249"
+    ],
+    "source": "https://api.osv.dev/v1/querybatch",
+    "unique_package_versions": 693,
+    "zod": "4.6.6"
+  },
+  "external_gates": [
+    "new_HEAD_remote_checks_after_push",
+    "human_review",
+    "ruleset_before_merge",
+    "provider_access_and_deployment_configuration"
+  ],
+  "git_review": {
+    "delivery_refs": [
+      "HEAD",
+      "origin/main",
+      "origin/feature/pipeline-e2e"
+    ],
+    "initial_reachable_blobs": 781,
+    "local_private_backup_blobs_metadata_only": 6,
+    "pattern_scan_is_exhaustive": false,
+    "private_raw_objects_reachable_from_delivery_refs": 0,
+    "secret_candidates": 0
+  },
+  "not_performed": [
+    "private_download",
+    "scientific_training",
+    "private_n3_repeat",
+    "provider_credential_use",
+    "notebook_edit",
+    "historical_evidence_edit",
+    "merge",
+    "force_push",
+    "new_pr",
+    "task21"
+  ],
+  "open_critical": 0,
+  "open_high": 0,
+  "preservation": {
+    "baseline_files": 49,
+    "extended_files": 68,
+    "previous_t16_receipts": 16,
+    "published_json": 22,
+    "status": "PASSED",
+    "t16_n3_identity": "899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f"
+  },
+  "report": "docs/security/security-review.md",
+  "residual_findings": {
+    "SEC-04": "MEDIUM",
+    "SEC-05": "MEDIUM",
+    "SEC-06": "MEDIUM",
+    "SEC-07": "MEDIUM",
+    "SEC-08": "LOW",
+    "SEC-09": "LOW"
+  },
+  "resolved_findings": {
+    "SEC-01": "HIGH",
+    "SEC-02": "MEDIUM",
+    "SEC-03": "MEDIUM"
+  },
+  "review_date": "2026-11-08",
+  "reviewed_code_commit": "0f4fc20c36390d6a9c1705b89eedd9bbcc901cbf",
+  "task": 20,
+  "validation": {
+    "api_tests": 35,
+    "bun_frozen": "PASSED",
+    "checkout_autocrlf_regression": "PASSED",
+    "dashboard_lint": "PASSED",
+    "dashboard_node_server_build": "PASSED",
+    "dashboard_tests": 55,
+    "pipeline_tests": 537,
+    "pydantic_documents": 24,
+    "registry": "VALID",
+    "ruff": "PASSED",
+    "sdk_error_regressions": "PASSED",
+    "uv_lock": "PASSED",
+    "uv_sync": "PASSED",
+    "zod_compatibility_and_bound_regressions": 22,
+    "zod_documents": 24
+  }
+}
