@@ -1,7 +1,8 @@
-# Retroanálisis de ventana expansiva (pipeline retroanalisis). La receta del modelo se toma de
+# Retroanálisis de ventana expansiva (pipeline retroanalisis). Receta por defecto: logística sin clima
+# (tanda 10). También acepta configuraciones de experimento XGBoost. La receta se toma de
 # una configuración de experimento existente; 2025 no se usa.
 retroanalisis:
-  configuracion: conf/experiments/EXP001.yml
+  configuracion: conf/retroanalisis/logistica_sin_clima.yml
   horizontes: [1, 2]
   primer_origen: "2019-01"
   ultimo_objetivo: "2024-12"

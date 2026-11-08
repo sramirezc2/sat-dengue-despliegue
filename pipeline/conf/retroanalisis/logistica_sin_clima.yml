@@ -1,0 +1,140 @@
+# Receta del retroanálisis: logística L2 sin clima (tanda 10). No es un experimento registrado en la fábrica.
+seed: 53
+label_delay_months: 1
+predictors:
+- dengue_notifications_count
+- dengue_grave_notifications_count
+- total_notifications_count
+- p25_canal_t
+- p50_canal_t
+- p75_canal_t
+- zona_canal_t
+- month_of_year
+- dengue_notifications_count_lag1
+- dengue_notifications_count_lag2
+- dengue_notifications_count_lag3
+- dengue_notifications_count_lag12
+- dengue_grave_notifications_count_lag1
+- dengue_grave_notifications_count_lag2
+- dengue_grave_notifications_count_lag3
+- dengue_grave_notifications_count_lag12
+- total_notifications_count_lag1
+- total_notifications_count_lag2
+- total_notifications_count_lag3
+- total_notifications_count_lag12
+- p25_h5_t1
+- p75_h5_t1
+- p25_h5_t2
+- p75_h5_t2
+predictor_availability:
+  dengue_notifications_count: 0
+  dengue_grave_notifications_count: 0
+  total_notifications_count: 0
+  rain_mm_month_sum: 0
+  surface_runoff_mm_month_sum: 0
+  total_evaporation_mm_month_sum_ecmwf: 0
+  solar_radiation_mj_m2_month_sum: 0
+  temp_mean_c_month_mean: 0
+  dewpoint_mean_c_month_mean: 0
+  soil_water_l1_month_mean: 0
+  wind_u_ms_month_mean: 0
+  wind_v_ms_month_mean: 0
+  p25_canal_t: 0
+  p50_canal_t: 0
+  p75_canal_t: 0
+  zona_canal_t: 0
+  month_of_year: 0
+  dengue_notifications_count_lag1: -1
+  dengue_notifications_count_lag2: -2
+  dengue_notifications_count_lag3: -3
+  dengue_notifications_count_lag12: -12
+  dengue_grave_notifications_count_lag1: -1
+  dengue_grave_notifications_count_lag2: -2
+  dengue_grave_notifications_count_lag3: -3
+  dengue_grave_notifications_count_lag12: -12
+  total_notifications_count_lag1: -1
+  total_notifications_count_lag2: -2
+  total_notifications_count_lag3: -3
+  total_notifications_count_lag12: -12
+  p25_h5_t1: 0
+  p75_h5_t1: 0
+  p25_h5_t2: 0
+  p75_h5_t2: 0
+preparation:
+  zone_encoding: fixed_onehot
+  zone_mapping:
+    EXITO: 0
+    SEGURIDAD: 1
+    ALERTA: 2
+    EXCESO: 3
+  zone_columns:
+  - zona_canal_t__EXITO
+  - zona_canal_t__SEGURIDAD
+  - zona_canal_t__ALERTA
+  - zona_canal_t__EXCESO
+  matrix_columns:
+  - dengue_notifications_count
+  - dengue_grave_notifications_count
+  - total_notifications_count
+  - p25_canal_t
+  - p50_canal_t
+  - p75_canal_t
+  - zona_canal_t__EXITO
+  - zona_canal_t__SEGURIDAD
+  - zona_canal_t__ALERTA
+  - zona_canal_t__EXCESO
+  - month_of_year
+  - dengue_notifications_count_lag1
+  - dengue_notifications_count_lag2
+  - dengue_notifications_count_lag3
+  - dengue_notifications_count_lag12
+  - dengue_grave_notifications_count_lag1
+  - dengue_grave_notifications_count_lag2
+  - dengue_grave_notifications_count_lag3
+  - dengue_grave_notifications_count_lag12
+  - total_notifications_count_lag1
+  - total_notifications_count_lag2
+  - total_notifications_count_lag3
+  - total_notifications_count_lag12
+  - p25_h5_t1
+  - p75_h5_t1
+  - p25_h5_t2
+  - p75_h5_t2
+  log1p_columns:
+  - dengue_notifications_count
+  - dengue_grave_notifications_count
+  - total_notifications_count
+  - p25_canal_t
+  - p50_canal_t
+  - p75_canal_t
+  - dengue_notifications_count_lag1
+  - dengue_notifications_count_lag2
+  - dengue_notifications_count_lag3
+  - dengue_notifications_count_lag12
+  - dengue_grave_notifications_count_lag1
+  - dengue_grave_notifications_count_lag2
+  - dengue_grave_notifications_count_lag3
+  - dengue_grave_notifications_count_lag12
+  - total_notifications_count_lag1
+  - total_notifications_count_lag2
+  - total_notifications_count_lag3
+  - total_notifications_count_lag12
+  - p25_h5_t1
+  - p75_h5_t1
+  - p25_h5_t2
+  - p75_h5_t2
+  missing: error
+  scaling: standard_train
+  imputation: none
+candidate:
+  family: logistic_onset
+  adapter_version: v1
+  library: scikit-learn
+  library_version: 1.7.2
+  C: 1.0
+  max_iter: 5000
+  early_stopping: false
+  hyperparameter_search: false
+  class_balancing: false
+  refit: false
+  seed_selection: false
