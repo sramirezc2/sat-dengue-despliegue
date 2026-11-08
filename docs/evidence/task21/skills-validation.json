@@ -25,6 +25,28 @@
       "routed_skill": "sat-dengue-recovery"
     }
   ],
+  "accumulated_gate": {
+    "api_tests": 35,
+    "contracts": {
+      "pydantic_documents": 24,
+      "zod_documents": 24
+    },
+    "dashboard_tests": 55,
+    "experiment_registry": "VALID",
+    "markdown_local_links": 127,
+    "new_files_over_5_mib": 0,
+    "notebooks_modified": 0,
+    "pipeline_tests": 549,
+    "preservation": {
+      "protected_files": 49,
+      "published_json": 22,
+      "status": "PASSED",
+      "t16_receipts": 16
+    },
+    "ruff": "PASSED",
+    "secret_candidates": 0,
+    "windows_checkout_tests": "PASSED"
+  },
   "date": "2026-11-08",
   "method": "isolated_static_dry_run",
   "official_validator": {
