@@ -1547,6 +1547,86 @@ después de publicar.
 
 ---
 
+### Tanda 10, línea R — Retroanálisis sobre la tubería real y la regresión logística
+
+**Qué se hizo.** El pipeline `retroanalisis` del PR #2 reentrena el modelo en cada mes de origen de 2019 a 2024 con el arnés `run_candidate`. Se corrió sobre el panel canónico reconstruido desde el manifiesto privado `satd-raw-a1a7f237`, con los cinco crudos verificados por sha256, filtrado a Tolima (73) y Meta (50).
+
+**Cómo se comparó.** El candidato emite en cada mes de origen las mismas alertas que la línea base, con las definiciones de la política v2. Hay tres líneas base del canal:
+
+- P75;
+- f × P75 con f elegido en el año anterior;
+- la misma, pero solo fuera de exceso. Esta es la principal.
+
+En total son 541 inicios evaluables en T+1 y 380 en T+2. Las recetas usadas aquí son locales y no se registraron en la fábrica. Las cifras entre paréntesis son la diferencia contra el canal fuera de exceso, con su IC 95 % bootstrap por municipio.
+
+#### Hallazgos sobre la tubería
+
+- **Panel nacional.** El panel canónico tiene 33 departamentos y 182.886 filas. El pipeline ahora filtra por departamento, con Tolima y Meta por defecto.
+- **Demora de etiqueta.** Con `label_delay_months = 1`, el objetivo 2024-12 deja su etiqueta en 2025-01 y el arnés lo rechazaba. El corte ahora considera esa demora.
+- **`EXP001` es un fixture** (4 rondas, profundidad 2). Como referencia científica pierde contra todos los canales: −63 en T+1.
+
+#### XGBoost
+
+| Receta | T+1 | T+2 |
+|---|---|---|
+| 300 rondas, profundidad 4 | 290 vs 280 (+10; −17 a 39) | 199 vs 179 (+20; −5 a 46) |
+| 150 rondas, profundidad 3, sin clima | 293 | 211 (+32; 7 a 58) |
+
+- **Contra el P75 con pocas alertas pierde:** 130 vs 155.
+- **Quitar el clima no cambia T+1 y mejora T+2.** Se sostiene con dos recetas, con dos semillas usando muestreo 0,8 y con reentrenamiento anual.
+- **Ablación:** el bloque del canal es indispensable (solo casos: 195 vs 285). Clima, mes, rezago de 12 meses y conteos de dengue grave o total no aportan.
+
+#### Regresión logística
+
+Sin clima, con log1p de conteos y umbrales, estandarizada:
+
+| | Contra el canal fuera de exceso | Contra el P75 |
+|---|---|---|
+| T+1 | 306 vs 280 (+26; 7 a 49) | empata (154 vs 155) |
+| T+2 | 215 vs 179 (+36; 12 a 61) | 92 vs 81 |
+
+- **Estable** con C de 0,1 a 10. En T+1 gana o empata los 6 años, y en T+2 gana 5 de 6.
+- **Una versión mínima con 5 variables explícitas rinde igual:** T+1 301 y T+2 216; en T+2 también le gana al P75, 96 vs 81 (IC 3 a 28). Las variables son:
+  - margen contra el umbral del mes objetivo;
+  - margen contra el umbral actual;
+  - cambio del umbral entre meses;
+  - tendencia de casos;
+  - si hubo casos en T.
+- **Qué aprende:** en T+1, el margen continuo entre los casos recientes y el P75 del mes objetivo. En T+2, si el umbral baja por estacionalidad del mes intermedio al mes objetivo.
+- **Selección en 2019-2022 y evaluación congelada en 2023-2024:**
+  - En T+1 la selección elige la logística, que mantiene +16.
+  - En T+2 elige XGBoost sin clima por un margen mínimo, pero cae a +3; la logística mantiene +15 (IC 2 a 30).
+  - Parte de la ventaja de XGBoost en T+2 era ruido de selección.
+- **Criterio operativo con umbral congelado del año anterior (FAR ≤ canal + 5 puntos), 2020-2024:**
+  - T+1: 280 vs 233 inicios, cumple 4 de 5 años.
+  - T+2: 197 vs 153, cumple 3 de 5.
+  - Los años que fallan son de baja transmisión (2021-2022).
+  - Si cada mes se emiten tantas alertas como el canal fuera de exceso (número conocido en T), cumple 6 de 6 en ambos horizontes.
+
+#### Líneas cerradas sin mejora
+
+- Regla híbrida canal + modelo con el umbral elegido ex ante: +5.
+- Splines (tipo GAM) sobre la versión mínima.
+- Interacciones y pesos balanceados.
+- Un modelo por departamento: peor.
+- Señal regional por departamento.
+- Señal de 5 municipios vecinos: coordenadas DIVIPOLA de datos.gov.co, distancia media de 24 km, calculada sobre el panel nacional. Suma unos 6 inicios de los que arrancan desde 0 casos, pero no cambia el total.
+
+#### Lo que queda a favor del modelo
+
+El 30 % de los inicios de T+1 (161 de 541) arranca con 0 casos en el origen, y el canal no puede detectar ninguno. Con las mismas alertas, los modelos detectan entre 40 y 50. El canal se satura cerca de 380 inicios en T+1, y la logística llega a 459 al máximo volumen de alertas.
+
+#### Limitaciones
+
+- Se probaron unas 25 variantes sobre los mismos años. La logística es la más consistente, pero conviene registrarla en la fábrica con la receta congelada antes de mirar nada nuevo.
+- La fábrica hoy solo acepta `xgboost_onset`.
+- La línea base principal es un canal mejorado, no la regla oficial.
+- 2025 sigue intacto para la confirmación del campeón.
+
+#### Próximo paso
+
+Agregar la familia logística a la fábrica y registrar la receta mínima como experimento formal.
+
 ## 6. Estado de las líneas de trabajo
 
 | Línea | Estado |
