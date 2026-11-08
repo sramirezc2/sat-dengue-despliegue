@@ -1629,6 +1629,19 @@ En T+1 las probabilidades están bien calibradas (skill de Brier 0,17). En T+2 e
 - **Pesos por tamaño del brote** (positivos ponderados por log1p de los casos en los 3 meses del brote, usando solo filas ya maduras): con α = 0,5, en T+1 empata con el canal en brotes grandes (120 vs 120; antes 111 vs 116) y mantiene el total (301 vs 280, IC 4 a 38). En T+2 casi no cambia (72 vs 76 en grandes; 215 en total).
 - **Recalibración de T+2 con Platt del año anterior:** empeora (skill de Brier 0,06 → 0,01) porque corrige de más: la prevalencia de inicios cambia mucho entre años. Hace falta una recalibración más estable, con varios años.
 
+#### Calibración de T+2 y señal nacional
+
+- **Recalibrar con todos los años previos** (Platt o isotónica) tampoco sirve: el skill de Brier pasa a −0,01, frente a 0,06 sin recalibrar.
+- **La causa es la frecuencia anual de inicios en T+2,** que va de 7 % (2021) a 42 % (2019). El modelo predice entre 14 % y 24 %, porque no sabe si viene un año epidémico. Ninguna calibración fija con el pasado acierta el año siguiente.
+- **Señal nacional** (fracción de los 1.122 municipios en exceso o en alerta en T, casos nacionales y su tendencia):
+  - no cambia el ordenamiento: T+1 303 vs 301 y T+2 215 vs 215;
+  - mejora la calibración de 2019 en T+2, pero empeora el Brier global.
+  - Línea cerrada.
+- **Candidata recomendada:** la logística sin clima con pesos por tamaño (α = 0,5).
+  - T+1: 301 vs 280 (IC 4 a 38); empata en brotes grandes (120 vs 120).
+  - T+2: 215 vs 179 (IC 14 a 60).
+  - En el holdout 2019-22 → 2023-24 gana en ambas mitades: en T+2 con IC por encima de 0; en T+1 por +10 y +11, con IC que toca 0.
+
 #### Limitaciones
 
 - Se probaron unas 45 configuraciones sobre los mismos años. La logística es la más consistente, pero conviene registrarla en la fábrica con la receta congelada antes de mirar nada nuevo.
