@@ -16,12 +16,17 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
     Args:
         artifact: Artefacto canónico producido por canonical_build.
         params: configuracion (ruta a un YAML de experimento), horizontes, primer_origen,
-            ultimo_objetivo y salida (carpeta bajo data/, ignorada por Git).
+            ultimo_objetivo, salida (carpeta bajo data/, ignorada por Git) y, opcional,
+            departamentos (códigos DANE; el panel canónico es nacional).
 
     Returns:
         Tupla (resumen, por_anio, curva, omitidos), cada una con columna horizonte.
     """
     table, schema = load_canonical(artifact)
+    departamentos = params.get("departamentos")
+    if departamentos:
+        codigos = [str(c) for c in departamentos]
+        table = table[table.department_code.isin(codigos)].reset_index(drop=True)
     config = yaml.safe_load(Path(params["configuracion"]).read_text(encoding="utf-8"))
     salidas: dict[str, list[pd.DataFrame]] = {"resumen": [], "anio": [], "curva": [], "omit": []}
     for h in params["horizontes"]:

@@ -6,3 +6,5 @@ retroanalisis:
   primer_origen: "2019-01"
   ultimo_objetivo: "2024-12"
   salida: data/retroanalisis
+  # El panel canónico es nacional; por defecto Tolima (73) y Meta (50), como la propuesta.
+  departamentos: ["50", "73"]
