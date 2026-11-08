@@ -73,59 +73,71 @@ def desde_pipeline(
     candidato: str,
     horizonte: int,
     col_casos: str = "dengue_notifications_count",
-    col_fold: str = "fold_year",
+    col_prob: str = "raw_probability",
+    col_fold: str = "fold_id",
+    permitir_un_fold: bool = False,
 ) -> pd.DataFrame:
-    """Adaptar panel y predicciones por fila al formato de entrada de la validación.
+    """Adaptar el panel canónico y las predicciones del arnés al formato de la validación.
 
-    panel trae municipality_code, year_month, <col_casos>, p75_canal_t y p75_t<h>. predicciones
-    trae municipality_code, year_month, horizon, candidate, prediction_probability, y_true y
-    <col_fold>, el año con el que se reentrenó el modelo que produjo cada fila.
+    Usa los contratos del pipeline: panel con municipality_code, year_month, <col_casos>,
+    p75_canal_t y p75_h5_t<h>; predicciones con municipality_code, origin_period, target_period,
+    horizon, fold_id, candidate y <col_prob>. Exceso, objetivo e inicio se derivan del panel, así
+    que no hace falta y_true.
 
     Args:
-        panel: Panel mensual del canal.
+        panel: Panel canónico mensual.
         predicciones: Predicciones fuera de muestra por fila.
         candidato: Candidato a evaluar.
         horizonte: 1 o 2.
         col_casos: Columna de casos que usa el canal.
-        col_fold: Columna con el año de reentrenamiento.
+        col_prob: Columna de probabilidad a ordenar (cruda o calibrada).
+        col_fold: Identificador del reentrenamiento que produjo cada fila.
+        permitir_un_fold: Acepta un único fold (corte fijo); por defecto se exige ventana
+            expansiva, con más de un reentrenamiento.
 
     Returns:
         DataFrame con las columnas de COLUMNAS y fold.
 
     Raises:
-        ValueError: Si las predicciones no traen el año de reentrenamiento.
+        ValueError: Si falta el fold o hay un único reentrenamiento sin permiso.
     """
-    p = panel.copy()
-    p["periodo"] = pd.PeriodIndex(p.year_month, freq="M")
-    p["exceso_t"] = (p[col_casos].astype(float) > p.p75_canal_t.astype(float)).astype(int)
-    exceso = p.set_index(["municipality_code", "periodo"]).exceso_t
+    p = panel[["municipality_code", "year_month", col_casos, "p75_canal_t",
+               f"p75_h5_t{horizonte}"]].copy()
+    p["exceso"] = (p[col_casos].astype(float) > p.p75_canal_t.astype(float)).astype(int)
+    exceso = p.set_index(["municipality_code", "year_month"]).exceso
 
     q = predicciones[
         (predicciones.candidate == candidato)
-        & (predicciones.horizon.astype(str) == str(horizonte))
+        & (predicciones.horizon.astype(int) == int(horizonte))
     ].copy()
     if col_fold not in q.columns:
-        raise ValueError(f"Las predicciones no traen '{col_fold}' (año de reentrenamiento)")
-    q["periodo"] = pd.PeriodIndex(q.year_month, freq="M")
-    cols = ["municipality_code", "periodo", col_casos, f"p75_t{horizonte}", "exceso_t"]
-    q = q.merge(p[cols], on=["municipality_code", "periodo"], how="inner")
-    objetivo = q.periodo + horizonte
-    previo = [exceso.get((m, x - 1), np.nan) for m, x in zip(q.municipality_code, objetivo)]
-    q["exceso_prev_obj"] = previo
-    keep = q.exceso_prev_obj.notna().values
-    q, objetivo = q[keep], objetivo[keep]
-    y = q.y_true.astype(int)
+        raise ValueError(f"Las predicciones no traen '{col_fold}'")
+    if q[col_fold].nunique() < 2 and not permitir_un_fold:
+        raise ValueError("Un único reentrenamiento: no es una ventana expansiva")
+    q = q.merge(
+        p.rename(columns={"year_month": "origin_period"}),
+        on=["municipality_code", "origin_period"],
+        how="inner",
+    )
+    previo = [
+        str(pd.Period(t, freq="M") - 1) for t in q.target_period
+    ]
+    q["exceso_obj"] = [exceso.get(k, np.nan) for k in zip(q.municipality_code, q.target_period)]
+    q["exceso_prev"] = [exceso.get(k, np.nan) for k in zip(q.municipality_code, previo)]
+    q = q[q.exceso_obj.notna() & q.exceso_prev.notna()]
+    origen = pd.PeriodIndex(q.origin_period, freq="M")
+    objetivo = pd.PeriodIndex(q.target_period, freq="M")
     return pd.DataFrame(
         {
             "municipio": q.municipality_code.values,
-            "anio_objetivo": [o.year for o in objetivo],
-            "origen": [o.year * 12 + o.month for o in q.periodo],
-            "score": q.prediction_probability.astype(float).values,
-            "objetivo": y.values,
-            "inicio": ((y == 1) & (q.exceso_prev_obj == 0)).astype(int).values,
+            "anio_objetivo": objetivo.year,
+            "origen": origen.year * 12 + origen.month,
+            "score": q[col_prob].astype(float).values,
+            "objetivo": q.exceso_obj.astype(int).values,
+            "inicio": ((q.exceso_obj == 1) & (q.exceso_prev == 0)).astype(int).values,
             "casos_t": q[col_casos].astype(float).values,
-            "p75_objetivo": q[f"p75_t{horizonte}"].astype(float).values,
-            "exceso_t": q.exceso_t.values,
+            "p75_objetivo": q[f"p75_h5_t{horizonte}"].astype(float).values,
+            "exceso_t": q.exceso.values,
             "fold": q[col_fold].values,
         }
     )

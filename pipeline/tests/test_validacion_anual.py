@@ -47,32 +47,39 @@ def test_rechaza_2025() -> None:
         va.comparar(_sintetico(), anios=(2024, 2025))
 
 
-def test_adaptador_desde_pipeline() -> None:
-    """El adaptador deriva inicio y exceso en T desde panel y predicciones por fila."""
-    meses = pd.period_range("2016-11", "2018-12", freq="M").astype(str)
+def _panel_y_predicciones(folds: bool = True):
+    """Panel canónico y predicciones del arnés para dos municipios."""
+    meses = [str(p) for p in pd.period_range("2016-11", "2018-12", freq="M")]
     panel = pd.DataFrame(
         [{"municipality_code": m, "year_month": x, "dengue_notifications_count": c,
-          "p75_canal_t": 5, "p75_t1": 5, "p75_t2": 5}
+          "p75_canal_t": 5, "p75_h5_t1": 5, "p75_h5_t2": 5}
          for m, c in (("A", 1), ("B", 9)) for x in meses]
     )
     pred = pd.DataFrame(
-        [{"municipality_code": m, "year_month": x, "horizon": 1, "candidate": "xgb",
-          "prediction_probability": p, "y_true": 1, "fold_year": int(x[:4]) + 1}
+        [{"municipality_code": m, "origin_period": x,
+          "target_period": str(pd.Period(x, freq="M") + 1), "horizon": 1,
+          "fold_id": f"fold-{x[:4]}" if folds else "procedure-x", "candidate": "xgb",
+          "raw_probability": p}
          for m, p in (("A", 0.8), ("B", 0.2)) for x in meses[:-1]]
     )
+    return panel, pred
+
+
+def test_adaptador_desde_pipeline() -> None:
+    """El adaptador deriva exceso, objetivo e inicio desde el panel canónico."""
+    panel, pred = _panel_y_predicciones()
     df = va.desde_pipeline(panel, pred, "xgb", 1)
     assert set(df.columns) >= set(va.COLUMNAS)
-    assert df.query("municipio == 'A'").inicio.eq(1).all()
-    assert df.query("municipio == 'B'").inicio.eq(0).all()
+    assert df.query("municipio == 'A'").objetivo.eq(0).all()  # A nunca supera el P75
+    assert df.query("municipio == 'B'").inicio.eq(0).all()  # B siempre en exceso
+    assert df.query("municipio == 'B'").exceso_t.eq(1).all()
     r = va.comparar(df, anios=(2018,), n_boot=50)
     assert {"canal_p75", "canal_fuera_exceso"} <= set(r.linea_base)
 
 
-def test_adaptador_exige_anio_de_reentrenamiento() -> None:
-    """Sin fold_year no hay ventana expansiva verificable."""
-    panel = pd.DataFrame([{"municipality_code": "A", "year_month": "2018-01",
-                           "dengue_notifications_count": 1, "p75_canal_t": 5, "p75_t1": 5}])
-    pred = pd.DataFrame([{"municipality_code": "A", "year_month": "2018-01", "horizon": 1,
-                          "candidate": "xgb", "prediction_probability": 0.5, "y_true": 0}])
+def test_adaptador_exige_ventana_expansiva() -> None:
+    """Un corte fijo (un solo fold) se rechaza salvo permiso explícito."""
+    panel, pred = _panel_y_predicciones(folds=False)
     with pytest.raises(ValueError):
         va.desde_pipeline(panel, pred, "xgb", 1)
+    assert len(va.desde_pipeline(panel, pred, "xgb", 1, permitir_un_fold=True)) > 0
