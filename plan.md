@@ -1,8 +1,8 @@
 # Hoja de ruta de implementación — Pipeline E2E SAT DENGUE
 
-**Versión:** 1.3
+**Versión:** 1.4
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Tarea 16 COMPLETA — T16-FACTORY-XGB-S53-v1, N=3 E2E exacta; 16/22; tarea 17 EN CURSO — preflight aprobado por DEC-026
+**Estado general:** Tarea 17 COMPLETA — administración multi-experimento validada; 17/22; tarea 18 PENDIENTE, no iniciada; T16 intacta
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -118,7 +118,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 14 | Migrar la publicación sin romper el despliegue | `COMPLETA` | 13 | Publicador puro, wrapper compatible y deployment_publication registrados; equivalencia byte a byte en cuatro casos caracterizados. Staging, contrato, manifiesto SHA-256 y rollback probados; 84 pruebas nuevas/440 totales. Los 22 JSON originales conservan sus hashes y Pydantic/Zod aceptan los generados. |
 | 15 | Cerrar portabilidad | `COMPLETA` | 14 | macOS local y Colab real verdes; matriz nativa Ubuntu/Windows/macOS sobre 61159d9 aprobada en run 42424636145. Cada runner: 463 pruebas, 12 específicas, cuatro CLI, árbol limpio y hashes idénticos. Siete checks del PR verdes; recibos/logs revisados. DEC-019; docs/decisions/portability.md. |
 | 16 | Conectar el release crudo y ejecutar reproducción sintética y real | `COMPLETA` | 15 | Construcción real/N=3 canónico y evidencia previa conservadas. [T16-FACTORY-XGB-S53-v1](docs/decisions/task16-experiment-specification.md): tres procesos E2E desde cinco fuentes, diez soportes aprobados, modelos independientes S53, identidades completas exactamente iguales. Lock/sync/Ruff, 487 pruebas pipeline, API 28, tablero 33/lint/build y 24 contratos verdes; 22 JSON publicados intactos. Evidencia agregada en docs/evidence/task16/factory-experiment/ y [reproducción](docs/decisions/task16-reproduction.md). Sin G, presupuesto, campeón o autorización operativa. La generalización experimental se incorpora como tarea 17. |
-| 17 | Generalizar la fábrica y administrar experimentos reproducibles | `EN CURSO` | 16 | `factory_validation` y T16 permanecen intactos; registro central y esquemas cerrados; protocolos/configuraciones congelados; pipeline separado `experiment_run`; evidencia agregada append-only por ejecución; MLflow padre/hijos; conclusiones y comparación determinista. Dos fixtures prueban coexistencia, rechazo fail-closed y exclusión de 2025, sin ejecutar ciencia real, HPO, campeón ni backend remoto. Bloqueo documental DEC-025 resuelto por DEC-026. |
+| 17 | Generalizar la fábrica y administrar experimentos reproducibles | `COMPLETA` | 16 | Registro y configuración cerrados, hashes, estados, pipeline separado `experiment_run`, evidencia exclusiva e inventarios, MLflow local padre/hijos, conclusiones obligatorias y comparación JSON. EXP001/EXP002: fixtures completos con recetas distintas y conclusiones NOT_APPLICABLE; sin ciencia real. 536 pruebas (45 nuevas), lock/sync/Ruff, API 28, tablero 33/lint/build, Pydantic/Zod 24 y cuatro CLI previos verdes. 49 archivos protegidos idénticos: 22 JSON, 16 recibos previos y demás evidencia T16; identidad N=3 intacta. [Diseño y límites](docs/decisions/experiment-management.md), [validaciones](docs/evidence/task17/validation.json). |
 | 18 | Realizar revisión científica independiente | `PENDIENTE` | 17 | Auditoría de fuentes, construcción canónica, determinismo, etiquetas, fuga, folds, líneas base, métricas, gobernanza experimental y correspondencia con la bitácora. |
 | 19 | Documentar operación, límites y migraciones | `PENDIENTE` | 18 | Guía de un comando, registro/ejecución/comparación de experimentos, Colab, troubleshooting, release crudo, reconstrucción canónica y migración Hugging Face/Zenodo hacia AWS. |
 | 20 | Ejecutar revisión de seguridad | `PENDIENTE` | 19 | Revisión de clasificación y privacidad de datos crudos, registro experimental, evidencia, tokens, secretos, dependencias y superficies de red. |
@@ -218,10 +218,10 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 16/22 |
-| Tarea activa | 17 — Administración multi-experimento |
+| Tareas completas | 17/22 |
+| Tarea activa | Ninguna — detenido antes de tarea 18 |
 | Tareas bloqueadas | Ninguna |
-| Última tarea completada | 16 — Fábrica V3 reproducible N=3 |
+| Última tarea completada | 17 — Administración multi-experimento |
 | Última actualización | 7 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -292,6 +292,8 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 | 2026-11-07 | 17 | PENDIENTE | — | Documentos reconciliados; `git diff --check`, estados, conteos y referencias vigentes revisados. | DEC-026 resuelve DEC-025: ruleset obligatorio antes del merge, no como precondición de implementación; cierre vigente 16/22. Ninguna implementación iniciada y ninguna tarea activa. |
 
 | 2026-11-07 | 17 | EN CURSO | Base `daf6ed5`; inicio local | Preflight documental y Git repetido; DEC-026 consistente; rama obligatoria y T16 COMPLETA. Snapshot SHA-256 de T16/publicaciones y copia de los tres cambios preexistentes fuera del repositorio. | Únicamente alcance T17; sin reproducción privada, push, merge ni nuevo PR. |
+
+| 2026-11-07 | 17 | COMPLETA | `b19a92e` preflight; `84e6067` implementación; `6910efa` regresiones; `7c4004a` guard de bytes; cierre documental local | Lock/sync/Ruff, 536 pruebas (45 nuevas), API 28, tablero 33/lint/build y 24 contratos Pydantic/Zod verdes. Cuatro pipelines sintéticos previos y EXP001/EXP002 por CLI Kedro aprobados; tracking real SQLite y comparación de 42 filas T+2 verificados. Secretos/pesos/notebooks y diff revisados. | 17/22, ninguna tarea activa o bloqueada; 18 PENDIENTE. Los 49 hashes protegidos y N=3 T16 permanecen iguales; regresión artificial del adaptador exacta frente a daf6ed5, sin repetir T16 real ni adquirir fuentes privadas. Recibos CLI conservan código 6910efa; el guard posterior se valida con la suite E2E temporal completa. Sin push, merge, force push ni PR adicional. CI remota/ruleset/aprobación siguen como gates de merge. |
 
 ## 7. Decisiones y desviaciones
 
@@ -389,4 +391,4 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre vigente: 16 COMPLETA, 16/22 y tarea 17 EN CURSO (preflight DEC-026 aprobado).
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente tras T17: 17/22, tarea 17 COMPLETA y tarea 18 PENDIENTE; ninguna tarea activa o bloqueada.

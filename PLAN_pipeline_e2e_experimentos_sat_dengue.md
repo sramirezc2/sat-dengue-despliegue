@@ -631,6 +631,11 @@ La especificación debe entrar por PR antes de ejecutar una corrida real. Dos
 fixtures sintéticos probarán coexistencia, aislamiento, comparación, rechazo de
 recetas alteradas y exclusión de 2025; no contarán como evidencia científica.
 
+La implementación y los límites concretos de T17 se documentan en
+[`docs/experiments/README.md`](docs/experiments/README.md), con evidencia de
+aceptación en [`docs/evidence/task17/validation.json`](docs/evidence/task17/validation.json).
+Los estados y el siguiente paso autorizado se consultan exclusivamente en `plan.md`.
+
 ### D10. Protocolo común de evaluación de inicios
 
 Todos los enfoques producirán una interfaz común de probabilidades por:

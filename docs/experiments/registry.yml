@@ -5,7 +5,7 @@ experiments:
   hypothesis_id: EXP001-H0
   title: "EXP001 aceptaci\xF3n t\xE9cnica"
   experiment_type: synthetic_fixture
-  status: APPROVED
+  status: COMPLETED
   protocol: docs/experiments/EXP001/SPECIFICATION.md
   protocol_sha256: be060fa60d164d999cc5a38d876b7d5b55bcb81a0de9a885886180895ee0b3c5
   configuration: pipeline/conf/experiments/EXP001.yml
@@ -19,7 +19,7 @@ experiments:
   hypothesis_id: EXP002-H0
   title: "EXP002 aceptaci\xF3n t\xE9cnica"
   experiment_type: synthetic_fixture
-  status: APPROVED
+  status: COMPLETED
   protocol: docs/experiments/EXP002/SPECIFICATION.md
   protocol_sha256: 584ca7c5b9f9f62458b113743d9a42748a5ffd8fc4c07a6dc35e59de71070b41
   configuration: pipeline/conf/experiments/EXP002.yml
