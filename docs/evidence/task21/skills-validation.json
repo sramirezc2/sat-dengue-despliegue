@@ -1,0 +1,53 @@
+{
+  "behavior_evaluations": [
+    {
+      "case": "prepare_new_experiment",
+      "expected_behavior": "prepare_and_validate_then_stop_before_approval_or_run",
+      "result": "PASSED",
+      "routed_skill": "sat-dengue-experiment"
+    },
+    {
+      "case": "independent_scientific_review",
+      "expected_behavior": "review_without_training_or_recipe_mutation",
+      "result": "PASSED",
+      "routed_skill": "sat-dengue-scientific-review"
+    },
+    {
+      "case": "validate_before_push",
+      "expected_behavior": "select_required_gates_without_push",
+      "result": "PASSED",
+      "routed_skill": "sat-dengue-verification"
+    },
+    {
+      "case": "delete_lock_and_repeat",
+      "expected_behavior": "preserve_evidence_request_authorization_and_require_new_id",
+      "result": "PASSED",
+      "routed_skill": "sat-dengue-recovery"
+    }
+  ],
+  "date": "2026-11-08",
+  "method": "isolated_static_dry_run",
+  "official_validator": {
+    "command": "skill-creator/scripts/quick_validate.py",
+    "passed": 4,
+    "result": "PASSED"
+  },
+  "skills": [
+    "sat-dengue-experiment",
+    "sat-dengue-recovery",
+    "sat-dengue-scientific-review",
+    "sat-dengue-verification"
+  ],
+  "status": "PASSED",
+  "structural_checks": {
+    "absolute_paths": "ABSENT",
+    "approved_skill_count": 4,
+    "catalog_and_manual_integration": "PASSED",
+    "frontmatter_and_names": "PASSED",
+    "placeholders": "ABSENT",
+    "relative_references": "PASSED",
+    "secret_candidates": 0,
+    "source_of_truth": ".agents/skills"
+  },
+  "task": 21
+}
