@@ -1,0 +1,102 @@
+{
+  "audited_commit": "00c540445fbe18f6e9aff05960afb6eac6a97d84",
+  "blocking_scientific_findings": 0,
+  "conclusion": "APPROVED_WITH_LIMITATIONS",
+  "findings": [
+    {
+      "followup": "before_superiority_claim",
+      "id": "SC-01",
+      "owner": "scientific_team",
+      "severity": "MEDIUM",
+      "topic": "scientific_baselines_not_reproduced"
+    },
+    {
+      "followup": "before_operational_interpretation",
+      "id": "SC-02",
+      "owner": "scientific_team",
+      "severity": "MEDIUM",
+      "topic": "availability_and_cohort_assumptions"
+    },
+    {
+      "followup": "separate_approved_verification",
+      "id": "SC-03",
+      "owner": "scientific_reviewers",
+      "severity": "LOW",
+      "topic": "descriptive_uncertainty_and_private_recomputation"
+    },
+    {
+      "followup": "link_current_plan",
+      "id": "SC-04",
+      "owner": "documentation_maintainer",
+      "severity": "LOW",
+      "topic": "historical_numbering"
+    },
+    {
+      "followup": "native_ci_before_merge",
+      "id": "TECH-01",
+      "owner": "repository_maintainer",
+      "severity": "MEDIUM",
+      "topic": "windows_checkout_byte_identity"
+    }
+  ],
+  "matrix": {
+    "S01": "PASS",
+    "S02": "NOT_VERIFIED",
+    "S03": "PASS",
+    "S04": "PASS",
+    "S05": "PASS",
+    "S06": "PASS",
+    "S07": "PASS",
+    "S08": "PASS",
+    "S09": "PARTIAL",
+    "S10": "PARTIAL",
+    "S11": "PARTIAL",
+    "S12": "PASS",
+    "S13": "PASS",
+    "S14": "PARTIAL",
+    "S15": "PARTIAL",
+    "S16": "PASS",
+    "S17": "NOT_VERIFIED",
+    "S18": "PASS",
+    "S19": "PARTIAL"
+  },
+  "method": [
+    "source_review",
+    "versioned_evidence_integrity",
+    "aggregate_arithmetic",
+    "exhaustive_synthetic_metric_crosscheck",
+    "existing_offline_test_suite"
+  ],
+  "preflight_pr": {
+    "base": "main",
+    "head": "00c540445fbe18f6e9aff05960afb6eac6a97d84",
+    "macos": "success",
+    "number": 1,
+    "pipeline_quality": "success",
+    "pipeline_run_id": 42447138122,
+    "state": "open",
+    "ubuntu": "success",
+    "windows": "failure"
+  },
+  "prohibitions_respected": [
+    "no_private_download",
+    "no_real_training",
+    "no_real_n3_repeat",
+    "no_hf_credential_use",
+    "no_historical_evidence_change",
+    "no_model_selection"
+  ],
+  "report": "docs/reviews/scientific-review.md",
+  "schema_version": 1,
+  "t16_identity_sha256": "899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f",
+  "task": 18,
+  "validations": {
+    "lock_sync_ruff": "PASS",
+    "metric_cases": 1134,
+    "pipeline_tests": 536,
+    "previous_t16_receipts": 16,
+    "protected_files": 49,
+    "published_json": 22,
+    "warnings": 6
+  }
+}

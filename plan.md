@@ -2,7 +2,7 @@
 
 **Versión:** 1.4
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Tarea 17 COMPLETA — administración multi-experimento validada; 17/22; tarea 18 PENDIENTE, no iniciada; T16 intacta
+**Estado general:** 18/22; T18 COMPLETA — APPROVED_WITH_LIMITATIONS; T19 PENDIENTE; ninguna tarea activa o bloqueada
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -119,7 +119,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 15 | Cerrar portabilidad | `COMPLETA` | 14 | macOS local y Colab real verdes; matriz nativa Ubuntu/Windows/macOS sobre 61159d9 aprobada en run 42424636145. Cada runner: 463 pruebas, 12 específicas, cuatro CLI, árbol limpio y hashes idénticos. Siete checks del PR verdes; recibos/logs revisados. DEC-019; docs/decisions/portability.md. |
 | 16 | Conectar el release crudo y ejecutar reproducción sintética y real | `COMPLETA` | 15 | Construcción real/N=3 canónico y evidencia previa conservadas. [T16-FACTORY-XGB-S53-v1](docs/decisions/task16-experiment-specification.md): tres procesos E2E desde cinco fuentes, diez soportes aprobados, modelos independientes S53, identidades completas exactamente iguales. Lock/sync/Ruff, 487 pruebas pipeline, API 28, tablero 33/lint/build y 24 contratos verdes; 22 JSON publicados intactos. Evidencia agregada en docs/evidence/task16/factory-experiment/ y [reproducción](docs/decisions/task16-reproduction.md). Sin G, presupuesto, campeón o autorización operativa. La generalización experimental se incorpora como tarea 17. |
 | 17 | Generalizar la fábrica y administrar experimentos reproducibles | `COMPLETA` | 16 | Registro y configuración cerrados, hashes, estados, pipeline separado `experiment_run`, evidencia exclusiva e inventarios, MLflow local padre/hijos, conclusiones obligatorias y comparación JSON. EXP001/EXP002: fixtures completos con recetas distintas y conclusiones NOT_APPLICABLE; sin ciencia real. 536 pruebas (45 nuevas), lock/sync/Ruff, API 28, tablero 33/lint/build, Pydantic/Zod 24 y cuatro CLI previos verdes. 49 archivos protegidos idénticos: 22 JSON, 16 recibos previos y demás evidencia T16; identidad N=3 intacta. [Diseño y límites](docs/decisions/experiment-management.md), [validaciones](docs/evidence/task17/validation.json). |
-| 18 | Realizar revisión científica independiente | `PENDIENTE` | 17 | Auditoría de fuentes, construcción canónica, determinismo, etiquetas, fuga, folds, líneas base, métricas, gobernanza experimental y correspondencia con la bitácora. |
+| 18 | Realizar revisión científica independiente | `COMPLETA` | 17 | [Auditoría científica](docs/reviews/scientific-review.md): APPROVED_WITH_LIMITATIONS, sin hallazgos científicos bloqueantes. Código/contratos/bitácora contrastados; 536 pruebas y 1.134 casos analíticos, 49 hashes y N=3 histórico íntegros. Tandas G, disponibilidad operativa y privacidad remota actual no verificadas; referencias científicas/intervalos de fábrica limitados. [Recibo](docs/evidence/task18/scientific-review.json). |
 | 19 | Documentar operación, límites y migraciones | `PENDIENTE` | 18 | Guía de un comando, registro/ejecución/comparación de experimentos, Colab, troubleshooting, release crudo, reconstrucción canónica y migración Hugging Face/Zenodo hacia AWS. |
 | 20 | Ejecutar revisión de seguridad | `PENDIENTE` | 19 | Revisión de clasificación y privacidad de datos crudos, registro experimental, evidencia, tokens, secretos, dependencias y superficies de red. |
 | 21 | Registrar capacidades reutilizables | `PENDIENTE` | 20 | Skills, agentes o herramientas útiles identificados y documentados. |
@@ -218,10 +218,10 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 17/22 |
-| Tarea activa | Ninguna — detenido antes de tarea 18 |
+| Tareas completas | 18/22 |
+| Tarea activa | Ninguna — detenido antes de tarea 19 |
 | Tareas bloqueadas | Ninguna |
-| Última tarea completada | 17 — Administración multi-experimento |
+| Última tarea completada | 18 — Auditoría científica |
 | Última actualización | 7 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -294,6 +294,10 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 | 2026-11-07 | 17 | EN CURSO | Base `daf6ed5`; inicio local | Preflight documental y Git repetido; DEC-026 consistente; rama obligatoria y T16 COMPLETA. Snapshot SHA-256 de T16/publicaciones y copia de los tres cambios preexistentes fuera del repositorio. | Únicamente alcance T17; sin reproducción privada, push, merge ni nuevo PR. |
 
 | 2026-11-07 | 17 | COMPLETA | `b19a92e` preflight; `84e6067` implementación; `6910efa` regresiones; `7c4004a` guard de bytes; cierre documental local | Lock/sync/Ruff, 536 pruebas (45 nuevas), API 28, tablero 33/lint/build y 24 contratos Pydantic/Zod verdes. Cuatro pipelines sintéticos previos y EXP001/EXP002 por CLI Kedro aprobados; tracking real SQLite y comparación de 42 filas T+2 verificados. Secretos/pesos/notebooks y diff revisados. | 17/22, ninguna tarea activa o bloqueada; 18 PENDIENTE. Los 49 hashes protegidos y N=3 T16 permanecen iguales; regresión artificial del adaptador exacta frente a daf6ed5, sin repetir T16 real ni adquirir fuentes privadas. Recibos CLI conservan código 6910efa; el guard posterior se valida con la suite E2E temporal completa. Sin push, merge, force push ni PR adicional. CI remota/ruleset/aprobación siguen como gates de merge. |
+
+| 2026-11-07 | 18 | EN CURSO | Base `00c5404`; preflight completo | Repositorio/rama correctos, árbol limpio, manual versionado y HEAD remoto 00c5404; PR #1 abierto hacia main. Lectura documental requerida completada. Checks consultados: API/tablero/contratos verdes; Pipeline quality/Ubuntu/macOS verdes y Windows fallido (run 42447138122), hash de protocolo/configuración rechazado tras checkout. | Auditoría de código/pruebas/evidencia sin fuentes privadas, token ni nuevas corridas científicas. El fallo de portabilidad se investigará sin alterar hashes/evidencia histórica. Secuencia autorizada 18→19→20; detenerse ante un bloqueo científico. |
+
+| 2026-11-07 | 18 | COMPLETA | `00c5404` auditado; cierre documental local | Lock/sync/Ruff; 536 pruebas y 1.134 casos analíticos contra sklearn; firmas, proporciones, inventarios y 49 hashes protegidos íntegros. | APPROVED_WITH_LIMITATIONS. No nueva ciencia, descargas, token ni repetición real. Limitaciones y responsables en docs/reviews/scientific-review.md; Windows pendiente por conversión de Markdown en checkout, sin relajar integridad. Progreso 18/22; T19 PENDIENTE. |
 
 ## 7. Decisiones y desviaciones
 
@@ -391,4 +395,4 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente tras T17: 17/22, tarea 17 COMPLETA y tarea 18 PENDIENTE; ninguna tarea activa o bloqueada.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 18/22, T18 COMPLETA, T19 PENDIENTE y ninguna tarea activa o bloqueada.
