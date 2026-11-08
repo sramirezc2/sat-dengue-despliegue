@@ -216,3 +216,23 @@ def test_un_resultado_corrupto_no_filtra_detalles_internos(configuracion: Config
     assert respuesta.status_code == 500
     assert respuesta.json()["error_code"] == "INTERNAL_ERROR"
     assert "json" not in respuesta.json()["message"].lower()
+
+
+@pytest.mark.parametrize("name", ["boto3", "botocore", "urllib3", "s3transfer"])
+def test_app_debug_does_not_enable_sdk_http_traces(
+    name: str, configuracion: Configuracion, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Separar el nivel de aplicación de las trazas HTTP que pueden ser firmadas.
+
+    Args:
+        name: Logger de transporte.
+        configuracion: Configuración de servicio aislada sin red.
+        monkeypatch: Restauración del logger tras la prueba.
+    """
+    import logging
+    from dataclasses import replace
+
+    logger = logging.getLogger(name)
+    monkeypatch.setattr(logger, "level", logging.DEBUG)
+    crear_app(replace(configuracion, nivel_log="debug"))
+    assert logger.getEffectiveLevel() == logging.WARNING

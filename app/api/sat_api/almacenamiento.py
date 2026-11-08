@@ -65,10 +65,10 @@ def _descargar_resultado(
             )
         try:
             load_dashboard_fixture(temporal)
-        except FixtureValidationError as error:
+        except FixtureValidationError:
             raise ErrorDeSincronizacion(
                 f"El resultado remoto {clave} no cumple el contrato publicado"
-            ) from error
+            ) from None
         os.replace(temporal, archivo)
     finally:
         temporal.unlink(missing_ok=True)
@@ -114,12 +114,12 @@ def sincronizar_desde_s3(configuracion: Configuracion) -> int:
         registro.info("Sin bucket declarado, se usa solo el directorio local %s", destino)
         return len(list(destino.glob("*.json")))
 
-    cliente = _cliente_s3(configuracion)
     origen = f"s3://{configuracion.bucket_s3}/{configuracion.prefijo_s3}"
     registro.info("Sincronizando resultados desde %s", origen)
 
     descargados = 0
     try:
+        cliente = _cliente_s3(configuracion)
         paginador = cliente.get_paginator("list_objects_v2")
         for pagina in paginador.paginate(
             Bucket=configuracion.bucket_s3, Prefix=configuracion.prefijo_s3
@@ -137,8 +137,11 @@ def sincronizar_desde_s3(configuracion: Configuracion) -> int:
                     objeto["Size"],
                 )
                 descargados += 1
-    except Exception as error:  # boto3 expone muchas excepciones distintas
-        raise ErrorDeSincronizacion(f"La sincronizacion desde {origen} fallo: {error}") from error
+    except ErrorDeSincronizacion as error:
+        # Solo nuestros mensajes de contrato/tamaño; sin cadenas del validador.
+        raise ErrorDeSincronizacion(str(error)) from None
+    except Exception:  # boto3 puede incluir cabeceras/credenciales en el texto
+        raise ErrorDeSincronizacion("La sincronizacion remota fallo") from None
 
     archivos = list(destino.glob("*.json"))
     registro.info(

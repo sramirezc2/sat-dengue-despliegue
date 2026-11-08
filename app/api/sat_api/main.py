@@ -52,6 +52,9 @@ def crear_app(configuracion: Configuracion | None = None) -> FastAPI:
     """Construir la aplicacion lista para desplegar."""
     actual = configuracion or obtener_configuracion()
     logging.basicConfig(level=actual.nivel_log.upper())
+    # El DEBUG de la aplicación no debe activar trazas HTTP firmadas del SDK.
+    for nombre in ("boto3", "botocore", "urllib3", "s3transfer"):
+        logging.getLogger(nombre).setLevel(logging.WARNING)
     _validar_departamentos(actual)
 
     try:

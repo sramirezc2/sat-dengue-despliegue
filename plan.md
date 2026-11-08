@@ -2,7 +2,7 @@
 
 **Versión:** 1.4
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 19/22; T18–T19 COMPLETAS; T20 PENDIENTE; ninguna tarea activa o bloqueada
+**Estado general:** 19/22; T18–T19 COMPLETAS; T20 EN CURSO — revisión de seguridad; T21 PENDIENTE
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -121,7 +121,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 17 | Generalizar la fábrica y administrar experimentos reproducibles | `COMPLETA` | 16 | Registro y configuración cerrados, hashes, estados, pipeline separado `experiment_run`, evidencia exclusiva e inventarios, MLflow local padre/hijos, conclusiones obligatorias y comparación JSON. EXP001/EXP002: fixtures completos con recetas distintas y conclusiones NOT_APPLICABLE; sin ciencia real. 536 pruebas (45 nuevas), lock/sync/Ruff, API 28, tablero 33/lint/build, Pydantic/Zod 24 y cuatro CLI previos verdes. 49 archivos protegidos idénticos: 22 JSON, 16 recibos previos y demás evidencia T16; identidad N=3 intacta. [Diseño y límites](docs/decisions/experiment-management.md), [validaciones](docs/evidence/task17/validation.json). |
 | 18 | Realizar revisión científica independiente | `COMPLETA` | 17 | [Auditoría científica](docs/reviews/scientific-review.md): APPROVED_WITH_LIMITATIONS, sin hallazgos científicos bloqueantes. Código/contratos/bitácora contrastados; 536 pruebas y 1.134 casos analíticos, 49 hashes y N=3 histórico íntegros. Tandas G, disponibilidad operativa y privacidad remota actual no verificadas; referencias científicas/intervalos de fábrica limitados. [Recibo](docs/evidence/task18/scientific-review.json). |
 | 19 | Documentar operación, límites y migraciones | `COMPLETA` | 18 | [Guía central](docs/operations/pipeline-operations.md) enlazada al manual, sin duplicar sus recetas. Preparación multiplataforma, comandos reales, publicación, recuperación, privacidad, memoria y migración de proveedores. Ayudas/AST/código, cuatro CLI artificiales, Pydantic/Zod 24 y 80 enlaces locales verificados. [Recibo](docs/evidence/task19/operations-validation.json). |
-| 20 | Ejecutar revisión de seguridad | `PENDIENTE` | 19 | Revisión de clasificación y privacidad de datos crudos, registro experimental, evidencia, tokens, secretos, dependencias y superficies de red. |
+| 20 | Ejecutar revisión de seguridad | `EN CURSO` | 19 | Revisión de clasificación y privacidad de datos crudos, registro experimental, evidencia, tokens, secretos, dependencias y superficies de red. |
 | 21 | Registrar capacidades reutilizables | `PENDIENTE` | 20 | Skills, agentes o herramientas útiles identificados y documentados. |
 | 22 | Elaborar reporte ejecutivo | `PENDIENTE` | 21 | Resumen final de entregables, validaciones, limitaciones y decisiones pendientes. |
 
@@ -219,7 +219,7 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 19/22 |
-| Tarea activa | Ninguna — detenido antes de tarea 20 |
+| Tarea activa | 20 — Revisión de seguridad |
 | Tareas bloqueadas | Ninguna |
 | Última tarea completada | 19 — Operación, límites y migraciones |
 | Última actualización | 8 de noviembre de 2026 |
@@ -301,7 +301,9 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 
 | 2026-11-07 | 19 | EN CURSO | Tras `19cd9e7` | T18 COMPLETA/APPROVED_WITH_LIMITATIONS, 18/22; rama correcta y árbol limpio. Arquitectura y estados vigentes revisados. | Guía central enlazada al manual existente; verificar sintaxis con ayuda/código/fixtures. No ejecutar comandos privados ni experimentos cerrados. |
 
-| 2026-11-08 | 19 | COMPLETA | Tras `19cd9e7`; cierre documental local | Cuatro ayudas CLI y código de modos privados/Colab; cuatro pipelines artificiales; Pydantic/Zod 24, registro, preservación, ocho bloques y 80 enlaces locales verdes. | Guía central, navegación y recibo; no comandos privados, nuevos experimentos ni cambios a manual/fixtures/evidencia histórica. Progreso 19/22; T20 PENDIENTE. |
+| 2026-11-08 | 19 | COMPLETA | `498583b` cierre; tras `19cd9e7` | Cuatro ayudas CLI y código de modos privados/Colab; cuatro pipelines artificiales; Pydantic/Zod 24, registro, preservación, ocho bloques y 80 enlaces locales verdes. | Guía central, navegación y recibo; no comandos privados, nuevos experimentos ni cambios a manual/fixtures/evidencia histórica. Progreso 19/22; T20 PENDIENTE. |
+
+| 2026-11-08 | 20 | EN CURSO | Tras `498583b` | T19 COMPLETA/19 de 22, rama correcta y árbol limpio. Plan/arquitectura y fronteras revisados; estados secuenciales consistentes. | Auditar activos, credenciales, datos/evidencia, dependencias/red/Git/CI. Corregir solo defectos locales de seguridad e integridad sin alterar ciencia ni evidencia. Gate acumulado y push normal al único PR al cerrar; T21 no se inicia. |
 
 ## 7. Decisiones y desviaciones
 
@@ -399,4 +401,4 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 19/22, T18–T19 COMPLETAS, T20 PENDIENTE y ninguna tarea activa o bloqueada.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 19/22, T18–T19 COMPLETAS, T20 EN CURSO y ninguna tarea bloqueada.

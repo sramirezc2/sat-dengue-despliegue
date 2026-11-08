@@ -123,7 +123,7 @@ def test_una_descarga_interrumpida_preserva_el_resultado_anterior(
     cliente = ClienteS3Falso(contenido, RuntimeError("conexion interrumpida"))
     monkeypatch.setattr(almacenamiento, "_cliente_s3", lambda _: cliente)
 
-    with pytest.raises(ErrorDeSincronizacion, match="conexion interrumpida"):
+    with pytest.raises(ErrorDeSincronizacion, match="fallo"):
         almacenamiento.sincronizar_desde_s3(_configuracion(tmp_path, "bucket"))
 
     assert final.read_bytes() == anterior
@@ -177,3 +177,40 @@ def test_asegurar_resultados_continua_con_la_copia_local_si_s3_falla(
     monkeypatch.setattr(almacenamiento, "sincronizar_desde_s3", fallar)
 
     assert almacenamiento.asegurar_resultados(_configuracion(tmp_path, "bucket")) == 1
+
+
+@pytest.mark.parametrize("stage", ["client", "listing", "download"])
+def test_sdk_errors_do_not_reach_tracebacks_or_fallback_logs(
+    stage: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Ocultar texto arbitrario del SDK en creación, listado y descarga.
+
+    Args:
+        stage: Punto de fallo del cliente artificial.
+        tmp_path: Cache aislada.
+        monkeypatch: Sustitución sin llamadas al proveedor.
+        caplog: Captura de logs del fallback local.
+    """
+    import traceback
+
+    marker = "sensitive-sdk-message-fixture"
+    cliente = ClienteS3Falso(b"{}", RuntimeError(marker))
+
+    def fail(*args: Any, **kwargs: Any) -> Any:
+        """Simular texto arbitrario de un error remoto."""
+        raise RuntimeError(marker)
+
+    if stage == "client":
+        monkeypatch.setattr(almacenamiento, "_cliente_s3", fail)
+    else:
+        monkeypatch.setattr(almacenamiento, "_cliente_s3", lambda _: cliente)
+        if stage == "listing":
+            monkeypatch.setattr(cliente, "get_paginator", fail)
+    config = _configuracion(tmp_path, "bucket")
+    with pytest.raises(ErrorDeSincronizacion) as caught:
+        almacenamiento.sincronizar_desde_s3(config)
+    assert marker not in "".join(traceback.format_exception(caught.value))
+    (tmp_path / RESULTADO_VALIDO.name).write_bytes(b"{}")
+    assert almacenamiento.asegurar_resultados(config) == 1
+    assert marker not in caplog.text
