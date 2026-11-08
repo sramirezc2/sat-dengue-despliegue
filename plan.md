@@ -2,7 +2,7 @@
 
 **Versión:** 1.4
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 20/22; T18–T20 COMPLETAS; T21 PENDIENTE; ninguna tarea activa ni bloqueada
+**Estado general:** 20/22; T18–T20 COMPLETAS; T21 EN CURSO; ninguna tarea bloqueada
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -122,7 +122,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 18 | Realizar revisión científica independiente | `COMPLETA` | 17 | [Auditoría científica](docs/reviews/scientific-review.md): APPROVED_WITH_LIMITATIONS, sin hallazgos científicos bloqueantes. Código/contratos/bitácora contrastados; 536 pruebas y 1.134 casos analíticos, 49 hashes y N=3 histórico íntegros. Tandas G, disponibilidad operativa y privacidad remota actual no verificadas; referencias científicas/intervalos de fábrica limitados. [Recibo](docs/evidence/task18/scientific-review.json). |
 | 19 | Documentar operación, límites y migraciones | `COMPLETA` | 18 | [Guía central](docs/operations/pipeline-operations.md) enlazada al manual, sin duplicar sus recetas. Preparación multiplataforma, comandos reales, publicación, recuperación, privacidad, memoria y migración de proveedores. Ayudas/AST/código, cuatro CLI artificiales, Pydantic/Zod 24 y 80 enlaces locales verificados. [Recibo](docs/evidence/task19/operations-validation.json). |
 | 20 | Ejecutar revisión de seguridad | `COMPLETA` | 19 | [Revisión de seguridad](docs/security/security-review.md): APPROVED_WITH_LIMITATIONS, sin CRITICAL/HIGH abiertos. Zod 4.6.6 compatible, logs SDK protegidos y LF de identidades/referencias POSIX; 541 pruebas pipeline, API 35, tablero 55/lint/build, lock/sync/Ruff, contratos 24+24, registro y 68 hashes verdes. Avisos moderados, backup privado exclusivamente local y controles externos documentados con responsables. [Recibo](docs/evidence/task20/security-review.json). |
-| 21 | Registrar capacidades reutilizables | `PENDIENTE` | 20 | Skills, agentes o herramientas útiles identificados y documentados. |
+| 21 | Registrar capacidades reutilizables | `EN CURSO` | 20 | Skills, agentes o herramientas útiles identificados y documentados. |
 | 22 | Elaborar reporte ejecutivo | `PENDIENTE` | 21 | Resumen final de entregables, validaciones, limitaciones y decisiones pendientes. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
@@ -219,10 +219,10 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 20/22 |
-| Tarea activa | Ninguna |
+| Tarea activa | T21 — Registrar capacidades reutilizables |
 | Tareas bloqueadas | Ninguna |
 | Última tarea completada | T20 — Ejecutar revisión de seguridad |
-| Próxima tarea | T21 — Registrar capacidades reutilizables (`PENDIENTE`) |
+| Próxima tarea | T22 — Elaborar reporte ejecutivo (`PENDIENTE`) |
 | Última actualización | 8 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -311,6 +311,8 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 | 2026-11-08 | 20 | EN CURSO | Tras `5d90929`; run 42451673280 | Nuevo HEAD: API/tablero/contratos, quality, Ubuntu/macOS verdes; Windows 526 pasan/11 fallan. LF solucionó los fallos de hashes previos; quedan rutas generadas con separador nativo y encoding de una conclusión artificial. | Reabrir únicamente el cierre técnico T20, 19/22; corregir serialización POSIX y UTF-8 sin relajar rechazo de rutas externas ni tocar evidencia. Revalidar y push normal; T21 PENDIENTE. |
 
 | 2026-11-08 | 20 | COMPLETA | `bb03e65` corrección CI; cierre documental en este commit | Gate acumulado repetido: 541 pipeline, API 35, tablero 55/frozen/lint/build, lock/sync/Ruff, registro, 24+24 contratos y 49/68 hashes verdes. Cuatro regresiones POSIX inicialmente rojas y caso CP1252 verdes. | APPROVED_WITH_LIMITATIONS; serialización portable sin aceptar entradas ambiguas ni tocar ciencia/evidencia. 20/22, T21 PENDIENTE, ninguna activa/bloqueada. Segundo push normal y todos los checks del nuevo HEAD deben verificarse; sin merge. |
+
+| 2026-11-08 | 21 | EN CURSO | Tras `5eee835`; base funcional `0ed1363` | Preflight repetido: repositorio/rama correctos, árbol limpio, PR #1 abierto hacia main, T20 COMPLETA y 20/22. Documentación obligatoria leída; `$skill-creator` y su validador disponibles. | Crear únicamente cuatro skills canónicas bajo `.agents/skills/`, catálogo, integración breve con agentes/Claude, capítulo del manual, pruebas estructurales y evaluaciones secas. Sin ciencia real, datos privados, secretos, publicación, push ni T22. |
 
 ## 7. Decisiones y desviaciones
 
@@ -408,4 +410,4 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 20/22, T18–T20 COMPLETAS, T21 PENDIENTE y ninguna tarea activa ni bloqueada.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 20/22, T18–T20 COMPLETAS, T21 EN CURSO y ninguna tarea bloqueada.
