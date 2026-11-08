@@ -7,6 +7,12 @@ controla tareas/estados; la [arquitectura](../architecture/pipeline-e2e.md) cont
 fronteras. Los ejemplos privados de este documento son instrucciones para una
 operación futura aprobada: no son autorización para ejecutarlos ahora.
 
+Para escoger una capacidad de agente, usar el
+[catálogo de skills](../agents/skills-catalog.md). Los límites científicos y de
+exposición se resumen en la [revisión científica](../reviews/scientific-review.md)
+y la [revisión de seguridad](../security/security-review.md); ambos documentos
+son auditorías cerradas y no sustituyen el estado vigente de `plan.md`.
+
 ## Directorios y responsabilidades
 
 | Ruta | Responsabilidad |

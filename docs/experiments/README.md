@@ -7,7 +7,11 @@ registro científico; no se reinterpreta ni se vuelve a ejecutar.
 
 Para operación del entorno, publicación y recuperación, consultar la
 [guía operativa central](../operations/pipeline-operations.md); para crear y repetir
-entrenamientos, el [manual](manual_pipeline.md).
+entrenamientos, el [manual](manual_pipeline.md). Las capacidades reutilizables se
+descubren en el [catálogo de skills](../agents/skills-catalog.md). Las conclusiones
+de auditoría están en la [revisión científica](../reviews/scientific-review.md) y
+la [revisión de seguridad](../security/security-review.md); la historia científica
+se conserva en la [bitácora](../bitacora-experimental.md).
 
 ## Registrar y aprobar
 

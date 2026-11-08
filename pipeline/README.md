@@ -1,11 +1,15 @@
 # Pipeline SAT DENGUE: adquisición y preparación
 
 Subproyecto Kedro independiente del despliegue. Incluye el smoke de cinco etapas,
-dominio científico y construcción/certificación desde crudos con fixtures
-artificiales. No es un modelo aprobado ni autoriza alertas.
+dominio científico, construcción/certificación desde crudos, fábrica reproducible
+y administración de experimentos registrados. No es un modelo aprobado ni
+autoriza alertas.
 
 La [guía operativa central](../docs/operations/pipeline-operations.md) reúne
 preparación multiplataforma, recuperación, límites y migración de almacenamiento.
+El [manual de la fábrica](../docs/experiments/manual_pipeline.md) documenta el
+ciclo experimental y el [catálogo](../docs/agents/skills-catalog.md) selecciona
+las cuatro skills reutilizables de operación, revisión, verificación y recuperación.
 
 Requisitos: Python 3.12 y uv (validado con 0.11.19). Dependencias fijadas en
 `pyproject.toml` y resueltas en `uv.lock`: Kedro 1.7.0, pytest 9.2.0 y Ruff 0.17.4.
@@ -50,9 +54,10 @@ La instalación necesita acceso al índice de paquetes; la ejecución del smoke 
 no usa red ni lee archivos reales del repositorio. Las comprobaciones del fixture
 son independientes de los controles temporales de preparación.
 
-Quedan aplazados los modelos definitivos y el tracking remoto; DVC permanece fuera
-del alcance. La publicación local explícita se implementó en tarea 14. Los límites están en
-[la arquitectura](../docs/architecture/pipeline-e2e.md).
+No hay campeón ni modelo operativo aprobado; el tracking remoto y DVC permanecen
+fuera del alcance. La fábrica implementa únicamente `xgboost_onset/v1` para las
+recetas cerradas de T16/T17. La publicación local explícita se implementó en
+tarea 14. Los límites están en [la arquitectura](../docs/architecture/pipeline-e2e.md).
 
 ## Adquisición de entradas científicas
 
@@ -63,7 +68,7 @@ coordina la caché sin conocerlo. El servicio se puede usar desde un nodo Kedro;
 pytest comprueba esa integración con archivos temporales. No se registra un
 pipeline `acquisition` que dependa de un release real todavía inexistente.
 
-Preparación, entrenamiento y evaluación futuros recibirán **solo ResolvedBundle**:
+Preparación, entrenamiento y evaluación reciben **solo ResolvedBundle**:
 identificador del release, digest del manifiesto, cobertura declarada y una tupla
 de archivos con nombre lógico, ruta local absoluta, tamaño y SHA-256. No contiene
 URLs, proveedor, clientes o credenciales. La disposición local se normaliza;
@@ -132,7 +137,7 @@ bundle = resolve_release(manifest, Path("data/01_raw/releases"), source)
 Para S3 se aporta además `s3_client` a la fábrica. Migrar de HF o Zenodo cambia
 solo el proveedor, origen y revisión del manifiesto y la configuración del cliente;
 se conservan los nombres lógicos, hashes y rutas relativas de las entradas.
-El digest del manifiesto cambia y crea una caché independiente. Los futuros nodos
+El digest del manifiesto cambia y crea una caché independiente. Los nodos
 científicos mantienen su interfaz `ResolvedBundle`.
 
 Esta caché contiene **entradas científicas**; no escribe ni valida resultados
@@ -143,8 +148,8 @@ El release crudo privado de HF, su commit inmutable y los cinco tamaños/hashes
 aprobados están fijados para la tarea 16. Su adquisición y reproducción real se
 registran en `docs/decisions/task16-reproduction.md`; el depósito académico de
 Zenodo sigue pendiente. Las suites unitarias usan archivos temporales y bloquean
-conexiones reales, DNS y acceso a publicaciones. El manual operativo corresponde
-a la tarea 18.
+conexiones reales, DNS y acceso a publicaciones. El manual operativo central fue
+cerrado en T19 después de la revisión científica T18.
 
 ## Panel canónico y preparación temporal
 
@@ -185,8 +190,9 @@ controls, labels, prepared, audit = prepare_horizon(
 El grafo `pipelines/preparation.create_pipeline()` expone compuerta y preparación
 de ambos horizontes con seis salidas: controles, etiquetas T+1/T+2, auditoría y
 conjuntos utilizables separados. Los tests suministran un catálogo en memoria;
-no se registra como pipeline operativo. `synthetic` sigue siendo el único flujo
-CLI registrado junto con su alias predeterminado.
+no se registra de forma aislada. El registro vigente expone `synthetic`,
+`canonical_build`, `canonical_reproducibility`, `deployment_publication`,
+`factory_validation`, `experiment_run` y el alias `__default__`.
 
 Procedencia, hashes, adaptaciones y límites en
 [la decisión de migración](../docs/decisions/v2-scientific-migration.md).
@@ -201,7 +207,8 @@ uv run --directory pipeline pytest tests/test_onset.py -k sentinel_2025
 ```
 
 Esta paridad sintética es evidencia de ingeniería, sin reproducción real ni
-validación científica. El release público y su validación continúan en tarea 15.
+validación científica. La adquisición privada, reproducción y validación reales
+quedaron documentadas en T15–T16; no existe un release público de fuentes crudas.
 No se usan datos de 2025; los centinelas contienen solo claves artificiales para
 comprobar su rechazo antes del consumidor.
 
@@ -271,8 +278,9 @@ serializables; no se versionan estimadores ajustados.
 uv run --directory pipeline pytest tests/test_adapters.py
 ```
 
-Las únicas implementaciones actuales son dobles de tests. XGBoost, LightGBM, GAM
-y demás enfoques reales están pendientes, sin paridad atribuida a V2.
+Los dobles deterministas siguen cubriendo los contratos genéricos. La única
+implementación real admitida por la fábrica es `xgboost_onset/v1`; LightGBM, GAM
+y otras familias permanecen fuera del alcance, sin paridad atribuida a V2.
 
 ## Calibración, umbral y referencias
 
@@ -314,8 +322,8 @@ Las referencias comparten todas las claves: prevalencia solo de y_train y
 persistencia de no exceso observado, adaptada a “sin nuevo inicio” en la cohorte
 elegible. Persistencia es determinista; prevalencia no recibe silenciosamente el
 umbral del candidato. y de evaluación no se lee durante ajuste ni inferencia.
-La futura tarea 11 deberá contar ausencias y aplicar una máscara común a candidato
-y referencias al reportar métricas; no se calcula ese reporte aquí.
+La evaluación emparejada implementada después cuenta ausencias y aplica soporte
+común a candidato y referencias; esta sección describe solo la etapa de decisión.
 
 ```sh
 uv run --directory pipeline pytest tests/test_procedure.py
@@ -656,4 +664,19 @@ Un fallo produce evidencia BLOCKED y se detiene sin cambiar parámetros. Los sie
 recibos agregados en `docs/evidence/task16/factory-experiment/` se crean de forma
 exclusiva; su existencia impide sobrescribirlos o repetir el comando sobre ellos.
 No se versionan filas, modelos ni rutas privadas. 2025 conserva el estado
-`consumed_retrospective_evidence`. Tarea 17 y autorización operativa quedan fuera.
+`consumed_retrospective_evidence`. T16 permanece cerrada; T17 reutiliza el motor
+sin modificar esa receta ni conceder autorización operativa.
+
+## Administración experimental y capacidades reutilizables
+
+El pipeline separado `experiment_run` ejecuta únicamente recetas registradas y
+aprobadas; `experiment_management` valida, registra, transiciona, lista y compara
+sin usar MLflow como fuente de verdad. EXP001 y EXP002 son fixtures técnicos
+cerrados. Los procedimientos y estados están en el
+[manual de la fábrica](../docs/experiments/manual_pipeline.md).
+
+T21 añadió exactamente cuatro skills canónicas bajo `.agents/skills/`:
+`sat-dengue-experiment`, `sat-dengue-scientific-review`,
+`sat-dengue-verification` y `sat-dengue-recovery`. Su catálogo es la entrada de
+descubrimiento; ninguna skill concede aprobación científica, secretos, push,
+publicación o merge.

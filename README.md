@@ -1,8 +1,9 @@
 # SAT Dengue, despliegue del tablero de alerta temprana
 
 Sistema de alerta temprana de brotes de dengue para los municipios de **Tolima
-y Meta**. Este repositorio contiene la aplicación desplegada: la API que sirve
-los resultados del modelo y el tablero que los presenta.
+y Meta**. Este repositorio contiene la aplicación desplegada y la fábrica
+científica V3 independiente: la API sirve resultados persistidos, el tablero los
+presenta y `pipeline/` los construye sin introducir Kedro en el producto.
 
 Universidad de los Andes, Maestría en Inteligencia Artificial.
 Proyecto: Despliegue de Soluciones. **Grupo 11**.
@@ -119,11 +120,16 @@ en `/api/docs`. Esa interfaz carga sus recursos desde un CDN público;
 | Repositorio del despliegue | https://github.com/sramirezc2/sat-dengue-despliegue |
 | Procedencia de los datos publicados | corrida `88e3ad9decce8bd4d`, evaluación congelada G5 |
 | Bitácora experimental | [`docs/bitacora-experimental.md`](docs/bitacora-experimental.md) |
+| Estado y secuencia de implementación | [`plan.md`](plan.md) |
+| Diseño detallado del E2E | [`PLAN_pipeline_e2e_experimentos_sat_dengue.md`](PLAN_pipeline_e2e_experimentos_sat_dengue.md) |
 | Arquitectura objetivo V3 y transición del pipeline E2E | [`docs/architecture/pipeline-e2e.md`](docs/architecture/pipeline-e2e.md) |
 | Operación, recuperación y migraciones del pipeline | [Guía operativa](docs/operations/pipeline-operations.md) |
+| Registro y ejecución de experimentos | [Manual de la fábrica](docs/experiments/manual_pipeline.md) |
+| Capacidades reutilizables para agentes | [Catálogo de skills](docs/agents/skills-catalog.md) |
+| Revisión científica y de seguridad | [Revisión científica](docs/reviews/scientific-review.md) · [Revisión de seguridad](docs/security/security-review.md) |
 | Subproyecto Kedro y smoke test sintético | [`pipeline/README.md`](pipeline/README.md) |
 | Propuesta de política de decisión v2 | [`docs/politica-de-decision-v2.md`](docs/politica-de-decision-v2.md) |
-| Repositorio científico (pipelines, notebooks, evidencia) | `SAT-Dengue-V2` |
+| Antecedente científico congelado | `SAT-Dengue-V2` (procedencia histórica, no fuente activa) |
 | Informe de avance | entregado el 25 de octubre de 2026 |
 
 ---
@@ -132,9 +138,9 @@ en `/api/docs`. Esa interfaz carga sus recursos desde un CDN público;
 
 ### API
 
-Python 3.12. Pines en `app/api/requirements.txt`, alineados con el
-`pyproject.toml` del repositorio científico para que el contrato se comporte
-igual en los dos lados.
+Python 3.12. Pines propios en `app/api/requirements.txt`; las dependencias
+científicas se mantienen separadas en `pipeline/pyproject.toml` y nunca entran
+en la imagen de la API.
 
 | Paquete | Versión |
 | --- | --- |
@@ -215,8 +221,8 @@ Para actualizar un despliegue ya montado basta volver a ejecutar el mismo
 script: detecta que el repositorio ya está clonado y hace `fetch` y `reset`.
 
 El laboratorio **no** se usa para entrenar. Los créditos están destinados al
-despliegue; el entrenamiento y la evaluación corren en el repositorio
-científico.
+despliegue; el entrenamiento y la evaluación se ejecutan en el subproyecto
+independiente `pipeline/`, fuera de los contenedores del producto.
 
 ---
 
@@ -352,7 +358,7 @@ contra el esquema en cada petición. Para Tolima, el departamento más grande co
 No hay cola ni trabajo asíncrono.
 
 **Tiempos del modelo, que ocurren fuera de esta aplicación.** El entrenamiento
-y la evaluación corren en el repositorio científico sobre un panel mensual de
+y la evaluación histórica se ejecutaron sobre un panel mensual de
 2007 a 2025 para los 76 municipios de Tolima y Meta. Las familias evaluadas son
 gradient boosting sobre árboles (XGBoost y LightGBM), un modelo aditivo
 generalizado y una regresión logística con penalización L2, cada una en los
@@ -462,10 +468,16 @@ trata como MD5 universal.
 │           │   └── comparacion-modelo.tsx # modelo contra canal y línea base
 │           ├── lib/                       # contrato Zod y adaptador de vista
 │           └── test/                      # contrato, adaptador e integración
+├── pipeline/                     # Kedro, dominio, fábrica, pruebas y lock propios
+├── .agents/skills/               # cuatro skills canónicas de operación y revisión
 ├── datos/resultados/            # resultados publicados, un JSON por periodo
 ├── docker/                      # Dockerfiles, compose y nginx
 ├── docs/
 │   ├── bitacora-experimental.md    # registro de experimentos, métricas y decisiones
+│   ├── agents/                      # catálogo de capacidades reutilizables
+│   ├── experiments/                 # registro, manual, recetas y conclusiones
+│   ├── operations/                  # guía operativa central
+│   ├── reviews/ y security/         # revisiones científica y de seguridad
 │   ├── politica-de-decision-v2.md  # propuesta de revisión de la compuerta G5
 │   └── politica-de-decision-v2.json # la misma propuesta, legible por máquina
 ├── modelos/                     # artefactos de modelo
@@ -480,10 +492,10 @@ trata como MD5 universal.
 Dos suites, una por lado. Ambas corren sin levantar la aplicación.
 
 ```bash
-# API: 22 pruebas sobre la capa de despliegue
+# API: suite de la capa de despliegue
 cd app/api && python -m pytest
 
-# Tablero: 25 pruebas de contrato, adaptador e integración
+# Tablero: suite de contrato, adaptador e integración
 cd app/dashboard && bun run test
 ```
 
@@ -556,7 +568,7 @@ entre "no hay brote" y "no se pudo calcular" es justamente la que importa.
 ## 14. Procedencia de los resultados publicados
 
 Los 22 archivos de `datos/resultados/` no son datos de ejemplo. Salen de la
-evaluación congelada que el repositorio científico identifica como la corrida
+evaluación histórica congelada identificada como la corrida
 `88e3ad9decce8bd4d`, y cubren **once meses de referencia**, de diciembre de
 2024 a octubre de 2025, para los 76 municipios de Tolima y Meta.
 

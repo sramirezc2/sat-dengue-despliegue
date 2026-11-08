@@ -151,6 +151,12 @@ Pipelines modulares propuestos:
 13. `experiment_reporting`
 14. `deployment_publication`
 
+Estos nombres describen etapas lógicas del diseño, no el registro CLI vigente.
+Hasta T21, `pipeline_registry.py` registra `synthetic`, `canonical_build`,
+`canonical_reproducibility`, `deployment_publication`, `factory_validation`,
+`experiment_run` y el alias `__default__`; las funciones de dominio componen esas
+entradas sin exponer cada etapa como pipeline independiente.
+
 `data_acquisition` será la única frontera que conoce proveedores externos. Usará
 un puerto `DataSource` y adaptadores intercambiables que materializan un bundle
 local verificado:
@@ -174,7 +180,7 @@ como entrada del E2E, aunque sus hashes sean válidos. La tabla canónica será 
 artefacto derivado local, direccionado por contenido y siempre reconstruible desde
 el manifiesto crudo, el código, la configuración y el lock.
 
-Composiciones registradas:
+Composiciones propuestas en el diseño inicial:
 
 - `experiment`: adquisición cruda → validación → cuarentena → construcción
   canónica → preparación → entrenamiento → evaluación → reporte, solo con datos
@@ -188,11 +194,19 @@ Composiciones registradas:
 
 ### D3. Una sola CLI estable y multiplataforma
 
-Comando lógico propuesto:
+Comando lógico propuesto originalmente (no implementado como ejecutable `satd`):
 
 ```text
 uv run --frozen --project pipeline satd experiment run \
   --spec pipeline/conf/experiments/EXP-YYYY-NNN-slug.yml
+```
+
+Las interfaces vigentes son Kedro para ejecutar y el módulo de administración
+para gobernar el registro:
+
+```text
+uv run --directory pipeline kedro run --pipeline experiment_run --params experiment_id=EXP003
+uv run --directory pipeline python -m sat_dengue_pipeline.experiment_management validate
 ```
 
 La CLI Python hará en orden:
@@ -837,6 +851,12 @@ manifiesto crudo -> DataSource -> caché local -> fuentes crudas hasta 2025
 
 ## 5. Estructura objetivo del repositorio
 
+El árbol siguiente conserva el objetivo de diseño original y no debe leerse como
+inventario del checkout. La estructura implementada y sus comandos vigentes se
+documentan en `pipeline/README.md`, `docs/operations/pipeline-operations.md` y
+`docs/experiments/manual_pipeline.md`; por ejemplo, no existe una CLI `satd` ni
+se registran por separado todos los pipelines lógicos enumerados arriba.
+
 ```text
 .
 ├── app/                               # producto desplegado; conservar estructura
@@ -1096,10 +1116,15 @@ pruebas de los tres consumidores: publicador, API y tablero.
 20. **Revisión de seguridad.** Decisión de publicación, clasificación de fuentes
     crudas, registro/evidencia experimental, tokens, propietarios, secretos,
     dependencias, futuros buckets, logs y superficies de red.
-21. **Descubrimiento de skills y agentes.** Identificar y registrar capacidades
-    reutilizables para operar, validar y mantener la solución.
+21. **Descubrimiento de skills y agentes.** Registrar exactamente cuatro skills
+    canónicas bajo `.agents/skills/`: operación experimental, revisión científica,
+    verificación y recuperación. Documentarlas en `docs/agents/skills-catalog.md`
+    y en el manual, sin añadir agentes, plugins, hooks ni autoridades paralelas.
 22. **Reporte ejecutivo.** Resumir implementación, validaciones, limitaciones,
     decisiones pendientes y evidencia reproducible para el equipo.
+
+El estado de ejecución vive exclusivamente en `plan.md`: al cierre de T21 hay
+21/22 tareas completas, ninguna activa o bloqueada y T22 permanece pendiente.
 
 ## 8. Criterios de aceptación del producto E2E
 

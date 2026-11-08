@@ -1,7 +1,7 @@
 # Arquitectura del pipeline E2E y transición a V3
 
-Estado: decisiones adoptadas para la implementación incremental. Fecha: 2026-11-07.
-Actualizada para DEC-015/016/018 y tareas 13–14; el producto desplegado se conserva.
+Estado: decisiones adoptadas para la implementación incremental. Fecha: 2026-11-08.
+Actualizada hasta T21; el producto desplegado y la evidencia cerrada se conservan.
 
 ## Fuente oficial y situación actual
 
@@ -37,6 +37,7 @@ datos/resultados/    único contrato entre pipeline y API
 docker/              despliegue existente
 scripts/             operación y envolturas temporales
 docs/                arquitectura, decisiones y evidencia
+.agents/skills/       cuatro capacidades canónicas de operación y revisión
 ```
 
 Esta estructura expresa responsabilidades principales; no elimina las demás
@@ -214,8 +215,8 @@ Esto concuerda con la advertencia de evidencia consumida de la
 ## Secuencia incremental y alcance protegido
 
 Toda la implementación se acumulará en `feature/pipeline-e2e` y terminará en
-**un único Pull Request**. Las etapas siguientes son orientación, no trabajo
-autorizado en este paso:
+**un único Pull Request**. La siguiente secuencia registra la orientación inicial
+de la transición; no representa el estado vigente de tareas:
 
 1. Formalizar estos límites y registrar un commit local de documentación.
 2. Crear el proyecto Kedro independiente y definir el bundle y `DataSource`.
@@ -228,18 +229,23 @@ autorizado en este paso:
 6. Verificar el flujo E2E y la compatibilidad con el despliegue; añadir el
    transporte S3 de adquisición cuando exista una necesidad concreta, sin DVC.
 
-En las primeras etapas se preservan rutas, configuración y comportamiento de
+Hasta T21 se implementaron y validaron adquisición, canónico, preparación,
+evaluación, publicación, fábrica reproducible, administración experimental,
+revisiones, operación y cuatro skills. T22 es la única tarea pendiente según
+`plan.md`; no está autorizada por este documento.
+
+En las primeras etapas se preservaron rutas, configuración y comportamiento de
 API, tablero, Docker y operación. No se mueven ni renombran `app/`, `docker/`,
 `datos/` o `scripts/`; el generador actual no se elimina ni se cambia en este paso.
-Aquí tampoco se crean CI, infraestructura, código productivo, dependencias,
-datos, modelos ni notebooks. No se crean ni editan celdas Markdown de notebooks
-sin autorización formal. No se hace push ni se abre el PR en este primer paso.
+La prohibición de editar celdas Markdown de notebooks sin autorización formal
+continúa vigente. La CI, código y dependencias incorporados por tareas posteriores
+se rigen por sus decisiones y evidencia; este texto histórico no los invalida.
 
 ## Diferencias de transición y riesgos
 
-- El README y el generador aún señalan V2 como origen científico externo.
-  Describen el estado heredado; esta decisión establece V3 como destino único.
-  Las referencias históricas se conservan hasta migrar y verificar su procedencia.
+- El generador y la evidencia conservan referencias a V2 como procedencia
+  histórica. V3 es la fuente activa única; esas referencias no crean una segunda
+  autoridad ni deben reescribirse dentro de evidencia cerrada.
 - El S3 existente no contradice que Hugging Face sea la fuente operativa inicial:
   sirve resultados terminados. Confundir ambos usos acoplaría el servicio al dominio.
 - Cambios de proveedor o revisiones mutables pueden romper la reproducibilidad:
@@ -272,3 +278,12 @@ registro no permite COMPLETED sin conclusiones estructuradas enlazadas a evidenc
 comparaciones efectivas. El CLI de comparación lee registro y agregados, nunca
 microdatos o MLflow. T16 queda fuera del índice científico y se conserva cerrada.
 Procedimiento, contratos y límites en [experimentos](../experiments/README.md).
+
+## Capacidades reutilizables (T21)
+
+Las únicas skills del repositorio viven en `.agents/skills/` y se descubren desde
+el [catálogo](../agents/skills-catalog.md): operación del ciclo experimental,
+revisión científica, selección/ejecución de gates y recuperación conservadora.
+Todas delegan en las autoridades versionadas existentes y fallan cerradas ante
+aprobaciones, secretos, publicación, push o merge. No se añadieron agentes,
+plugins, hooks ni una segunda implementación de comandos o reglas científicas.
