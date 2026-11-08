@@ -47,7 +47,9 @@ def verify_execution(root: Path, reference: str) -> dict:
     if set(inventory) != NAMES:
         raise ValueError("Inventario incompleto")
     for name, digest in inventory.items():
-        path = confined(root, str((folder / name).relative_to(root)), "docs/evidence/experiments")
+        path = confined(
+            root, (folder / name).relative_to(root).as_posix(), "docs/evidence/experiments"
+        )
         if path.stat().st_size > 512_000 or sha256(path) != digest:
             raise ValueError("Inventario de ejecución alterado")
     record = json.loads((folder / "receipt.json").read_bytes())

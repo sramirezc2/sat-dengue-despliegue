@@ -42,7 +42,7 @@ def code_identity(root: Path) -> dict:
         "dirty": bool(git("status", "--porcelain")),
         "source_sha256": stable_digest(
             {
-                str(p.relative_to(root)): sha256(p)
+                p.relative_to(root).as_posix(): sha256(p)
                 for p in sorted((root / "pipeline/src").rglob("*"))
                 if p.is_file() and p.suffix in {".py", ".json"}
             }

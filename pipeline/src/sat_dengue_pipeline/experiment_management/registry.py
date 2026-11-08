@@ -235,7 +235,7 @@ class Registry:
             for path in sorted(folder.iterdir()):
                 receipt = confined(
                     self.root,
-                    str((path / "receipt.json").relative_to(self.root)),
+                    (path / "receipt.json").relative_to(self.root).as_posix(),
                     "docs/evidence/experiments",
                 )
                 old = json.loads(receipt.read_bytes())

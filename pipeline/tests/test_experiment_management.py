@@ -42,8 +42,10 @@ def repository(tmp_path, monkeypatch):
     document = read_yaml(source / "docs/experiments/registry.yml")
     for entry in document["experiments"]:
         entry.update(status="APPROVED", scientific_result="NOT_APPLICABLE")
-    (tmp_path / "docs/experiments/registry.yml").write_text(yaml.safe_dump(document))
-    (tmp_path / ".gitignore").write_text("pipeline/data/\npipeline/.tracking/\n")
+    (tmp_path / "docs/experiments/registry.yml").write_text(
+        yaml.safe_dump(document), encoding="utf-8"
+    )
+    (tmp_path / ".gitignore").write_text("pipeline/data/\npipeline/.tracking/\n", encoding="utf-8")
     subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
     monkeypatch.setattr(
         runner,
@@ -61,7 +63,7 @@ def repository(tmp_path, monkeypatch):
 
 def save_registry(root, document):
     """Simular modificaciones versionadas explícitas para atacar validadores."""
-    (root / "docs/experiments/registry.yml").write_text(yaml.safe_dump(document))
+    (root / "docs/experiments/registry.yml").write_text(yaml.safe_dump(document), encoding="utf-8")
 
 
 def change_config(root, eid, mutate):
@@ -71,7 +73,7 @@ def change_config(root, eid, mutate):
     path = root / entry["configuration"]
     config = read_yaml(path)
     mutate(config)
-    path.write_text(yaml.safe_dump(config))
+    path.write_text(yaml.safe_dump(config), encoding="utf-8")
     registry.entries[eid]["configuration_sha256"] = sha256(path)
     save_registry(root, registry.document)
 
@@ -291,7 +293,7 @@ def test_identity_cannot_be_reused_with_new_recipe(repository, monkeypatch):
     with pytest.raises(runner.ExecutionError):
         runner.execute("EXP001", root=repository, execution_id="history", tracking=False)
     path = repository / "docs/experiments/EXP001/SPECIFICATION.md"
-    path.write_text(path.read_text() + "\nChanged protocol\n")
+    path.write_text(path.read_text(encoding="utf-8") + "\nChanged protocol\n", encoding="utf-8")
     document = read_yaml(repository / "docs/experiments/registry.yml")
     document["experiments"][0].update(protocol_sha256=sha256(path), status="APPROVED")
     save_registry(repository, document)
@@ -354,13 +356,14 @@ def test_completed_negative_result_requires_conclusions_and_verified_evidence(re
             + "\nConclusión técnica explícita, sin aprobación científica. "
             + reference
             for section in CONCLUSION_SECTIONS
-        )
+        ),
+        encoding="utf-8",
     )
     registry.transition("EXP002", "COMPLETED", "NEGATIVE")
     assert Registry(repository).get("EXP002")["scientific_result"] == "NEGATIVE"
     assert {r["scientific_result"] for r in compare(repository)} == {"NEGATIVE"}
     metrics = repository / "docs/evidence/experiments/EXP002/reviewed/metrics.json"
-    metrics.write_text("{}")
+    metrics.write_text("{}", encoding="utf-8")
     with pytest.raises(ValueError, match="alterado"):
         Registry(repository)
 
@@ -450,12 +453,12 @@ def test_cli_registration_and_explicit_approval(repository, monkeypatch, capsys)
     )
     protocol = repository / entry["protocol"]
     protocol.parent.mkdir()
-    protocol.write_text("# EXP003 fixture protocol frozen for CLI test\n")
+    protocol.write_text("# EXP003 fixture protocol frozen for CLI test\n", encoding="utf-8")
     config = repository / entry["configuration"]
     shutil.copyfile(repository / "pipeline/conf/experiments/EXP002.yml", config)
     entry.update(protocol_sha256=sha256(protocol), configuration_sha256=sha256(config))
     registration = protocol.parent / "registration.yml"
-    registration.write_text(yaml.safe_dump(entry))
+    registration.write_text(yaml.safe_dump(entry), encoding="utf-8")
     monkeypatch.setattr(
         sys,
         "argv",
@@ -510,8 +513,44 @@ def test_document_changed_after_registry_read_is_rejected(repository, document):
     if document == "configuration":
         config = read_yaml(path)
         config["threshold"]["grid"] = [0.0, 0.5, 1.0]
-        path.write_text(yaml.safe_dump(config))
+        path.write_text(yaml.safe_dump(config), encoding="utf-8")
     else:
-        path.write_text(path.read_text() + "\nProtocol changed after registry lookup.\n")
+        path.write_text(
+            path.read_text(encoding="utf-8") + "\nProtocol changed after registry lookup.\n",
+            encoding="utf-8",
+        )
     with pytest.raises(ValueError, match="alterad"):
         load_configuration(repository, entry)
+
+
+@pytest.mark.parametrize("operation", ["verify", "compare", "identity"])
+def test_generated_references_are_posix_on_windows(
+    repository: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    operation: str,
+) -> None:
+    """Mantener confinamiento y firma con separadores nativos de Windows.
+
+    Args:
+        repository: Repositorio artificial, sin fuentes reales.
+        monkeypatch: Sustitución controlada de representación relativa.
+        operation: Consumidor de la referencia o identidad de código.
+    """
+    from pathlib import PureWindowsPath
+
+    runner.execute("EXP002", root=repository, execution_id="portable", tracking=False)
+    original = Path.relative_to
+
+    def windows_relative(path: Path, *args, **kwargs):
+        """Cambiar solo la representación de rutas relativas, sin emular el SO."""
+        return PureWindowsPath(*original(path, *args, **kwargs).parts)
+
+    monkeypatch.setattr(Path, "relative_to", windows_relative)
+    reference = "docs/evidence/experiments/EXP002/portable/inventory.json"
+    if operation == "verify":
+        assert verify_execution(repository, reference)["status"] == "COMPLETED"
+    elif operation == "compare":
+        assert all("\\" not in row["evidence"] for row in compare(repository))
+    else:
+        registry = Registry(repository)
+        registry.assert_identity(registry.get("EXP002"))

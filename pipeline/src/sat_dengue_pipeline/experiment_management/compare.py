@@ -22,7 +22,7 @@ def compare(
             root, f"docs/evidence/experiments/{eid}", "docs/evidence/experiments", exists=False
         )
         for execution in sorted(folder.iterdir()) if folder.exists() else []:
-            reference = str((execution / "inventory.json").relative_to(root))
+            reference = (execution / "inventory.json").relative_to(root).as_posix()
             record = verify_execution(root, reference)
             if status and status not in (entry["status"], record["status"]):
                 continue
