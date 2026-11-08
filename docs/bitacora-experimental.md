@@ -1628,3 +1628,13 @@ no detectar mejor; ganar contra la persistencia pero no contra el canal.
 **Si nada funciona**, es un resultado. Que cuatro familias de modelos no
 superen al canal endémico en la detección de inicios, con este aparato de
 validación, es un hallazgo publicable y no un fracaso.
+
+## Infraestructura experimental V3 — tarea 17
+
+V3 incorpora un [registro versionado y un ejecutor independiente](experiments/README.md)
+para futuros experimentos aprobados, con protocolos/configuraciones congelados,
+evidencia agregada inmutable, conclusiones obligatorias y comparación reproducible.
+La validación histórica de fábrica T16 conserva su propósito de ingeniería y sus
+identidades. Los dos fixtures de aceptación de esta infraestructura son pruebas
+técnicas; no se incorporan como resultados científicos ni modifican los hallazgos
+anteriores de esta bitácora. No hay selección de campeón ni autorización operativa.

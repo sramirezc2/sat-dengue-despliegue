@@ -220,7 +220,7 @@ def preflight(run: FactoryRun) -> FactoryRun:
 
 
 def fit(run: FactoryRun) -> FactoryRun:
-    """Ajustar dos modelos independientes sin tocar evaluation.y."""
+    """Ajustar un modelo independiente por horizonte sin tocar evaluation.y."""
     run.stage = "fit_calibration_threshold"
     registry = ModelRegistry()
     spec = adapter_spec(run.config)
@@ -241,7 +241,7 @@ def fit(run: FactoryRun) -> FactoryRun:
         )
         if run.label_reads.get(f"{h}:evaluation", 0):
             raise FactoryGateError("evaluation_labels_during_fit")
-    if run.fitted[1].model.adapter is run.fitted[2].model.adapter:
+    if len({id(f.model.adapter) for f in run.fitted.values()}) != len(run.fitted):
         raise FactoryGateError("shared_horizon_model")
     return run
 

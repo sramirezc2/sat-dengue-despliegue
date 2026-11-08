@@ -1262,4 +1262,3 @@ La implementación estará lista cuando:
 - [uv: proyectos y lock multiplataforma](https://docs.astral.sh/uv/guides/projects/)
 - [MLflow Tracking](https://mlflow.org/docs/latest/tracking/)
 - [GitHub rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets)
-

@@ -53,7 +53,9 @@ class XGBoostOnsetAdapter:
         self.candidate = self.settings["candidate"]
         self.preparation = self.settings["preparation"]
         if (
-            self.settings["predictors"] != PREDICTORS
+            not self.settings["predictors"]
+            or self.settings["predictors"]
+            != [p for p in PREDICTORS if p in self.settings["predictors"]]
             or spec.family != self.candidate["family"]
             or spec.version != self.candidate["adapter_version"]
             or xgb.__version__ != self.candidate["library_version"]
@@ -100,24 +102,27 @@ class XGBoostOnsetAdapter:
             raise ValueError("Preparación fija diferente de la autorizada")
         expected = [
             column
-            for name in PREDICTORS
+            for name in self.settings["predictors"]
             for column in (self.preparation["zone_columns"] if name == "zona_canal_t" else [name])
         ]
-        if self.preparation["matrix_columns"] != expected or len(expected) != 36:
+        if self.preparation["matrix_columns"] != expected:
             raise ValueError("Orden o cardinalidad de matriz interna alterados")
 
     def matrix(self, X: pd.DataFrame) -> np.ndarray:
-        """Validar primero 33 entradas y producir 36 columnas float32 sin aprender."""
+        """Validar 33 entradas y proyectar predictores declarados a float32 sin aprender."""
         validate_features(X, self._dtypes)
         parts = []
-        for name in PREDICTORS:
+        for name in self.settings["predictors"]:
             if name == "zona_canal_t":
                 codes = X[name].map(self.preparation["zone_mapping"]).to_numpy(dtype=int)
                 parts.append(np.eye(len(self.preparation["zone_mapping"]), dtype=np.float32)[codes])
             else:
                 parts.append(X[name].to_numpy(dtype=np.float32).reshape(-1, 1))
         result = np.concatenate(parts, axis=1)
-        if result.shape != (len(X), 36) or not np.isfinite(result).all():
+        if (
+            result.shape != (len(X), len(self.preparation["matrix_columns"]))
+            or not np.isfinite(result).all()
+        ):
             raise ValueError("Matriz interna inválida o no finita")
         return result
 

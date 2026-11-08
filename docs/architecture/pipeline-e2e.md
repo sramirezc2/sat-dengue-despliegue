@@ -254,3 +254,21 @@ sin autorización formal. No se hace push ni se abre el PR en este primer paso.
   condición para recuperar datos o reproducir resultados académicos.
 
 No hay incompatibilidad estructural que exija cambiar el producto en este paso.
+
+## Administración multi-experimento (T17)
+
+`experiment_management/` resuelve el registro versionado de
+`docs/experiments/registry.yml` y configuraciones independientes de
+`pipeline/conf/experiments/`. El pipeline `experiment_run` valida aprobación,
+rutas, hashes y allowlist antes de adquirir; comparte las etapas científicas de
+`factory.engine` sin invocar ni flexibilizar el validador cerrado de T16.
+La extensión del adaptador admite un subconjunto declarado de predictores y el
+motor admite uno o ambos horizontes, conservando el comportamiento de T16.
+
+Una reserva exclusiva por ejecución precede al estado RUNNING. Evidencia agregada
+append-only e inventario verificable viven en `docs/evidence/experiments/`; el
+registro no permite COMPLETED sin conclusiones estructuradas enlazadas a evidencia
+íntegra. MLflow extiende el store SQLite local existente con padre/hijos solo por
+comparaciones efectivas. El CLI de comparación lee registro y agregados, nunca
+microdatos o MLflow. T16 queda fuera del índice científico y se conserva cerrada.
+Procedimiento, contratos y límites en [experimentos](../experiments/README.md).

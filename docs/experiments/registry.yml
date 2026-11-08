@@ -1,0 +1,30 @@
+schema_version: 1
+experiments:
+- experiment_id: EXP001
+  experiment_slug: exp001-synthetic
+  hypothesis_id: EXP001-H0
+  title: "EXP001 aceptaci\xF3n t\xE9cnica"
+  experiment_type: synthetic_fixture
+  status: APPROVED
+  protocol: docs/experiments/EXP001/SPECIFICATION.md
+  protocol_sha256: be060fa60d164d999cc5a38d876b7d5b55bcb81a0de9a885886180895ee0b3c5
+  configuration: pipeline/conf/experiments/EXP001.yml
+  configuration_sha256: ae1b8ad1a6b0c0e0e404458aeecd86598348496c01e4a4b0bcc82b1a2c16a74e
+  pipeline: experiment_run
+  conclusions: docs/experiments/EXP001/CONCLUSIONS.md
+  scientific_result: NOT_APPLICABLE
+  champion_status: NOT_SELECTED
+- experiment_id: EXP002
+  experiment_slug: exp002-synthetic
+  hypothesis_id: EXP002-H0
+  title: "EXP002 aceptaci\xF3n t\xE9cnica"
+  experiment_type: synthetic_fixture
+  status: APPROVED
+  protocol: docs/experiments/EXP002/SPECIFICATION.md
+  protocol_sha256: 584ca7c5b9f9f62458b113743d9a42748a5ffd8fc4c07a6dc35e59de71070b41
+  configuration: pipeline/conf/experiments/EXP002.yml
+  configuration_sha256: d8f660b9d48442eec296e623a4b8479a1c631ead2d0f0755cbb3aa4b482e03b4
+  pipeline: experiment_run
+  conclusions: docs/experiments/EXP002/CONCLUSIONS.md
+  scientific_result: NOT_APPLICABLE
+  champion_status: NOT_SELECTED
