@@ -1642,6 +1642,19 @@ En T+1 las probabilidades están bien calibradas (skill de Brier 0,17). En T+2 e
   - T+2: 215 vs 179 (IC 14 a 60).
   - En el holdout 2019-22 → 2023-24 gana en ambas mitades: en T+2 con IC por encima de 0; en T+1 por +10 y +11, con IC que toca 0.
 
+#### Inicios sostenidos frente a picos de un solo mes
+
+Esta prueba reevalúa la candidata contando por separado los inicios que siguen en exceso el mes siguiente (sostenidos) y los picos de un solo mes.
+
+| | Canal | Logística | Diferencia |
+|---|---|---|---|
+| T+1, sostenidos (274) | 162 | 164 | +2 |
+| T+1, picos de un mes (267) | 118 | 137 | +19 |
+| T+2, sostenidos (181) | 93 | 104 | +11 |
+| T+2, picos de un mes (199) | 86 | 111 | +25 |
+
+**En T+1, casi toda la ventaja viene de picos de un solo mes.** En los brotes que se sostienen, la logística empata con un canal bien ajustado. En T+2 hay una ventaja modesta también en los sostenidos. Esto hay que decirlo explícitamente en el informe: el aporte del modelo en T+1 es detectar picos cortos (brotes pequeños o ruido de notificación), no anticipar mejor los brotes que importan.
+
 #### Limitaciones
 
 - Se probaron unas 45 configuraciones sobre los mismos años. La logística es la más consistente, pero conviene registrarla en la fábrica con la receta congelada antes de mirar nada nuevo.
