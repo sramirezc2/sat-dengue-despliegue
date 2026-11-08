@@ -1,0 +1,8 @@
+# Retroanálisis de ventana expansiva (pipeline retroanalisis). La receta del modelo se toma de
+# una configuración de experimento existente; 2025 no se usa.
+retroanalisis:
+  configuracion: conf/experiments/EXP001.yml
+  horizontes: [1, 2]
+  primer_origen: "2019-01"
+  ultimo_objetivo: "2024-12"
+  salida: data/retroanalisis
