@@ -1624,9 +1624,14 @@ Con las mismas alertas que el canal fuera de exceso, la logística detecta más 
 
 En T+1 las probabilidades están bien calibradas (skill de Brier 0,17). En T+2 el modelo subestima el riesgo (el decil superior predice 0,34 y se observa 0,51), así que habría que recalibrar antes de usar esas probabilidades como tales.
 
+#### Respuesta a esos dos hallazgos
+
+- **Pesos por tamaño del brote** (positivos ponderados por log1p de los casos en los 3 meses del brote, usando solo filas ya maduras): con α = 0,5, en T+1 empata con el canal en brotes grandes (120 vs 120; antes 111 vs 116) y mantiene el total (301 vs 280, IC 4 a 38). En T+2 casi no cambia (72 vs 76 en grandes; 215 en total).
+- **Recalibración de T+2 con Platt del año anterior:** empeora (skill de Brier 0,06 → 0,01) porque corrige de más: la prevalencia de inicios cambia mucho entre años. Hace falta una recalibración más estable, con varios años.
+
 #### Limitaciones
 
-- Se probaron unas 25 variantes sobre los mismos años. La logística es la más consistente, pero conviene registrarla en la fábrica con la receta congelada antes de mirar nada nuevo.
+- Se probaron unas 45 configuraciones sobre los mismos años. La logística es la más consistente, pero conviene registrarla en la fábrica con la receta congelada antes de mirar nada nuevo.
 - La fábrica hoy solo acepta `xgboost_onset`.
 - La línea base principal es un canal mejorado, no la regla oficial.
 - 2025 sigue intacto para la confirmación del campeón.
