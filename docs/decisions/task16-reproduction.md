@@ -1,10 +1,11 @@
 # Reproducción desde el release privado — tarea 16
 
-Estado vigente: EN CURSO — validación de fábrica T16-FACTORY-XGB-S53-v1 autorizada.
+Estado vigente: COMPLETA — T16-FACTORY-XGB-S53-v1, fábrica E2E N=3 exacta.
+Progreso: 16/21; tarea 17 PENDIENTE, no iniciada.
 Los estados BLOQUEADA de las secciones históricas describen sus respectivas reanudaciones.
 Adquisición privada, construcción real/Kedro, N=3, formato, cobertura y controles
 temporales aprobados. Los HTTP 401/404 anteriores se conservan como historia.
-Reanudación: 2026-11-07, desde DEC-020. Progreso conservado: 15/21.
+Reanudación inicial: 2026-11-07, desde DEC-020; en aquella fase se conservó 15/21.
 
 ## Identidad y credencial
 
@@ -221,7 +222,7 @@ operativas ni constituyen evaluación independiente o selección de modelos.
 Detalle por columna/departamento/horizonte y medición de formato en
 [canonical-quality.json](../evidence/task16/canonical-quality.json).
 
-## Recursos y validación local
+## Recursos y validación local de la fase canónica anterior
 
 La ejecución real se midió en macOS arm64 con 32 GiB de RAM. El inventario de
 recursos y el alcance de RSS están en
@@ -253,7 +254,7 @@ arrancarlo. Recibo: [kedro-real.json](../evidence/task16/kedro-real.json).
 La construcción real, integridad, cuarentena, N=3, formato, cobertura, memoria,
 rendimiento y preparación temporal están verificados.
 
-El experimento aprendido sigue **PENDIENTE DE ESPECIFICACIÓN CIENTÍFICA**. El
+Al terminar aquella fase, el experimento aprendido quedó **PENDIENTE DE ESPECIFICACIÓN CIENTÍFICA**. El
 registro V3 de modelos permanece vacío por defecto y no hay un candidato real
 predeclarado con hiperparámetros ni un calendario aprobado de los cinco roles,
 embargo/disponibilidad y mínimos de soporte, ni grilla/cota FAR para el release
@@ -281,6 +282,140 @@ equipo para **T16-FACTORY-XGB-S53-v1**. La autoridad normativa vigente es
 [task16-experiment-specification.md](task16-experiment-specification.md), aprobada
 exclusivamente para validar reproducibilidad de fábrica V3. No autoriza un campeón,
 uso operativo ni tarea 17. El experimento de fábrica se implementa por configuración
-y sus nuevos recibos se crearán en `docs/evidence/task16/factory-experiment/`;
-los recibos anteriores conservan sus bytes. El resultado de fábrica se documentará
+y sus nuevos recibos están en `docs/evidence/task16/factory-experiment/`;
+los recibos anteriores conservan sus bytes. El resultado de fábrica se documenta
 a continuación. Las métricas históricas anteriores no se atribuyen a esta ejecución.
+
+
+## Resultado de fábrica T16-FACTORY-XGB-S53-v1
+
+El comando `uv run --directory pipeline kedro run --pipelines factory_validation`
+completó el grafo padre y los tres grafos científicos aislados: **PASSED**,
+871,8 s de ejecución total del pipeline. Código fijado en `0d3f30a`;
+XGBoost 3.0.5, CPU/hist/un hilo/semilla 53, 80 árboles y 33 entradas canónicas
+(36 columnas internas por codificación fija). Receta efectiva completa, parámetros
+nativos y calendario en la [especificación V3](task16-experiment-specification.md)
+y [YAML Kedro](../../pipeline/conf/base/parameters_experiment.yml).
+Sin variables G, presupuesto del canal, HPO, early stopping, balanceo, refit o
+selección de semillas. Cada horizonte ajustó exactamente un modelo independiente.
+V2 se conserva solo como procedencia.
+
+La adquisición volvió a verificar privacidad y revisión exacta, y verificó la
+integridad de las cinco fuentes autorizadas. Cada hijo copió solamente esos cinco
+crudos a un inbox nuevo y reconstruyó su propio canónico, sin compartir derivados,
+matrices, modelos, decisiones, resultados ni tracking. HF_TOKEN se retiró del
+entorno de los hijos; no fue impreso, almacenado ni incorporado al linaje. El Excel
+auxiliar continuó ignorado. No se publicaron modelos ni predicciones por fila.
+
+### Identidades y recursos observados
+
+| Corrida | PID independiente | Duración (s) | Pico RSS (bytes) | Resultado |
+|---|---:|---:|---:|---|
+| 1 | 57217 | 288.918268 | 10434985984 | PASSED |
+| 2 | 57950 | 288.437726 | 11347361792 | PASSED |
+| 3 | 58654 | 288.145484 | 11906760704 | PASSED |
+
+Las tres identidades completas son exactamente
+`899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f`.
+Coinciden canónico, claves por rol/horizonte, matrices/orden/tipos, JSON completo
+con árboles y estado predictivo de ambos modelos, probabilidades originales y
+calibradas, representación, umbrales, decisiones, etiquetas evaluadas, métricas,
+configuración y linaje. No se omitió estado predictivo del JSON ni se usó pickle.
+El canónico nuevo coincide además con los SHA/digest certificados previamente:
+182.886 claves, 1.122 municipios, 2011-06 a 2024-12; cero objetivos reservados.
+La comparación excluye únicamente metadatos operativos de corrida (tiempo/PID).
+RSS es máximo por proceso, no memoria conjunta de la máquina.
+
+Recibos: [run-1.json](../evidence/task16/factory-experiment/run-1.json),
+[run-2.json](../evidence/task16/factory-experiment/run-2.json),
+[run-3.json](../evidence/task16/factory-experiment/run-3.json) y
+[n3-comparison.json](../evidence/task16/factory-experiment/n3-comparison.json).
+No hubo divergencia, fallo ni cuarta corrida.
+
+### Soportes observados
+
+| Horizonte | Rol | N0 | N1 | Municipios | Meses | Estado |
+|---|---|---:|---:|---:|---:|---|
+| T+1 | train | 28649 | 2873 | 1120 | 36 | PASSED |
+| T+1 | calibration_fit | 5588 | 438 | 1107 | 6 | PASSED |
+| T+1 | calibration_selection | 4825 | 569 | 1075 | 6 | PASSED |
+| T+1 | threshold_selection | 4513 | 671 | 1062 | 6 | PASSED |
+| T+1 | evaluation | 4942 | 1332 | 1008 | 11 | PASSED |
+| T+2 | train | 29393 | 2203 | 1120 | 36 | PASSED |
+| T+2 | calibration_fit | 5736 | 354 | 1108 | 6 | PASSED |
+| T+2 | calibration_selection | 5075 | 451 | 1082 | 6 | PASSED |
+| T+2 | threshold_selection | 4778 | 501 | 1070 | 6 | PASSED |
+| T+2 | evaluation | 5509 | 845 | 1008 | 11 | PASSED |
+
+Los diez soportes coinciden en las tres corridas. Todos los soportes productores
+de ambos horizontes se verificaron antes del primer ajuste; para evaluación se
+validaron claves/meses/municipios sin construir etiquetas. Cada callback de etiquetas
+se ejecutó una sola vez. Las etiquetas de evaluación se construyeron y leyeron
+solo después de congelar decisiones y producir ambas predicciones; entonces se
+comprobaron clases y se calcularon métricas, sin reajuste. El audit conserva campos
+legados `min_class_rows`/`min_months` por compatibilidad: no sustituyen los mínimos
+normativos por rol de `supports`, que son los aplicados en esta fábrica.
+Detalle: [support-by-role.json](../evidence/task16/factory-experiment/support-by-role.json).
+
+### Exclusión temporal
+
+La cuarentena previa separó 529.927 registros desde 2025 y 136 fechas inválidas,
+antes de normalizar, agregar o construir features. El canónico acaba en 2024-12;
+los cinco roles se cortan por objetivo S=T+h y disponibilidad A=S+1. Evaluación
+abarca objetivos 2024-01 a 2024-11 y disponibilidad máxima 2024-12. Sus orígenes
+son 2023-12 a 2024-10 para T+1 y 2023-11 a 2024-09 para T+2. Las cuatro
+transiciones cumplen disponibilidad de dependencias más embargo de un mes antes
+del primer origen consumidor. Los centinelas automáticos rechazan objetivos,
+disponibilidad o dependencias reservadas antes de construir y o ajustar modelos.
+No se consumió ningún objetivo de 2025 en entrenamiento, preparación aprendida,
+selección, calibración, umbrales o política FAR. 2025 sigue
+`consumed_retrospective_evidence`; no es holdout ciego ni confirmación independiente.
+Detalle: [temporal-guard.json](../evidence/task16/factory-experiment/temporal-guard.json).
+
+### Métricas agregadas de evaluación
+
+| Horizonte | Representación | Umbral | AP | AUROC | Brier | Sensibilidad | FAR | Alertas | Fracción alertada |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| T+1 | original | 0.06 | 0.451472298 | 0.738272672 | 0.153521912 | 0.838588589 | 0.712927268 | 3891 | 0.620178515 |
+| T+2 | original | 0.08 | 0.214411508 | 0.648026199 | 0.114601834 | 0.557396450 | 0.800761421 | 2364 | 0.372049103 |
+
+Los valores completos con numeradores, denominadores y soportes, más las líneas
+base obligatorias de prevalencia de train y persistencia, están en cada recibo.
+En ambos horizontes la sigmoide no superó el criterio de mejora de Brier >1e-12,
+por lo que se mantuvo original. FAR=FP/(TP+FP), entre alertas evaluables; cero
+alertas no fue candidato factible. La cota 0.80 se aplicó en threshold_selection.
+La FAR posterior T+2 = 1893/2364 = 0.800761421319797 supera ligeramente esa cota:
+se reporta sin ocultar, reajustar o repetir y no invalida la reproducibilidad técnica.
+
+### Validaciones, conservación y límites
+
+Antes de usar datos reales: lock/sync y Ruff verdes; 487 pruebas pipeline sin
+fallos ni omisiones (seis avisos de OmegaConf); CLI synthetic verde; API 28 pruebas;
+tablero instalación congelada, 33 pruebas, lint sin errores (seis advertencias
+existentes) y build node_server verdes. Pydantic/Zod: 24 documentos válidos cada
+uno. Documento normativo, YAML y parámetros cargados por Kedro coinciden exactamente.
+[validation.json](../evidence/task16/factory-experiment/validation.json) identifica
+los gates previos, configuración, adquisición y gobierno. Las comprobaciones finales
+y el inventario de cambios quedan en
+[final-checks.json](../evidence/task16/factory-experiment/final-checks.json).
+
+Los 16 recibos técnicos anteriores y los siete nuevos se conservan sin sobrescritura;
+los 22 JSON publicados siguen byte a byte iguales. API, tablero, contratos de
+publicación y dependencias de su imagen no cambiaron. XGBoost se agregó solo a
+pipeline. No se incorporaron datos, modelos, filas, rutas privadas, secretos ni
+archivos pesados a Git. Los recibos nuevos contienen únicamente agregados y hashes.
+
+Este cierre acredita una receta retrospectiva fija y su fábrica local N=3; no
+valida uso operativo, latencias reales, generalización prospectiva ni portabilidad
+real entre plataformas. La disponibilidad de un mes es un supuesto aprobado.
+No se estimaron intervalos de incertidumbre ni se seleccionó campeón. La reducción
+a casos elegibles con features completos y la cobertura observada limitan las
+conclusiones. G5 permanece NOT_APPROVED y champion NOT_SELECTED; el rendimiento no
+es criterio de cierre. La revisión científica independiente de tarea 17 permanece
+PENDIENTE y no comenzó. CI remota/ruleset/aprobación/checks de merge siguen sujetos
+a DEC-006; no se hizo push, merge ni se abrió otro PR.
+
+La tarea 16 queda COMPLETA y el progreso 16/21. La autorización científica aquí
+registrada es la del equipo comunicada explícitamente en el chat; los integrantes
+y la fecha formal del acta no fueron proporcionados. Se conserva el mecanismo y
+la fecha de registro sin inventar esos datos.

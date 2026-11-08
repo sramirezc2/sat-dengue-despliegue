@@ -2,7 +2,7 @@
 
 **Versión:** 1.1
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Tarea 16 EN CURSO — validación de fábrica T16-FACTORY-XGB-S53-v1 autorizada; 15/21; tarea 17 PENDIENTE
+**Estado general:** Tarea 16 COMPLETA — T16-FACTORY-XGB-S53-v1, N=3 E2E exacta; 16/21; tarea 17 PENDIENTE, no iniciada
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -89,7 +89,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 13 | Construir y certificar la tabla canónica desde fuentes crudas | `COMPLETA` | 12 | Arquitectura sincronizada; contrato crudo cerrado y productores registrados; 83 pruebas nuevas/356 totales. N=3 exacto sobre 168 claves artificiales y prueba de cuadrícula artificial de 182.886 claves (DEC-017). Cuarentena previa, guards T+1/T+2, conservación/nulos, atomicidad y tracking agregado verificados. Reproducción real pendiente en tarea 16. |
 | 14 | Migrar la publicación sin romper el despliegue | `COMPLETA` | 13 | Publicador puro, wrapper compatible y deployment_publication registrados; equivalencia byte a byte en cuatro casos caracterizados. Staging, contrato, manifiesto SHA-256 y rollback probados; 84 pruebas nuevas/440 totales. Los 22 JSON originales conservan sus hashes y Pydantic/Zod aceptan los generados. |
 | 15 | Cerrar portabilidad | `COMPLETA` | 14 | macOS local y Colab real verdes; matriz nativa Ubuntu/Windows/macOS sobre 61159d9 aprobada en run 42424636145. Cada runner: 463 pruebas, 12 específicas, cuatro CLI, árbol limpio y hashes idénticos. Siete checks del PR verdes; recibos/logs revisados. DEC-019; docs/decisions/portability.md. |
-| 16 | Conectar el release crudo y ejecutar reproducción sintética y real | `EN CURSO` | 15 | Se conservan construcción real/N=3 canónico y evidencia técnica previa. Equipo autoriza T16-FACTORY-XGB-S53-v1: XGBoost fijo semilla 53, soportes por rol, FAR 0.80 y tres ejecuciones E2E aisladas. Implementación, pruebas y validación de fábrica en curso; sin G, presupuesto de canal, campeón o autorización operativa. Evidencia nueva solo en docs/evidence/task16/factory-experiment/. Tarea 17 PENDIENTE. |
+| 16 | Conectar el release crudo y ejecutar reproducción sintética y real | `COMPLETA` | 15 | Construcción real/N=3 canónico y evidencia previa conservadas. [T16-FACTORY-XGB-S53-v1](docs/decisions/task16-experiment-specification.md): tres procesos E2E desde cinco fuentes, diez soportes aprobados, modelos independientes S53, identidades completas exactamente iguales. Lock/sync/Ruff, 487 pruebas pipeline, API 28, tablero 33/lint/build y 24 contratos verdes; 22 JSON publicados intactos. Evidencia agregada en docs/evidence/task16/factory-experiment/ y [reproducción](docs/decisions/task16-reproduction.md). Sin G, presupuesto, campeón o autorización operativa. Tarea 17 PENDIENTE. |
 | 17 | Realizar revisión científica independiente | `PENDIENTE` | 16 | Auditoría de fuentes, construcción canónica, determinismo, etiquetas, fuga, folds, líneas base, métricas y correspondencia con la bitácora. |
 | 18 | Documentar operación, límites y migraciones | `PENDIENTE` | 17 | Guía de un comando, Colab, troubleshooting, release crudo, reconstrucción canónica y migración Hugging Face/Zenodo hacia AWS. |
 | 19 | Ejecutar revisión de seguridad | `PENDIENTE` | 18 | Revisión de clasificación y privacidad de datos crudos, tokens, secretos, dependencias y superficies de red. |
@@ -188,10 +188,10 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 15/21 |
-| Tarea activa | 16 — Validación de fábrica T16-FACTORY-XGB-S53-v1 |
-| Tareas bloqueadas | Ninguna al inicio; detener si falla un gate de la receta aprobada |
-| Última tarea completada | 15 — Portabilidad nativa y Colab real |
+| Tareas completas | 16/21 |
+| Tarea activa | Ninguna — detenido antes de tarea 17 |
+| Tareas bloqueadas | Ninguna |
+| Última tarea completada | 16 — Fábrica V3 reproducible N=3 |
 | Última actualización | 7 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -247,6 +247,12 @@ tarea 10 en `4646316`; tarea 11 en `31f1e4b`. El cierre de tarea 12 es el commit
 documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido mediante
 `4d775ae` y DEC-015.
 
+### Cierre de fábrica de tarea 16
+
+| Fecha | Tarea | Estado nuevo | Commit | Validaciones | Observaciones |
+|---|---:|---|---|---|---|
+| 2026-11-07 | 16 | COMPLETA | `0d3f30a` (implementación); cierre documental local | Lock/sync/Ruff, 487 pruebas pipeline, CLI synthetic, API 28, tablero 33/lint/build, Pydantic/Zod 24 documentos y checks de integridad verdes. factory_validation: PASSED, 871,8 s, tres procesos limpios secuenciales, sin cuarta corrida. | Los diez soportes cumplen; identidad común 899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f. JSON completo de modelos, claves/matrices/probabilidades/decisiones/métricas/configuración/linaje idénticos. Etiquetas de evaluación diferidas; ningún objetivo 2025 consumido. FAR posterior T+2=0.8007614213 se reporta sin reajuste y no determina cierre técnico. 16 recibos previos y 22 JSON publicados intactos; sin secretos, datos/modelos pesados, campeón, cambios API/tablero/contratos, push/merge/otro PR. Evidencia y métricas en docs/decisions/task16-reproduction.md; 16/21, tarea 17 PENDIENTE. |
+
 ## 7. Decisiones y desviaciones
 
 Toda desviación debe registrarse antes de continuar.
@@ -280,6 +286,12 @@ Toda desviación debe registrarse antes de continuar.
 | DEC-021 | 2026-11-07 | Fijar tarea 16 a `sat-dengue/data_raw@a1a7f237a4baa6ffa848fabeef474f811f3b3f33` y admitir Listados_DIVIPOLA.xlsx solo como auxiliar remoto. | Identidad y revisión aprobadas por el usuario; Excel presente en el release, sin autorización de uso científico. | Se elige ignorar su descarga. El adaptador adquiere exclusivamente los cinco archivos aprobados y Kedro rechaza cualquier sexto archivo en el bundle/manifiesto científico. Ninguna lectura del Excel para construcción canónica, transformaciones o aprendizaje; hashes/tamaños del contrato se conservan. | Autorización explícita del usuario en la reanudación de tarea 16 |
 
 | DEC-022 | 2026-11-07 | Admitir estrictamente fechas epidemiológicas día/mes/año con medianoche localizada `12:00:00 a. m.` y espacio normal o NBSP. Bloquear una fuente no vacía sin ninguna fecha interpretable. | Perfil completo de INI_SIN: dengue 1.705.471 fechas localizadas + 133 vacías; grave 50.098 + 3 vacías. En 1.042.282 registros el primer componente supera 12; ninguno tiene segundo componente mayor que 12. La convención es día/mes, sin inferencia ni fallback. | Se conserva INI_SIN y cuarentena previa; fechas imposibles o formatos distintos siguen inválidos. Parser puro con caché acotada dentro de cada proceso; ninguna caché derivada compartida por N=3. Se reinicia la construcción; no se certifican los pilotos interrumpidos. | Adaptación de formato sustentada por inspección de claves y autorizada por la ejecución/diagnóstico de tarea 16; sin cambio de política científica |
+
+### Autorización vigente de fábrica
+
+| ID | Fecha | Decisión o desviación | Motivo | Impacto | Aprobación |
+|---|---|---|---|---|---|
+| DEC-023 | 2026-11-07 | Adoptar T16-FACTORY-XGB-S53-v1 únicamente para reproducibilidad E2E de fábrica V3; V2 queda como procedencia. | Aprobación explícita del equipo comunicada por el usuario. | Resuelve el bloqueo anterior; receta fija, sin G, presupuesto, HPO, refit, campeón, G5 o uso operativo. FAR se selecciona sin evaluación y el resultado posterior se reporta sin reajuste. Cierre técnico por procedimiento reproducible, no por rendimiento; detener antes de tarea 17. | Autorización explícita del chat; mecanismo y fecha de registro en el documento normativo, sin inventar integrantes o fecha formal del acta. |
 
 ## 8. Condición de finalización
 
@@ -325,5 +337,6 @@ y `pipeline/conf/base/parameters_experiment.yml` fijan la receta, sin campeón,
 uso operativo o tarea 17. Se conserva la evidencia anterior. Los nombres de
 integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
-Esta autorización resuelve el bloqueo de aprobación anterior; 16 EN CURSO,
-15/21 y 17 PENDIENTE hasta comprobar todos los gates y N=3 de la fábrica.
+Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
+y 15/21 hasta comprobar los gates y N=3. Cierre vigente: 16 COMPLETA, 16/21 y
+17 PENDIENTE, sin iniciarla.
