@@ -12,6 +12,7 @@ import yaml
 from sat_dengue_pipeline.experiment_management import runner
 from sat_dengue_pipeline.experiment_management.compare import compare
 from sat_dengue_pipeline.experiment_management.configuration import (
+    load_configuration,
     validate_configuration,
 )
 from sat_dengue_pipeline.experiment_management.evidence import exclusive_json, verify_execution
@@ -489,5 +490,28 @@ def test_comparison_reads_only_registry_and_aggregate_evidence(repository, monke
             raise AssertionError("Comparison opened an external document")
         return original(path, *args, **kwargs)
 
+    original_bytes = Path.read_bytes
+
+    def limited_bytes(path):
+        if path.name != "registry.yml" and not path.is_relative_to(repository / "docs/evidence"):
+            raise AssertionError("Comparison opened an external document")
+        return original_bytes(path)
+
     monkeypatch.setattr(Path, "read_text", limited_read)
+    monkeypatch.setattr(Path, "read_bytes", limited_bytes)
     assert compare(repository, horizon=2)
+
+
+@pytest.mark.parametrize("document", ["configuration", "protocol"])
+def test_document_changed_after_registry_read_is_rejected(repository, document):
+    """Rechazar bytes alterados entre resolver el registro y materializar la receta."""
+    entry = Registry(repository).get("EXP001")
+    path = repository / entry[document]
+    if document == "configuration":
+        config = read_yaml(path)
+        config["threshold"]["grid"] = [0.0, 0.5, 1.0]
+        path.write_text(yaml.safe_dump(config))
+    else:
+        path.write_text(path.read_text() + "\nProtocol changed after registry lookup.\n")
+    with pytest.raises(ValueError, match="alterad"):
+        load_configuration(repository, entry)

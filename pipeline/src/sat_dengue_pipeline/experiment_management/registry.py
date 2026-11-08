@@ -1,5 +1,6 @@
 """Registro cerrado, rutas confinadas, hashes y transiciones verificables en Git."""
 
+import hashlib
 import json
 import re
 from contextlib import contextmanager
@@ -58,11 +59,16 @@ def _mapping(loader: UniqueLoader, node: yaml.MappingNode) -> dict:
 UniqueLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _mapping)
 
 
-def read_yaml(path: Path) -> dict:
+def read_yaml(path: Path, *, expected_sha256: str | None = None) -> dict:
     """Cargar únicamente un objeto YAML pequeño, sin aliases recursivos."""
     if path.stat().st_size > 512_000:
         raise ValueError("Documento pesado")
-    value = yaml.load(path.read_text(encoding="utf-8"), Loader=UniqueLoader)
+    data = path.read_bytes()
+    if len(data) > 512_000 or (
+        expected_sha256 is not None and hashlib.sha256(data).hexdigest() != expected_sha256
+    ):
+        raise ValueError("Bytes congelados de configuración alterados")
+    value = yaml.load(data.decode("utf-8"), Loader=UniqueLoader)
     # JSON rechaza objetos no declarativos y ciclos provenientes de aliases.
     canonical_bytes(value)
     if not isinstance(value, dict):

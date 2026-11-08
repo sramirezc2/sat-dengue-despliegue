@@ -107,7 +107,10 @@ def validate_configuration(config: dict) -> dict:
 def load_configuration(root: Path, entry: dict) -> dict:
     """Vincular tipo de experimento, release y archivo congelado antes de ejecución."""
     path = confined(root, entry["configuration"], "pipeline/conf/experiments")
-    config = validate_configuration(read_yaml(path))
+    config = validate_configuration(read_yaml(path, expected_sha256=entry["configuration_sha256"]))
+    protocol = confined(root, entry["protocol"], "docs/experiments")
+    if sha256(protocol) != entry["protocol_sha256"]:
+        raise ValueError("Protocolo congelado alterado")
     data = config["data"]
     if (entry["experiment_type"] == "synthetic_fixture") != (data["mode"] == "synthetic"):
         raise ValueError("Fixture y experimento científico no pueden intercambiar fuentes")
