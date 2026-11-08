@@ -1618,6 +1618,12 @@ Sin clima, con log1p de conteos y umbrales, estandarizada:
 
 El 30 % de los inicios de T+1 (161 de 541) arranca con 0 casos en el origen, y el canal no puede detectar ninguno. Con las mismas alertas, los modelos detectan entre 40 y 50. El canal se satura cerca de 380 inicios en T+1, y la logística llega a 459 al máximo volumen de alertas.
 
+#### Qué inicios gana, y calibración
+
+Con las mismas alertas que el canal fuera de exceso, la logística detecta más inicios pequeños (T+1: 46 % vs 32 %; T+2: 55 % vs 27 %) y más inicios en municipios de baja endemicidad (49 % vs 33 %). En los brotes grandes (63 % vs 66 %) y en los municipios más endémicos (61 % vs 66 %), el canal es igual o un poco mejor. Su aporte es ver inicios que arrancan con pocos casos, no anticipar mejor los brotes grandes.
+
+En T+1 las probabilidades están bien calibradas (skill de Brier 0,17). En T+2 el modelo subestima el riesgo (el decil superior predice 0,34 y se observa 0,51), así que habría que recalibrar antes de usar esas probabilidades como tales.
+
 #### Limitaciones
 
 - Se probaron unas 25 variantes sobre los mismos años. La logística es la más consistente, pero conviene registrarla en la fábrica con la receta congelada antes de mirar nada nuevo.
