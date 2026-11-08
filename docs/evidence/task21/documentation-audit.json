@@ -1,0 +1,110 @@
+{
+  "schema": "sat-dengue.documentation-audit/v1",
+  "audited_commit": "766e5d5e009e2a7e1360827b205c7758ab578ac5",
+  "date_utc": "2026-11-08",
+  "documents_reviewed": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "plan.md",
+    "PLAN_pipeline_e2e_experimentos_sat_dengue.md",
+    "README.md",
+    "pipeline/README.md",
+    "docs/architecture/pipeline-e2e.md",
+    "docs/experiments/README.md",
+    "docs/experiments/manual_pipeline.md",
+    "docs/operations/pipeline-operations.md",
+    "docs/agents/skills-catalog.md",
+    "docs/reviews/scientific-review.md",
+    "docs/security/security-review.md",
+    "docs/bitacora-experimental.md",
+    ".agents/skills/sat-dengue-experiment/SKILL.md",
+    ".agents/skills/sat-dengue-recovery/SKILL.md",
+    ".agents/skills/sat-dengue-scientific-review/SKILL.md",
+    ".agents/skills/sat-dengue-verification/SKILL.md",
+    "docs/decisions/ci-governance.md",
+    "docs/decisions/deployment-publication.md",
+    "docs/decisions/experiment-management.md",
+    "docs/decisions/local-mlflow.md",
+    "docs/decisions/paired-evaluation.md",
+    "docs/decisions/portability.md",
+    "docs/decisions/raw-canonical-build.md",
+    "docs/decisions/task16-experiment-specification.md",
+    "docs/decisions/task16-reproduction.md",
+    "docs/decisions/temporal-experiments.md",
+    "docs/decisions/v2-scientific-migration.md"
+  ],
+  "documents_modified": [
+    "README.md",
+    "pipeline/README.md",
+    "docs/architecture/pipeline-e2e.md",
+    "PLAN_pipeline_e2e_experimentos_sat_dengue.md",
+    "docs/experiments/README.md",
+    "docs/operations/pipeline-operations.md",
+    "plan.md",
+    "docs/evidence/task21/documentation-audit.json"
+  ],
+  "links_verified": {
+    "local_markdown_links": 148,
+    "status": "PASSED"
+  },
+  "commands_verified": [
+    "uv lock --check --project pipeline",
+    "uv sync --locked --project pipeline",
+    "uv run --directory pipeline ruff check .",
+    "uv run --directory pipeline pytest",
+    "cd app/api && python -m pytest",
+    "cd app/dashboard && bun install --frozen-lockfile",
+    "cd app/dashboard && bun run lint",
+    "cd app/dashboard && bun run test",
+    "cd app/dashboard && NITRO_PRESET=node_server bun run build",
+    "uv run --directory pipeline kedro run --help",
+    "uv run --directory pipeline python -m sat_dengue_pipeline.experiment_management --help",
+    "uv run --directory pipeline python -m sat_dengue_pipeline.experiment_management validate",
+    "uv run --directory pipeline python tools/check_experiment_preservation.py",
+    "uv run --project pipeline python scripts/construir_resultados.py --help"
+  ],
+  "inconsistencies_found": [
+    "root README described only the deployed application and treated V2 as an active scientific repository",
+    "pipeline README listed stale pipeline, model and task states",
+    "architecture document stopped at T14 and omitted T21 skills",
+    "detailed plan could present proposed pipeline names and CLI as implemented interfaces",
+    "navigation omitted direct paths to the manual, skills catalog and closed reviews",
+    "T21 closure record omitted its exact closure commit and documentation-audit receipt"
+  ],
+  "inconsistencies_corrected": [
+    "documented the deployed product and independent V3 factory with V2 as historical provenance",
+    "aligned registered pipelines, xgboost_onset/v1 scope and T15-T19 status with implementation",
+    "updated architecture through T21 without rewriting historical evidence",
+    "distinguished design proposals from current Kedro and experiment-management interfaces",
+    "added concise navigation to operational, scientific, security and skills authorities",
+    "linked both T21 receipts and recorded the exact closure commit"
+  ],
+  "inconsistencies_pending": [],
+  "limitations_pending": [
+    "scientific references, availability assumptions and cohort limitations remain as documented in the closed scientific review",
+    "moderate dependency advisories and private local backup controls remain as documented in the closed security review",
+    "remote checks, independent human review and the main-branch ruleset must be verified before merge",
+    "local audit commits are not published to the existing pull request"
+  ],
+  "validation_summary": {
+    "api_tests": 35,
+    "dashboard_tests": 55,
+    "experiment_registry": "VALID",
+    "pipeline_tests": 549,
+    "publication_contracts": {
+      "pydantic_documents": 24,
+      "zod_documents": 24
+    },
+    "skills_official_validator": 4,
+    "skills_tests": 8,
+    "preservation": {
+      "protected_files": 49,
+      "published_json": 22,
+      "status": "PASSED",
+      "t16_n3_identity": "899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f",
+      "t16_receipts": 16
+    }
+  },
+  "final_status": "PASSED_WITH_LIMITATIONS",
+  "historical_evidence_unchanged": true
+}
