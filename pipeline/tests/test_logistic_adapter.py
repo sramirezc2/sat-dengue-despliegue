@@ -26,8 +26,13 @@ def test_receta_valida_y_rechaza_alteraciones() -> None:
     """La receta se acepta tal cual y se rechaza si cambia la preparación o la identidad."""
     cfg = _config()
     LogisticOnsetAdapter(adapter_spec(cfg))
-    for ruta, valor in ((("preparation", "scaling"), "none"), (("candidate", "class_balancing"), True),
-                        (("candidate", "library"), "xgboost"), (("candidate", "C"), 0)):
+    cambios = [
+        (("preparation", "scaling"), "none"),
+        (("candidate", "class_balancing"), True),
+        (("candidate", "library"), "xgboost"),
+        (("candidate", "C"), 0),
+    ]
+    for ruta, valor in cambios:
         malo = json.loads(json.dumps(cfg))
         malo[ruta[0]][ruta[1]] = valor
         with pytest.raises(ValueError):
