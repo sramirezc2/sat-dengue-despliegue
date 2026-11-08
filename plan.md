@@ -218,10 +218,11 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 19/22 |
-| Tarea activa | 20 — Revisión de seguridad |
+| Tareas completas | 20/22 |
+| Tarea activa | Ninguna |
 | Tareas bloqueadas | Ninguna |
-| Última tarea completada | 19 — Operación, límites y migraciones |
+| Última tarea completada | T20 — Ejecutar revisión de seguridad |
+| Próxima tarea | T21 — Registrar capacidades reutilizables (`PENDIENTE`) |
 | Última actualización | 8 de noviembre de 2026 |
 
 ### Registro de ejecución
