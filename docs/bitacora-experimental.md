@@ -1655,6 +1655,8 @@ Esta prueba reevalúa la candidata contando por separado los inicios que siguen 
 
 **En T+1, casi toda la ventaja viene de picos de un solo mes.** En los brotes que se sostienen, la logística empata con un canal bien ajustado. En T+2 hay una ventaja modesta también en los sostenidos. Esto hay que decirlo explícitamente en el informe: el aporte del modelo en T+1 es detectar picos cortos (brotes pequeños o ruido de notificación), no anticipar mejor los brotes que importan.
 
+Entrenar con la etiqueta de inicio sostenido (exceso en T+h y en T+h+1) no ayuda. En T+1 detecta 148 sostenidos frente a 159 del canal (−11, IC −21 a 0), peor que con la etiqueta normal (158 vs 159). En T+2 detecta 99 frente a 92, también por debajo de la etiqueta normal (102). En los brotes sostenidos de T+1, el canal bien ajustado está en el techo de lo que estos datos permiten.
+
 #### Limitaciones
 
 - Se probaron unas 45 configuraciones sobre los mismos años. La logística es la más consistente, pero conviene registrarla en la fábrica con la receta congelada antes de mirar nada nuevo.
