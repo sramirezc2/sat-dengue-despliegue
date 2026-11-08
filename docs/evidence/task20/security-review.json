@@ -32,6 +32,7 @@
     "private_raw_objects_reachable_from_delivery_refs": 0,
     "secret_candidates": 0
   },
+  "initial_security_fix_commit": "0f4fc20c36390d6a9c1705b89eedd9bbcc901cbf",
   "not_performed": [
     "private_download",
     "scientific_training",
@@ -54,6 +55,15 @@
     "status": "PASSED",
     "t16_n3_identity": "899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f"
   },
+  "previous_ci": {
+    "correction": "POSIX_generated_references_and_UTF8_test_text",
+    "head": "5d909290d3a44ac15e2d68a2efcc6eb690d82a5a",
+    "other_six_jobs": "PASSED",
+    "run_id": 42451673280,
+    "windows": "FAILED",
+    "windows_tests_failed": 11,
+    "windows_tests_passed": 526
+  },
   "report": "docs/security/security-review.md",
   "residual_findings": {
     "SEC-04": "MEDIUM",
@@ -69,16 +79,18 @@
     "SEC-03": "MEDIUM"
   },
   "review_date": "2026-11-08",
-  "reviewed_code_commit": "0f4fc20c36390d6a9c1705b89eedd9bbcc901cbf",
+  "reviewed_code_commit": "bb03e65bf8612f4a478f13487467e264bce3c8de",
   "task": 20,
   "validation": {
     "api_tests": 35,
     "bun_frozen": "PASSED",
     "checkout_autocrlf_regression": "PASSED",
+    "controlled_cp1252_conclusion": "PASSED",
     "dashboard_lint": "PASSED",
     "dashboard_node_server_build": "PASSED",
     "dashboard_tests": 55,
-    "pipeline_tests": 537,
+    "pipeline_tests": 541,
+    "posix_reference_and_identity_regressions": 4,
     "pydantic_documents": 24,
     "registry": "VALID",
     "ruff": "PASSED",

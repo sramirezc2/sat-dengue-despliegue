@@ -2,7 +2,8 @@
 
 Fecha: 2026-11-08. Resultado: **APPROVED_WITH_LIMITATIONS**.
 Base documental y funcional: `498583b` (T19); correcciones auditadas:
-`0f4fc20c36390d6a9c1705b89eedd9bbcc901cbf`. No quedan hallazgos CRITICAL/HIGH
+`0f4fc20c36390d6a9c1705b89eedd9bbcc901cbf` y corrección de transporte
+`bb03e65bf8612f4a478f13487467e264bce3c8de`. No quedan hallazgos CRITICAL/HIGH
 abiertos dentro de las superficies verificadas. Esto no certifica la configuración
 actual de proveedores, un despliegue remoto ni una aprobación humana de merge.
 
@@ -80,7 +81,7 @@ NOT_VERIFIED exige comprobación humana o infraestructura fuera del alcance.
 | Transporte API S3 | PASS | `almacenamiento.py`: descarga temporal, tamaño+contrato antes de reemplazo; fallo conserva copia local. Excepciones SDK y cadenas del validador ocultas; creación/listado/descarga cubiertos por regresiones. Autenticidad del productor: SEC-09. |
 | Logs de API | PASS | `main.py:crear_app` mantiene boto3/botocore/urllib3/s3transfer en WARNING incluso con aplicación DEBUG; siete casos nuevos de transporte/logging y fallback. No prueba de configuración externa de logging. |
 | Contrato/API/tablero | PASS | 35 pruebas API, 55 tablero, 24 Pydantic y 24 Zod; validación de JSON, errores controlados, API GET/CORS explícito. SEC-01 conserva aceptación histórica de UUID/fechas/enteros al actualizar Zod. |
-| Fronteras científicas | PASS | 537 pruebas pipeline: bloqueo de import inverso, red, DNS y aperturas de datos reales en tests; revisión T18. API requirements sin Kedro ni dependencias científicas; pipeline no escribe en app. |
+| Fronteras científicas | PASS | 541 pruebas pipeline: bloqueo de import inverso, red, DNS y aperturas de datos reales en tests; revisión T18. API requirements sin Kedro ni dependencias científicas; pipeline no escribe en app. |
 | Dependencias | PARTIAL | uv lock/sync y Bun frozen aprobados; OSV sin HIGH/CRITICAL pendiente en versiones consultadas; cinco avisos moderados en SEC-04. API fija directas, no transitivas ni hashes de wheels. |
 | Workflows | PARTIAL | Cuatro workflows: pull_request/workflow_dispatch, contents:read, checkout persist-credentials:false, sin pull_request_target ni interpolación de título/cuerpo en shell; sin secretos de proveedor. Acciones por tag, no SHA: SEC-06. |
 | Contenedores/red | PARTIAL | Dockerfiles API/tablero usan usuario sin privilegios, API sin ciencia. Nginx expone HTTP; TLS/firewall/IAM actuales NOT_VERIFIED (SEC-07). Imágenes base por tag (SEC-06). No Docker build ni despliegue remoto en esta revisión. |
@@ -100,7 +101,7 @@ y [`pipeline/tests/`](../../pipeline/tests/), salvo las rutas API/tablero explí
 |---|---|---|
 | SEC-01 | HIGH, resuelto | Zod 3.25.76 y copias 4.6.5 afectadas por agotamiento de memoria al validar colecciones sobredimensionadas. Se fija Zod 4.6.6 y override transitivo; no se agrega otra dependencia. Uso de colecciones V4 corregidas, con reglas explícitas que conservan aceptación JSON anterior de UUID, timestamp y enteros. 21 casos de compatibilidad y un caso con getters prueban rechazo previo a leer elementos de los dos horizontes. Comparación acotada: V3 procesa tres elementos pese a length(2), V4 cero. Cinco regresiones de compatibilidad fallaban con actualización sin adaptación. No cambia ningún dato ni regla científica. [Aviso](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5), [corrección del mantenedor](https://github.com/colinhacks/zod/commit/a0ebf970f2d752e5f58527cd2942ff48be4f46bd). |
 | SEC-02 | MEDIUM, resuelto | Excepciones arbitrarias del SDK S3 podían alcanzar logs/tracebacks y el cliente se construía fuera del bloque protegido. Ahora se oculta mensaje/cadena externa, se conserva diagnóstico interno de tamaño/contrato y se acota logging HTTP. Regresiones con marcador artificial fallaban en creación/listado/descarga; ahora pasan y mantienen fallback/atomicidad. No se observó una credencial expuesta. |
-| SEC-03 | MEDIUM, resuelto localmente | autocrlf alteraba documentos de protocolo y rompía las identidades en Windows (fallo remoto previo de T17). `.gitattributes` fuerza LF en protocolos, evidencia, especificación T16 y JSON; no se renormaliza ni modifica evidencia histórica, no se relaja ningún hash. Regresión de checkout roja → verde; confirmación nativa pendiente en CI del push. |
+| SEC-03 | MEDIUM, resuelto localmente | autocrlf alteraba documentos de protocolo y rompía las identidades en Windows (fallo remoto previo de T17). `.gitattributes` fuerza LF en protocolos, evidencia, especificación T16 y JSON; no se renormaliza ni modifica evidencia histórica, no se relaja ningún hash. Regresión de checkout roja → verde. La primera CI (42451673280) eliminó los fallos por hashes y expuso referencias internas con separador Windows y una conclusión de prueba con encoding implícito. `bb03e65` usa as_posix al generar referencias/claves de identidad (mantiene guards de entrada) y UTF-8 explícito en fixtures. Cuatro regresiones controladas de rutas rojas → verdes y conclusión bajo CP1252 verde; confirmación nativa completa pendiente del segundo push. |
 
 ### Riesgo residual admitido con seguimiento
 
@@ -123,7 +124,7 @@ Detalle de SEC-04 (severidad conservadora de la base de avisos):
 
 ## Validación, límites y cierre
 
-- Gate acumulado: lock/sync/Ruff PASS; pipeline **537** pruebas (seis avisos
+- Gate acumulado: lock/sync/Ruff PASS; pipeline **541** pruebas (seis avisos
   OmegaConf existentes); API **35** (aviso deprecación TestClient); tablero
   **55**, Bun frozen, lint y build node_server PASS.
 - `experiment_management validate` VALID; preservación **49/49**, incluyendo
@@ -131,6 +132,8 @@ Detalle de SEC-04 (severidad conservadora de la base de avisos):
   `899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f`.
 - Pydantic y Zod aceptan **24 documentos cada uno** (22 publicados y dos
   artificiales). Fixtures sin ciencia nueva; no reemplazan validación operativa.
+- Cuatro regresiones adicionales de referencias/identidad POSIX y conclusión artificial
+  con locale CP1252 controlado PASS; no se atribuye ese control a Windows nativo.
 - Cuatro workflows y Dockerfiles inspeccionados; pruebas pipeline bloquean red
   y DNS. Hubo red únicamente para metadatos públicos de paquetes/avisos y GitHub;
   no se afirma que builds/instalaciones normales sean offline o sin scripts.
