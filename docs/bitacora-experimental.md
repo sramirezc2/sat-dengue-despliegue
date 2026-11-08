@@ -1610,6 +1610,8 @@ Sin clima, con log1p de conteos y umbrales, estandarizada:
 - Interacciones y pesos balanceados.
 - Un modelo por departamento: peor.
 - Señal regional por departamento.
+- Ventanas móviles de 3 y 5 años, y pesos por recencia (vida media de 2 años): entre −1 y −7 inicios frente a la ventana expansiva. Toda la historia es lo mejor.
+- Modelo de conteo Poisson (predice los casos del mes objetivo y alerta por su razón contra el P75): T+1 238 vs 280 (−42) y T+2 179 vs 179. Clasificar el inicio directamente es mejor que predecir el conteo.
 - Señal de 5 municipios vecinos: coordenadas DIVIPOLA de datos.gov.co, distancia media de 24 km, calculada sobre el panel nacional. Suma unos 6 inicios de los que arrancan desde 0 casos, pero no cambia el total.
 
 #### Lo que queda a favor del modelo
