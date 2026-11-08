@@ -1,0 +1,11 @@
+{
+  "baseline_adapter_sha256": "c2d44ef691c21771bd3aa84f23d7494d55b595ab4b8066a9f243cb66be91238c",
+  "baseline_commit": "daf6ed5",
+  "full_model_json_equal": true,
+  "full_model_sha256": "27ad73e959a364f3758524b99f5a0a01ea7babcfa816b58c065f9b34f009971f",
+  "private_sources_used": false,
+  "probabilities_equal": true,
+  "purpose": "synthetic_engineering_regression_only",
+  "status": "PASSED",
+  "t16_real_rerun": false
+}
