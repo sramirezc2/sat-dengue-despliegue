@@ -20,6 +20,13 @@ Leer `plan.md` y `docs/architecture/pipeline-e2e.md` antes de cada tarea.
 - Python con tipado y docstrings estilo Google; cambios de comportamiento con
   pruebas proporcionales.
 
+Skills obligatorias de la fábrica ([catálogo](docs/agents/skills-catalog.md)):
+
+- Usar `$sat-dengue-experiment` para crear, repetir, ejecutar, concluir o comparar experimentos.
+- Usar `$sat-dengue-scientific-review` antes de aprobar una receta científica o aceptar conclusiones.
+- Usar `$sat-dengue-verification` antes de declarar cambios terminados o listos para push.
+- Usar `$sat-dengue-recovery` ante ejecuciones fallidas, bloqueadas o incompletas.
+
 Comandos desde la raíz:
 
 ```sh
