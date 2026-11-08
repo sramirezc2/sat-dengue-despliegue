@@ -120,6 +120,7 @@ en `/api/docs`. Esa interfaz carga sus recursos desde un CDN público;
 | Procedencia de los datos publicados | corrida `88e3ad9decce8bd4d`, evaluación congelada G5 |
 | Bitácora experimental | [`docs/bitacora-experimental.md`](docs/bitacora-experimental.md) |
 | Arquitectura objetivo V3 y transición del pipeline E2E | [`docs/architecture/pipeline-e2e.md`](docs/architecture/pipeline-e2e.md) |
+| Operación, recuperación y migraciones del pipeline | [Guía operativa](docs/operations/pipeline-operations.md) |
 | Subproyecto Kedro y smoke test sintético | [`pipeline/README.md`](pipeline/README.md) |
 | Propuesta de política de decisión v2 | [`docs/politica-de-decision-v2.md`](docs/politica-de-decision-v2.md) |
 | Repositorio científico (pipelines, notebooks, evidencia) | `SAT-Dengue-V2` |

@@ -5,6 +5,10 @@ T17 añade gobernanza a los contratos científicos existentes. El registro
 store MLflow. T16 sigue siendo validación de ingeniería cerrada y vive fuera del
 registro científico; no se reinterpreta ni se vuelve a ejecutar.
 
+Para operación del entorno, publicación y recuperación, consultar la
+[guía operativa central](../operations/pipeline-operations.md); para crear y repetir
+entrenamientos, el [manual](manual_pipeline.md).
+
 ## Registrar y aprobar
 
 1. Crear `docs/experiments/EXP003/SPECIFICATION.md` con hipótesis, receta,

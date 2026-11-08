@@ -4,6 +4,9 @@ Subproyecto Kedro independiente del despliegue. Incluye el smoke de cinco etapas
 dominio científico y construcción/certificación desde crudos con fixtures
 artificiales. No es un modelo aprobado ni autoriza alertas.
 
+La [guía operativa central](../docs/operations/pipeline-operations.md) reúne
+preparación multiplataforma, recuperación, límites y migración de almacenamiento.
+
 Requisitos: Python 3.12 y uv (validado con 0.11.19). Dependencias fijadas en
 `pyproject.toml` y resueltas en `uv.lock`: Kedro 1.7.0, pytest 9.2.0 y Ruff 0.17.4.
 La adquisición agrega `huggingface_hub` 2.4.0; la preparación usa NumPy 2.5.4

@@ -1,0 +1,31 @@
+{
+  "checks": {
+    "cli_help": [
+      "kedro run",
+      "experiment_management",
+      "construir_resultados.py",
+      "validate_publication_consumers.py"
+    ],
+    "colab_and_private_commands": "source_and_existing_tests_only",
+    "historical_experiments_rerun": false,
+    "local_links_checked": 80,
+    "notebooks_changed": false,
+    "operations_code_blocks": 8,
+    "private_commands_executed": false,
+    "protected_sha256_files": 49,
+    "pydantic_documents": 24,
+    "synthetic_pipelines": [
+      "synthetic",
+      "canonical_build",
+      "canonical_reproducibility",
+      "deployment_publication"
+    ],
+    "zod_documents": 24
+  },
+  "documentation": "docs/operations/pipeline-operations.md",
+  "platform_validation": "current_macOS_execution; Windows/Colab/Linux syntax and existing adapters inspected, not simulated as native runs",
+  "review_base_commit": "19cd9e7",
+  "schema_version": 1,
+  "status": "PASSED",
+  "task": 19
+}
