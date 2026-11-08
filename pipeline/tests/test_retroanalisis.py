@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import pandas as pd
 import pytest
 import yaml
 from fixtures.canonical_fixture import make_panel
@@ -54,3 +55,13 @@ def test_salida_solo_bajo_data(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
     with pytest.raises(ValueError):
         retroanalisis(object(), params)
+
+
+def test_respeta_demora_de_etiqueta() -> None:
+    """Con demora de etiqueta, ningún objetivo deja su etiqueta en el periodo reservado."""
+    table, schema = build_table(make_panel())
+    config = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
+    assert config["label_delay_months"] >= 1
+    preds, _ = predicciones_rolling(table, schema, config, 1, "2023-06")
+    ultimo = max(preds.target_period)
+    assert str(pd.Period(ultimo, freq="M") + config["label_delay_months"]) <= "2024-12"

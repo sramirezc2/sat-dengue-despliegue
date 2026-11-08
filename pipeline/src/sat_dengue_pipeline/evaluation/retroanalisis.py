@@ -47,24 +47,26 @@ def predicciones_rolling(
     Returns:
         Predicciones del arnés concatenadas y la lista de meses omitidos con su motivo.
     """
-    targets = table.year_month.map(lambda t: add_months(t, horizonte))
-    origins = table.loc[targets.le(ultimo_objetivo), KEYS].reset_index(drop=True)
+    demora = config["label_delay_months"]
+    # La etiqueta debe estar disponible antes del periodo reservado, no solo el objetivo.
+    disponible = table.year_month.map(lambda t: add_months(t, horizonte + demora))
+    origins = table.loc[disponible.le(ultimo_objetivo), KEYS].reset_index(drop=True)
     _, _, prepared, _ = prepare_horizon(
         table, schema, origins, horizonte, config["predictor_availability"]
     )
-    data = from_prepared(prepared, horizonte, label_delay_months=config["label_delay_months"])
+    data = from_prepared(prepared, horizonte, label_delay_months=demora)
     spec = adapter_spec(config)
     registry = ModelRegistry()
     registry.register(spec.family, spec.version, XGBoostOnsetAdapter)
     partes, omitidos = [], []
     origen = primer_origen
-    while add_months(origen, horizonte) <= ultimo_objetivo:
+    while add_months(origen, horizonte + demora) <= ultimo_objetivo:
         experimento = ExperimentSpec(
             horizon=horizonte,
             seed=config["seed"],
             first_origin=origen,
             last_target=add_months(origen, horizonte),
-            label_delay_months=config["label_delay_months"],
+            label_delay_months=demora,
         )
         try:
             frame, _ = run_candidate(data, experimento, spec, registry)
