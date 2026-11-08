@@ -1,8 +1,8 @@
 # Hoja de ruta de implementación — Pipeline E2E SAT DENGUE
 
-**Versión:** 1.1
+**Versión:** 1.3
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** Tarea 16 COMPLETA — T16-FACTORY-XGB-S53-v1, N=3 E2E exacta; 16/21; tarea 17 PENDIENTE, no iniciada
+**Estado general:** Tarea 16 COMPLETA — T16-FACTORY-XGB-S53-v1, N=3 E2E exacta; 16/22; tarea 17 EN CURSO — preflight aprobado por DEC-026
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -32,6 +32,11 @@ Implementar en el repositorio definitivo un pipeline E2E reproducible que permit
 adquirir y validar fuentes crudas, construir y certificar la tabla canónica,
 preparar datos, entrenar candidatos, evaluarlos y publicar resultados compatibles
 con la API y el tablero existentes.
+
+La fábrica también deberá administrar múltiples experimentos aprobados sin
+reescribir la validación cerrada de tarea 16: registro central, protocolo y
+configuración congelados, ejecución identificable, evidencia agregada append-only,
+tracking MLflow local, conclusiones y comparación reproducible entre experimentos.
 
 La implementación debe conservar la separación:
 
@@ -76,6 +81,10 @@ cuya identidad completa haya sido certificada.
   selección, umbrales o evaluación presentada como independiente.
 - La tabla canónica es un derivado local reconstruible; no se publica como fuente
   de entrenamiento ni se incorpora DVC en esta implementación.
+- `factory_validation` y `T16-FACTORY-XGB-S53-v1` permanecen cerrados e inmutables;
+  la ejecución de otros experimentos utilizará un pipeline separado.
+- Ningún experimento científico real se ejecutará sin registro, protocolo,
+  configuración, hashes y estado `APPROVED` verificables.
 
 ## 3. Estados permitidos
 
@@ -108,12 +117,13 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 13 | Construir y certificar la tabla canónica desde fuentes crudas | `COMPLETA` | 12 | Arquitectura sincronizada; contrato crudo cerrado y productores registrados; 83 pruebas nuevas/356 totales. N=3 exacto sobre 168 claves artificiales y prueba de cuadrícula artificial de 182.886 claves (DEC-017). Cuarentena previa, guards T+1/T+2, conservación/nulos, atomicidad y tracking agregado verificados. Reproducción real pendiente en tarea 16. |
 | 14 | Migrar la publicación sin romper el despliegue | `COMPLETA` | 13 | Publicador puro, wrapper compatible y deployment_publication registrados; equivalencia byte a byte en cuatro casos caracterizados. Staging, contrato, manifiesto SHA-256 y rollback probados; 84 pruebas nuevas/440 totales. Los 22 JSON originales conservan sus hashes y Pydantic/Zod aceptan los generados. |
 | 15 | Cerrar portabilidad | `COMPLETA` | 14 | macOS local y Colab real verdes; matriz nativa Ubuntu/Windows/macOS sobre 61159d9 aprobada en run 42424636145. Cada runner: 463 pruebas, 12 específicas, cuatro CLI, árbol limpio y hashes idénticos. Siete checks del PR verdes; recibos/logs revisados. DEC-019; docs/decisions/portability.md. |
-| 16 | Conectar el release crudo y ejecutar reproducción sintética y real | `COMPLETA` | 15 | Construcción real/N=3 canónico y evidencia previa conservadas. [T16-FACTORY-XGB-S53-v1](docs/decisions/task16-experiment-specification.md): tres procesos E2E desde cinco fuentes, diez soportes aprobados, modelos independientes S53, identidades completas exactamente iguales. Lock/sync/Ruff, 487 pruebas pipeline, API 28, tablero 33/lint/build y 24 contratos verdes; 22 JSON publicados intactos. Evidencia agregada en docs/evidence/task16/factory-experiment/ y [reproducción](docs/decisions/task16-reproduction.md). Sin G, presupuesto, campeón o autorización operativa. Tarea 17 PENDIENTE. |
-| 17 | Realizar revisión científica independiente | `PENDIENTE` | 16 | Auditoría de fuentes, construcción canónica, determinismo, etiquetas, fuga, folds, líneas base, métricas y correspondencia con la bitácora. |
-| 18 | Documentar operación, límites y migraciones | `PENDIENTE` | 17 | Guía de un comando, Colab, troubleshooting, release crudo, reconstrucción canónica y migración Hugging Face/Zenodo hacia AWS. |
-| 19 | Ejecutar revisión de seguridad | `PENDIENTE` | 18 | Revisión de clasificación y privacidad de datos crudos, tokens, secretos, dependencias y superficies de red. |
-| 20 | Registrar capacidades reutilizables | `PENDIENTE` | 19 | Skills, agentes o herramientas útiles identificados y documentados. |
-| 21 | Elaborar reporte ejecutivo | `PENDIENTE` | 20 | Resumen final de entregables, validaciones, limitaciones y decisiones pendientes. |
+| 16 | Conectar el release crudo y ejecutar reproducción sintética y real | `COMPLETA` | 15 | Construcción real/N=3 canónico y evidencia previa conservadas. [T16-FACTORY-XGB-S53-v1](docs/decisions/task16-experiment-specification.md): tres procesos E2E desde cinco fuentes, diez soportes aprobados, modelos independientes S53, identidades completas exactamente iguales. Lock/sync/Ruff, 487 pruebas pipeline, API 28, tablero 33/lint/build y 24 contratos verdes; 22 JSON publicados intactos. Evidencia agregada en docs/evidence/task16/factory-experiment/ y [reproducción](docs/decisions/task16-reproduction.md). Sin G, presupuesto, campeón o autorización operativa. La generalización experimental se incorpora como tarea 17. |
+| 17 | Generalizar la fábrica y administrar experimentos reproducibles | `EN CURSO` | 16 | `factory_validation` y T16 permanecen intactos; registro central y esquemas cerrados; protocolos/configuraciones congelados; pipeline separado `experiment_run`; evidencia agregada append-only por ejecución; MLflow padre/hijos; conclusiones y comparación determinista. Dos fixtures prueban coexistencia, rechazo fail-closed y exclusión de 2025, sin ejecutar ciencia real, HPO, campeón ni backend remoto. Bloqueo documental DEC-025 resuelto por DEC-026. |
+| 18 | Realizar revisión científica independiente | `PENDIENTE` | 17 | Auditoría de fuentes, construcción canónica, determinismo, etiquetas, fuga, folds, líneas base, métricas, gobernanza experimental y correspondencia con la bitácora. |
+| 19 | Documentar operación, límites y migraciones | `PENDIENTE` | 18 | Guía de un comando, registro/ejecución/comparación de experimentos, Colab, troubleshooting, release crudo, reconstrucción canónica y migración Hugging Face/Zenodo hacia AWS. |
+| 20 | Ejecutar revisión de seguridad | `PENDIENTE` | 19 | Revisión de clasificación y privacidad de datos crudos, registro experimental, evidencia, tokens, secretos, dependencias y superficies de red. |
+| 21 | Registrar capacidades reutilizables | `PENDIENTE` | 20 | Skills, agentes o herramientas útiles identificados y documentados. |
+| 22 | Elaborar reporte ejecutivo | `PENDIENTE` | 21 | Resumen final de entregables, validaciones, limitaciones y decisiones pendientes. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
 
@@ -189,6 +199,7 @@ arquitectura y gobernanza
         -> construcción canónica certificada
         -> preparación científica
         -> entrenamiento y evaluación
+        -> administración y comparación de experimentos
         -> publicación
         -> portabilidad y reproducción
         -> revisión, documentación y cierre
@@ -207,8 +218,8 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 16/21 |
-| Tarea activa | Ninguna — detenido antes de tarea 17 |
+| Tareas completas | 16/22 |
+| Tarea activa | 17 — Administración multi-experimento |
 | Tareas bloqueadas | Ninguna |
 | Última tarea completada | 16 — Fábrica V3 reproducible N=3 |
 | Última actualización | 7 de noviembre de 2026 |
@@ -272,6 +283,16 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 |---|---:|---|---|---|---|
 | 2026-11-07 | 16 | COMPLETA | `0d3f30a` (implementación); cierre documental local | Lock/sync/Ruff, 487 pruebas pipeline, CLI synthetic, API 28, tablero 33/lint/build, Pydantic/Zod 24 documentos y checks de integridad verdes. factory_validation: PASSED, 871,8 s, tres procesos limpios secuenciales, sin cuarta corrida. | Los diez soportes cumplen; identidad común 899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f. JSON completo de modelos, claves/matrices/probabilidades/decisiones/métricas/configuración/linaje idénticos. Etiquetas de evaluación diferidas; ningún objetivo 2025 consumido. FAR posterior T+2=0.8007614213 se reporta sin reajuste y no determina cierre técnico. 16 recibos previos y 22 JSON publicados intactos; sin secretos, datos/modelos pesados, campeón, cambios API/tablero/contratos, push/merge/otro PR. Evidencia y métricas en docs/decisions/task16-reproduction.md; 16/21, tarea 17 PENDIENTE. |
 
+### Ampliación autorizada posterior a tarea 16
+
+| Fecha | Tarea | Estado nuevo | Commit | Validaciones | Observaciones |
+|---|---:|---|---|---|---|
+| 2026-11-07 | 17 | PENDIENTE | — | Consistencia documental y dependencias revisadas; no se ejecutó implementación. | Se inserta la administración multi-experimento antes de la revisión científica. Las antiguas tareas 17–21 pasan a 18–22; progreso 16/22 y ninguna tarea activa. |
+| 2026-11-07 | 17 | BLOQUEADA | Base `daf6ed5`; registro documental local sin commit | Lectura de AGENTS.md, hojas de ruta y arquitectura; rama feature/pipeline-e2e; T16 COMPLETA. No existe 14-05-01-194.md en la raíz. Cambios preexistentes conservados: .gitignore, plan.md y plan detallado sin seguimiento. | Precondición 4 del pedido: detener ante contradicciones. El plan detallado exige ruleset como gate cero antes de implementar, pero su sección 6 y DEC-006 lo exigen antes del merge. El cierre final denominado vigente aún dice 16/21 frente al progreso actual 16/22. Registrar y resolver estas discrepancias antes de iniciar código; sin suites, adquisición, reproducción T16, push, merge o PR. |
+| 2026-11-07 | 17 | PENDIENTE | — | Documentos reconciliados; `git diff --check`, estados, conteos y referencias vigentes revisados. | DEC-026 resuelve DEC-025: ruleset obligatorio antes del merge, no como precondición de implementación; cierre vigente 16/22. Ninguna implementación iniciada y ninguna tarea activa. |
+
+| 2026-11-07 | 17 | EN CURSO | Base `daf6ed5`; inicio local | Preflight documental y Git repetido; DEC-026 consistente; rama obligatoria y T16 COMPLETA. Snapshot SHA-256 de T16/publicaciones y copia de los tres cambios preexistentes fuera del repositorio. | Únicamente alcance T17; sin reproducción privada, push, merge ni nuevo PR. |
+
 ## 7. Decisiones y desviaciones
 
 Toda desviación debe registrarse antes de continuar.
@@ -311,12 +332,17 @@ Toda desviación debe registrarse antes de continuar.
 | ID | Fecha | Decisión o desviación | Motivo | Impacto | Aprobación |
 |---|---|---|---|---|---|
 | DEC-023 | 2026-11-07 | Adoptar T16-FACTORY-XGB-S53-v1 únicamente para reproducibilidad E2E de fábrica V3; V2 queda como procedencia. | Aprobación explícita del equipo comunicada por el usuario. | Resuelve el bloqueo anterior; receta fija, sin G, presupuesto, HPO, refit, campeón, G5 o uso operativo. FAR se selecciona sin evaluación y el resultado posterior se reporta sin reajuste. Cierre técnico por procedimiento reproducible, no por rendimiento; detener antes de tarea 17. | Autorización explícita del chat; mecanismo y fecha de registro en el documento normativo, sin inventar integrantes o fecha formal del acta. |
+| DEC-024 | 2026-11-07 | Insertar como tarea 17 la generalización de la fábrica para registrar, ejecutar, conservar y comparar múltiples experimentos aprobados; desplazar las antiguas tareas 17–21 a 18–22. | La validación T16 demostró reproducibilidad de una receta, pero el ejecutor actual está cerrado a esa única especificación y el tracking V3 aún no reproduce el registro experimental de V2. | T16 continúa inmutable. Un pipeline separado incorporará registro y estados cerrados, protocolos/configuraciones con hashes, evidencia append-only, MLflow local padre/hijos, conclusiones y comparación. No incluye nuevas familias, HPO, campeón, modelos pesados, servicio remoto ni ejecución científica real. Las referencias históricas a tareas anteriores a DEC-024 conservan su numeración original. | Autorización explícita del usuario para actualizar las hojas de ruta antes de continuar. |
+| DEC-025 | 2026-11-07 | Detener T17 en preflight por contradicciones documentales, sin modificar código. | PLAN_pipeline_e2e_experimentos_sat_dengue.md, sección 9, exige ruleset verificado como gate cero antes de implementar; su sección 6 y DEC-006 sitúan ese requisito antes del merge. Además, el párrafo final de este plan denomina vigente un cierre 16/21, mientras cabecera, tabla y DEC-024 establecen 16/22. | T17 BLOQUEADA, progreso 16/22 y ninguna tarea activa. Pendiente reconciliar el momento exigido para verificar ruleset y actualizar o identificar como histórico el cierre final; se conservan los textos en conflicto para revisión. T16 y cambios preexistentes intactos; no se ejecutan suites ni experimentos. | Detención exigida por precondición 4 del pedido actual y sección 9 de plan.md; no se elige silenciosamente una interpretación. |
+| DEC-026 | 2026-11-07 | Resolver DEC-025: el ruleset y la aprobación independiente son gates obligatorios antes del merge, no antes de implementar en la rama; el conteo vigente es 16/22. | DEC-006 y la sección de gobernanza del diseño ya fijan el momento correcto. El texto de riesgo era demasiado estricto y el cierre 16/21 no había incorporado la renumeración de DEC-024. | T17 vuelve a `PENDIENTE`, sin tarea activa ni bloqueada. La implementación puede comenzar; merge continúa prohibido hasta verificar ruleset, aprobación independiente y checks finales verdes. Los registros históricos 15/21 y 16/21 anteriores a DEC-024 no se reescriben. | Reconciliación documental solicitada tras el preflight de T17. |
 
 ## 8. Condición de finalización
 
 El trabajo solo puede considerarse terminado cuando:
 
-- las 21 tareas estén `COMPLETA`;
+- las 22 tareas estén `COMPLETA`;
+- la fábrica pueda registrar, ejecutar y comparar experimentos aprobados sin
+  sobrescribir T16 ni depender exclusivamente de un store MLflow local;
 - el clon limpio ejecute el E2E sintético con un comando;
 - los cuatro integrantes puedan adquirir el release privado crudo con cuentas y
   credenciales individuales, sin depender de otro integrante en cada corrida;
@@ -337,8 +363,13 @@ El trabajo solo puede considerarse terminado cuando:
 
 ## 9. Referencia de diseño
 
-La fuente arquitectónica versionada y disponible para todos los integrantes es
-[docs/architecture/pipeline-e2e.md](docs/architecture/pipeline-e2e.md).
+La única hoja de directrices y diseño detallado del E2E es
+[`PLAN_pipeline_e2e_experimentos_sat_dengue.md`](PLAN_pipeline_e2e_experimentos_sat_dengue.md).
+La arquitectura implementada y sus fronteras versionadas también se documentan en
+[`docs/architecture/pipeline-e2e.md`](docs/architecture/pipeline-e2e.md).
+
+Este `plan.md` es la única fuente de verdad sobre tareas, numeración, estados,
+dependencias y progreso. El plan de diseño no mantiene un estado operativo paralelo.
 
 Antes de implementar la tarea 13, ese documento debe sincronizarse con DEC-015 y
 DEC-016. La propia tarea 13 no puede cerrarse mientras conserve el supuesto de un
@@ -357,5 +388,5 @@ uso operativo o tarea 17. Se conserva la evidencia anterior. Los nombres de
 integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
-y 15/21 hasta comprobar los gates y N=3. Cierre vigente: 16 COMPLETA, 16/21 y
-17 PENDIENTE, sin iniciarla.
+y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
+anterior a DEC-024. Cierre vigente: 16 COMPLETA, 16/22 y tarea 17 EN CURSO (preflight DEC-026 aprobado).
