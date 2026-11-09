@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 25/27; T22–T25 COMPLETAS; T26–T27 PENDIENTES; ninguna tarea activa ni bloqueada
+**Estado general:** 25/27; T22–T25 COMPLETAS; T26 EN CURSO; T27 PENDIENTE; ninguna tarea bloqueada
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -127,7 +127,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 23 | Agregar operación portable y comando canónico E2E | `COMPLETA` | 22 | Helper build_approved_canonical.py, adquisición → canonical_build provisional, cinco regresiones rojas → verdes y guía portable/recursos. 51 pruebas enfocadas verdes; sin ciencia nueva. |
 | 24 | Validar las correcciones operativas acumuladas | `COMPLETA` | 23 | 578 pipeline, API 35, tablero 55/frozen/lint/build; contratos 22+22; skills, enlaces, filtros e higiene verdes. Checkout limpio de 5768331 con 29 pruebas nuevas y ayuda/error controlado; evidencia preservada. [Recibo](docs/evidence/task24/operational-validation.json). |
 | 25 | Elaborar reporte ejecutivo final | `COMPLETA` | 24 | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md): síntesis con evidencia y límites, navegación desde guías y arquitectura actualizada hasta T24. Auditoría documental, registro, skills y preservación verdes; publicación pendiente de autorización. |
-| 26 | Publicar cambios y validar el PR #1 | `PENDIENTE` | 25 | Fase 2: solo con autorización posterior; push normal al PR existente y CI remota del HEAD publicado. |
+| 26 | Publicar cambios y validar el PR #1 | `EN CURSO` | 25 | Fase 2: solo con autorización posterior; push normal al PR existente y CI remota del HEAD publicado. |
 | 27 | Ejecutar auditoría final de merge | `PENDIENTE` | 26 | Fase 2: ruleset, aprobación independiente, conversaciones y checks finales; no autoriza merge automático. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
@@ -224,10 +224,10 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 25/27 |
-| Tarea activa | Ninguna |
+| Tarea activa | T26 — Publicar cambios y validar el PR #1 |
 | Tareas bloqueadas | Ninguna |
 | Última tarea completada | T25 — Elaborar reporte ejecutivo final |
-| Próxima tarea | T26 — Publicar cambios y validar el PR #1 (`PENDIENTE`, requiere autorización explícita) |
+| Próxima tarea | T27 — Ejecutar auditoría final de merge (`PENDIENTE`) |
 | Última actualización | 9 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -337,6 +337,10 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 | 2026-11-09 | 25 | EN CURSO | Base `e1db85d` | Repositorio/rama/tracking correctos, árbol limpio y cinco commits locales exactamente autorizados. PR #1 remoto en db442881, sin cambios remotos. Registro VALID y 49 hashes protegidos PASS; contrato PROPUESTA_PARA_APROBACION y EXP003 ausente del árbol. | Reporte ejecutivo con evidencia enlazada, navegación y corrección menor de cabecera arquitectónica hasta T24. T26 exige autorización explícita después del cierre local; no iniciar publicación, cambios de PR/ruleset ni solicitud de reviews. |
 
 | 2026-11-09 | 25 | COMPLETA | Base `e1db85d`; reporte y cierre en este commit | Markdown: 161 enlaces locales y 17 anclas verdes; 53 JSON de evidencia válidos, UTF-8/LF, sin rutas privadas ni candidatos de secretos. Cuatro validadores oficiales, ocho pruebas de skills, registro VALID y preservación de 49 archivos/22 JSON/16 recibos e identidad N=3 PASS. 393 archivos preexistentes fuera de los siete documentos autorizados sin cambios por comparación con e1db85d. Ayuda del helper y diff verdes. | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md) con evidencia cuantitativa enlazada, fixtures/ingeniería separados de ciencia y CI histórica distinguida del HEAD nuevo. Cabecera arquitectónica hasta T24; contrato sigue propuesta, EXP003 ausente, sin campeón ni autorización sanitaria. Progreso 25/27; T26–T27 PENDIENTES, ninguna activa/bloqueada. Gate externo explícito: detener antes de T26 hasta autorización de push normal/descripcion/espera de checks; cualquier cambio del ruleset debe mostrarse y aprobarse antes de aplicar. Sin push, reviews, cambios de PR/ruleset, entrenamiento, fuentes privadas ni merge. |
+
+| 2026-11-09 | 26 | EN CURSO | Base `7ee97f3` | Árbol limpio, seis commits locales autorizados, remoto db442881, PR #1 abierto hacia main y único para esta rama. Reviews y threads vacíos. Cuenta con push=true y admin=false. Ruleset activo requiere una aprobación, pero no checks obligatorios ni resolución de conversaciones. | Autorización explícita del usuario: push normal a feature/pipeline-e2e, actualizar descripción y esperar checks. Solo preparar corrección de ruleset; mostrar y obtener aprobación antes de aplicar. No merge, force push ni solicitud formal de review. Gate local completo antes de publicar. |
+
+| 2026-11-09 | 26 | EN CURSO | Gate antes de publicar | Lock/sync/Ruff PASS; pipeline 578 (6 avisos OmegaConf), API 35 (1 deprecación), tablero frozen/lint (6 avisos)/55/build PASS; contratos 22+22, registro VALID, preservación 49/49 e identidad N=3, cuatro validadores oficiales, 10 pruebas skills/checkout. 174 enlaces/17 anclas, filtros, secretos/pesos/imports/notebooks y diff verdes. | Solo cambia este registro documental desde 7ee97f3. Publicar normalmente la rama explícita y verificar el SHA nuevo; ninguna CI previa sustituye sus checks. |
 
 ### Riesgos de la extensión operacional
 
@@ -452,4 +456,4 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 25/27, T22–T25 COMPLETAS, T26–T27 PENDIENTES y ninguna tarea activa ni bloqueada.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 25/27, T26 EN CURSO, T27 PENDIENTE y ninguna tarea bloqueada.
