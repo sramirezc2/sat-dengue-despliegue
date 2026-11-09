@@ -1,13 +1,47 @@
 # Auditoría final de merge — T27
 
 Última revisión local: 2026-11-09. **Veredicto vigente: `NOT_READY`.**
-Aceptación operacional real: **en curso**, tras autorización expresa del nuevo
-release operacional (DEC-029). La autenticación de entorno funciona. La consulta
+Aceptación operacional real: **`PASS`, aprobada por el usuario**. La prueba real
+desde clon limpio pasó y las novedades operativas quedaron corregidas (DEC-029).
+**No se requiere modificar el ruleset** según la instrucción vigente (DEC-030).
+La consulta
 de gobernanza descrita abajo corresponde a la auditoría previa; no se volvió a
 consultar ni modificar el ruleset en esta reanudación.
 **T27 BLOQUEADA; progreso 26/27. No autoriza merge.**
 
-## Segundo release operacional autorizado: aceptación pendiente
+## Cierre local aprobado y acciones externas vigentes
+
+El usuario aprobó la aceptación operacional PASS y autorizó el commit local final
+con esta auditoría, `plan.md` y el recibo agregado pendiente. El HEAD probado
+continúa siendo `002f122f09a80743041e3a71c6fe0936c4cbc960`; este cierre es
+documental, sin nueva ejecución científica ni cambios de código/configuración.
+No se deben repetir localmente las suites delegadas a GitHub.
+
+Solo permanecen estas acciones externas:
+
+1. Publicar mediante push normal bajo la autorización correspondiente; esta
+   ejecución termina sin push, merge ni force push.
+2. Obtener los siete checks verdes sobre el **HEAD final publicado**: API tests,
+   Dashboard quality, Publication contract, Pipeline quality y Pipeline
+   portability (Ubuntu, Windows y macOS).
+3. Obtener la aprobación independiente del HEAD final antes del merge.
+
+No se requiere un cambio de ruleset. Esta disposición del usuario sustituye las
+acciones de configuración propuestas en la auditoría previa; no afirma una nueva
+consulta remota ni una modificación ya realizada. Se conservan las observaciones
+históricas con su fecha y contexto.
+
+El recibo agregado se incorpora con sus bytes originales. Su lista `task_status`
+es el snapshot anterior a esta aprobación; la referencia a controles del ruleset
+en esa lista queda superada por DEC-030. No se reescribe el recibo ni otra
+evidencia cerrada para actualizar el estado operativo vigente.
+
+## Segundo release operacional autorizado: aceptación PASS
+
+HEAD probado desde clon temporal limpio:
+**`002f122f09a80743041e3a71c6fe0936c4cbc960`**. Commit exclusivamente local;
+no se publicó ni se atribuye a este SHA la CI histórica de otro HEAD.
+[Recibo agregado de esta aceptación](../evidence/task27/operational-acceptance-0a4c4512a5c64a538829d999cfb58c5d.json).
 
 El usuario autorizó registrar un nuevo manifiesto de adquisición/integridad sin
 modificar el contrato científico, la identidad anterior ni evidencia cerrada.
@@ -17,9 +51,11 @@ Consulta autenticada fijada exclusivamente a
 explícita de entorno y sin valores secretos en salidas o archivos.
 
 Se confirmó que únicamente cambia `google_earth_engine.csv`: los dos CSV
-epidemiológicos coinciden por tamaño/SHA-256 LFS; los dos archivos pequeños se
-descargaron con SHA fijo y sus bytes/tamaños/SHA-256 coinciden. La integridad local
-de los cinco archivos se comprobará nuevamente al adquirir el bundle completo.
+epidemiológicos coincidieron inicialmente por tamaño/SHA-256 LFS; los dos archivos
+pequeños se descargaron con SHA fijo y sus bytes/tamaños/SHA-256 coinciden. Después
+la adquisición completa verificó localmente tamaños y SHA-256 de los cinco
+archivos. El helper volvió a verificar la caché y el constructor comprobó su
+integridad antes y después de construir. No se adquirió el Excel auxiliar.
 
 Nuevo manifiesto:
 [`operational-raw-173d5856.json`](../../pipeline/conf/releases/operational-raw-173d5856.json),
@@ -46,10 +82,88 @@ ejecutaron `test_operational_releases.py`, `test_operational_command.py`,
 `test_operational_acquisition.py`, `test_private_release.py` y
 `test_raw_canonical.py`; no se repiten suites completas.
 
-Pendientes de este intento: descarga real e integridad completa, cobertura de
-enero 2020 y comando único desde clon temporal limpio del commit local que
-incorpore estos cambios. El registro siguiente conserva el bloqueo anterior y
-no representa una solicitud de aprobación todavía pendiente.
+### Resultados reales comprobados
+
+Clon local nuevo con `git clone --no-hardlinks`, HEAD exacto y árbol limpio antes
+y después de la aceptación. `uv sync --locked --project pipeline` creó un entorno
+nuevo y terminó con código 0. No se cambiaron dependencias ni lock. La adquisición
+inicial, antes de comprobar enero, terminó con código 0 y recibo exclusivo
+`5feb568c57ce48e2853a34e7d8b7259b`: VERIFIED, cinco fuentes, 56,856 s internos.
+
+La comprobación de enero leyó solo `date` y `mpio_cdpmp` por bloques, filtró enero
+2020 antes de normalizar claves y comparó conjuntos/multiplicidades con el
+producto exacto de DIVIPOLA y los 31 días ISO esperados. Solo emitió agregados:
+
+| Comprobación | Resultado |
+|---|---:|
+| Municipios | 1.122, conjunto idéntico a DIVIPOLA |
+| Días | 31, conjunto exacto `2020-01-01`–`2020-01-31` |
+| Filas y claves municipio–día únicas | 34.782 y 34.782 |
+| Duplicados inesperados | 0 |
+| Departamentos | 33; excluida la limitación a Meta/Tolima |
+| Producto cartesiano completo | PASS |
+
+Se ejecutó **una sola vez**, desde la raíz del clon, el comando solicitado:
+
+```sh
+uv run --locked --directory pipeline python tools/build_approved_canonical.py
+```
+
+Resultado: **código 0**, 282,61 s de pared, 250,01 s de CPU usuario y 10,52 s de
+sistema. Pico RSS de **12.160.942.080 bytes**, medido con `/usr/bin/time -l` en
+macOS; no equivale a memoria simultánea total del árbol de procesos. El helper
+reutilizó solo la caché cruda verificada, con un nuevo recibo exclusivo
+`c856655eaa9e45afb8c7cc7d8d73c15a` (VERIFIED, 2,684 s internos); no reutilizó
+derivados. Los dos recibos se conservaron y están incluidos en el agregado.
+
+La salida provisional se verificó por SHA-256 completo y digest semántico
+recalculado desde el contenido serializado:
+
+| Identidad/superficie | Resultado |
+|---|---|
+| Filas y claves municipio–mes únicas | 182.886 y 182.886 |
+| Dimensión | 1.122 municipios × 163 meses, `2011-06`–`2024-12` |
+| Columnas/predictores | 52/33 |
+| Digest semántico | `8ba33ecb1c1b942506d9d2b54faeb1592bd04c472ba23e35a871571b8e71183e` |
+| SHA-256 serializado | `c71e5c1f042daec3eebbab7919bdc29619340f5e1158527b4ca934dd95639711` |
+| Tamaño | 66.962.954 bytes, fuera de Git |
+
+Esta identidad pertenece al nuevo provisional; no reemplaza la identidad N=3
+histórica. No hubo certificación N=3 nueva, entrenamiento, experimentos ni
+publicación de datos/modelos/resultados. 2025 sigue fuera del desarrollo y no se
+presenta como holdout intacto. La aceptación acredita operación e integridad,
+sin aprobación científica, campeón o habilitación sanitaria.
+
+Se compararon **90 archivos históricos** de evidencia/registro/configuraciones
+experimentales, manifiesto anterior y resultados publicados contra `8202571`:
+todos byte a byte iguales. El verificador oficial vuelve a confirmar 49 archivos
+protegidos, 22 JSON, 16 recibos T16 y la identidad N=3; el registro sigue VALID.
+No se editaron recibos cerrados ni se repitieron suites completas. Persisten el
+aviso de `VIRTUAL_ENV` ignorado y tres avisos OmegaConf deprecados del comando;
+no se ocultaron ni se cambiaron dependencias para resolverlos.
+
+Verificación documental final: `git diff --check` y
+`git diff --check origin/main...HEAD` PASS; 75 enlaces locales, estructura de los
+JSON nuevos, UTF-8/LF, tamaños y patrones de secretos PASS en los 12 archivos
+cambiados/nuevos. Tras el commit probado quedaron pendientes este cierre de
+`plan.md`, esta auditoría y el nuevo recibo agregado, incorporados al commit local
+final autorizado. El clon de aceptación permanece limpio.
+Una invocación adicional del verificador desde la raíz omitió `pipeline/` en la
+ruta del script y falló con ENOENT/código 2; la invocación correcta
+`pipeline/.venv/bin/python pipeline/tools/check_experiment_preservation.py` pasó
+en el clon. Fue un error de invocación del chequeo de preservación, sin repetir
+el comando real ni modificar datos o evidencia histórica.
+
+Los crudos, el provisional y los logs quedan conservados en el temporal local,
+fuera de Git. El cierre documental/recibo agregado posterior al HEAD probado no
+cambia código ni configuración y no tiene CI remota propia. **Aceptación PASS;
+auditoría NOT_READY; T27 BLOQUEADA, 26/27**, por los gates externos descritos
+al inicio de esta auditoría. Pendientes: push normal autorizado, los siete checks
+del HEAD final y aprobación independiente; no se requiere modificar el ruleset. No se
+hizo push, merge, force push ni modificación del ruleset.
+
+Los registros siguientes conservan los bloqueos anteriores como historia; no
+representan una solicitud de aprobación de release todavía pendiente.
 
 ## Preflight anterior sobre 8202571: discrepancia de contrato
 
@@ -263,7 +377,7 @@ Durante la publicación anterior no se repitieron suites locales tras la
 instrucción del usuario; la nueva aceptación permite únicamente las pruebas
 específicas registradas arriba. No se repiten suites completas.
 
-## Ruleset: consulta exclusivamente en lectura
+## Ruleset: consulta previa exclusivamente en lectura
 
 [Ruleset 26765445, «proteger main»](https://github.com/sramirezc2/sat-dengue-despliegue/rules/26765445):
 activo, aplicado a `~DEFAULT_BRANCH` (`main`), sin exclusiones observadas.
@@ -285,7 +399,12 @@ bypassear el ruleset. Un workflow verde no equivale a un check obligatorio.
 La restricción vigente del usuario es lectura solamente: no hay operación de
 escritura, payload aplicable, intento de elevar permisos ni solicitud de excepción.
 
-## Acciones pendientes del propietario
+## Acciones de configuración propuestas anteriormente (histórico)
+
+DEC-030 determina que no se requiere modificar el ruleset. Las propuestas de
+configuración siguientes se conservan como historia y ya no constituyen acciones
+pendientes del cierre actual. Los siete checks y la aprobación independiente sí
+siguen pendientes, según la lista vigente al inicio de esta auditoría.
 
 Estas son diferencias de configuración para revisión humana, no instrucciones
 que Codex esté autorizado a aplicar. El propietario deberá decidirlas fuera de
@@ -342,9 +461,10 @@ Bloqueo confirmado de gobernanza, sin fallo de código ni ejecución científica
 que recuperar. No aplican IDs de experimento o ejecución nuevos. Se conserva
 la evidencia y no se alteran registros, recibos, cachés o locks.
 
-La recuperación mínima es verificar posteriormente las acciones externas de
-configuración y aprobación sobre el HEAD final. Hasta entonces T27 sigue
+En ese diagnóstico, la recuperación mínima era verificar posteriormente las
+acciones externas de configuración y aprobación sobre el HEAD final. T27 quedó
 `BLOQUEADA`, 26/27. La auditoría de gobernanza previa quedó
-`READY_WITH_EXTERNAL_ACTION`; el veredicto vigente es `NOT_READY` por la aceptación
-real adicional bloqueada. No se crea cierre 27/27,
+`READY_WITH_EXTERNAL_ACTION`; después el veredicto pasó a `NOT_READY` por la
+aceptación real entonces bloqueada. Esa aceptación ya pasó y fue aprobada;
+DEC-030 fija las únicas acciones externas vigentes. No se crea cierre 27/27,
 no se hace merge y no se requiere otro commit para sustituir la aprobación.
