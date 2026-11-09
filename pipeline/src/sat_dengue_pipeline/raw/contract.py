@@ -39,6 +39,16 @@ INVENTORY = {
         "dfe20fa02b6d6068c04744b5c86f44112048400a7fde637368c0d4effc88cb3f",
     ),
 }
+# Identidad de integridad operacional adicional; INVENTORY conserva T16 intacta.
+OPERATIONAL_RELEASE_ID = "satd-raw-173d5856"
+OPERATIONAL_INVENTORY = {
+    **INVENTORY,
+    "daily_climate": (
+        "google_earth_engine.csv",
+        1721511337,
+        "a92fd7c7e013136280ba3766b870a303c22ad6196b5411a3fefb81b46670ec8e",
+    ),
+}
 EPI_HEADER = (
     "CONSECUTIVE COD_EVE FEC_NOT SEMANA ANO COD_PRE COD_SUB EDAD UNI_MED SEXO COD_PAIS_O "
     "COD_DPTO_O COD_MUN_O AREA OCUPACION TIP_SS COD_ASE PER_ETN GRU_POB nom_grupo estrato "
@@ -126,7 +136,8 @@ def raw_contract_validation(
     """
     if bundle.release_kind != "raw_sources":
         raise ValueError("Solo raw_sources; tablas, features y derivados prohibidos")
-    expected = INVENTORY if config.profile == "approved" else synthetic_inventory
+    approved = OPERATIONAL_INVENTORY if bundle.release_id == OPERATIONAL_RELEASE_ID else INVENTORY
+    expected = approved if config.profile == "approved" else synthetic_inventory
     if expected is None or set(expected) != set(INVENTORY):
         raise ValueError("Falta contrato sintético explícito")
     if config.profile == "approved" and synthetic_inventory is not None:

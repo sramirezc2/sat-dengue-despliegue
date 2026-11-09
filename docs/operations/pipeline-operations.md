@@ -156,7 +156,18 @@ de argumentos y cwd del subproyecto; se detiene al primer fallo y devuelve su
 código. `--help` no adquiere ni escribe. No usa shell, login implícito o una CLI
 científica nueva. Kedro solo recibe rutas locales/metadatos neutrales y no descarga.
 
-Los dos comandos internos siguen visibles para aislar fallos:
+DEC-029 fija el default del helper al nuevo release operacional
+`173d5856874b89d8aeb0566accc65ce7f6759820`, declarado en
+`pipeline/conf/releases/operational-raw-173d5856.json`. Solo cambia la identidad
+de integridad del archivo climático. El manifiesto histórico `approved-raw.json`
+se conserva byte a byte; el constructor directo y el adquiridor directo mantienen
+su selección histórica por defecto. Para seleccionar ese release mediante el
+helper, usar `--manifest conf/releases/approved-raw.json`. El helper transmite la
+misma selección a adquisición y al parámetro `canonical.manifest`; las cachés se
+separan por `release_id` y digest del manifiesto. No se cambian ventanas,
+predictores ni configuración científica; T16 no selecciona el release operacional.
+
+Los dos comandos históricos internos siguen visibles para aislar fallos:
 
 ```sh
 uv run --locked --directory pipeline python tools/acquire_private_raw.py

@@ -6,7 +6,7 @@ from pathlib import Path
 import pandas as pd
 
 from sat_dengue_pipeline.acquisition.contracts import ReleaseManifest, ResolvedBundle, ResolvedFile
-from sat_dengue_pipeline.acquisition.raw_manifest import validate_raw_manifest
+from sat_dengue_pipeline.acquisition.raw_manifest import RAW_MANIFESTS, validate_raw_manifest
 from sat_dengue_pipeline.canonical_cache import ACQUIRE_COMMAND, preflight_cache
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy
 from sat_dengue_pipeline.raw import build as io
@@ -32,7 +32,8 @@ class BuildInput:
 
 def build_input(parameters: dict) -> BuildInput:
     """Elegir fixture o caché aprobada verificada; nunca descargar desde ciencia."""
-    if set(parameters) != {"mode", "workspace", "tracking"} or parameters["mode"] not in {
+    required = {"mode", "workspace", "tracking"}
+    if set(parameters) not in (required, required | {"manifest"}) or parameters["mode"] not in {
         "synthetic",
         "approved",
     }:
@@ -47,9 +48,10 @@ def build_input(parameters: dict) -> BuildInput:
     if parameters["mode"] == "synthetic":
         bundle, inventory = synthetic_bundle(workspace / "raw")
         return BuildInput(bundle, fixture_config(), inventory, workspace, parameters["tracking"])
-    manifest = ReleaseManifest.from_json(
-        Path("conf/releases/approved-raw.json").read_text(encoding="utf-8")
-    )
+    manifest_path = parameters.get("manifest", RAW_MANIFESTS[0])
+    if manifest_path not in RAW_MANIFESTS:
+        raise ValueError("Manifiesto operacional no aprobado")
+    manifest = ReleaseManifest.from_json(Path(manifest_path).read_text(encoding="utf-8"))
     validate_raw_manifest(manifest)
     cache = Path("data/01_raw/inbox") / manifest.release_id / manifest.manifest_sha256
     preflight_cache(cache, {file.relative_path for file in manifest.files})

@@ -13,8 +13,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 @pytest.mark.parametrize("codes", [(0, 0), (7,), (0, 9), (0, -2)])
+@pytest.mark.parametrize("selected", [None, "conf/releases/approved-raw.json"])
 def test_order_exit_codes_and_portable_arguments(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, codes: tuple[int, ...]
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, codes: tuple[int, ...], selected: str | None
 ) -> None:
     """Ejecutar adquisición primero y Kedro solo tras éxito, sin shell ni credenciales."""
     run = runpy.run_path(str(ROOT / "tools/build_approved_canonical.py"))["run"]
@@ -33,9 +34,12 @@ def test_order_exit_codes_and_portable_arguments(
         return subprocess.CompletedProcess(args, codes[len(calls) - 1])
 
     monkeypatch.setattr(subprocess, "run", process)
-    assert run(root) == codes[-1]
+    assert (run(root) if selected is None else run(root, selected)) == codes[-1]
     assert len(calls) == len(codes)
-    assert calls[0][0][1:] == ["tools/acquire_private_raw.py"]
+    assert calls[0][0][1:] == [
+        "tools/acquire_private_raw.py", "--manifest",
+        selected or "conf/releases/operational-raw-173d5856.json"
+    ]
     if len(calls) == 2:
         args, kwargs = calls[1]
         assert args[1:6] == ["-m", "kedro", "run", "--pipelines", "canonical_build"]
@@ -43,6 +47,7 @@ def test_order_exit_codes_and_portable_arguments(
         params = dict(item.split("=", 1) for item in args[7].split(","))
         assert params["canonical.mode"] == "approved"
         assert params["canonical.tracking"] == "false"
+        assert params["canonical.manifest"] == calls[0][0][-1]
         workspace = Path(params["canonical.workspace"])
         assert not workspace.is_absolute() and workspace.parts[:2] == ("data", "canonical-approved")
         assert "HF_TOKEN" not in kwargs["env"]

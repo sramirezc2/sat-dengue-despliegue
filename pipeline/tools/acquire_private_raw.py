@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from sat_dengue_pipeline.acquisition.factory import acquire
+from sat_dengue_pipeline.acquisition.raw_manifest import RAW_MANIFESTS
 from sat_dengue_pipeline.raw.contract import BuildConfig, raw_contract_validation
 
 ERROR_TYPES = {
@@ -30,11 +31,12 @@ ERROR_TYPES = {
 }
 
 
-def run(root: Path) -> int:
+def run(root: Path, manifest: str = RAW_MANIFESTS[0]) -> int:
     """Adquirir sin login implícito y escribir solo agregados bajo data/acquisition/.
 
     Args:
         root: Raíz del subproyecto; las pruebas suministran un directorio temporal.
+        manifest: Manifiesto histórico o nuevo operacional, seleccionado explícitamente.
 
     Returns:
         Cero si se verificaron los crudos y el recibo; uno ante fallo controlado.
@@ -58,10 +60,12 @@ def run(root: Path) -> int:
         print(json.dumps({"status": "FAILED", "error_type": "ReceiptError"}))
         return 1
     try:
+        if manifest not in RAW_MANIFESTS:
+            raise ValueError("Manifiesto operacional no aprobado")
         bundle, result = acquire(
             {
                 "acquisition": {
-                    "manifest": "conf/releases/approved-raw.json",
+                    "manifest": manifest,
                     "cache": "data/01_raw/inbox",
                     "require_private": True,
                 }
@@ -75,6 +79,8 @@ def run(root: Path) -> int:
             raw_contract_validation(bundle, BuildConfig())
             receipt.update(
                 status="VERIFIED",
+                release_id=bundle.release_id,
+                revision=result.get("revision"),
                 manifest_sha256=bundle.manifest_sha256,
                 files=[
                     {"name": file.path.name, "size_bytes": file.size_bytes, "sha256": file.sha256}
@@ -100,8 +106,10 @@ def run(root: Path) -> int:
 
 def main() -> int:
     """Resolver únicamente el proyecto instalado, sin aceptar destinos históricos."""
-    argparse.ArgumentParser(description=__doc__).parse_args()
-    return run(Path(__file__).resolve().parents[1])
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--manifest", choices=RAW_MANIFESTS, default=RAW_MANIFESTS[0])
+    arguments = parser.parse_args()
+    return run(Path(__file__).resolve().parents[1], arguments.manifest)
 
 
 if __name__ == "__main__":

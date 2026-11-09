@@ -1,12 +1,148 @@
 # Auditoría final de merge — T27
 
 Última revisión local: 2026-11-09. **Veredicto vigente: `NOT_READY`.**
-Aceptación operacional real: **`BLOCKED`**. La consulta de gobernanza descrita
-abajo corresponde a la auditoría previa; no se volvió a consultar ni modificar
-el ruleset en la aceptación.
+Aceptación operacional real: **en curso**, tras autorización expresa del nuevo
+release operacional (DEC-029). La autenticación de entorno funciona. La consulta
+de gobernanza descrita abajo corresponde a la auditoría previa; no se volvió a
+consultar ni modificar el ruleset en esta reanudación.
 **T27 BLOQUEADA; progreso 26/27. No autoriza merge.**
 
-## Aceptación operacional real incorporada a T27
+## Segundo release operacional autorizado: aceptación pendiente
+
+El usuario autorizó registrar un nuevo manifiesto de adquisición/integridad sin
+modificar el contrato científico, la identidad anterior ni evidencia cerrada.
+Consulta autenticada fijada exclusivamente a
+`173d5856874b89d8aeb0566accc65ce7f6759820`: SHA exacto y `private=true`.
+`whoami` volvió a confirmar `mauro114`, organización `sat-dengue`, con credencial
+explícita de entorno y sin valores secretos en salidas o archivos.
+
+Se confirmó que únicamente cambia `google_earth_engine.csv`: los dos CSV
+epidemiológicos coinciden por tamaño/SHA-256 LFS; los dos archivos pequeños se
+descargaron con SHA fijo y sus bytes/tamaños/SHA-256 coinciden. La integridad local
+de los cinco archivos se comprobará nuevamente al adquirir el bundle completo.
+
+Nuevo manifiesto:
+[`operational-raw-173d5856.json`](../../pipeline/conf/releases/operational-raw-173d5856.json),
+SHA-256 de archivo `ee36be0affe23b1bad99044853e48f6396c556f39851852c769002d029f8b550`.
+Los cinco nombres/tamaños/hashes son los de la tabla del preflight anterior,
+ahora confirmados para el SHA fijado. El manifiesto histórico mantiene SHA-256
+`667f4273add97d874ea70344fc698c454c499bea5e9d3e3c5e74c82d8eb70f0c`.
+
+Se añadió exclusivamente la segunda identidad de integridad y su selección
+explícita al mecanismo existente: manifiesto → resolver → bundle local. El
+constructor y adquiridor directos conservan su default histórico; el helper
+operacional selecciona el nuevo manifiesto y acepta `--manifest` para el anterior.
+No se cambian configuración científica, encabezados, productores, ventanas,
+predictores, roles, modelos ni hiperparámetros. T16 sigue fijada al manifiesto
+histórico; `INVENTORY` conserva sus valores. El nuevo release exige repositorio,
+proveedor y revisión exactos; las identidades mezcladas se rechazan.
+
+Validaciones previas a la aceptación real: **116 pruebas específicas PASS en
+2,57 s**, incluidas nueve nuevas de coexistencia y cuatro variantes adicionales
+del helper histórico; cinco regresiones nuevas fallaron antes del cambio y ahora
+pasan. Ruff de los siete archivos Python afectados PASS. Registro VALID;
+preservación PASS (49 archivos, 22 JSON, 16 recibos T16, N=3 intacto). Solo se
+ejecutaron `test_operational_releases.py`, `test_operational_command.py`,
+`test_operational_acquisition.py`, `test_private_release.py` y
+`test_raw_canonical.py`; no se repiten suites completas.
+
+Pendientes de este intento: descarga real e integridad completa, cobertura de
+enero 2020 y comando único desde clon temporal limpio del commit local que
+incorpore estos cambios. El registro siguiente conserva el bloqueo anterior y
+no representa una solicitud de aprobación todavía pendiente.
+
+## Preflight anterior sobre 8202571: discrepancia de contrato
+
+HEAD comprobado: `8202571e7ba3e0d674e76ec77b9f48c853ffeabf`, rama
+`feature/pipeline-e2e`, árbol inicialmente limpio. Solo se comprobó presencia
+booleana de `HF_TOKEN`; `HfApi.whoami(token=...)` devolvió usuario `mauro114` y
+organización `sat-dengue`. No se imprimió, registró, serializó ni almacenó el valor
+del token, ni se usaron credenciales cacheadas.
+
+El primer arranque de `uv` fue impedido por el sandbox al acceder a su caché
+(`Operation not permitted`, código 2), antes de ejecutar `whoami`. La repetición
+con permiso de acceso terminó con código 0. La consulta autenticada de metadatos
+también terminó con código 0; no hubo fallo HTTP de autenticación. `uv` advirtió
+que el `VIRTUAL_ENV` heredado no coincide con el entorno de `pipeline` y lo ignoró.
+
+`HfApi.dataset_info(..., files_metadata=True, token=...)` consultó
+`sat-dengue/data_raw` en `main` solo para descubrir la revisión y en el SHA
+configurado. Ambos informaron `private=true`:
+
+| Referencia consultada | SHA resuelto |
+|---|---|
+| `main`, descubrimiento del candidato corregido | `173d5856874b89d8aeb0566accc65ce7f6759820` |
+| Revisión configurada | `a1a7f237a4baa6ffa848fabeef474f811f3b3f33` |
+
+No se adquirió desde una referencia mutable. El SHA del candidato proviene de
+los metadatos; no se hizo una segunda consulta fijada a ese SHA, ni se certificó
+todavía que su contenido satisfaga la aceptación del release corregido.
+
+Los cinco nombres esperados están presentes bajo `datos-crudos/`. Comparación
+de **metadatos remotos**, sin descarga ni cálculo local de SHA-256:
+
+| Archivo | Bytes del candidato | SHA-256 remoto LFS | Comparación con contrato vigente |
+|---|---:|---|---|
+| `Divipola-municipios.md` | 209.867 | No disponible en estos metadatos | Nombre/tamaño coinciden; hash NOT_VERIFIED |
+| `divipola-provenance.json` | 925 | No disponible en estos metadatos | Nombre/tamaño coinciden; hash NOT_VERIFIED |
+| `dengue.csv` | 875.694.283 | `58d277cfef7a60c28d488eefe4e7a1a7bf0f7b0df3dd88245971cd7b3d32c84b` | Coincide en metadatos |
+| `dengue_grave.csv` | 24.537.734 | `3d60e96ccbedc35a19a8f5f54be8d786aa599813259c914f131522bf17dd1d70` | Coincide en metadatos |
+| `google_earth_engine.csv` | 1.721.511.337 | `a92fd7c7e013136280ba3766b870a303c22ad6196b5411a3fefb81b46670ec8e` | Difiere en tamaño y SHA-256 |
+
+El contrato vigente exige para clima **1.714.544.311 bytes** y
+`dfe20fa02b6d6068c04744b5c86f44112048400a7fde637368c0d4effc88cb3f`.
+La consulta del SHA configurado devolvió esos valores históricos. El candidato
+contiene 6.967.026 bytes adicionales; esto no demuestra por sí solo cobertura
+nacional ni explica el contenido añadido.
+
+La identidad antigua está fijada tanto en
+[`approved-raw.json`](../../pipeline/conf/releases/approved-raw.json) como en
+`INVENTORY` de [`raw/contract.py`](../../pipeline/src/sat_dengue_pipeline/raw/contract.py).
+`raw_contract_validation` exige igualdad exacta del inventario aprobado y rechaza
+su sustitución. Cambiar solo la revisión no permitiría aceptar los nuevos bytes;
+cambiar solo el manifiesto tampoco permitiría superar el contrato del constructor.
+
+Se activa la condición explícita del usuario: **si el release corregido exige
+modificar contratos, detenerse y solicitar aprobación**. No se modificaron el
+manifiesto, el validador, la ciencia, las ventanas ni los predictores. La siguiente
+decisión requiere aprobar expresamente la nueva revisión y la identidad climática
+indicadas arriba, con un alcance que preserve el contrato y evidencia cerrados de
+T16. No se ha implementado ni elegido una migración de contratos.
+
+| Gate de aceptación | Resultado de esta reanudación |
+|---|---|
+| Credencial de entorno y `whoami` | PASS |
+| Descubrimiento de revisión y privacidad | PASS de metadatos; candidato identificado, contenido no aceptado |
+| Cinco archivos por nombre/tamaño/SHA-256 local | NOT_VERIFIED; discrepancia climática confirmada por metadatos |
+| Enero 2020: 1.122 municipios, 31 días, 34.782 claves únicas | NOT_VERIFIED; sin lectura de microdatos |
+| Clon temporal limpio e instalación bloqueada | NOT_EXECUTED por condición de parada |
+| `uv run --locked --directory pipeline python tools/build_approved_canonical.py` | NOT_EXECUTED por condición de parada; sin duración, RSS ni identidad nueva |
+| `pipeline/.venv/bin/python pipeline/tools/check_experiment_preservation.py` | PASS, código 0: 49 archivos, 22 JSON, 16 recibos T16 |
+| `pipeline/.venv/bin/python -m sat_dengue_pipeline.experiment_management validate` | VALID, código 0 |
+| `git diff --check origin/main...HEAD` | PASS, código 0, sobre 8202571 |
+| Diff documental local | PASS: `git diff --check`, UTF-8/LF, 43 enlaces locales existentes; solo dos documentos modificados y ningún archivo nuevo no versionado |
+
+La identidad N=3 sigue siendo
+`899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f`.
+Los cambios de esta reanudación se limitan a `plan.md` y esta auditoría; EXP001,
+EXP002, los JSON publicados y toda evidencia cerrada conservan sus bytes frente
+al HEAD probado. No se repitieron suites completas ni las 292 pruebas artificiales
+del intento previo: no hubo cambio de código y esas pruebas no resuelven la
+discrepancia del contrato. No se creó clon, descargaron crudos ni ejecutaron
+construcción, N=3, entrenamiento o experimentos. No se hizo commit, push, merge,
+force push ni cambio del ruleset; no se atribuye CI remota a este diff documental.
+
+**Resultado: BLOCKED; auditoría NOT_READY; T27 BLOQUEADA, 26/27.** Pendientes:
+aprobación del cambio de contrato antes de continuar; después, verificación fijada
+al SHA, integridad local de cinco archivos, cobertura de enero 2020 y comando real
+desde clon limpio. Los gates externos de gobernanza/aprobación del HEAD final
+siguen pendientes y no se volvieron a consultar.
+
+## Intento previo: aceptación operacional incorporada a T27
+
+El registro siguiente describe el intento anterior sobre `c729f19`, conservado
+como historia. Su bloqueo por ausencia de credencial quedó resuelto en esta
+reanudación; no es el diagnóstico vigente.
 
 HEAD sometido al preflight y pruebas específicas:
 `c729f1936f1e637f992c1a6167cb9ff15595cef2`; rama correcta y árbol inicialmente
