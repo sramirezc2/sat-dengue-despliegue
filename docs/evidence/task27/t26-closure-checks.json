@@ -1,0 +1,108 @@
+{
+  "schema": "sat-dengue.remote-checks/v1",
+  "head_sha": "0222d6d0c3e1cb9ad2a2cc7253584f1c8de41843",
+  "status": "PASSED",
+  "checks": [
+    {
+      "id": 129470026381,
+      "name": "API tests",
+      "head_sha": "0222d6d0c3e1cb9ad2a2cc7253584f1c8de41843",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42708063596/job/129470026381",
+      "started_at": "2026-11-09T22:02:05Z",
+      "completed_at": "2026-11-09T22:02:19Z",
+      "duration_seconds": 14.0,
+      "integration_id": 15368,
+      "warnings_observed": [
+        "Existing Starlette TestClient/httpx deprecation"
+      ]
+    },
+    {
+      "id": 129470027058,
+      "name": "Dashboard quality",
+      "head_sha": "0222d6d0c3e1cb9ad2a2cc7253584f1c8de41843",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42708063920/job/129470027058",
+      "started_at": "2026-11-09T22:02:05Z",
+      "completed_at": "2026-11-09T22:02:28Z",
+      "duration_seconds": 23.0,
+      "integration_id": 15368,
+      "warnings_observed": [
+        "Existing react-refresh lint warnings",
+        "Existing Vite tsconfig-paths advisory"
+      ]
+    },
+    {
+      "id": 129470028567,
+      "name": "Pipeline portability (Ubuntu)",
+      "head_sha": "0222d6d0c3e1cb9ad2a2cc7253584f1c8de41843",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42708063904/job/129470028567",
+      "started_at": "2026-11-09T22:02:05Z",
+      "completed_at": "2026-11-09T22:05:34Z",
+      "duration_seconds": 209.0,
+      "integration_id": 15368,
+      "warnings_observed": []
+    },
+    {
+      "id": 129470028181,
+      "name": "Pipeline portability (Windows)",
+      "head_sha": "0222d6d0c3e1cb9ad2a2cc7253584f1c8de41843",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42708063904/job/129470028181",
+      "started_at": "2026-11-09T22:02:07Z",
+      "completed_at": "2026-11-09T22:07:53Z",
+      "duration_seconds": 346.0,
+      "integration_id": 15368,
+      "warnings_observed": []
+    },
+    {
+      "id": 129470028258,
+      "name": "Pipeline portability (macOS)",
+      "head_sha": "0222d6d0c3e1cb9ad2a2cc7253584f1c8de41843",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42708063904/job/129470028258",
+      "started_at": "2026-11-09T22:02:07Z",
+      "completed_at": "2026-11-09T22:06:08Z",
+      "duration_seconds": 241.0,
+      "integration_id": 15368,
+      "warnings_observed": []
+    },
+    {
+      "id": 129470027733,
+      "name": "Pipeline quality",
+      "head_sha": "0222d6d0c3e1cb9ad2a2cc7253584f1c8de41843",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42708063904/job/129470027733",
+      "started_at": "2026-11-09T22:02:05Z",
+      "completed_at": "2026-11-09T22:04:40Z",
+      "duration_seconds": 155.0,
+      "integration_id": 15368,
+      "warnings_observed": [
+        "Existing OmegaConf/Kedro deprecation notices"
+      ]
+    },
+    {
+      "id": 129470025864,
+      "name": "Publication contract",
+      "head_sha": "0222d6d0c3e1cb9ad2a2cc7253584f1c8de41843",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42708063531/job/129470025864",
+      "started_at": "2026-11-09T22:02:05Z",
+      "completed_at": "2026-11-09T22:02:42Z",
+      "duration_seconds": 37.0,
+      "integration_id": 15368,
+      "warnings_observed": [
+        "Existing OmegaConf/Kedro deprecation notices"
+      ]
+    }
+  ],
+  "warning_scope": "Job logs inspected; portability subprocess output is captured in runner receipts. Empty warning list does not assert warning-free dependencies."
+}

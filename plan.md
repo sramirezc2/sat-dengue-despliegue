@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 26/27; T22–T26 COMPLETAS; T27 PENDIENTE; ninguna tarea activa ni bloqueada
+**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; ninguna tarea activa
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -127,8 +127,8 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 23 | Agregar operación portable y comando canónico E2E | `COMPLETA` | 22 | Helper build_approved_canonical.py, adquisición → canonical_build provisional, cinco regresiones rojas → verdes y guía portable/recursos. 51 pruebas enfocadas verdes; sin ciencia nueva. |
 | 24 | Validar las correcciones operativas acumuladas | `COMPLETA` | 23 | 578 pipeline, API 35, tablero 55/frozen/lint/build; contratos 22+22; skills, enlaces, filtros e higiene verdes. Checkout limpio de 5768331 con 29 pruebas nuevas y ayuda/error controlado; evidencia preservada. [Recibo](docs/evidence/task24/operational-validation.json). |
 | 25 | Elaborar reporte ejecutivo final | `COMPLETA` | 24 | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md): síntesis con evidencia y límites, navegación desde guías y arquitectura actualizada hasta T24. Auditoría documental, registro, skills y preservación verdes; publicación pendiente de autorización. |
-| 26 | Publicar cambios y validar el PR #1 | `COMPLETA` | 25 | Push normal y descripción autorizados. Siete checks verdes sobre 524c38e; [recibo remoto/local](docs/evidence/task26/publication-validation.json). El cierre solo es efectivo después de publicar este commit documental y verificar también todos sus checks; su SHA final se coteja en GitHub antes de T27. |
-| 27 | Ejecutar auditoría final de merge | `PENDIENTE` | 26 | Fase 2: ruleset, aprobación independiente, conversaciones y checks finales; no autoriza merge automático. |
+| 26 | Publicar cambios y validar el PR #1 | `COMPLETA` | 25 | Push normal y descripción autorizados. Siete checks verdes sobre 524c38e ([recibo remoto/local](docs/evidence/task26/publication-validation.json)) y sobre su cierre publicado 0222d6d ([snapshot](docs/evidence/task27/t26-closure-checks.json)). Cada nuevo HEAD requiere checks propios. |
+| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | [Auditoría](docs/reviews/final-merge-audit.md): READY_WITH_EXTERNAL_ACTION. Faltan checks obligatorios y resolución obligatoria de conversaciones en el ruleset, y aprobación independiente del HEAD final. Ruleset solo lectura; admin=false. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
 
@@ -225,9 +225,9 @@ Actualizar esta sección al cerrar cada tarea.
 |---|---:|
 | Tareas completas | 26/27 |
 | Tarea activa | Ninguna |
-| Tareas bloqueadas | Ninguna |
+| Tareas bloqueadas | T27 — Controles remotos y aprobación independiente |
 | Última tarea completada | T26 — Publicar cambios y validar el PR #1 |
-| Próxima tarea | T27 — Ejecutar auditoría final de merge (`PENDIENTE`) |
+| Próxima tarea | Reanudar T27 después de acciones externas y nueva verificación del HEAD final |
 | Última actualización | 9 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -344,6 +344,12 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 
 | 2026-11-09 | 26 | COMPLETA | `524c38e` primera publicación; cierre en este commit | Siete checks success: API tests, Dashboard quality, Publication contract, Pipeline quality y Pipeline portability (Ubuntu/Windows/macOS). [Recibo](docs/evidence/task26/publication-validation.json) conserva SHA, URLs, tiempos y avisos; tres recibos nativos verifican árbol de merge temporal idéntico al HEAD. | PR #1 actualizado con autorización, sin cambiar ruleset ni pedir reviews. Push normal del cierre documental y nueva ronda de checks obligatorios antes de considerar efectivo 26/27 o iniciar T27. La aprobación independiente y el ajuste de ruleset siguen pendientes; admin=false. Sin merge ni force push. |
 
+| 2026-11-09 | 26 | COMPLETA | `0222d6d` cierre publicado | Siete checks success sobre el SHA exacto, incluidos Windows/macOS/Ubuntu; [snapshot](docs/evidence/task27/t26-closure-checks.json) con URLs, tiempos y avisos. | T26 efectivamente cerrada; rama y PR sincronizados antes de iniciar T27. |
+
+| 2026-11-09 | 27 | EN CURSO | Base `0222d6d` | Relectura de AGENTS, plan, arquitectura y plan maestro; rama/tracking/PR coincidentes, árbol limpio, siete checks verdes. | Nueva instrucción expresa: ruleset exclusivamente lectura; push normal, descripción y espera de GitHub autorizados; no repetir suites locales. |
+
+| 2026-11-09 | 27 | BLOQUEADA | Auditoría documental en este commit | [Informe](docs/reviews/final-merge-audit.md) READY_WITH_EXTERNAL_ACTION. Ruleset activo con una aprobación y descarte de obsoletas, pero sin checks requeridos ni resolución obligatoria de conversaciones; admin=false. Reviews y threads vacíos, PR mergeable=true pero blocked. | 26/27, ninguna tarea activa. Se registran diferencias para el propietario y aprobación independiente pendiente. Sin modificar ruleset, solicitar review formal, merge o force push. Publicar documentación autorizada y verificar sus checks por SHA; no repetir suites locales ni declarar T27 completa. |
+
 ### Riesgos de la extensión operacional
 
 - Un recibo operativo no puede reemplazar historia: destino exclusivo bajo pipeline/data/.
@@ -458,4 +464,4 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 26/27, T22–T26 COMPLETAS, T27 PENDIENTE y ninguna tarea activa ni bloqueada.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 26/27, T22–T26 COMPLETAS, T27 BLOQUEADA y ninguna tarea activa.
