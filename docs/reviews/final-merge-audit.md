@@ -1,9 +1,96 @@
 # Auditoría final de merge — T27
 
-Fecha de consulta: 2026-11-09. **Veredicto: `READY_WITH_EXTERNAL_ACTION`.**
+Última revisión local: 2026-11-09. **Veredicto vigente: `NOT_READY`.**
+Aceptación operacional real: **`BLOCKED`**. La consulta de gobernanza descrita
+abajo corresponde a la auditoría previa; no se volvió a consultar ni modificar
+el ruleset en la aceptación.
 **T27 BLOQUEADA; progreso 26/27. No autoriza merge.**
 
-## Revisión y alcance comprobados
+## Aceptación operacional real incorporada a T27
+
+HEAD sometido al preflight y pruebas específicas:
+`c729f1936f1e637f992c1a6167cb9ff15595cef2`; rama correcta y árbol inicialmente
+limpio. El permiso nuevo amplía exclusivamente la comprobación operacional dentro
+de T27 (DEC-028); no aprueba ciencia, campeón ni operación sanitaria.
+
+[Recibo de este intento](../evidence/task27/acceptance-preflight-ecb0f761ba1c48e3a724549d4496362d.json).
+
+| Comprobación | Resultado observado |
+|---|---|
+| HF_TOKEN de entorno | Ausente en el proceso ejecutor, también tras aviso de habilitación del usuario |
+| whoami | No ejecutado: falta credencial explícita; no se recurrió a login cacheado |
+| Revisión inmutable corregida | NOT_VERIFIED; no se pudo consultar el dataset privado |
+| Cinco archivos por nombre/tamaño/SHA-256 | NOT_VERIFIED sobre el release corregido |
+| Enero 2020: 1.122 municipios, 31 días, 34.782 claves, sin duplicados inesperados | NOT_VERIFIED; no se leyeron microdatos |
+| Ya no limitado a 76 municipios de Meta/Tolima | NOT_VERIFIED |
+| Clon limpio e instalación bloqueada | No iniciados por bloqueo del prerrequisito privado |
+| Comando único real | NOT_EXECUTED; sin código de salida, duración, RSS o identidad de salida atribuibles |
+| Pruebas específicas | 292 PASS, cero fallos/errores/omisiones; 21,293 s |
+| Registro y preservación | VALID; 49/49, 22 JSON, 16 recibos e identidad N=3 intactos |
+
+Comando solicitado, **no ejecutado**:
+
+```sh
+uv run --locked --directory pipeline python tools/build_approved_canonical.py
+```
+
+La referencia local conserva
+`pipeline/conf/releases/approved-raw.json`, revisión configurada
+`a1a7f237a4baa6ffa848fabeef474f811f3b3f33`. **No se afirma que sea el release
+corregido ni que se haya verificado remotamente en este intento.** No se modificó
+ningún manifiesto ni referencia anterior. No hay medición real de memoria,
+identidad canónica nueva o recibo operacional del helper: los valores ausentes
+quedan nulos en el recibo, sin reutilizar resultados de T16 como si fueran nuevos.
+
+### Viabilidad del experimento técnico opcional
+
+La inspección del registro y las configuraciones confirma que EXP001 y EXP002
+son `synthetic_fixture` con `data.mode=synthetic`. El registro solo admite
+`synthetic_fixture` o `scientific`; `load_configuration` impide intercambiar sin
+más fuentes sintéticas y reales. No hay receta real registrada reutilizable ni
+un tipo de aceptación técnica real separado. T16 es una validación cerrada,
+con especificación y configuración propias, y no se vuelve a ejecutar.
+
+Además, `experiment_management/runner.py:acquire_and_build` reconstruye el
+canónico desde crudos: no recibe el canónico provisional producido previamente
+por el helper. Introducir ese consumo sería otra modificación de interfaz.
+No se cambia el esquema, no se convierte un fixture en experimento real y no se
+inventa una receta. EXP003 continúa libre, sin reserva ni ejecución. No hay receta
+real sometida a preaprobación: su revisión es `NOT_VERIFIED`, no una aprobación.
+
+Fuentes: [registro](../experiments/registry.yml),
+[configuración](../../pipeline/src/sat_dengue_pipeline/experiment_management/configuration.py),
+[ejecutor](../../pipeline/src/sat_dengue_pipeline/experiment_management/runner.py),
+[manual](../experiments/manual_pipeline.md) y
+[contrato todavía propuesto](../experiments/contrato.md).
+La adquisición y construcción reales podrían validar las novedades operativas
+sin entrenamiento, como permite la instrucción del usuario, pero **aún no se han
+comprobado**. Las pruebas artificiales no sustituyen esa aceptación.
+
+### Diagnóstico y reanudación de la aceptación
+
+La comprobación de presencia informa ausencia de variable, no token inválido.
+No hubo fallo de autenticación de Hugging Face porque `whoami` no pudo iniciarse
+con una credencial explícita. No se buscó, imprimió ni almacenó ningún token.
+
+La acción externa necesaria es hacer que HF_TOKEN esté disponible en el entorno
+heredado por el proceso que ejecuta la prueba. Tras comprobar presencia y
+`whoami`, reanudar desde la consulta del release, fijar la revisión corregida y
+verificar enero 2020 antes del comando real. No hace falta ID de experimento para
+este preflight; ninguna ejecución científica quedó fallida o debe repetirse.
+
+No se creó clon temporal. Las pruebas específicas usaron fixtures temporales y
+el entorno ya instalado; dejaron el árbol versionado limpio antes del registro
+documental. No se repitieron suites completas de pipeline/API/tablero/portabilidad.
+Solo se agregan este diagnóstico, su recibo y el registro del plan; el commit de
+documentación queda **local**, sin atribuirle la CI verde del HEAD anterior.
+
+No se confirma como corregida ninguna novedad que requiera los datos privados.
+T27 permanece BLOQUEADA, 26/27; aceptación BLOCKED y auditoría NOT_READY. Los
+controles remotos y la aprobación independiente señalados en la auditoría previa
+siguen pendientes de verificación antes de cualquier merge.
+
+## Auditoría previa de gobernanza y alcance comprobado
 
 - PR único: [#1](https://github.com/sramirezc2/sat-dengue-despliegue/pull/1),
   abierto desde `feature/pipeline-e2e` hacia `main`.
@@ -36,8 +123,9 @@ URLs, tiempos, aplicación GitHub Actions (`15368`) y avisos observados.
 Persisten avisos conocidos de Starlette/httpx, react-refresh, Vite y OmegaConf;
 no se modifican dependencias ni se ocultan. Los logs de portabilidad capturan
 salidas de subprocesos; una lista vacía de avisos no afirma ausencia de avisos.
-Por instrucción expresa del usuario no se repiten suites localmente: se consultan
-los resultados de GitHub sobre cada HEAD publicado.
+Durante la publicación anterior no se repitieron suites locales tras la
+instrucción del usuario; la nueva aceptación permite únicamente las pruebas
+específicas registradas arriba. No se repiten suites completas.
 
 ## Ruleset: consulta exclusivamente en lectura
 
@@ -112,7 +200,7 @@ el contrato sigue `PROPUESTA_PARA_APROBACION`, no hay campeón,
 G5 sigue `NOT_APPROVED` y 2025 es evidencia retrospectiva consumida.
 No se autoriza operación sanitaria ni se afirma superioridad científica.
 
-## Diagnóstico y condición de reanudación
+## Diagnóstico previo de gobernanza y condición de reanudación
 
 Bloqueo confirmado de gobernanza, sin fallo de código ni ejecución científica
 que recuperar. No aplican IDs de experimento o ejecución nuevos. Se conserva
@@ -120,5 +208,7 @@ la evidencia y no se alteran registros, recibos, cachés o locks.
 
 La recuperación mínima es verificar posteriormente las acciones externas de
 configuración y aprobación sobre el HEAD final. Hasta entonces T27 sigue
-`BLOQUEADA`, 26/27, `READY_WITH_EXTERNAL_ACTION`. No se crea cierre 27/27,
+`BLOQUEADA`, 26/27. La auditoría de gobernanza previa quedó
+`READY_WITH_EXTERNAL_ACTION`; el veredicto vigente es `NOT_READY` por la aceptación
+real adicional bloqueada. No se crea cierre 27/27,
 no se hace merge y no se requiere otro commit para sustituir la aprobación.

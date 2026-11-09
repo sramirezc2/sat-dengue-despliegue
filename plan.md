@@ -128,7 +128,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 24 | Validar las correcciones operativas acumuladas | `COMPLETA` | 23 | 578 pipeline, API 35, tablero 55/frozen/lint/build; contratos 22+22; skills, enlaces, filtros e higiene verdes. Checkout limpio de 5768331 con 29 pruebas nuevas y ayuda/error controlado; evidencia preservada. [Recibo](docs/evidence/task24/operational-validation.json). |
 | 25 | Elaborar reporte ejecutivo final | `COMPLETA` | 24 | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md): síntesis con evidencia y límites, navegación desde guías y arquitectura actualizada hasta T24. Auditoría documental, registro, skills y preservación verdes; publicación pendiente de autorización. |
 | 26 | Publicar cambios y validar el PR #1 | `COMPLETA` | 25 | Push normal y descripción autorizados. Siete checks verdes sobre 524c38e ([recibo remoto/local](docs/evidence/task26/publication-validation.json)) y sobre su cierre publicado 0222d6d ([snapshot](docs/evidence/task27/t26-closure-checks.json)). Cada nuevo HEAD requiere checks propios. |
-| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | [Auditoría](docs/reviews/final-merge-audit.md): READY_WITH_EXTERNAL_ACTION. Faltan checks obligatorios y resolución obligatoria de conversaciones en el ruleset, y aprobación independiente del HEAD final. Ruleset solo lectura; admin=false. |
+| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | [Auditoría](docs/reviews/final-merge-audit.md): NOT_READY. Aceptación real BLOCKED: HF_TOKEN ausente del proceso ejecutor, incluso tras aviso de habilitación. Sin verificar release corregido, enero 2020 ni comando real. Continúan gates externos de gobernanza pendientes; ruleset sin cambios. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
 
@@ -225,9 +225,9 @@ Actualizar esta sección al cerrar cada tarea.
 |---|---:|
 | Tareas completas | 26/27 |
 | Tarea activa | Ninguna |
-| Tareas bloqueadas | T27 — Controles remotos y aprobación independiente |
+| Tareas bloqueadas | T27 — Aceptación real sin credencial de entorno; controles remotos y aprobación independiente pendientes |
 | Última tarea completada | T26 — Publicar cambios y validar el PR #1 |
-| Próxima tarea | Reanudar T27 después de acciones externas y nueva verificación del HEAD final |
+| Próxima tarea | Habilitar credencial en el proceso ejecutor y reanudar aceptación real de T27; después verificar gates de merge |
 | Última actualización | 9 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -350,6 +350,8 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 
 | 2026-11-09 | 27 | BLOQUEADA | Auditoría documental en este commit | [Informe](docs/reviews/final-merge-audit.md) READY_WITH_EXTERNAL_ACTION. Ruleset activo con una aprobación y descarte de obsoletas, pero sin checks requeridos ni resolución obligatoria de conversaciones; admin=false. Reviews y threads vacíos, PR mergeable=true pero blocked. | 26/27, ninguna tarea activa. Se registran diferencias para el propietario y aprobación independiente pendiente. Sin modificar ruleset, solicitar review formal, merge o force push. Publicar documentación autorizada y verificar sus checks por SHA; no repetir suites locales ni declarar T27 completa. |
 
+| 2026-11-09 | 27 | BLOQUEADA | Preflight de aceptación sobre `c729f19`; diagnóstico en este commit local | 292 pruebas específicas PASS (21,293 s), registro VALID, preservación 49/49, 22 JSON, 16 recibos e identidad N=3 PASS; árbol limpio tras pruebas. [Recibo](docs/evidence/task27/acceptance-preflight-ecb0f761ba1c48e3a724549d4496362d.json). | Nueva aceptación técnica integrada en T27, sin tareas nuevas. HF_TOKEN no está disponible en el proceso ejecutor ni tras el aviso del usuario; whoami no se ejecuta sin credencial explícita. Release corregido/revisión, enero 2020, clon limpio y comando real NOT_VERIFIED/NOT_EXECUTED. No se inventa receta real, EXP003 no se registra. Aceptación BLOCKED, auditoría NOT_READY, 26/27; sin push ni merge. |
+
 ### Riesgos de la extensión operacional
 
 - Un recibo operativo no puede reemplazar historia: destino exclusivo bajo pipeline/data/.
@@ -405,6 +407,8 @@ Toda desviación debe registrarse antes de continuar.
 | DEC-026 | 2026-11-07 | Resolver DEC-025: el ruleset y la aprobación independiente son gates obligatorios antes del merge, no antes de implementar en la rama; el conteo vigente es 16/22. | DEC-006 y la sección de gobernanza del diseño ya fijan el momento correcto. El texto de riesgo era demasiado estricto y el cierre 16/21 no había incorporado la renumeración de DEC-024. | T17 vuelve a `PENDIENTE`, sin tarea activa ni bloqueada. La implementación puede comenzar; merge continúa prohibido hasta verificar ruleset, aprobación independiente y checks finales verdes. Los registros históricos 15/21 y 16/21 anteriores a DEC-024 no se reescriben. | Reconciliación documental solicitada tras el preflight de T17. |
 
 | DEC-027 | 2026-11-09 | Ampliar la hoja de ruta a 27 tareas por revisión humana: insertar T22–T24 operativas, trasladar la anterior T22 a T25 y reservar T26–T27 para fase 2. | La auditoría encontró caché sin diagnóstico controlado, recibos que sobrescriben T16 y una interfaz operacional no portable. | Fase 1 autorizada solo para caché/recibos, helper adquisición → canonical_build provisional, documentación y gates locales. T16, EXP001/EXP002, identidades y 22 JSON son inmutables. Sin cambios científicos, ampliación temporal, canal condicionado, EXP003 ni investigación climática. El trabajo científico posterior requerirá otro alcance después del merge. T25–T27 quedan pendientes; esta autorización no permite push, publicación remota, entrenamiento ni merge. | Instrucción explícita del usuario de 2026-11-09; sin aprobación científica implícita. |
+
+| DEC-028 | 2026-11-09 | Incorporar aceptación operacional real dentro de T27 sin crear tareas. | El usuario solicita comprobar release climático corregido, cobertura nacional de enero 2020 y helper desde clon limpio. | Autoriza uso de HF_TOKEN exclusivamente de entorno, metadatos mínimos de release inmutable, adquisición/construcción real y evaluación previa de viabilidad de un experimento técnico sin nuevas decisiones científicas. Solo pruebas específicas y preservación; no suites completas, cambios de ruleset, push, merge ni force push. T16/EXP001/EXP002 e identidades cerradas siguen inmutables. | Instrucción adjunta del usuario y verificación posterior de presencia/identidad; el permiso no implica disponibilidad de la credencial ni autenticación exitosa. |
 
 ## 8. Condición de finalización
 
