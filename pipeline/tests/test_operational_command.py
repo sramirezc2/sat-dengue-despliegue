@@ -66,3 +66,25 @@ def test_process_launch_error_is_sanitized(
     output = capsys.readouterr()
     assert "private_marker" not in output.out + output.err
     assert str(tmp_path) not in output.out + output.err
+
+
+def test_help_from_another_directory_has_no_side_effects(tmp_path: Path) -> None:
+    """Ejecutar la ayuda real en una ruta con espacios sin adquirir ni escribir."""
+    import shutil
+
+    project = tmp_path / "checkout with spaces" / "pipeline"
+    tools = project / "tools"
+    tools.mkdir(parents=True)
+    script = tools / "build_approved_canonical.py"
+    shutil.copy2(ROOT / "tools/build_approved_canonical.py", script)
+    result = subprocess.run(
+        [sys.executable, str(script), "--help"],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0
+    assert "provisional" in result.stdout and "--help" in result.stdout
+    assert list(tools.iterdir()) == [script]
+    assert not (project / "data").exists() and not (project / "docs").exists()

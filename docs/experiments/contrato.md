@@ -466,4 +466,3 @@ anteriores permanecen en Git; no se reescriben decisiones históricas.
 - `pipeline/src/sat_dengue_pipeline/evaluation/paired.py`: soporte común e
   incertidumbre descriptiva actual.
 - `docs/experiments/manual_pipeline.md`: gobernanza y operación de experimentos.
-

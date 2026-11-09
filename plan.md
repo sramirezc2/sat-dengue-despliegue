@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 23/27; T22–T23 COMPLETAS; T24–T27 PENDIENTES; ninguna tarea activa ni bloqueada
+**Estado general:** 23/27; T22–T23 COMPLETAS; T24 EN CURSO; T25–T27 PENDIENTES; ninguna tarea bloqueada
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -125,7 +125,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 21 | Registrar capacidades reutilizables | `COMPLETA` | 20 | Cuatro skills canónicas para experimentos, revisión científica, verificación y recuperación; catálogo, integración Codex/Claude, manual, pruebas estructurales, evaluaciones secas y recibos de [validación](docs/evidence/task21/skills-validation.json) y [auditoría documental](docs/evidence/task21/documentation-audit.json). |
 | 22 | Corregir caché y recibos de adquisición | `COMPLETA` | 21 | Preflight estructural seguro y validador de integridad existente; recibos exclusivos bajo pipeline/data/acquisition/. 23 regresiones nuevas; 162 pruebas enfocadas y 49 hashes verdes. |
 | 23 | Agregar operación portable y comando canónico E2E | `COMPLETA` | 22 | Helper build_approved_canonical.py, adquisición → canonical_build provisional, cinco regresiones rojas → verdes y guía portable/recursos. 51 pruebas enfocadas verdes; sin ciencia nueva. |
-| 24 | Validar las correcciones operativas acumuladas | `PENDIENTE` | 23 | Gate local acumulado, checkout temporal limpio, hashes y árbol limpio; sin fuentes privadas. |
+| 24 | Validar las correcciones operativas acumuladas | `EN CURSO` | 23 | Gate local acumulado, checkout temporal limpio, hashes y árbol limpio; sin fuentes privadas. |
 | 25 | Elaborar reporte ejecutivo final | `PENDIENTE` | 24 | Antigua T22: resumen final de entregables, validaciones, limitaciones y decisiones pendientes. |
 | 26 | Publicar cambios y validar el PR #1 | `PENDIENTE` | 25 | Fase 2: solo con autorización posterior; push normal al PR existente y CI remota del HEAD publicado. |
 | 27 | Ejecutar auditoría final de merge | `PENDIENTE` | 26 | Fase 2: ruleset, aprobación independiente, conversaciones y checks finales; no autoriza merge automático. |
@@ -224,10 +224,10 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 23/27 |
-| Tarea activa | Ninguna |
+| Tarea activa | T24 — Validar las correcciones operativas acumuladas |
 | Tareas bloqueadas | Ninguna |
 | Última tarea completada | T23 — Agregar operación portable y comando canónico E2E |
-| Próxima tarea | T24 — Validar las correcciones operativas acumuladas (`PENDIENTE`) |
+| Próxima tarea | T25 — Elaborar reporte ejecutivo final (`PENDIENTE`) |
 | Última actualización | 9 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -327,6 +327,10 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 | 2026-11-09 | 22 | COMPLETA | `cd35781` implementación | 23 regresiones nuevas, 162 pruebas enfocadas, Ruff y 49 hashes protegidos verdes. Regresiones inicialmente rojas. | Diagnóstico estructural separado de integridad; sin reparación automática ni productores ante fallo. Adquisición reutilizada, recibos exclusivos ignorados, sin destino configurable innecesario. Progreso 22/27. |
 | 2026-11-09 | 23 | EN CURSO | Tras `cd35781` | Plan y arquitectura revisados; caché/recibos cerrados. | Solo helper portable, pruebas con dobles y documentación operacional; sin adquisición real ni canónico real. |
 | 2026-11-09 | 23 | COMPLETA | Implementación y cierre en este commit | Cinco regresiones del helper inicialmente rojas; 51 pruebas enfocadas, Ruff y diff de trabajo verdes. | Mismo intérprete, listas sin shell, cwd portable y workspace relativo exclusivo; adquisición antes de Kedro, salida provisional sin N=3, entrenamiento o evidencia Git. Documentación centraliza recursos y secretos por shell. Progreso 23/27. |
+
+| 2026-11-09 | 24 | EN CURSO | Tras cierre T23 | Relectura del plan, arquitectura y gates requeridos. | Validación local acumulada, checkout temporal y preservación; corregir únicamente EOF conocido del contrato, sin alterar palabras ni estado científico. CI nueva pertenece a T26, todavía no ejecutada. |
+
+| 2026-11-09 | 24 | EN CURSO | Gates acumulados locales antes del checkout | Lock/sync/Ruff PASS; 578 pipeline (6 avisos OmegaConf), API 35 (1 deprecación), tablero frozen/lint (6 avisos)/55/build PASS; Pydantic/Zod 22+22, registro VALID, preservación 49/49, 211 archivos científicos/producto conservados, cuatro validadores oficiales y 10 pruebas skills/checkout PASS. 82 enlaces/6 anchors y cuatro filtros de workflows verdes; cero candidatos de secretos o archivos >5 MiB. | EOF del contrato corregido sin alterar contenido científico. Pendiente checkout limpio antes de cierre. CI remota nueva pertenece a T26. |
 
 ### Riesgos de la extensión operacional
 
@@ -442,4 +446,4 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 23/27, T22–T23 COMPLETAS, T24–T27 PENDIENTES y ninguna tarea activa ni bloqueada.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 23/27, T22–T23 COMPLETAS, T24 EN CURSO, T25–T27 PENDIENTES y ninguna tarea bloqueada.
