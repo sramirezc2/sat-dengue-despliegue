@@ -1547,7 +1547,7 @@ después de publicar.
 
 ---
 
-### Tanda 10, línea R — Retroanálisis sobre la tubería real y la regresión logística
+### Tanda 10 — Retroanálisis con datos reales y regresión logística
 
 Documentada en [tanda-10-retroanalisis.docx](bitacora/tanda-10-retroanalisis.docx).
 
