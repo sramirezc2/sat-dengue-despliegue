@@ -154,6 +154,7 @@ en `/api/docs`. Esa interfaz carga sus recursos desde un CDN público;
 | Repositorio del despliegue | https://github.com/sramirezc2/sat-dengue-despliegue |
 | Procedencia de los datos publicados | corrida `88e3ad9decce8bd4d`, evaluación congelada G5 |
 | Bitácora experimental | [`docs/bitacora-experimental.md`](docs/bitacora-experimental.md) |
+| Reporte ejecutivo de la fábrica | [Entregables, evidencia y límites](docs/reports/pipeline-e2e-executive-report.md) |
 | Estado y secuencia de implementación | [`plan.md`](plan.md) |
 | Diseño detallado del E2E | [`PLAN_pipeline_e2e_experimentos_sat_dengue.md`](PLAN_pipeline_e2e_experimentos_sat_dengue.md) |
 | Arquitectura objetivo V3 y transición del pipeline E2E | [`docs/architecture/pipeline-e2e.md`](docs/architecture/pipeline-e2e.md) |

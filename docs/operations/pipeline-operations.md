@@ -13,6 +13,9 @@ exposición se resumen en la [revisión científica](../reviews/scientific-revie
 y la [revisión de seguridad](../security/security-review.md); ambos documentos
 son auditorías cerradas y no sustituyen el estado vigente de `plan.md`.
 
+El [reporte ejecutivo](../reports/pipeline-e2e-executive-report.md) resume
+capacidades y limitaciones; esta guía conserva los procedimientos operacionales.
+
 ## Directorios y responsabilidades
 
 | Ruta | Responsabilidad |

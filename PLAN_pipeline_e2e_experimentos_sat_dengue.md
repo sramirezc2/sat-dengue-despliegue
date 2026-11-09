@@ -1130,7 +1130,9 @@ pruebas de los tres consumidores: publicador, API y tablero.
 24. **Validar las correcciones operativas acumuladas.** Depende de T23: gate local
     completo, pruebas sin fuentes privadas, checkout limpio y preservación por hash.
 25. **Elaborar reporte ejecutivo final.** Depende de T24; antigua T22. Resumir
-    entregables, validaciones, limitaciones y decisiones pendientes.
+    entregables, validaciones, limitaciones y decisiones pendientes. El
+    [reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md) sintetiza la
+    evidencia; el estado y los siguientes gates viven únicamente en `plan.md`.
 26. **Publicar cambios y validar el PR #1.** Depende de T25; fase 2 pendiente y
     autorización posterior. Publicar únicamente en el PR existente y comprobar CI
     remota del nuevo HEAD, sin atribuirle resultados históricos.

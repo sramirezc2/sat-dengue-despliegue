@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 24/27; T22–T24 COMPLETAS; T25–T27 PENDIENTES; ninguna tarea activa ni bloqueada
+**Estado general:** 25/27; T22–T25 COMPLETAS; T26–T27 PENDIENTES; ninguna tarea activa ni bloqueada
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -126,7 +126,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 22 | Corregir caché y recibos de adquisición | `COMPLETA` | 21 | Preflight estructural seguro y validador de integridad existente; recibos exclusivos bajo pipeline/data/acquisition/. 23 regresiones nuevas; 162 pruebas enfocadas y 49 hashes verdes. |
 | 23 | Agregar operación portable y comando canónico E2E | `COMPLETA` | 22 | Helper build_approved_canonical.py, adquisición → canonical_build provisional, cinco regresiones rojas → verdes y guía portable/recursos. 51 pruebas enfocadas verdes; sin ciencia nueva. |
 | 24 | Validar las correcciones operativas acumuladas | `COMPLETA` | 23 | 578 pipeline, API 35, tablero 55/frozen/lint/build; contratos 22+22; skills, enlaces, filtros e higiene verdes. Checkout limpio de 5768331 con 29 pruebas nuevas y ayuda/error controlado; evidencia preservada. [Recibo](docs/evidence/task24/operational-validation.json). |
-| 25 | Elaborar reporte ejecutivo final | `PENDIENTE` | 24 | Antigua T22: resumen final de entregables, validaciones, limitaciones y decisiones pendientes. |
+| 25 | Elaborar reporte ejecutivo final | `COMPLETA` | 24 | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md): síntesis con evidencia y límites, navegación desde guías y arquitectura actualizada hasta T24. Auditoría documental, registro, skills y preservación verdes; publicación pendiente de autorización. |
 | 26 | Publicar cambios y validar el PR #1 | `PENDIENTE` | 25 | Fase 2: solo con autorización posterior; push normal al PR existente y CI remota del HEAD publicado. |
 | 27 | Ejecutar auditoría final de merge | `PENDIENTE` | 26 | Fase 2: ruleset, aprobación independiente, conversaciones y checks finales; no autoriza merge automático. |
 
@@ -223,11 +223,11 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 24/27 |
+| Tareas completas | 25/27 |
 | Tarea activa | Ninguna |
 | Tareas bloqueadas | Ninguna |
-| Última tarea completada | T24 — Validar las correcciones operativas acumuladas |
-| Próxima tarea | T25 — Elaborar reporte ejecutivo final (`PENDIENTE`) |
+| Última tarea completada | T25 — Elaborar reporte ejecutivo final |
+| Próxima tarea | T26 — Publicar cambios y validar el PR #1 (`PENDIENTE`, requiere autorización explícita) |
 | Última actualización | 9 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -333,6 +333,10 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 | 2026-11-09 | 24 | EN CURSO | Gates acumulados locales antes del checkout | Lock/sync/Ruff PASS; 578 pipeline (6 avisos OmegaConf), API 35 (1 deprecación), tablero frozen/lint (6 avisos)/55/build PASS; Pydantic/Zod 22+22, registro VALID, preservación 49/49, 211 archivos científicos/producto conservados, cuatro validadores oficiales y 10 pruebas skills/checkout PASS. 82 enlaces/6 anchors y cuatro filtros de workflows verdes; cero candidatos de secretos o archivos >5 MiB. | EOF del contrato corregido sin alterar contenido científico. Pendiente checkout limpio antes de cierre. CI remota nueva pertenece a T26. |
 
 | 2026-11-09 | 24 | COMPLETA | `5768331` código probado; cierre documental en este commit | Gate acumulado verde: 578 pipeline, API 35, tablero 55/frozen/lint/build, contratos 22+22; cuatro validadores oficiales, registro VALID, 49 hashes e identidad N=3. Checkout limpio con espacios: instalación bloqueada/Ruff/29 pruebas/ayuda/caché ausente y árbol final limpio. Temporales propios eliminados. | [Recibo agregado](docs/evidence/task24/operational-validation.json). 386 archivos preexistentes sin cambios, incluyendo 211 de evidencia/ciencia/producto; nueve cambios existentes autorizados y EOF del contrato sin cambio semántico. Solo pruebas artificiales; sin ejecutar experimentos por CLI, adquisición privada, canónico real o N=3 real. Progreso 24/27, T25–T27 PENDIENTES, ninguna tarea activa/bloqueada; sin push/merge/PR nuevo. CI remota de estos commits pertenece a T26 y no fue ejecutada. |
+
+| 2026-11-09 | 25 | EN CURSO | Base `e1db85d` | Repositorio/rama/tracking correctos, árbol limpio y cinco commits locales exactamente autorizados. PR #1 remoto en db442881, sin cambios remotos. Registro VALID y 49 hashes protegidos PASS; contrato PROPUESTA_PARA_APROBACION y EXP003 ausente del árbol. | Reporte ejecutivo con evidencia enlazada, navegación y corrección menor de cabecera arquitectónica hasta T24. T26 exige autorización explícita después del cierre local; no iniciar publicación, cambios de PR/ruleset ni solicitud de reviews. |
+
+| 2026-11-09 | 25 | COMPLETA | Base `e1db85d`; reporte y cierre en este commit | Markdown: 161 enlaces locales y 17 anclas verdes; 53 JSON de evidencia válidos, UTF-8/LF, sin rutas privadas ni candidatos de secretos. Cuatro validadores oficiales, ocho pruebas de skills, registro VALID y preservación de 49 archivos/22 JSON/16 recibos e identidad N=3 PASS. 393 archivos preexistentes fuera de los siete documentos autorizados sin cambios por comparación con e1db85d. Ayuda del helper y diff verdes. | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md) con evidencia cuantitativa enlazada, fixtures/ingeniería separados de ciencia y CI histórica distinguida del HEAD nuevo. Cabecera arquitectónica hasta T24; contrato sigue propuesta, EXP003 ausente, sin campeón ni autorización sanitaria. Progreso 25/27; T26–T27 PENDIENTES, ninguna activa/bloqueada. Gate externo explícito: detener antes de T26 hasta autorización de push normal/descripcion/espera de checks; cualquier cambio del ruleset debe mostrarse y aprobarse antes de aplicar. Sin push, reviews, cambios de PR/ruleset, entrenamiento, fuentes privadas ni merge. |
 
 ### Riesgos de la extensión operacional
 
@@ -448,4 +452,4 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 24/27, T22–T24 COMPLETAS, T25–T27 PENDIENTES y ninguna tarea activa ni bloqueada.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 25/27, T22–T25 COMPLETAS, T26–T27 PENDIENTES y ninguna tarea activa ni bloqueada.

@@ -1,7 +1,7 @@
 # Arquitectura del pipeline E2E y transición a V3
 
-Estado: decisiones adoptadas para la implementación incremental. Fecha: 2026-11-08.
-Actualizada hasta T21; el producto desplegado y la evidencia cerrada se conservan.
+Estado: decisiones adoptadas para la implementación incremental. Fecha: 2026-11-09.
+Actualizada hasta T24; el producto desplegado y la evidencia cerrada se conservan.
 
 ## Fuente oficial y situación actual
 
@@ -26,6 +26,9 @@ La distribución observada es compatible con una integración aditiva:
 temporales, arnés experimental, evaluación y tracking local opt-in. La API permite sincronizar resultados desde S3
 a su directorio local mediante `SATD_BUCKET_S3`; esto transporta resultados
 publicados, no adquiere datos científicos ni ejecuta entrenamiento.
+
+Síntesis de entregables, evidencia y límites en el
+[reporte ejecutivo](../reports/pipeline-e2e-executive-report.md).
 
 ## Estructura objetivo y límites
 

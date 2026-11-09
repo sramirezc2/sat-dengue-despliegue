@@ -11,6 +11,9 @@ V3](contrato.md). Ese documento separa una corrida técnicamente correcta de una
 evaluación capaz de responder la pregunta de grado. Mientras conserve estado de
 propuesta, sus decisiones pendientes requieren aprobación explícita del equipo.
 
+Para una síntesis de entregables, evidencia y límites, consulte el
+[reporte ejecutivo](../reports/pipeline-e2e-executive-report.md).
+
 ## Reglas esenciales
 
 1. Use un identificador nuevo y consecutivo, por ejemplo `EXP003`. Un identificador ejecutado nunca se reutiliza.

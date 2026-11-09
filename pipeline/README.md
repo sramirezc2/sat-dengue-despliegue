@@ -1,5 +1,7 @@
 # Pipeline SAT DENGUE: adquisición y preparación
 
+[Reporte ejecutivo: entregables, evidencia y límites](../docs/reports/pipeline-e2e-executive-report.md).
+
 Subproyecto Kedro independiente del despliegue. Incluye el smoke de cinco etapas,
 dominio científico, construcción/certificación desde crudos, fábrica reproducible
 y administración de experimentos registrados. No es un modelo aprobado ni
