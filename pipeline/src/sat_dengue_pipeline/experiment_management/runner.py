@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from sat_dengue_pipeline.experiments.rolling import stable_digest
-from sat_dengue_pipeline.factory import engine
+from sat_dengue_pipeline.factory import engine, rolling_protocol
 from sat_dengue_pipeline.factory.configuration import project_root
 from sat_dengue_pipeline.raw.build import build
 from sat_dengue_pipeline.raw.contract import sha256
@@ -236,6 +236,7 @@ def advance(session: RegisteredExecution, *, stage: str) -> RegisteredExecution:
             bundle, artifact, audit, table, schema, canonical = acquire_and_build(
                 session.root, session.config, session.workspace
             )
+            table = rolling_protocol.filtrar_poblacion(table, session.config)
             session.lineage.update(
                 dataset_manifest_sha256=bundle.manifest_sha256,
                 dataset_manifest_digest=bundle.manifest_sha256,
@@ -245,7 +246,10 @@ def advance(session: RegisteredExecution, *, stage: str) -> RegisteredExecution:
                 canonical_serialized_sha256=artifact.serialized_sha256,
                 canonical=canonical,
             )
-            if session.config.get("schema_version") == 3:
+            if session.config.get("protocol", "fixed_roles") == "rolling_origin":
+                session.gate = "rolling_origin"
+                session.runs["legacy"] = rolling_protocol.ejecutar(table, schema, session.config, audit)
+            elif session.config.get("schema_version") == 3:
                 from sat_dengue_pipeline.evaluation.scientific.configuration import variants
 
                 configurations = [(name, config) for name, config, _ in variants(session.config)]
@@ -269,7 +273,7 @@ def advance(session: RegisteredExecution, *, stage: str) -> RegisteredExecution:
             session.scientific_records, session.results = evaluate_runs(
                 session.runs, session.config
             )
-        else:
+        elif session.config.get("protocol", "fixed_roles") != "rolling_origin":
             function = getattr(engine, stage)
             for run in session.runs.values():
                 function(run)
@@ -302,8 +306,7 @@ def finish_execution(
         else "BLOCKED"
         if isinstance(error, (engine.FactoryGateError, ValueError))
         else "FAILED"
-    )
-    signature_fields = {
+    )    signature_fields = {
         "experiment_id": experiment_id,
         "protocol_sha256": entry["protocol_sha256"],
         "configuration_sha256": entry["configuration_sha256"],

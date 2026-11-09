@@ -25,6 +25,8 @@ METRICS = [
     "alert_fraction",
 ]
 BASELINES = ["train_prevalence", "non_excess_persists_no_new_onset"]
+# Con protocolo rolling_origin se agregan las líneas base del canal endémico (política v2).
+BASELINES_ROLLING = [*BASELINES, "canal_p75", "canal_ajustado", "canal_fuera_exceso"]
 
 
 def validate_configuration(config: dict) -> dict:
@@ -61,8 +63,19 @@ def validate_configuration(config: dict) -> dict:
             tuple(config["threshold"]["grid"]),
             config["threshold"]["max_false_alarm_ratio_by_horizon"][str(h)],
         )
-    if config["metrics"] != METRICS or config["baselines"] != BASELINES:
+    rolling = config.get("protocol", "fixed_roles") == "rolling_origin"
+    if config["metrics"] != METRICS or config["baselines"] != (
+        BASELINES_ROLLING if rolling else BASELINES
+    ):
         raise ValueError("Métricas/líneas base fuera del contrato implementado")
+    if rolling != ("rolling" in config):
+        raise ValueError("La ventana expansiva requiere el bloque rolling, y solo ella lo admite")
+    if rolling:
+        ventana = config["rolling"]
+        if not (
+            "2019-01" <= ventana["first_origin"] < ventana["last_target"] < config["reserved_start"]
+        ):
+            raise ValueError("Ventana expansiva fuera del periodo autorizado")
     candidate = config["candidate"]
     key = (candidate["family"], candidate["adapter_version"])
     if key not in ADAPTERS:
