@@ -40,6 +40,10 @@ def repository(tmp_path, monkeypatch):
         path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source / f"pipeline/conf/experiments/{name}.yml", path)
     document = read_yaml(source / "docs/experiments/registry.yml")
+    # Solo las recetas técnicas copiadas; otras entradas del registro real quedan fuera.
+    document["experiments"] = [
+        e for e in document["experiments"] if e["experiment_id"] in ("EXP001", "EXP002")
+    ]
     for entry in document["experiments"]:
         entry.update(status="APPROVED", scientific_result="NOT_APPLICABLE")
     (tmp_path / "docs/experiments/registry.yml").write_text(
