@@ -13,6 +13,7 @@ from sat_dengue_pipeline.acquisition.contracts import ResolvedBundle, ResolvedFi
 from sat_dengue_pipeline.domain.calendar import add_months
 from sat_dengue_pipeline.domain.canonical import KEYS, predictor_matrix
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy, guard_development
+from sat_dengue_pipeline.evaluation import contrato
 from sat_dengue_pipeline.evaluation.metrics import DEFINITIONS_DIGEST, metric_records
 from sat_dengue_pipeline.experiments.decisions import ThresholdPolicy, apply_sigmoid
 from sat_dengue_pipeline.experiments.procedure import fit_procedure, predict_frozen
@@ -381,6 +382,16 @@ def evaluate(run: FactoryRun) -> FactoryRun:
             "fit_calls": fitted.model.adapter.fit_calls,
             "metrics": metrics,
         }
+        if run.config.get("contract"):
+            # Contrato científico (§8-§12): se calcula después de congelar y predecir.
+            run.results[str(h)]["contract"] = contrato.evaluar(
+                output.keys,
+                output.raw_probability,
+                run.batches[h]["threshold_selection"].keys,
+                run.table,
+                h,
+                run.config["contract"],
+            )
         run.identities[str(h)]["evaluation_labels"] = table_digest(y.to_frame("onset"))
         run.identities[str(h)]["metrics"] = stable_digest(metrics)
     run.temporal["evaluation_reads_after_both_predictions"] = True

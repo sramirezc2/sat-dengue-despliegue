@@ -173,6 +173,25 @@ class LogisticOnsetAdapter:
         validate_probabilities(probability, X.index)
         return probability
 
+    def native_configuration(self) -> dict[str, Any]:
+        """Parámetros efectivos del estimador ajustado, para la identidad del motor.
+
+        Returns:
+            Diccionario JSON de ``get_params`` y versión de la biblioteca.
+        """
+        if not self.fitted or self._model is None:
+            raise ValueError("No existe modelo ajustado")
+        params = {
+            k: v
+            for k, v in self._model.get_params().items()
+            if v is None or isinstance(v, (bool, int, float, str))
+        }
+        return {
+            "estimator": "LogisticRegression",
+            "params": params,
+            "library_version": sklearn.__version__,
+        }
+
     def model_json(self) -> bytes:
         """Serializar coeficientes, intercepto, escalado y configuración.
 

@@ -1660,6 +1660,51 @@
         "last_target"
       ],
       "additionalProperties": false
+    },
+    "contract": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": "0.1.0-propuesta"
+        },
+        "grilla_f": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
+          "minItems": 1
+        },
+        "ganancia_minima_pp": {
+          "type": "number"
+        },
+        "aumento_maximo_carga": {
+          "type": "number"
+        },
+        "replicas": {
+          "type": "integer",
+          "minimum": 100
+        },
+        "semilla": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nivel": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        }
+      },
+      "required": [
+        "version",
+        "grilla_f",
+        "ganancia_minima_pp",
+        "aumento_maximo_carga",
+        "replicas",
+        "semilla",
+        "nivel"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [

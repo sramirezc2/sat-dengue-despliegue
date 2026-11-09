@@ -73,3 +73,33 @@ def test_experiment_run_rolling_de_punta_a_punta(repository):  # noqa: F811
         assert {"canal_fuera_exceso", "candidate_vs_canal_fuera_exceso"} <= set(res["metrics"])
         assert validacion["support"][h]["folds"] >= 2
     assert validacion["temporal"]["protocol"] == "rolling_origin"
+
+
+def test_experiment_run_cinco_roles_con_contrato(repository):  # noqa: F811
+    """Con roles fijos y contrato, la evidencia trae comparadores, controles y veredicto."""
+    from sat_dengue_pipeline.evaluation.contrato import PARAMETROS_DEFECTO
+
+    def _contrato(config: dict) -> None:
+        for clave in ("predictors", "preparation", "candidate"):
+            config[clave] = copy.deepcopy(RECETA[clave])
+        config["seed"] = RECETA["seed"]
+        config["calibration"]["parameters"]["random_state"] = RECETA["seed"]
+        config["population"] = {"department_codes": ["50", "73"]}
+        config["contract"] = {**PARAMETROS_DEFECTO, "replicas": 200}
+
+    change_config(repository, "EXP001", _contrato)
+    rec = runner.execute("EXP001", root=repository, execution_id="contrato", tracking=False)
+    assert rec["status"] == "COMPLETED"
+    metricas = json.loads(
+        (repository / "docs/evidence/experiments/EXP001/contrato/metrics.json").read_bytes()
+    )
+    for res in metricas.values():
+        c = res["contract"]
+        assert {"canal_condicionado", "candidato", "control_ranking_aleatorio"} <= set(c["medidas"])
+        assert c["veredicto"] in {
+            "CUMPLE",
+            "NO_CUMPLE_POR_EFECTO",
+            "PRECISION_INSUFICIENTE",
+            "NO_EVALUABLE",
+            "INVALIDO",
+        }

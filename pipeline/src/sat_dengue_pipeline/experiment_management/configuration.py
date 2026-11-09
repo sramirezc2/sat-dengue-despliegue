@@ -68,6 +68,8 @@ def validate_configuration(config: dict) -> dict:
         BASELINES_ROLLING if rolling else BASELINES
     ):
         raise ValueError("Métricas/líneas base fuera del contrato implementado")
+    if "contract" in config and rolling:
+        raise ValueError("El contrato científico se evalúa sobre los cinco roles fijos")
     if rolling != ("rolling" in config):
         raise ValueError("La ventana expansiva requiere el bloque rolling, y solo ella lo admite")
     if rolling:
