@@ -35,7 +35,7 @@ from sat_dengue_pipeline.factory.configuration import (
     temporal_plan,
 )
 from sat_dengue_pipeline.models.adapters import ModelRegistry
-from sat_dengue_pipeline.models.xgboost import XGBoostOnsetAdapter
+from sat_dengue_pipeline.models.familias import ADAPTERS
 from sat_dengue_pipeline.preparation import prepare_horizon
 from sat_dengue_pipeline.raw.build import build
 from sat_dengue_pipeline.raw.contract import BuildConfig, sha256
@@ -265,7 +265,7 @@ def fit(run: FactoryRun) -> FactoryRun:
     run.stage = "fit_calibration_threshold"
     registry = ModelRegistry()
     spec = adapter_spec(run.config)
-    registry.register(spec.family, spec.version, XGBoostOnsetAdapter)
+    registry.register(spec.family, spec.version, ADAPTERS[(spec.family, spec.version)])
     for h in run.config["horizons"]:
         policy = ThresholdPolicy(
             tuple(run.config["threshold"]["grid"]),

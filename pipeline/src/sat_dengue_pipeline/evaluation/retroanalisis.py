@@ -20,12 +20,10 @@ from sat_dengue_pipeline.domain.calendar import add_months
 from sat_dengue_pipeline.experiments.rolling import ExperimentSpec, from_prepared
 from sat_dengue_pipeline.factory.configuration import adapter_spec
 from sat_dengue_pipeline.models.adapters import ModelRegistry, run_candidate
-from sat_dengue_pipeline.models.logistic import LogisticOnsetAdapter
-from sat_dengue_pipeline.models.xgboost import XGBoostOnsetAdapter
+from sat_dengue_pipeline.models.familias import ADAPTERS
 from sat_dengue_pipeline.preparation import prepare_horizon
 
 KEYS = ["municipality_code", "year_month"]
-FAMILIAS = {"xgboost_onset": XGBoostOnsetAdapter, "logistic_onset": LogisticOnsetAdapter}
 
 
 def predicciones_rolling(
@@ -59,9 +57,9 @@ def predicciones_rolling(
     data = from_prepared(prepared, horizonte, label_delay_months=demora)
     spec = adapter_spec(config)
     registry = ModelRegistry()
-    if spec.family not in FAMILIAS:
-        raise ValueError(f"Familia no soportada en el retroanálisis: {spec.family}")
-    registry.register(spec.family, spec.version, FAMILIAS[spec.family])
+    if (spec.family, spec.version) not in ADAPTERS:
+        raise ValueError(f"Familia no soportada: {spec.family} {spec.version}")
+    registry.register(spec.family, spec.version, ADAPTERS[(spec.family, spec.version)])
     partes, omitidos = [], []
     origen = primer_origen
     while add_months(origen, horizonte + demora) <= ultimo_objetivo:

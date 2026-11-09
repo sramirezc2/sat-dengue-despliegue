@@ -10,12 +10,11 @@ from sat_dengue_pipeline.domain.canonical import PREDICTORS
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy
 from sat_dengue_pipeline.experiments.decisions import ThresholdPolicy
 from sat_dengue_pipeline.factory.configuration import adapter_spec, temporal_plan
-from sat_dengue_pipeline.models.xgboost import XGBoostOnsetAdapter
+from sat_dengue_pipeline.models.familias import ADAPTERS
 from sat_dengue_pipeline.raw.contract import sha256
 
 from .registry import confined, read_yaml
 
-ADAPTERS = {("xgboost_onset", "v1"): XGBoostOnsetAdapter}
 METRICS = [
     "average_precision",
     "auroc",

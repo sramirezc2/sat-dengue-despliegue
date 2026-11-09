@@ -126,6 +126,9 @@ preparation:
   missing: error
   scaling: standard_train
   imputation: none
+  matrix_dtype: float64
+  variables_g: false
+  channel_budget: false
 candidate:
   family: logistic_onset
   adapter_version: v1

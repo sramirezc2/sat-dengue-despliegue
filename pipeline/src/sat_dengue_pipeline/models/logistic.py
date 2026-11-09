@@ -90,6 +90,9 @@ class LogisticOnsetAdapter:
             or self.preparation["missing"] != "error"
             or self.preparation["scaling"] != "standard_train"
             or self.preparation["imputation"] != "none"
+            or self.preparation["matrix_dtype"] != "float64"
+            or self.preparation["variables_g"] is not False
+            or self.preparation["channel_budget"] is not False
         ):
             raise ValueError("Preparación diferente de la autorizada")
         expected = [
