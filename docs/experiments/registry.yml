@@ -28,3 +28,18 @@ experiments:
   conclusions: docs/experiments/EXP002/CONCLUSIONS.md
   scientific_result: NOT_APPLICABLE
   champion_status: NOT_SELECTED
+- experiment_id: EXP003
+  experiment_slug: exp003-logistica-sin-clima-rolling
+  hypothesis_id: EXP003-H1
+  title: "Regresi\xF3n log\xEDstica sin clima con ventana expansiva frente al canal\
+    \ end\xE9mico"
+  experiment_type: scientific
+  status: PROPOSED
+  protocol: docs/experiments/EXP003/SPECIFICATION.md
+  protocol_sha256: 7fefc73168abf637b6dd45d69b22bbfb470991854f038cb82674ae97c2458891
+  configuration: pipeline/conf/experiments/EXP003.yml
+  configuration_sha256: bff662eed986fca82338d66747a58b0db8b6385e7e633d560c6a1f2a32192ba9
+  pipeline: experiment_run
+  conclusions: docs/experiments/EXP003/CONCLUSIONS.md
+  scientific_result: PENDING
+  champion_status: NOT_SELECTED
