@@ -231,8 +231,10 @@ de la transición; no representa el estado vigente de tareas:
 
 Hasta T21 se implementaron y validaron adquisición, canónico, preparación,
 evaluación, publicación, fábrica reproducible, administración experimental,
-revisiones, operación y cuatro skills. T22 es la única tarea pendiente según
-`plan.md`; no está autorizada por este documento.
+revisiones, operación y cuatro skills. DEC-027 amplía la secuencia a 27 tareas:
+T22–T24 son correcciones operativas y validación local; la anterior T22 pasa a T25.
+T26–T27 reservan publicación/CI y auditoría final para autorización posterior.
+Los estados y el alcance autorizado se consultan exclusivamente en `plan.md`.
 
 En las primeras etapas se preservaron rutas, configuración y comportamiento de
 API, tablero, Docker y operación. No se mueven ni renombran `app/`, `docker/`,

@@ -1,8 +1,8 @@
 # Hoja de ruta de implementación — Pipeline E2E SAT DENGUE
 
-**Versión:** 1.4
+**Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 21/22; T18–T21 COMPLETAS; T22 PENDIENTE; ninguna tarea activa ni bloqueada
+**Estado general:** 21/27; T1–T21 COMPLETAS; T22–T27 PENDIENTES; ninguna tarea activa ni bloqueada
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -123,7 +123,12 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 19 | Documentar operación, límites y migraciones | `COMPLETA` | 18 | [Guía central](docs/operations/pipeline-operations.md) enlazada al manual, sin duplicar sus recetas. Preparación multiplataforma, comandos reales, publicación, recuperación, privacidad, memoria y migración de proveedores. Ayudas/AST/código, cuatro CLI artificiales, Pydantic/Zod 24 y 80 enlaces locales verificados. [Recibo](docs/evidence/task19/operations-validation.json). |
 | 20 | Ejecutar revisión de seguridad | `COMPLETA` | 19 | [Revisión de seguridad](docs/security/security-review.md): APPROVED_WITH_LIMITATIONS, sin CRITICAL/HIGH abiertos. Zod 4.6.6 compatible, logs SDK protegidos y LF de identidades/referencias POSIX; 541 pruebas pipeline, API 35, tablero 55/lint/build, lock/sync/Ruff, contratos 24+24, registro y 68 hashes verdes. Avisos moderados, backup privado exclusivamente local y controles externos documentados con responsables. [Recibo](docs/evidence/task20/security-review.json). |
 | 21 | Registrar capacidades reutilizables | `COMPLETA` | 20 | Cuatro skills canónicas para experimentos, revisión científica, verificación y recuperación; catálogo, integración Codex/Claude, manual, pruebas estructurales, evaluaciones secas y recibos de [validación](docs/evidence/task21/skills-validation.json) y [auditoría documental](docs/evidence/task21/documentation-audit.json). |
-| 22 | Elaborar reporte ejecutivo | `PENDIENTE` | 21 | Resumen final de entregables, validaciones, limitaciones y decisiones pendientes. |
+| 22 | Corregir caché y recibos de adquisición | `PENDIENTE` | 21 | Preflight seguro, recibos exclusivos bajo pipeline/data/, regresiones locales y preservación histórica. |
+| 23 | Agregar operación portable y comando canónico E2E | `PENDIENTE` | 22 | Helper adquisición → canonical_build provisional, comandos portables y recursos medidos; sin ciencia nueva. |
+| 24 | Validar las correcciones operativas acumuladas | `PENDIENTE` | 23 | Gate local acumulado, checkout temporal limpio, hashes y árbol limpio; sin fuentes privadas. |
+| 25 | Elaborar reporte ejecutivo final | `PENDIENTE` | 24 | Antigua T22: resumen final de entregables, validaciones, limitaciones y decisiones pendientes. |
+| 26 | Publicar cambios y validar el PR #1 | `PENDIENTE` | 25 | Fase 2: solo con autorización posterior; push normal al PR existente y CI remota del HEAD publicado. |
+| 27 | Ejecutar auditoría final de merge | `PENDIENTE` | 26 | Fase 2: ruleset, aprobación independiente, conversaciones y checks finales; no autoriza merge automático. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
 
@@ -218,12 +223,12 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 21/22 |
+| Tareas completas | 21/27 |
 | Tarea activa | Ninguna |
 | Tareas bloqueadas | Ninguna |
 | Última tarea completada | T21 — Registrar capacidades reutilizables |
-| Próxima tarea | T22 — Elaborar reporte ejecutivo (`PENDIENTE`) |
-| Última actualización | 8 de noviembre de 2026 |
+| Próxima tarea | T22 — Corregir caché y recibos de adquisición (`PENDIENTE`) |
+| Última actualización | 9 de noviembre de 2026 |
 
 ### Registro de ejecución
 
@@ -318,6 +323,14 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 
 | 2026-11-08 | 21 | COMPLETA | `1cca905` reconciliación; recibo y registro en este commit | Auditoría documental posterior al cierre: enlaces, comandos y cuatro skills verdes; gate acumulado con 549 pipeline, API 35, tablero 55, registro VALID, contratos 24+24 e integridad protegida aprobada. | [Recibo de auditoría](docs/evidence/task21/documentation-audit.json). Se corrigieron solo documentos vigentes; historia y evidencia cerradas intactas. Persisten limitaciones científicas/de seguridad documentadas y gates externos antes del merge. Estado 21/22, T22 PENDIENTE, ninguna activa/bloqueada. |
 
+### Riesgos de la extensión operacional
+
+- Un recibo operativo no puede reemplazar historia: destino exclusivo bajo pipeline/data/.
+- Un error de caché no autoriza reparación automática ni debilitar hashes o inventario.
+- El helper no certifica ni entrena; el canónico resultante continúa provisional.
+- CI histórica no valida commits nuevos: T26 debe comprobar su HEAD remoto.
+- Las numeraciones históricas se conservan; DEC-027 controla la nueva secuencia.
+
 ## 7. Decisiones y desviaciones
 
 Toda desviación debe registrarse antes de continuar.
@@ -361,11 +374,18 @@ Toda desviación debe registrarse antes de continuar.
 | DEC-025 | 2026-11-07 | Detener T17 en preflight por contradicciones documentales, sin modificar código. | PLAN_pipeline_e2e_experimentos_sat_dengue.md, sección 9, exige ruleset verificado como gate cero antes de implementar; su sección 6 y DEC-006 sitúan ese requisito antes del merge. Además, el párrafo final de este plan denomina vigente un cierre 16/21, mientras cabecera, tabla y DEC-024 establecen 16/22. | T17 BLOQUEADA, progreso 16/22 y ninguna tarea activa. Pendiente reconciliar el momento exigido para verificar ruleset y actualizar o identificar como histórico el cierre final; se conservan los textos en conflicto para revisión. T16 y cambios preexistentes intactos; no se ejecutan suites ni experimentos. | Detención exigida por precondición 4 del pedido actual y sección 9 de plan.md; no se elige silenciosamente una interpretación. |
 | DEC-026 | 2026-11-07 | Resolver DEC-025: el ruleset y la aprobación independiente son gates obligatorios antes del merge, no antes de implementar en la rama; el conteo vigente es 16/22. | DEC-006 y la sección de gobernanza del diseño ya fijan el momento correcto. El texto de riesgo era demasiado estricto y el cierre 16/21 no había incorporado la renumeración de DEC-024. | T17 vuelve a `PENDIENTE`, sin tarea activa ni bloqueada. La implementación puede comenzar; merge continúa prohibido hasta verificar ruleset, aprobación independiente y checks finales verdes. Los registros históricos 15/21 y 16/21 anteriores a DEC-024 no se reescriben. | Reconciliación documental solicitada tras el preflight de T17. |
 
+| DEC-027 | 2026-11-09 | Ampliar la hoja de ruta a 27 tareas por revisión humana: insertar T22–T24 operativas, trasladar la anterior T22 a T25 y reservar T26–T27 para fase 2. | La auditoría encontró caché sin diagnóstico controlado, recibos que sobrescriben T16 y una interfaz operacional no portable. | Fase 1 autorizada solo para caché/recibos, helper adquisición → canonical_build provisional, documentación y gates locales. T16, EXP001/EXP002, identidades y 22 JSON son inmutables. Sin cambios científicos, ampliación temporal, canal condicionado, EXP003 ni investigación climática. El trabajo científico posterior requerirá otro alcance después del merge. T25–T27 quedan pendientes; esta autorización no permite push, publicación remota, entrenamiento ni merge. | Instrucción explícita del usuario de 2026-11-09; sin aprobación científica implícita. |
+
 ## 8. Condición de finalización
 
 El trabajo solo puede considerarse terminado cuando:
 
-- las 22 tareas estén `COMPLETA`;
+- las 27 tareas estén `COMPLETA`;
+- T22–T24 acrediten caché controlada, recibos exclusivos ignorados, comando portable
+  de adquisición/construcción provisional y gate acumulado sin datos privados;
+- los gates incluyan regresiones, clon limpio, preservación de evidencia y contratos;
+- T26–T27 se ejecuten solo bajo autorización posterior, con CI remota del HEAD final,
+  ruleset verificado, aprobación independiente y conversaciones resueltas;
 - la fábrica pueda registrar, ejecutar y comparar experimentos aprobados sin
   sobrescribir T16 ni depender exclusivamente de un store MLflow local;
 - el clon limpio ejecute el E2E sintético con un comando;
@@ -414,4 +434,4 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 21/22, T18–T21 COMPLETAS, T22 PENDIENTE y ninguna tarea activa ni bloqueada.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 21/27, T1–T21 COMPLETAS, T22–T27 PENDIENTES y ninguna tarea activa ni bloqueada.

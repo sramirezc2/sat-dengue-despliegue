@@ -2,7 +2,7 @@
 
 **Plan interno:** `PLAN_pipeline_e2e_experimentos_sat_dengue`
 
-**Versión de diseño:** 7.1 — fábrica reproducible y administración multi-experimento
+**Versión de diseño:** 7.2 — correcciones operativas previas al merge
 
 **Fase actual:** diseño aprobado en ejecución sobre `feature/pipeline-e2e`; `plan.md`
 es la única fuente de verdad sobre número, estado, dependencia y avance de las tareas
@@ -1120,15 +1120,41 @@ pruebas de los tres consumidores: publicador, API y tablero.
     canónicas bajo `.agents/skills/`: operación experimental, revisión científica,
     verificación y recuperación. Documentarlas en `docs/agents/skills-catalog.md`
     y en el manual, sin añadir agentes, plugins, hooks ni autoridades paralelas.
-22. **Reporte ejecutivo.** Resumir implementación, validaciones, limitaciones,
-    decisiones pendientes y evidencia reproducible para el equipo.
+22. **Corregir caché y recibos de adquisición.** Depende de T21: distinguir caché
+    ausente, no directorio, faltantes, adicionales, corrupción y symlinks; conservar
+    integridad existente. Recibos exclusivos bajo `pipeline/data/`, nunca sobre T16.
+23. **Agregar operación portable y comando canónico E2E.** Depende de T22:
+    helper delgado en `pipeline/tools/`, mismo intérprete, adquisición y luego
+    `canonical_build` aprobado; salida provisional. Documentar secretos por shell
+    y recursos históricos, sin garantías de RAM no demostradas.
+24. **Validar las correcciones operativas acumuladas.** Depende de T23: gate local
+    completo, pruebas sin fuentes privadas, checkout limpio y preservación por hash.
+25. **Elaborar reporte ejecutivo final.** Depende de T24; antigua T22. Resumir
+    entregables, validaciones, limitaciones y decisiones pendientes.
+26. **Publicar cambios y validar el PR #1.** Depende de T25; fase 2 pendiente y
+    autorización posterior. Publicar únicamente en el PR existente y comprobar CI
+    remota del nuevo HEAD, sin atribuirle resultados históricos.
+27. **Ejecutar auditoría final de merge.** Depende de T26; fase 2 pendiente.
+    Verificar ruleset, revisión independiente, conversaciones y checks obligatorios;
+    el merge requiere autorización específica.
 
-El estado de ejecución vive exclusivamente en `plan.md`: al cierre de T21 hay
-21/22 tareas completas, ninguna activa o bloqueada y T22 permanece pendiente.
+DEC-027 amplía el plan por revisión humana: conserva T1–T21 y toda la historia;
+la antigua T22 pasa a T25. La fase 1 autoriza exclusivamente T22–T24 operativas,
+sin ciencia, fuentes privadas, entrenamiento ni cambios a T16/EXP001/EXP002.
+Ampliación temporal, canal condicionado y EXP003 quedan fuera; trabajo científico
+posterior necesita otro alcance después del merge. El progreso inicial es 21/27;
+los estados y el control de avance viven exclusivamente en `plan.md`.
 
 ## 8. Criterios de aceptación del producto E2E
 
-La implementación estará lista cuando:
+La implementación estará lista cuando las 27 tareas y sus dependencias estén
+completas según `plan.md`. La entrega local de fase 1 termina en T24, con T25–T27
+pendientes y sin publicar. Se exige además:
+
+- errores de caché controlados sin rutas privadas y sin relajar integridad;
+- recibos operacionales exclusivos e ignorados que no sobrescriban historia;
+- adquisición y construcción provisional mediante un helper portable sin ciencia;
+- gate local acumulado y checkout limpio, preservando evidencia y publicación;
 
 - un clon limpio conserva el despliegue actual: Compose levanta API, tablero y
   proxy, `/api/salud` reporta resultados y una consulta válida responde 200;
@@ -1212,6 +1238,9 @@ La implementación estará lista cuando:
 
 | Riesgo | Mitigación |
 |---|---|
+| Recibos operacionales sobrescriben evidencia cerrada | T22: directorio exclusivo por ejecución bajo pipeline/data/, sin escritura histórica |
+| El helper se confunde con certificación o experimento | T23: solo adquisición y canonical_build provisional, sin N=3 ni entrenamiento |
+| Se atribuye CI anterior a commits locales nuevos | T24 es local; publicación y CI del HEAD nuevo pertenecen a T26 |
 | Los scripts originales de las tandas no se entregan | Recuperación prioritaria; si falla, reproducción independiente y estado `NOT_REPRODUCED` |
 | El esqueleto Kedro rompe el despliegue existente | `pipeline/` autocontenido, línea base Docker previa y CI separado por componentes |
 | Se mezclan dependencias de ML con la API | Entornos y locks independientes; la imagen API no copia ni instala `pipeline/` |
