@@ -6,6 +6,11 @@ La fábrica permite registrar, aprobar, ejecutar, concluir y comparar entrenamie
 
 Este manual aplica tanto a personas como a agentes de IA. Todas las acciones se realizan desde la raíz del repositorio y sobre una rama de trabajo. Ningún experimento autoriza por sí mismo un modelo campeón ni su uso operativo.
 
+Antes de preparar un experimento científico, lea el [contrato científico
+V3](contrato.md). Ese documento separa una corrida técnicamente correcta de una
+evaluación capaz de responder la pregunta de grado. Mientras conserve estado de
+propuesta, sus decisiones pendientes requieren aprobación explícita del equipo.
+
 ## Reglas esenciales
 
 1. Use un identificador nuevo y consecutivo, por ejemplo `EXP003`. Un identificador ejecutado nunca se reutiliza.
@@ -17,6 +22,9 @@ Este manual aplica tanto a personas como a agentes de IA. Todas las acciones se 
 7. El periodo 2025 está excluido del aprendizaje. No modifique `reserved_start: 2025-01` ni los controles temporales.
 8. No guarde tokens, datos crudos, matrices, modelos o predicciones en Git. `HF_TOKEN` debe existir únicamente como secreto del entorno.
 9. La especificación, configuración y aprobación deben pasar por revisión mediante Pull Request antes de ejecutar un experimento científico.
+10. Una corrida no puede declararse positiva para la pregunta de grado si omite
+    los comparadores, métricas decisorias, soporte común o incertidumbre exigidos
+    por el contrato científico vigente.
 
 ## Archivos de cada experimento
 

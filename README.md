@@ -125,6 +125,7 @@ en `/api/docs`. Esa interfaz carga sus recursos desde un CDN público;
 | Arquitectura objetivo V3 y transición del pipeline E2E | [`docs/architecture/pipeline-e2e.md`](docs/architecture/pipeline-e2e.md) |
 | Operación, recuperación y migraciones del pipeline | [Guía operativa](docs/operations/pipeline-operations.md) |
 | Registro y ejecución de experimentos | [Manual de la fábrica](docs/experiments/manual_pipeline.md) |
+| Contrato científico V3 | [Pregunta de grado y reglas de decisión](docs/experiments/contrato.md) |
 | Capacidades reutilizables para agentes | [Catálogo de skills](docs/agents/skills-catalog.md) |
 | Revisión científica y de seguridad | [Revisión científica](docs/reviews/scientific-review.md) · [Revisión de seguridad](docs/security/security-review.md) |
 | Subproyecto Kedro y smoke test sintético | [`pipeline/README.md`](pipeline/README.md) |

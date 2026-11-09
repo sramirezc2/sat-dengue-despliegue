@@ -5,6 +5,11 @@ T17 añade gobernanza a los contratos científicos existentes. El registro
 store MLflow. T16 sigue siendo validación de ingeniería cerrada y vive fuera del
 registro científico; no se reinterpreta ni se vuelve a ejecutar.
 
+La [propuesta de contrato científico V3](contrato.md) define la pregunta de
+grado, el evento, los comparadores y las condiciones que cualquier candidato
+debe satisfacer. Su estado es pendiente de aprobación formal; hasta entonces no
+reclasifica resultados ni autoriza una afirmación de superioridad.
+
 Para operación del entorno, publicación y recuperación, consultar la
 [guía operativa central](../operations/pipeline-operations.md); para crear y repetir
 entrenamientos, el [manual](manual_pipeline.md). Las capacidades reutilizables se
