@@ -386,3 +386,12 @@ de consumidores; modos privados y Colab inspeccionados en código/pruebas. Se
 verificaron los cuatro CLI artificiales y los contratos de consumidores. Los
 comandos de aprobación, entrenamiento real, publicación vigente y recuperación
 privada no se ejecutaron. [Recibo de validación](../evidence/task19/operations-validation.json).
+
+### Correcciones operativas T22–T24
+
+El helper y los errores/recibos se verificaron con dobles y fixtures pequeños,
+gate local acumulado y checkout limpio en una ruta con espacios. Se conservó por
+hash toda evidencia previa y el producto. El [recibo de T24](../evidence/task24/operational-validation.json)
+identifica el código validado y sus límites. No se adquirieron datos privados ni
+se reconstruyó el canónico real. CI nativa de estos commits queda para T26 tras
+autorización de publicación; el cierre local no autoriza merge.
