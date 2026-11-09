@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 21/27; T1–T21 COMPLETAS; T22–T27 PENDIENTES; ninguna tarea activa ni bloqueada
+**Estado general:** 21/27; T22 EN CURSO; T23–T27 PENDIENTES; ninguna tarea bloqueada
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -123,7 +123,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 19 | Documentar operación, límites y migraciones | `COMPLETA` | 18 | [Guía central](docs/operations/pipeline-operations.md) enlazada al manual, sin duplicar sus recetas. Preparación multiplataforma, comandos reales, publicación, recuperación, privacidad, memoria y migración de proveedores. Ayudas/AST/código, cuatro CLI artificiales, Pydantic/Zod 24 y 80 enlaces locales verificados. [Recibo](docs/evidence/task19/operations-validation.json). |
 | 20 | Ejecutar revisión de seguridad | `COMPLETA` | 19 | [Revisión de seguridad](docs/security/security-review.md): APPROVED_WITH_LIMITATIONS, sin CRITICAL/HIGH abiertos. Zod 4.6.6 compatible, logs SDK protegidos y LF de identidades/referencias POSIX; 541 pruebas pipeline, API 35, tablero 55/lint/build, lock/sync/Ruff, contratos 24+24, registro y 68 hashes verdes. Avisos moderados, backup privado exclusivamente local y controles externos documentados con responsables. [Recibo](docs/evidence/task20/security-review.json). |
 | 21 | Registrar capacidades reutilizables | `COMPLETA` | 20 | Cuatro skills canónicas para experimentos, revisión científica, verificación y recuperación; catálogo, integración Codex/Claude, manual, pruebas estructurales, evaluaciones secas y recibos de [validación](docs/evidence/task21/skills-validation.json) y [auditoría documental](docs/evidence/task21/documentation-audit.json). |
-| 22 | Corregir caché y recibos de adquisición | `PENDIENTE` | 21 | Preflight seguro, recibos exclusivos bajo pipeline/data/, regresiones locales y preservación histórica. |
+| 22 | Corregir caché y recibos de adquisición | `EN CURSO` | 21 | Preflight seguro, recibos exclusivos bajo pipeline/data/, regresiones locales y preservación histórica. |
 | 23 | Agregar operación portable y comando canónico E2E | `PENDIENTE` | 22 | Helper adquisición → canonical_build provisional, comandos portables y recursos medidos; sin ciencia nueva. |
 | 24 | Validar las correcciones operativas acumuladas | `PENDIENTE` | 23 | Gate local acumulado, checkout temporal limpio, hashes y árbol limpio; sin fuentes privadas. |
 | 25 | Elaborar reporte ejecutivo final | `PENDIENTE` | 24 | Antigua T22: resumen final de entregables, validaciones, limitaciones y decisiones pendientes. |
@@ -224,10 +224,10 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 21/27 |
-| Tarea activa | Ninguna |
+| Tarea activa | T22 — Corregir caché y recibos de adquisición |
 | Tareas bloqueadas | Ninguna |
 | Última tarea completada | T21 — Registrar capacidades reutilizables |
-| Próxima tarea | T22 — Corregir caché y recibos de adquisición (`PENDIENTE`) |
+| Próxima tarea | T23 — Agregar operación portable y comando canónico E2E (`PENDIENTE`) |
 | Última actualización | 9 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -330,6 +330,8 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 - El helper no certifica ni entrena; el canónico resultante continúa provisional.
 - CI histórica no valida commits nuevos: T26 debe comprobar su HEAD remoto.
 - Las numeraciones históricas se conservan; DEC-027 controla la nueva secuencia.
+
+| 2026-11-09 | 22 | EN CURSO | Tras autorización DEC-027 | Preflight: árbol limpio en db442881, PR #1 abierto y tracking coincidente; Ruff, registro VALID y 49 hashes verdes sin sync/descargas. | Fallo preexistente: git diff --check origin/main...HEAD, EOF de contrato.md:469; corrección limitada reservada a T24. Solo alcance operacional y pruebas artificiales. |
 
 ## 7. Decisiones y desviaciones
 
@@ -434,4 +436,4 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 21/27, T1–T21 COMPLETAS, T22–T27 PENDIENTES y ninguna tarea activa ni bloqueada.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 21/27, T22 EN CURSO, T23–T27 PENDIENTES y ninguna tarea bloqueada.

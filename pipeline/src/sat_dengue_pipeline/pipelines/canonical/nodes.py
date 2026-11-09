@@ -7,6 +7,7 @@ import pandas as pd
 
 from sat_dengue_pipeline.acquisition.contracts import ReleaseManifest, ResolvedBundle, ResolvedFile
 from sat_dengue_pipeline.acquisition.raw_manifest import validate_raw_manifest
+from sat_dengue_pipeline.canonical_cache import ACQUIRE_COMMAND, preflight_cache
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy
 from sat_dengue_pipeline.raw import build as io
 from sat_dengue_pipeline.raw.contract import BuildConfig, raw_contract_validation
@@ -46,13 +47,12 @@ def build_input(parameters: dict) -> BuildInput:
     if parameters["mode"] == "synthetic":
         bundle, inventory = synthetic_bundle(workspace / "raw")
         return BuildInput(bundle, fixture_config(), inventory, workspace, parameters["tracking"])
-    manifest = ReleaseManifest.from_json(Path("conf/releases/approved-raw.json").read_text())
+    manifest = ReleaseManifest.from_json(
+        Path("conf/releases/approved-raw.json").read_text(encoding="utf-8")
+    )
     validate_raw_manifest(manifest)
     cache = Path("data/01_raw/inbox") / manifest.release_id / manifest.manifest_sha256
-    if cache.is_symlink() or any(part.is_symlink() for part in cache.parents):
-        raise ValueError("Caché enlazada no permitida")
-    if {p.name for p in cache.iterdir()} != {f.relative_path for f in manifest.files}:
-        raise ValueError("La caché científica debe contener exclusivamente cinco archivos")
+    preflight_cache(cache, {file.relative_path for file in manifest.files})
     bundle = ResolvedBundle(
         manifest.release_id,
         manifest.manifest_sha256,
@@ -69,7 +69,14 @@ def build_input(parameters: dict) -> BuildInput:
 
 def validate_input(source: BuildInput) -> ResolvedBundle:
     """Validar crudos antes de proyectar claves."""
-    return raw_contract_validation(source.bundle, source.config, source.inventory)
+    try:
+        return raw_contract_validation(source.bundle, source.config, source.inventory)
+    except (ValueError, OSError):
+        if source.config.profile == "synthetic":
+            raise
+        raise ValueError(
+            f"Caché corrupta o contrato crudo inválido. Ejecute: {ACQUIRE_COMMAND}"
+        ) from None
 
 
 def quarantine(keys: dict[str, pd.DataFrame], source: BuildInput) -> Quarantine:
