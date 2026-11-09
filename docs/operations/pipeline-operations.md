@@ -398,3 +398,7 @@ hash toda evidencia previa y el producto. El [recibo de T24](../evidence/task24/
 identifica el código validado y sus límites. No se adquirieron datos privados ni
 se reconstruyó el canónico real. CI nativa de estos commits queda para T26 tras
 autorización de publicación; el cierre local no autoriza merge.
+
+La publicación posterior autorizada y la primera CI del código operacional constan
+en el [recibo T26](../evidence/task26/publication-validation.json). Cada cierre
+documental requiere verificar nuevamente su HEAD; `plan.md` controla el estado.

@@ -1133,10 +1133,10 @@ pruebas de los tres consumidores: publicador, API y tablero.
     entregables, validaciones, limitaciones y decisiones pendientes. El
     [reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md) sintetiza la
     evidencia; el estado y los siguientes gates viven únicamente en `plan.md`.
-26. **Publicar cambios y validar el PR #1.** Depende de T25; fase 2 pendiente y
-    autorización posterior. Publicar únicamente en el PR existente y comprobar CI
+26. **Publicar cambios y validar el PR #1.** Depende de T25; fase 2 bajo
+    autorización explícita. Publicar únicamente en el PR existente y comprobar CI
     remota del nuevo HEAD, sin atribuirle resultados históricos.
-27. **Ejecutar auditoría final de merge.** Depende de T26; fase 2 pendiente.
+27. **Ejecutar auditoría final de merge.** Depende de T26; fase 2 bajo autorización explícita.
     Verificar ruleset, revisión independiente, conversaciones y checks obligatorios;
     el merge requiere autorización específica.
 

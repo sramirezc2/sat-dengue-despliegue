@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 25/27; T22–T25 COMPLETAS; T26 EN CURSO; T27 PENDIENTE; ninguna tarea bloqueada
+**Estado general:** 26/27; T22–T26 COMPLETAS; T27 PENDIENTE; ninguna tarea activa ni bloqueada
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -127,7 +127,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 23 | Agregar operación portable y comando canónico E2E | `COMPLETA` | 22 | Helper build_approved_canonical.py, adquisición → canonical_build provisional, cinco regresiones rojas → verdes y guía portable/recursos. 51 pruebas enfocadas verdes; sin ciencia nueva. |
 | 24 | Validar las correcciones operativas acumuladas | `COMPLETA` | 23 | 578 pipeline, API 35, tablero 55/frozen/lint/build; contratos 22+22; skills, enlaces, filtros e higiene verdes. Checkout limpio de 5768331 con 29 pruebas nuevas y ayuda/error controlado; evidencia preservada. [Recibo](docs/evidence/task24/operational-validation.json). |
 | 25 | Elaborar reporte ejecutivo final | `COMPLETA` | 24 | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md): síntesis con evidencia y límites, navegación desde guías y arquitectura actualizada hasta T24. Auditoría documental, registro, skills y preservación verdes; publicación pendiente de autorización. |
-| 26 | Publicar cambios y validar el PR #1 | `EN CURSO` | 25 | Fase 2: solo con autorización posterior; push normal al PR existente y CI remota del HEAD publicado. |
+| 26 | Publicar cambios y validar el PR #1 | `COMPLETA` | 25 | Push normal y descripción autorizados. Siete checks verdes sobre 524c38e; [recibo remoto/local](docs/evidence/task26/publication-validation.json). El cierre solo es efectivo después de publicar este commit documental y verificar también todos sus checks; su SHA final se coteja en GitHub antes de T27. |
 | 27 | Ejecutar auditoría final de merge | `PENDIENTE` | 26 | Fase 2: ruleset, aprobación independiente, conversaciones y checks finales; no autoriza merge automático. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
@@ -223,10 +223,10 @@ Actualizar esta sección al cerrar cada tarea.
 
 | Indicador | Valor |
 |---|---:|
-| Tareas completas | 25/27 |
-| Tarea activa | T26 — Publicar cambios y validar el PR #1 |
+| Tareas completas | 26/27 |
+| Tarea activa | Ninguna |
 | Tareas bloqueadas | Ninguna |
-| Última tarea completada | T25 — Elaborar reporte ejecutivo final |
+| Última tarea completada | T26 — Publicar cambios y validar el PR #1 |
 | Próxima tarea | T27 — Ejecutar auditoría final de merge (`PENDIENTE`) |
 | Última actualización | 9 de noviembre de 2026 |
 
@@ -342,6 +342,8 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 
 | 2026-11-09 | 26 | EN CURSO | Gate antes de publicar | Lock/sync/Ruff PASS; pipeline 578 (6 avisos OmegaConf), API 35 (1 deprecación), tablero frozen/lint (6 avisos)/55/build PASS; contratos 22+22, registro VALID, preservación 49/49 e identidad N=3, cuatro validadores oficiales, 10 pruebas skills/checkout. 174 enlaces/17 anclas, filtros, secretos/pesos/imports/notebooks y diff verdes. | Solo cambia este registro documental desde 7ee97f3. Publicar normalmente la rama explícita y verificar el SHA nuevo; ninguna CI previa sustituye sus checks. |
 
+| 2026-11-09 | 26 | COMPLETA | `524c38e` primera publicación; cierre en este commit | Siete checks success: API tests, Dashboard quality, Publication contract, Pipeline quality y Pipeline portability (Ubuntu/Windows/macOS). [Recibo](docs/evidence/task26/publication-validation.json) conserva SHA, URLs, tiempos y avisos; tres recibos nativos verifican árbol de merge temporal idéntico al HEAD. | PR #1 actualizado con autorización, sin cambiar ruleset ni pedir reviews. Push normal del cierre documental y nueva ronda de checks obligatorios antes de considerar efectivo 26/27 o iniciar T27. La aprobación independiente y el ajuste de ruleset siguen pendientes; admin=false. Sin merge ni force push. |
+
 ### Riesgos de la extensión operacional
 
 - Un recibo operativo no puede reemplazar historia: destino exclusivo bajo pipeline/data/.
@@ -456,4 +458,4 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 25/27, T26 EN CURSO, T27 PENDIENTE y ninguna tarea bloqueada.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 26/27, T22–T26 COMPLETAS, T27 PENDIENTE y ninguna tarea activa ni bloqueada.
