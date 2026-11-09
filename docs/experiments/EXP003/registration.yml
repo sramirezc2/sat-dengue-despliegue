@@ -1,0 +1,14 @@
+experiment_id: EXP003
+experiment_slug: exp003-logistica-sin-clima-contrato
+hypothesis_id: EXP003-H1
+title: Regresión logística sin clima frente al canal condicionado (contrato v0.1.0)
+experiment_type: scientific
+status: PROPOSED
+protocol: docs/experiments/EXP003/SPECIFICATION.md
+protocol_sha256: 365f965c561d398eb91d07183f9159a9f0b476b2e2ceebd3a6e67dfae8af0470
+configuration: pipeline/conf/experiments/EXP003.yml
+configuration_sha256: 714695788a04a8ddfd3a0ca401ad333d3494fe3668ce03a8a1d37275feedebda
+pipeline: experiment_run
+conclusions: docs/experiments/EXP003/CONCLUSIONS.md
+scientific_result: PENDING
+champion_status: NOT_SELECTED
