@@ -67,6 +67,39 @@ y el runner portable. La matriz actual debe consultarse en el PR: una ejecución
 histórica verde no acredita un HEAD nuevo. La auditoría T18 registra el fallo
 Windows de checkout de `00c5404`; el gate de cierre exige nueva CI verde.
 
+### Autenticación segura
+
+Solo en una operación privada autorizada, configure un token individual de lectura
+en el entorno del proceso. No use login persistente o credenciales cacheadas como
+fallback; no escriba el valor en argumentos, archivos, notebooks, logs o prompts.
+La entrada siguiente queda oculta y no contiene el secreto en el historial.
+
+PowerShell en Windows:
+
+```powershell
+$env:HF_TOKEN = [System.Net.NetworkCredential]::new("", (Read-Host "Token HF de lectura" -AsSecureString)).Password
+```
+
+Bash en Linux/macOS:
+
+```bash
+read -r -s -p "Token HF de lectura: " HF_TOKEN
+export HF_TOKEN
+printf '\n'
+```
+
+zsh en macOS:
+
+```zsh
+read -rs "HF_TOKEN?Token HF de lectura: "
+export HF_TOKEN
+printf '\n'
+```
+
+Al terminar, use `Remove-Item Env:HF_TOKEN` en PowerShell o `unset HF_TOKEN`
+en Bash/zsh. El helper retira esa variable del entorno del proceso científico.
+El ejemplo de autenticación del manual también es específico de zsh.
+
 ### Colab
 
 Usar un clon limpio fuera de Drive y el helper existente
@@ -107,12 +140,84 @@ N=3 en procesos/inboxes distintos y libera un solo certificado tras igualdad
 exacta. El fixture es de dos municipios y 84 meses, no el panel nacional real.
 No sustituir la certificación por escoger una de varias salidas divergentes.
 
-El modo `canonical.mode=approved` consume una caché real ya verificada del
-manifiesto aprobado, sin descargar desde el nodo científico. Su sintaxis y
-confinamiento están en `pipelines/canonical/nodes.py:build_input`; **no ejecutarlo
-ni repetir la certificación real T16 como diagnóstico rutinario**. El esquema,
-las identidades y los recursos reales están en
-[la reproducción histórica](../decisions/task16-reproduction.md).
+### Canónico aprobado
+
+Con entorno bloqueado y autenticación explícita, desde la raíz:
+
+```sh
+uv run --locked --directory pipeline python tools/build_approved_canonical.py
+```
+
+Coordina adquisición → `canonical_build` aprobado con el mismo intérprete, listas
+de argumentos y cwd del subproyecto; se detiene al primer fallo y devuelve su
+código. `--help` no adquiere ni escribe. No usa shell, login implícito o una CLI
+científica nueva. Kedro solo recibe rutas locales/metadatos neutrales y no descarga.
+
+Los dos comandos internos siguen visibles para aislar fallos:
+
+```sh
+uv run --locked --directory pipeline python tools/acquire_private_raw.py
+uv run --locked --directory pipeline kedro run --pipelines canonical_build --params canonical.mode=approved,canonical.workspace=data/canonical-approved-manual,canonical.tracking=false
+```
+
+El helper crea un workspace relativo único `pipeline/data/canonical-approved/<id>`;
+el comando manual usa un workspace explícito distinto. Los defaults siguen siendo
+sintéticos: no omita `canonical.mode=approved` en el diagnóstico real.
+**La salida es provisional**, no certificada ni entrenable automáticamente. No se
+invocan N=3, entrenamiento, experimentos o publicación. No ejecutar estos comandos
+privados como parte de validación rutinaria ni repetir la ciencia cerrada de T16.
+
+Cada adquisición escribe `pipeline/data/acquisition/<id>/receipt.json`, exclusivo,
+UTF-8 e ignorado por Git, con estado, duración, hashes permitidos y tipo de error
+sanitizado. Conserva intentos fallidos sin tocar `docs/evidence/`. No admite destino
+arbitrario. Ante falta de permisos/espacio se devuelve `ReceiptError`; un filesystem
+fallido puede impedir guardar el recibo y exige investigar, sin borrar historia.
+
+El preflight reconoce caché inexistente, ruta no directorio, faltantes, adicionales
+y enlaces de caché/ancestros/archivos. La integridad (tamaño/SHA, encabezados y
+procedencia) sigue en `raw_contract_validation`. Ningún productor se inicia si
+falla la entrada; los errores no muestran rutas absolutas o excepciones externas.
+Ante ausencia/faltantes, ejecute el adquiridor indicado; ante adicionales revise
+el inventario antes de mover nada; ante corrupción confirme el manifiesto y haga
+una readquisición autorizada, sin aceptar hashes nuevos por conveniencia. Kedro
+no borra ni repara automáticamente la caché.
+
+### Recursos medidos
+
+El bundle contiene **2.614.987.120 bytes** (aproximadamente 2,615 GB / 2,435 GiB).
+Reserve además espacio para temporales, cachés y derivados; la cifra del bundle
+no es una garantía de espacio total. Las siguientes son mediciones históricas,
+no tiempos ni memoria garantizados para otro equipo o release:
+
+| Procedimiento real T16 | Tiempo observado | Pico RSS por proceso | Fuente |
+|---|---:|---:|---|
+| Adquisición validada | 43,63 s | No medido en este recibo | [acquisition.json](../evidence/task16/acquisition.json) |
+| Construcción directa | 258,45 s | 9,84 GiB | [build-real.json](../evidence/task16/build-real.json) |
+| Construcción Kedro | 258,17 s | 12.259.475.456 bytes | [kedro-real.json](../evidence/task16/kedro-real.json) |
+| Certificación canónica N=3 histórica | 757,55 s; workers 248,25 / 248,30 / 248,76 s | Máximo 11,43 GiB por worker | [certify-real.json](../evidence/task16/certify-real.json) |
+
+Estas medidas reales proceden del [entorno T16](../evidence/task16/resources.json):
+macOS 26.6.2 ARM64 con **32 GiB** de RAM. El controlador N=3 midió por separado
+1.273.790.464 bytes RSS. RSS por proceso no equivale al consumo total de la máquina.
+El código lee bloques pero concatena DataFrames y materializa clima diario:
+**no tiene memoria constante**. **8 GB no están acreditados**; la evidencia tampoco
+establece 16 o 32 GB como mínimo universal. No paralelice construcciones reales
+para intentar acelerar sin evaluar recursos.
+
+Como referencia de otros equipos, T15 midió `canonical_build` **sintético**:
+
+| Entorno | Tiempo del fixture | Procedencia |
+|---|---:|---|
+| macOS ARM64 local | 1,46 s | [macos-arm64.json](../evidence/task15/macos-arm64.json) |
+| macOS ARM64 Actions | 3,55 s | [macos-actions.json](../evidence/task15/macos-actions.json) |
+| Ubuntu x86_64 Actions | 2,12 s | [ubuntu-actions.json](../evidence/task15/ubuntu-actions.json) |
+| Windows AMD64 Actions | 2,67 s | [windows-actions.json](../evidence/task15/windows-actions.json) |
+| Colab Linux x86_64 | 2,63 s | [colab-x86_64.json](../evidence/task15/colab-x86_64.json) |
+
+Los recibos identifican sus commits y entornos. Son fixtures, no benchmarks del
+bundle privado ni una comprobación nativa del helper nuevo. No extrapolar sus
+tiempos al canónico nacional. La portabilidad remota de los commits locales nuevos
+se verificará en T26 después de una publicación autorizada.
 
 ### Experimentos
 

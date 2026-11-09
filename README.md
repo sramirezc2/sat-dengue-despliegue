@@ -10,6 +10,40 @@ Proyecto: Despliegue de Soluciones. **Grupo 11**.
 
 ---
 
+## Construcción canónica desde la raíz
+
+Para una operación privada autorizada, instale Python 3.12 y uv 0.11.19 y sincronice:
+
+```sh
+uv sync --locked --project pipeline
+```
+
+Configure `HF_TOKEN` mediante lectura oculta de su terminal o un gestor de secretos;
+no copie su valor en argumentos, archivos, notebooks ni prompts. Los ejemplos para
+PowerShell, Bash y zsh están en [autenticación segura](docs/operations/pipeline-operations.md#autenticación-segura).
+En macOS instale también `libomp`; consulte los requisitos de sistema de esa guía.
+
+Comando recomendado, compatible con Windows, macOS y Linux:
+
+```sh
+uv run --locked --directory pipeline python tools/build_approved_canonical.py
+```
+
+Ejecuta adquisición y después Kedro; se detiene al primer fallo. Para diagnosticar
+cada etapa, los dos comandos internos siguen disponibles:
+
+```sh
+uv run --locked --directory pipeline python tools/acquire_private_raw.py
+uv run --locked --directory pipeline kedro run --pipelines canonical_build --params canonical.mode=approved,canonical.workspace=data/canonical-approved-manual,canonical.tracking=false
+```
+
+La salida es **provisional**, no certificada ni entrenable automáticamente. El
+helper no ejecuta N=3, entrenamiento, publicación ni cambios al registro. Cada
+adquisición conserva un recibo nuevo en `pipeline/data/acquisition/`, ignorado por
+Git. Para recursos medidos, límites de memoria y fallos, consulte
+[operación y recuperación](docs/operations/pipeline-operations.md#recursos-medidos).
+Estos comandos privados no son el smoke sintético ni autorización para ejecutarlos.
+
 ## 1. El problema y la solución
 
 En Colombia el dengue se vigila con el **canal endémico**, que compara los

@@ -494,23 +494,38 @@ ni reutilices una salida anterior como certificación de la corrida fallida.
 La conexión privada, cobertura/formatos y N=3 reales se registran en
 [la evidencia de tarea 16](../docs/decisions/task16-reproduction.md).
 
-El manifiesto `conf/releases/approved-raw.json` fija el dataset privado y commit
-aprobados. Con `HF_TOKEN` disponible en el entorno, desde la raíz:
+El manifiesto `conf/releases/approved-raw.json` fija los cinco crudos privados.
+Desde la raíz, tras `uv sync --locked --project pipeline` y autenticación explícita:
 
 ```sh
-pipeline/.venv/bin/python pipeline/tools/acquire_private_raw.py
-pipeline/.venv/bin/python pipeline/tools/reproduce_private_raw.py build
-pipeline/.venv/bin/python pipeline/tools/reproduce_private_raw.py certify
-pipeline/.venv/bin/python pipeline/tools/validate_private_canonical.py
+uv run --locked --directory pipeline python tools/build_approved_canonical.py
 ```
 
-La adquisición comprueba privacidad/SHA y descarga solo los cinco archivos;
-`Listados_DIVIPOLA.xlsx` queda excluido. Los siguientes comandos son locales,
-retiran `HF_TOKEN` de su entorno y bloquean la red. El modo Kedro equivalente
-se selecciona con `--params canonical.mode=approved,canonical.workspace=data/task16-kedro`.
-No reutilices el provisional como salida certificada. La certificación compara
-N=3 desde nuevos procesos e inboxes y registra tiempos/RSS por proceso; el RSS
-no mide la memoria física conjunta ni garantiza recursos en otra máquina.
+El helper usa el intérprete actual, adquiere y solo tras éxito ejecuta
+`canonical_build` aprobado en `data/canonical-approved/<execution_id>`, sin
+tracking ni credencial HF en el proceso Kedro. El resultado sigue **provisional**;
+no certifica N=3, entrena, registra experimentos ni publica resultados.
+
+Los comandos internos de diagnóstico son:
+
+```sh
+uv run --locked --directory pipeline python tools/acquire_private_raw.py
+uv run --locked --directory pipeline kedro run --pipelines canonical_build --params canonical.mode=approved,canonical.workspace=data/canonical-approved-manual,canonical.tracking=false
+```
+
+El adquiridor reutiliza `DataSource`/`ResolvedBundle`, exige privacidad y revisión
+fija, y verifica inventario y bytes. Guarda un recibo exclusivo por intento en
+`data/acquisition/<execution_id>/receipt.json`, incluso ante fallo de adquisición;
+no escribe en evidencia histórica. Sin permisos o espacio para el recibo, falla
+con `ReceiptError`; no puede garantizar persistencia ante un filesystem fallido.
+No hay opción de destino arbitrario. El preflight Kedro distingue ausencia,
+faltantes, adicionales y enlaces; la integridad sigue en el validador existente,
+sin reparación automática desde nodos científicos.
+
+[Operación](../docs/operations/pipeline-operations.md#canónico-aprobado) centraliza
+secretos por shell, requisitos nativos, recuperación y recursos históricos. La
+certificación real cerrada de T16 se consulta como evidencia; no es un paso del
+helper ni un diagnóstico rutinario. No reutilice un provisional como certificado.
 La preparación posterior mide soporte T+1/T+2 y rechaza cruces de 2025; no elige
 candidatos, calendarios de roles o políticas FAR científicas.
 
