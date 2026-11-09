@@ -1,0 +1,405 @@
+horizons:
+- 1
+- 2
+seed: 13
+predictors:
+- dengue_notifications_count
+- dengue_grave_notifications_count
+- total_notifications_count
+- rain_mm_month_sum
+- surface_runoff_mm_month_sum
+- total_evaporation_mm_month_sum_ecmwf
+- solar_radiation_mj_m2_month_sum
+- temp_mean_c_month_mean
+- dewpoint_mean_c_month_mean
+- soil_water_l1_month_mean
+- wind_u_ms_month_mean
+- wind_v_ms_month_mean
+- p25_canal_t
+- p50_canal_t
+- p75_canal_t
+- zona_canal_t
+- month_of_year
+- dengue_notifications_count_lag1
+- dengue_notifications_count_lag2
+- dengue_notifications_count_lag3
+- dengue_notifications_count_lag12
+- dengue_grave_notifications_count_lag1
+- dengue_grave_notifications_count_lag2
+- dengue_grave_notifications_count_lag3
+- dengue_grave_notifications_count_lag12
+- total_notifications_count_lag1
+- total_notifications_count_lag2
+- total_notifications_count_lag3
+- total_notifications_count_lag12
+- p25_h5_t1
+- p75_h5_t1
+- p25_h5_t2
+- p75_h5_t2
+predictor_availability:
+  dengue_notifications_count: 0
+  dengue_grave_notifications_count: 0
+  total_notifications_count: 0
+  rain_mm_month_sum: 0
+  surface_runoff_mm_month_sum: 0
+  total_evaporation_mm_month_sum_ecmwf: 0
+  solar_radiation_mj_m2_month_sum: 0
+  temp_mean_c_month_mean: 0
+  dewpoint_mean_c_month_mean: 0
+  soil_water_l1_month_mean: 0
+  wind_u_ms_month_mean: 0
+  wind_v_ms_month_mean: 0
+  p25_canal_t: 0
+  p50_canal_t: 0
+  p75_canal_t: 0
+  zona_canal_t: 0
+  month_of_year: 0
+  dengue_notifications_count_lag1: -1
+  dengue_notifications_count_lag2: -2
+  dengue_notifications_count_lag3: -3
+  dengue_notifications_count_lag12: -12
+  dengue_grave_notifications_count_lag1: -1
+  dengue_grave_notifications_count_lag2: -2
+  dengue_grave_notifications_count_lag3: -3
+  dengue_grave_notifications_count_lag12: -12
+  total_notifications_count_lag1: -1
+  total_notifications_count_lag2: -2
+  total_notifications_count_lag3: -3
+  total_notifications_count_lag12: -12
+  p25_h5_t1: 0
+  p75_h5_t1: 0
+  p25_h5_t2: 0
+  p75_h5_t2: 0
+preparation:
+  zone_encoding: fixed_onehot
+  zone_mapping:
+    EXITO: 0
+    SEGURIDAD: 1
+    ALERTA: 2
+    EXCESO: 3
+  zone_columns:
+  - zona_canal_t__EXITO
+  - zona_canal_t__SEGURIDAD
+  - zona_canal_t__ALERTA
+  - zona_canal_t__EXCESO
+  matrix_columns:
+  - dengue_notifications_count
+  - dengue_grave_notifications_count
+  - total_notifications_count
+  - rain_mm_month_sum
+  - surface_runoff_mm_month_sum
+  - total_evaporation_mm_month_sum_ecmwf
+  - solar_radiation_mj_m2_month_sum
+  - temp_mean_c_month_mean
+  - dewpoint_mean_c_month_mean
+  - soil_water_l1_month_mean
+  - wind_u_ms_month_mean
+  - wind_v_ms_month_mean
+  - p25_canal_t
+  - p50_canal_t
+  - p75_canal_t
+  - zona_canal_t__EXITO
+  - zona_canal_t__SEGURIDAD
+  - zona_canal_t__ALERTA
+  - zona_canal_t__EXCESO
+  - month_of_year
+  - dengue_notifications_count_lag1
+  - dengue_notifications_count_lag2
+  - dengue_notifications_count_lag3
+  - dengue_notifications_count_lag12
+  - dengue_grave_notifications_count_lag1
+  - dengue_grave_notifications_count_lag2
+  - dengue_grave_notifications_count_lag3
+  - dengue_grave_notifications_count_lag12
+  - total_notifications_count_lag1
+  - total_notifications_count_lag2
+  - total_notifications_count_lag3
+  - total_notifications_count_lag12
+  - p25_h5_t1
+  - p75_h5_t1
+  - p25_h5_t2
+  - p75_h5_t2
+  matrix_dtype: float32
+  missing: error
+  scaling: none
+  imputation: none
+  variables_g: false
+  channel_budget: false
+candidate:
+  family: xgboost_onset
+  adapter_version: v1
+  library: xgboost
+  library_version: 3.0.5
+  rounds: 300
+  parameters:
+    booster: gbtree
+    objective: binary:logistic
+    tree_method: hist
+    device: cpu
+    nthread: 1
+    n_jobs: 1
+    seed: 13
+    random_state: 13
+    seed_per_iteration: false
+    validate_parameters: true
+    verbosity: 0
+    disable_default_eval_metric: 1
+    eta: 0.05
+    max_depth: 4
+    min_child_weight: 5
+    lambda: 1.0
+    alpha: 0.0
+    gamma: 0.0
+    max_delta_step: 0.0
+    subsample: 0.8
+    colsample_bytree: 0.8
+    colsample_bylevel: 1.0
+    colsample_bynode: 1.0
+    max_bin: 128
+    max_leaves: 0
+    grow_policy: depthwise
+    sampling_method: uniform
+    base_score: 0.5
+    boost_from_average: 1
+    num_parallel_tree: 1
+    max_cached_hist_node: 65536
+    debug_synchronize: false
+    multi_strategy: one_output_per_tree
+    scale_pos_weight: 1.0
+    process_type: default
+    cache_opt: true
+    max_cat_threshold: 64
+    max_cat_to_onehot: 4
+    monotone_constraints: ()
+    interaction_constraints: ''
+    refresh_leaf: true
+    sketch_ratio: 2.0
+    sparse_threshold: 0.2
+    extmem_single_page: false
+    fail_on_invalid_gpu_id: false
+  expected_native_configuration:
+    learner:
+      generic_param:
+        device: cpu
+        fail_on_invalid_gpu_id: '0'
+        n_jobs: '1'
+        nthread: '1'
+        random_state: '13'
+        seed: '13'
+        seed_per_iteration: '0'
+        validate_parameters: '1'
+      gradient_booster:
+        gbtree_model_param:
+          num_parallel_tree: '1'
+          num_trees: '300'
+        gbtree_train_param:
+          process_type: default
+          tree_method: hist
+          updater: grow_quantile_histmaker
+          updater_seq: grow_quantile_histmaker
+        name: gbtree
+        specified_updater: false
+        tree_train_param:
+          alpha: '0'
+          cache_opt: '1'
+          colsample_bylevel: '1'
+          colsample_bynode: '1'
+          colsample_bytree: '0.800000012'
+          eta: '0.0500000007'
+          gamma: '0'
+          grow_policy: depthwise
+          interaction_constraints: ''
+          lambda: '1'
+          learning_rate: '0.0500000007'
+          max_bin: '128'
+          max_cat_threshold: '64'
+          max_cat_to_onehot: '4'
+          max_delta_step: '0'
+          max_depth: '4'
+          max_leaves: '0'
+          min_child_weight: '5'
+          min_split_loss: '0'
+          monotone_constraints: ()
+          refresh_leaf: '1'
+          reg_alpha: '0'
+          reg_lambda: '1'
+          sampling_method: uniform
+          sketch_ratio: '2'
+          sparse_threshold: '0.20000000000000001'
+          subsample: '0.800000012'
+        updater:
+        - hist_train_param:
+            debug_synchronize: '0'
+            extmem_single_page: '0'
+            max_cached_hist_node: '65536'
+          name: grow_quantile_histmaker
+      learner_model_param:
+        base_score: ESTIMATED_FROM_TRAIN_ONLY
+        boost_from_average: '1'
+        num_class: '0'
+        num_feature: '36'
+        num_target: '1'
+      learner_train_param:
+        booster: gbtree
+        disable_default_eval_metric: '1'
+        multi_strategy: one_output_per_tree
+        objective: binary:logistic
+      metrics: []
+      objective:
+        name: binary:logistic
+        reg_loss_param:
+          scale_pos_weight: '1'
+    version:
+    - 3
+    - 0
+    - 5
+  early_stopping: false
+  hyperparameter_search: false
+  class_balancing: false
+  refit: false
+  seed_selection: false
+calibration:
+  representations:
+  - original
+  - sigmoid
+  method: logistic_on_raw_probability
+  parameters:
+    solver: lbfgs
+    penalty: l2
+    C: 1.0
+    fit_intercept: true
+    max_iter: 1000
+    tol: 0.0001
+    random_state: 53
+    class_weight: null
+    dual: false
+    intercept_scaling: 1
+    multi_class: deprecated
+    n_jobs: 1
+    l1_ratio: null
+    warm_start: false
+    verbose: 0
+  brier_tolerance: 1.0e-12
+  tie: original
+  convergence: fail
+label_delay_months: 1
+embargo_months: 1
+reserved_start: 2025-01
+roles_by_horizon:
+  '1':
+    train:
+      start: 2018-01
+      end: 2020-12
+      support:
+        n0: 1
+        n1: 1
+        municipalities: 2
+        months: 36
+    calibration_fit:
+      start: 2021-05
+      end: 2021-10
+      support:
+        n0: 1
+        n1: 1
+        municipalities: 2
+        months: 6
+    calibration_selection:
+      start: 2022-03
+      end: 2022-08
+      support:
+        n0: 1
+        n1: 1
+        municipalities: 2
+        months: 6
+    threshold_selection:
+      start: 2023-01
+      end: 2023-06
+      support:
+        n0: 1
+        n1: 1
+        municipalities: 2
+        months: 6
+    evaluation:
+      start: 2024-01
+      end: 2024-11
+      support:
+        n0: 1
+        n1: 1
+        municipalities: 2
+        months: 11
+  '2':
+    train:
+      start: 2018-01
+      end: 2020-12
+      support:
+        n0: 1
+        n1: 1
+        municipalities: 2
+        months: 36
+    calibration_fit:
+      start: 2021-05
+      end: 2021-10
+      support:
+        n0: 1
+        n1: 1
+        municipalities: 2
+        months: 6
+    calibration_selection:
+      start: 2022-03
+      end: 2022-08
+      support:
+        n0: 1
+        n1: 1
+        municipalities: 2
+        months: 6
+    threshold_selection:
+      start: 2023-01
+      end: 2023-06
+      support:
+        n0: 1
+        n1: 1
+        municipalities: 2
+        months: 6
+    evaluation:
+      start: 2024-01
+      end: 2024-11
+      support:
+        n0: 1
+        n1: 1
+        municipalities: 2
+        months: 11
+threshold:
+  grid:
+  - 0.0
+  - 0.25
+  - 0.5
+  - 0.75
+  - 1.0
+  max_false_alarm_ratio_by_horizon:
+    '1': 1.0
+    '2': 1.0
+  comparison: probability_greater_or_equal_threshold
+  denominator: emitted_evaluable_alerts_TP_plus_FP
+  zero_alerts: infeasible
+  objective: maximum_onset_sensitivity
+  tiebreak:
+  - fewer_false_alerts
+  - lower_false_alarm_ratio
+  - higher_threshold
+baselines:
+- train_prevalence
+- non_excess_persists_no_new_onset
+metrics:
+- average_precision
+- auroc
+- brier
+- onset_sensitivity
+- false_alarm_ratio
+- alert_volume
+- alert_fraction
+schema_version: 1
+data:
+  mode: synthetic
+  manifest: null
+  manifest_sha256: null
+  require_private: false
