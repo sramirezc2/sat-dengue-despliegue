@@ -290,6 +290,15 @@ No hay incompatibilidad estructural que exija cambiar el producto en este paso.
 
 ## Administración multi-experimento (T17)
 
+La extensión posterior al PR #1 añade la
+[evaluación científica bajo contrato propuesto](../experiments/scientific-evaluation.md)
+al mismo pipeline `experiment_run`. El grafo hace explícitas adquisición/canónico
+certificado, preparación, preflight, ajuste, predicción, desenlaces, evaluación e
+inventario. Los nodos y la API comparten etapas y finalización del lifecycle
+existente; se mantienen registro, almacenamiento y fronteras. Las recetas V3
+agregan cortes/semillas/brazos declarativos, sin otro orquestador. La evidencia
+anterior y la validación cerrada T16 conservan sus contratos.
+
 `experiment_management/` resuelve el registro versionado de
 `docs/experiments/registry.yml` y configuraciones independientes de
 `pipeline/conf/experiments/`. El pipeline `experiment_run` valida aprobación,

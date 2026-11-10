@@ -52,19 +52,39 @@ def compare(
                 "code_sha256": lineage["source_sha256"],
                 "evidence": reference,
             }
+            if "scientific_evaluation" in record:
+                common["evaluation_label"] = record["scientific_evaluation"]["label"]
+                common["contract_status"] = "PROPUESTA_PARA_APROBACION"
+                common["contract_sha256"] = record["scientific_evaluation"]["contract"]["sha256"]
             for h in record["horizons"]:
                 if horizon is not None and h != horizon:
                     continue
                 result = metrics.get(str(h), {})
                 for baseline, records in sorted(result.get("metrics", {}).items()) or [(None, [])]:
                     for metric in records or [{"metric": None, "value": None}]:
+                        dimensions = {}
+                        reference_name = baseline
+                        if "scientific_evaluation" in record and baseline:
+                            cut, seed, arm, reading, population, reference_name = baseline.split(
+                                ".", 5
+                            )
+                            dimensions = {
+                                "cut": cut,
+                                "seed": int(seed),
+                                "arm": arm,
+                                "reading": reading,
+                                "population": population,
+                                "territory": "primary_meta_tolima",
+                                "year": "all",
+                            }
                         rows.append(
                             {
                                 **common,
                                 "horizon": h,
-                                "reference": baseline,
+                                "reference": reference_name,
                                 "metric": metric["metric"],
                                 "value": metric["value"],
+                                **dimensions,
                             }
                         )
     return rows

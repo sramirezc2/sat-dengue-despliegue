@@ -340,6 +340,12 @@ El ejemplo artificial no demuestra suficiencia científica ni autoriza alertas.
 
 ## Evaluación emparejada e incertidumbre
 
+Las recetas V3 incorporan la
+[evaluación científica bajo contrato propuesto](../docs/experiments/scientific-evaluation.md)
+en el mismo `experiment_run`, desde adquisición/certificado hasta evidencia.
+La guía documenta el comando único, ambos brazos climáticos, cohortes y decisiones
+pendientes. La implementación descriptiva original siguiente conserva su alcance.
+
 `evaluation/paired.py` recibe `EvaluationTables`: claves, etiquetas, probabilidades,
 decisiones, contexto y estratos en tablas separadas, todas enlazadas uno a uno
 por municipio/origen/objetivo/horizonte/fold/candidato. Se exige el digest de

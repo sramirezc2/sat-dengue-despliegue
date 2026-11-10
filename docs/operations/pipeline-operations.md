@@ -101,7 +101,7 @@ printf '\n'
 
 Al terminar, use `Remove-Item Env:HF_TOKEN` en PowerShell o `unset HF_TOKEN`
 en Bash/zsh. El helper retira esa variable del entorno del proceso científico.
-El ejemplo de autenticación del manual también es específico de zsh.
+El manual remite a estos tres bloques; use el correspondiente a su terminal.
 
 ### Colab
 

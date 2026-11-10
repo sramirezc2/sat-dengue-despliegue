@@ -1,11 +1,18 @@
 # Hoja de ruta de implementación — Pipeline E2E SAT DENGUE
 
-**Versión:** 1.5
+**Versión:** 1.8
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; aceptación técnica E2E real PASS, publicación/CI/revisión final pendientes
+**Estado del alcance actual:** etapas documental y funcional COMPLETAS como implementación bajo contrato propuesto; agregación entre semillas COMPLETA como implementación propuesta; auditoría final FAIL histórica preservada; AUD-01/AUD-02/AUD-03 corregidos y verificados técnicamente, sin aprobación científica
+**Último corte histórico T1–T27:** 26/27; T27 BLOQUEADA en su registro previo, sin reauditar sus gates en este alcance
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
-**Rama única de implementación:** `feature/pipeline-e2e`
-**Entrega:** un único Pull Request
+**Rama del alcance actual:** `feature/contrato-cientifico-fabrica-final`, creada desde `origin/main@a324f3c7f141b0ec53582b461cf6586643c5b569`
+**Entrega actual:** un PR nuevo con etapa documental y posterior etapa funcional en la misma rama; PR #1 ya fusionado
+
+El [PR #1](https://github.com/sramirezc2/sat-dengue-despliegue/pull/1) está
+fusionado y `main` actualizado ya contiene la fábrica. No hay dependencia de un
+PR de fábrica sin integrar. El alcance posterior se registra en la sección 10;
+las tareas y decisiones previas se conservan como historia, sin atribuirles una
+nueva revisión de merge o aprobación científica.
 
 ### Corrección de CI posterior al cierre de tarea 16
 
@@ -54,7 +61,8 @@ cuya identidad completa haya sido certificada.
 
 ## 2. Reglas obligatorias
 
-- Toda la implementación se acumula en la misma rama y termina en un único PR.
+- T1–T27 se acumularon en `feature/pipeline-e2e` y el PR #1. El alcance posterior
+  autorizado en la sección 10 usa su propia rama y un único PR nuevo para ambas etapas.
 - Ningún cambio se realiza directamente sobre `main`.
 - Antes de cada tarea se revisan `AGENTS.md`, este documento y el estado de Git.
 - Se conservan los cambios preexistentes del usuario.
@@ -98,7 +106,7 @@ cuya identidad completa haya sido certificada.
 Solo puede existir una tarea `EN CURSO`. Las tareas se ejecutan en orden. Para
 cambiar el alcance se debe registrar primero la decisión en la sección 7.
 
-## 4. Hoja de ruta
+## 4. Hoja de ruta histórica del PR #1
 
 | # | Tarea | Estado | Dependencia | Evidencia de cierre |
 |---:|---|---|---|---|
@@ -190,7 +198,7 @@ El registro Kedro debe exponer al menos `canonical_build` y
 `canonical_reproducibility`. Las pruebas usarán un bundle sintético pequeño; la
 descarga y reproducción científica real corresponden a la tarea 16.
 
-## 5. Secuencia de integración
+## 5. Secuencia histórica de integración del PR #1
 
 Aunque toda la implementación terminará en un solo PR, los commits deben conservar
 esta secuencia lógica:
@@ -217,9 +225,11 @@ No se mezclará en un mismo commit:
 - refactorizaciones cosméticas con cambios científicos;
 - correcciones de API con adquisición de datos de entrenamiento.
 
-## 6. Control de avance
+## 6. Control histórico de avance del PR #1
 
-Actualizar esta sección al cerrar cada tarea.
+Snapshot previo a la integración del PR #1. El avance del alcance actual se
+registra exclusivamente en la sección 10; este historial no es una instrucción
+para volver a publicar en el PR #1.
 
 | Indicador | Valor |
 |---|---:|
@@ -538,7 +548,13 @@ Toda desviación debe registrarse antes de continuar.
 
 | DEC-034 | 2026-11-09 | Tercera reparación local T27: salidas privadas exclusivas y preservación explícita/portable. | Los auxiliares históricos podían sobrescribir recibos cerrados de T16 y el verificador perdía sus comprobaciones con Python -O, además de comparar separadores nativos Windows. | Reservar cada intento bajo pipeline/data, reutilizar escritura exclusiva y guards, mantener entradas históricas solo de lectura, reemplazar asserts de preservación por errores explícitos y comparar rutas POSIX. Pruebas artificiales por CLI, incluidos éxito/fallo, Python normal/-O y rutas Windows simuladas. | Instrucción expresa del usuario sobre 2490f45; conservar las dos reparaciones previas, sin push, merge ni operaciones científicas reales. |
 
-## 8. Condición de finalización
+| DEC-035 | 2026-11-09 | Abrir alcance posterior al PR #1: corrección del contrato y posterior mejora final de fábrica en un único PR nuevo. | PR #1 fusionado en a324f3c, confirmado por GitHub y fetch local; árbol inicial limpio. Usuario solicita rama desde main actualizado y publicación de un PR nuevo. | Esta ejecución solo modifica contrato y los dos planes: T+2, A/B/C, procedencia de métricas y reglas de método. Segunda etapa funcional PENDIENTE, sin implementación ni aprobación. Se autoriza publicar esta propuesta en su rama/PR nuevo; no modificar PR #1, fusionar, entrenar ni alterar evidencia cerrada. | Instrucción explícita del usuario, que sustituye para este alcance la restricción histórica de rama/PR único de AGENTS.md. Aprobación científica reservada al equipo. |
+
+| DEC-036 | 2026-11-09 | Implementar la evaluación científica propuesta dentro del mismo experiment_run y PR #3. | Autorización posterior explícita del usuario para la etapa funcional y E2E sintético; base limpia 1ed9383. | Reutilizar lifecycle, registro, certificación, controles temporales y almacenamiento; grafo Kedro explícito, recetas V3 con brazos/cortes/semillas, A/B/C, cupo, intervalos y desgloses. Sin experimento científico real, campeón o merge. El contrato no define agregación de veredictos entre semillas: calcular sus salidas independientes y detener solo ese resumen como PENDING_SEED_AGGREGATION_RULE. | Implementación técnica autorizada; el contrato continúa PROPUESTA_PARA_APROBACION y no se concede aprobación científica. |
+
+| DEC-037 | 2026-11-10 | Proponer e implementar agregación entre semillas en la etapa final existente del PR #3. | Instrucción explícita del usuario: continuar en feature/contrato-cientifico-fabrica-final; sin ciencia real, uso de 2025 ni merge. | Conservar mayoría estricta entre cortes utilizables dentro de cada semilla; resumen afirmativo solo con las cinco semillas declaradas válidas y CUMPLE. Faltantes/soporte/políticas pendientes: NO_EVALUABLE; mezcla válida: INCONCLUSO_POR_INESTABILIDAD; corrida inválida: INVALIDO. Conservar cinco resultados sin seleccionar semilla ni sumar semillas como cortes. Actualizar contrato/guía/planes, pruebas artificiales, preservación, controles de fábrica, commit y checks del mismo PR. | Autorización de implementación y entrega técnica como propuesta; requiere aprobación científica del equipo antes de evaluar una receta nueva. No reclasifica T16, EXP001/EXP002, certificados o JSON publicados. |
+
+## 8. Condición de finalización histórica del PR #1
 
 El trabajo solo puede considerarse terminado cuando:
 
@@ -597,4 +613,443 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 26/27, T22–T26 COMPLETAS, T27 BLOQUEADA y ninguna tarea activa; canónico completo PASS N=3, gates externos pendientes.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Último corte histórico:
+26/27, T22–T26 COMPLETAS, T27 BLOQUEADA; canónico completo PASS N=3 y gates
+externos pendientes en ese registro. La integración observada del PR #1 no
+reescribe esa evidencia. El alcance vigente se detalla a continuación.
+
+## 10. Contrato científico y mejora final de fábrica — PR nuevo
+
+Base `main@a324f3c`, ya actualizada y con fábrica integrada. La rama
+`feature/contrato-cientifico-fabrica-final` nace directamente de esa base; no
+requiere apilar o duplicar el historial del PR #1. Se conserva un único
+`plan.md` y el [plan maestro existente](PLAN_pipeline_e2e_experimentos_sat_dengue.md).
+
+| Etapa del mismo PR | Estado | Alcance y condición de salida |
+|---|---|---|
+| Documental, ejecución actual | COMPLETA | [Contrato V3](docs/experiments/contrato.md) corregido, mantiene PROPUESTA_PARA_APROBACION; contrastado con V2/bitácora/código. Enlaces, coherencia, preservación y diff PASS; propuesta para revisión del equipo, sin aprobación científica. |
+| Funcional, autorización DEC-036 | COMPLETA | Evaluación integrada en el mismo grafo Kedro y evidencia: modelo/canal/persistencia, A/B/C, presupuesto, intervalos, cortes/semillas, horizonte/año/territorio y brazos con/sin clima. E2E técnico sintético y gate acumulado PASS; sin aprobación científica. La agregación propuesta se detalla en la fila siguiente. |
+| Resumen científico único entre semillas, DEC-037 | COMPLETA | Unanimidad propuesta de las cinco consistencias predeclaradas implementada y probada; se conservan resultados individuales y estados NO_EVALUABLE/INCONCLUSO_POR_INESTABILIDAD/INVALIDO. Gate acumulado PASS; requiere aprobación científica del equipo, sin experimento real ni merge. |
+
+La propuesta mantiene el evento T+1 → T+2 y diferencia compuerta observable en T
+de información futura. Conserva la cohorte académica principal sin exceso en T,
+propone lectura secundaria T+2 sin esa restricción y separa los 209/329 TP de la
+bitácora. A/B/C histórica se reporta separada de UTILIDAD_PROPUESTA; la carga
+`carga_FA_inicio_100mm` no se denomina B ni sustituye la condición de persistencia.
+Se incorpora la procedencia posterior a resultados del cambio del 4 de noviembre,
+el mínimo histórico de 30 inicios por celda, cinco semillas para diferencias de
+uno o dos inicios y una generalización propuesta de consistencia a mayoría
+estricta con al menos tres cortes utilizables. Todo requiere revisión del equipo.
+
+En la segunda etapa deberán fijarse comparadores y compuertas por horizonte,
+semillas/cortes/territorios, presupuesto y puntos de operación antes de evaluar.
+Las recetas con y sin clima compararán sobre soporte común predeclarado y
+reportarán aparte cualquier cobertura adicional. No se crearán recetas aprobadas
+ni experimentos reales por el mero hecho de aprobar documentación o código.
+
+La etapa documental preservó T16, EXP001/EXP002, certificados N=3, bitácora,
+política v2 y los 22 JSON publicados. Su ejecución no cambió código, recetas
+ejecutables ni datos. La etapa funcional posterior solo entrena con fuentes
+artificiales en pruebas aisladas y mantiene esos mismos límites de preservación;
+no ejecuta ciencia real, selecciona campeón ni hace merge.
+
+Validación documental PASS: 45 enlaces locales, fuente V2 remota fijada por
+commit y SHA-256, 104 JSON leídos sin cambios, coherencia de los tres documentos,
+registro oficial VALID y preservación normal/-O (49 archivos, 22 JSON, 16 recibos
+históricos e identidad N=3 T16). Solo cambian contrato y estos dos planes; el
+resto del contenido versionado permanece idéntico a la base. `git diff --check`
+local, staged y contra `origin/main` PASS. No se ejecutan suites de producto,
+entrenamientos o reconstrucciones: ese alcance fue exclusivamente documental.
+
+### Implementación funcional bajo contrato propuesto
+
+La [guía integrada](docs/experiments/scientific-evaluation.md) documenta el único
+comando `experiment_run`, receta V3 y límites. Los nodos comparten `runner.STAGES`,
+el mismo contexto y finalizador. La adquisición/certificación precede al primer
+ajuste; la evaluación consume predicciones de esos modelos y conserva sus huellas
+y el certificado en la evidencia habitual. Se mantienen legibles las recetas y
+los seis archivos históricos de evidencia V1/V2; V3 añade fragmentos científicos
+pequeños, inventariados y solo agregados.
+
+Las recetas enumeran todos los cortes, semillas y brazos. El brazo epidemiológico
+nativo conserva observaciones con clima ausente; la comparación entre brazos
+ajusta y evalúa sobre la misma población en los cinco roles, con X limitado a las
+variables declaradas de cada brazo. Se separan lectura primaria/secundaria T+2,
+C0/C1 histórica y canal condicionado; el canal utiliza el mismo conteo de dengue
+que P75 H5. El cupo se compromete en la receta y se aplica por mes y departamento
+antes de leer desenlaces. No se eligen umbrales, fracciones o presupuesto con y_eval.
+
+La evaluación conserva A/B/C y carga por 100 municipio-mes como salidas distintas,
+2.000 réplicas emparejadas por mes con indefinidas visibles, controles negativos,
+soportes mínimos de 30 inicios, voto de cortes predeclarado, distribución de cinco
+semillas y resultados por año/territorio/horizonte. Todos los resultados llevan
+VEREDICTO_BAJO_CONTRATO_PROPUESTO. La regla propuesta entre semillas se implementa
+bajo DEC-037, pendiente de aprobación explícita del equipo; también siguen
+pendientes la cohorte confirmatoria independiente y N=3 E2E de un eventual finalista. El N=3
+canónico no reemplaza este último requisito.
+
+La aceptación sintética cubre cinco fuentes, N=3 canónico en tres procesos, tres
+cortes, cinco semillas, dos brazos, poblaciones nativa/común y las dos lecturas:
+180 ajustes XGBoost auténticos cuyas huellas se cotejan con las de la evaluación.
+Una prueba CLI completa adicional verifica MLflow SQLite real; una identidad
+ajena de predicción produce terminal BLOCKED preservado. La muestra artificial
+tiene menos de 30 inicios por celda y no se usa para afirmar éxito científico.
+
+Cierre técnico PASS: **707 pruebas pipeline** (265,20 s), **35 API**, **55 tablero**,
+frozen install/lint/build, lock/sync/Ruff, CLI sintético previo, registro y
+preservación normal/-O. Se verifican 95 archivos históricos en el control extendido contra
+la base, enlaces, JSON, tamaños, ausencia de candidatos a secretos y diff.
+[Recibo de validación](docs/evidence/pr3/scientific-evaluation-validation.json).
+La prueba ampliada detectó y corrigió preparación Git del fixture y particionado
+de tracking: MLflow limita el total combinado de métricas y etiquetas. Los
+recibos fallidos se conservaron localmente y una regresión de 1.200 valores pasa.
+La versión final pasa la suite completa, incluidos todos los E2E, sin omisiones.
+Persisten avisos previos de OmegaConf, Starlette/httpx, fast-refresh y Vite.
+El PR #3 conserva su estado de borrador; CI remota y revisión deben corresponder
+al nuevo HEAD. No se ejecutó un experimento científico real ni se hizo merge.
+
+
+### Agregación entre semillas propuesta — DEC-037
+
+Se conserva la mayoría estricta dentro de cada semilla y se agrega únicamente
+la consistencia de las cinco identidades predeclaradas. Solo 5/5 válidas con
+CUMPLE produce CUMPLE_BAJO_CONTRATO_PROPUESTO; una mezcla válida queda
+INCONCLUSO_POR_INESTABILIDAD, faltantes/soporte/políticas pendientes NO_EVALUABLE
+y una corrida inválida INVALIDO, sin excluirla para mejorar el voto. Se conservan
+los cinco resultados, las exclusiones por soporte y las distribuciones previas.
+No se mezclan horizontes, lecturas T+2, brazos, poblaciones o territorios; tampoco
+se suman semillas o vistas anuales como cortes adicionales. La función pequeña
+se invoca en la evaluación final existente, con el mismo comando E2E y evidencia.
+
+Contrato 0.2.2-propuesta y guía actualizados; **requiere aprobación del equipo**.
+La unanimidad comprueba sensibilidad algorítmica, sin crear independencia entre
+semillas ni un veredicto de efecto de una mezcla. La revisión técnica no aprueba
+recetas o conclusiones; faltan revisión científica independiente, cohorte
+confirmatoria y N=3 E2E de un eventual finalista. No se usa 2025 para elegir
+la regla ni se ejecuta ciencia real. T16, EXP001/EXP002, certificados y los 22
+JSON publicados conservan sus bytes.
+
+Gate acumulado PASS: **725 pruebas pipeline** sin fallos/omisiones (18 nuevas,
+47 enfocadas), **35 API**, **55 tablero**, frozen/lint/build, lock/sync/Ruff,
+CLI sintético, registro VALID, preservación normal/-O y Pydantic/Zod 22+22.
+Control extendido: 95 archivos históricos idénticos al HEAD previo 1427ac1.
+Persisten solo avisos previos de OmegaConf, Starlette/httpx, fast-refresh y Vite.
+[Recibo nuevo de validación](docs/evidence/pr3/seed-aggregation-validation.json),
+sin modificar el recibo anterior. Publicación en la misma rama y PR #3;
+los siete checks previos de 1427ac1 no validan el nuevo commit. Verificar CI por
+SHA tras el push, manteniendo borrador y aprobación del equipo pendiente. Sin merge.
+
+
+### Auditoría final de recorridos críticos — 10 de noviembre de 2026
+
+**Dictamen: FAIL para el cierre final.** El recorrido operativo E2E y el
+aislamiento de las ejecuciones probadas funcionan; queda un defecto bloqueante
+en la propagación de invalidación científica. Esta auditoría no corrige código,
+no crea otra hoja de ruta y no aprueba el contrato. Los cierres técnicos previos
+se conservan como historia; no acreditan ausencia del defecto identificado aquí.
+
+Revisión exacta: `e10b3f487695c3b5222ffd96bf1338abcff1fa93`, árbol Git
+`bd437d8177b8b5cea91009abb3d8b396d28a0c10`, rama actual y HEAD remoto del
+[PR #3](https://github.com/sramirezc2/sat-dengue-despliegue/pull/3) coincidentes.
+Árbol de trabajo limpio al empezar; el único cambio versionable de la auditoría
+es este registro local en `plan.md`, sin commit/push ni cambio del HEAD auditado.
+
+Se reutilizan los checks del HEAD y el gate local anterior de 725 pruebas,
+con hashes de fuente cotejados; no se repiten suites completas. Al corte del
+registro: seis checks SUCCESS (API, tablero, Publication contract, Pipeline
+quality y portabilidad Windows/macOS); Ubuntu continúa IN_PROGRESS en el
+[run 42816491599](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42816491599).
+Los recibos nativos Windows/macOS confirman 725 pruebas sin fallos/omisiones,
+lock/sync/Ruff, cuatro CLI sintéticos y árbol limpio antes/después. El checkout
+CI usa el merge temporal `03ee69b`, cuyo árbol coincide exactamente con e10b3f4;
+no se atribuyen a e10b3f4 checks históricos de otro contenido.
+
+| Recorrido auditado | Resultado y evidencia |
+|---|---|
+| E2E por comando documentado | PASS técnico. Clon local limpio de e10b3f4, instalación nueva desde lock; tres invocaciones reales de `uv run --locked --group tracking --directory pipeline kedro run --pipelines experiment_run --params experiment_id=ID`. Registro/aprobación técnica previos por CLI; cinco fuentes artificiales, cuarentena, certificación N=3, preparación, modelos, evaluación y evidencia automáticos. Las recetas de auditoría se preparan solo en el clon temporal, con dirty=true explícito y sin modificar código productivo. |
+| Dos recetas y repetición | PASS. AUDITA1/S53, AUDITB1/S7 y AUDITA2/repetición exacta de A: tres execution_id y firmas distintos, carpetas e inventarios separados; configuración de A y repetición idéntica y hashes de modelos efectivos iguales. Nueve runs MLflow FINISHED con padres/hijos propios. Reutilizar AUDITA1 se rechaza antes de otra ejecución. |
+| Fallo y aislamiento | PASS para fallo controlado. AUDITFAIL/controlled-failure introduce una identidad de predicción incorrecta tras inferir; termina BLOCKED en scientific_evaluation, padre MLflow FAILED y registro BLOCKED. Los 33 archivos de evidencia de las tres ejecuciones previas permanecen idénticos y compare sigue funcionando. No se retiran locks, borran terminales ni reintentan identidades. SIGKILL/disco lleno y cuatro máquinas simultáneas no se acreditan con esta prueba. |
+| Protección científica | FAIL por AUD-01. Se reutilizan las pruebas del HEAD sobre 2025, T+1/T+2, compuertas solo en T, poblaciones comunes/nativas, clima, A/B/C, cupo, bootstrap de 2.000 meses y cinco semillas; el E2E ampliado existente cubre 180 ajustes artificiales. Ningún resultado sintético se interpreta como ciencia. La regla entre semillas sigue PROPUESTA_PARA_APROBACION. |
+| Preservación y fronteras | PASS. Verificador oficial normal/-O: 49 hashes, 16 recibos históricos y N=3 T16 intactos; registro VALID. 91 archivos actuales de evidencia/recetas/resultados idénticos a HEAD; T16, EXP001/EXP002, certificados y resultados sin diff frente a a324f3c. Los 22 JSON conservan identidad. app/ y datos/resultados/ del clon temporal tampoco cambian. Sin candidatos a secretos en archivos versionados; 969 blobs alcanzables por HEAD sin objetos mayores de 5 MiB. Workspaces, crudos, tracking y .env ignorados. El escaneo por patrones no garantiza ausencia universal de secretos. |
+| Uso por el equipo | PASS_WITH_LIMITATIONS. Manual y guía operacional describen creación, hashes, revisión/aprobación, comando E2E, comparación, repetición con nuevo ID y recuperación conservadora. La autenticación individual, permisos y aprobación son prerrequisitos, no transferencias manuales entre etapas. Acceso privado de las cuatro cuentas y recursos reales de sus equipos NOT_VERIFIED; no se consulta HF ni se descargan datos privados. Portabilidad del ejemplo de autenticación incompleta: AUD-03. |
+
+Defectos reproducidos, sin corregir:
+
+- **AUD-01 — bloqueante:** `evaluation/scientific/reporting.py:457–459` sobrescribe
+  UTILIDAD_PROPUESTA=INVALIDO con NO_EVALUABLE cuando falla el soporte declarado
+  del productor. Prueba artificial aislada: 80 observaciones/40 inicios y control
+  negativo perfecto producen INVALIDO; al proyectar producer_support_passed=false,
+  el estado pasa a NO_EVALUABLE aunque negative_controls siga CUMPLE. Se usan
+  dobles de identidad/emisión solo para aislar esa proyección, sin entrenar.
+  Composición adicional de cuatro cortes/cinco semillas: si el cuarto corte
+  pierde así la invalidación y se excluye, los otros tres votos CUMPLE permiten
+  CUMPLE_BAJO_CONTRATO_PROPUESTO. Es una prueba artificial del defecto, no una
+  conclusión académica ni una corrida real que se haya aceptado como válida.
+- **AUD-02 — metadatos inconsistentes:** `experiment_management/runner.py:394–396`
+  fija summary=PENDING_SEED_AGGREGATION_RULE y seed_verdict_aggregation pendiente.
+  Reproducido en los tres recibos V3: sus fragmentos seed_stability ya contienen
+  NO_EVALUABLE y la regla implementada. El consumidor del recibo recibe un estado
+  obsoleto respecto del contrato 0.2.2 y la evidencia detallada.
+- **AUD-03 — documentación no portable:** `manual_pipeline.md:66–68` presenta
+  sintaxis zsh dentro de un bloque sh. Copiar `read -s "HF_TOKEN?Token de Hugging Face: "`
+  en Bash devuelve «not a valid identifier», sin llegar a cargar credencial.
+  La guía operacional sí distingue zsh/Bash/PowerShell. Los hashes del manual
+  usan shasum/sha256sum sin equivalente para PowerShell documentado allí.
+
+Evidencia adicional conservada solo localmente en
+`pipeline/data/pr3-final-audit/`: probe-result.json, invalid-support-probe.json,
+logs de las tres CLI, registro de ubicación del clon temporal, preservación y
+recibos de CI descargados. Se conserva también un fallo de preparación del
+sondeo antes de clonar: cwd cambió por --directory; no fue una corrida de fábrica.
+No se incorpora infraestructura nueva ni evidencia experimental oficial.
+
+Acciones mínimas posteriores, fuera de esta auditoría: preservar INVALIDO antes
+de excluir por soporte y cubrir esa composición con una regresión; sincronizar
+los metadatos del recibo con la agregación propuesta; aclarar los comandos por
+shell/enlazar la guía operacional. La aprobación del equipo, revisión científica
+independiente, cohorte confirmatoria y N=3 E2E de un eventual finalista siguen
+pendientes. Ningún check verde elimina AUD-01. Sin correcciones, campeón, uso de
+2025, experimentos científicos reales, acceso privado, publicación o merge.
+
+
+### Corrección autorizada de AUD-01/AUD-02/AUD-03 — PASS técnico local
+
+El usuario autoriza corregir exclusivamente los tres defectos en la rama actual
+y el PR #3. Se conserva íntegro el registro local de la auditoría sobre e10b3f4;
+su FAIL es histórico y no se elimina. El preflight confirma HEAD local/remoto
+coincidente y siete checks SUCCESS para e10b3f4; no validan el próximo commit.
+No se cambia el contrato 0.2.2-propuesta, el comando E2E ni la arquitectura Kedro.
+
+Se añaden seis casos dirigidos antes de la corrección: control negativo aprobado
+y predicción ausente con soporte insuficiente; soporte insuficiente sin invalidez;
+recibos de éxito y fallos anteriores/posteriores a la agregación. Cinco casos
+fallan por los defectos auditados; soporte insuficiente sin invalidez ya pasa.
+Después de las correcciones pasan los seis. Se comprueba la celda, sus causas,
+los cuatro cortes y cinco semillas, y la concordancia del recibo con fragmentos
+e inventario. Gates del alcance y preservación PASS, detallados a continuación.
+
+
+AUD-01: el soporte insuficiente queda reportado, sin sobrescribir INVALIDO ni
+sus causas (controles negativos/predicciones ausentes). La regresión ejercita
+métricas y agregación reales con dobles solo de emisión/procedencia y una vista:
+cuatro cortes y las cinco semillas, con tres cortes favorables y el cuarto
+inválido para una semilla. Celda, consistencia y resumen conservan INVALIDO;
+el caso sin invalidez mantiene la exclusión válida por soporte y puede cumplir.
+
+AUD-02: el recibo proyecta directamente los registros seed_stability de los
+fragmentos que se van a guardar, con las cinco dimensiones y su estado. No
+mezcla vistas ni inventa otro estado global. Si el fallo precede la agregación,
+summary es una lista vacía; si la agregación ya existe, se conserva también en
+terminal fallido. Se mantienen team_approval, independent_confirmatory_cohort
+y finalist_E2E_N3 como límites pendientes, sin seed_verdict_aggregation obsoleto.
+Pruebas de éxito/fallo cotejan recibo, fragmentos, inventario y hashes; el E2E
+artificial real coteja además la proyección efectivamente publicada.
+
+AUD-03: el manual enlaza sin ambigüedad la autenticación oculta por zsh, Bash y
+PowerShell ya documentada; se actualiza la referencia inversa de la guía
+operacional. Se añade Get-FileHash para preparar hashes desde PowerShell y se
+indica normalizarlos a minúsculas. No se solicita, muestra o almacena un token.
+La guía científica documenta la lista summary y su comportamiento ante fallos.
+
+| Validación ejecutada | Resultado comprobado |
+|---|---|
+| Seis regresiones nuevas, antes/después | Cinco fallos esperados y un caso válido antes; seis PASS después. Logs locales preservados bajo pipeline/data/pr3-audit-fixes/. |
+| pytest test_scientific_evaluation.py, test_seed_aggregation.py, test_scientific_e2e.py y test_experiment_management.py | 104 PASS, sin fallos, errores u omisiones. Incluye E2E de 180 ajustes artificiales, CLI real con MLflow, coexistencia y terminales. |
+| uv lock --check; uv sync --locked; Ruff | PASS; sin cambios de dependencias. |
+| Registro oficial | VALID; sin nuevas entradas ni ejecuciones oficiales. |
+| Preservación normal y Python -O | PASS: 49 hashes protegidos, 16 recibos históricos, N=3 T16 y los 22 JSON intactos. |
+| Pydantic/Zod de las publicaciones | 22 + 22 documentos válidos. |
+| Control extendido | 93 archivos de evidencia/recetas/resultados, contrato y plan maestro idénticos a e10b3f4. La auditoría local previa se conserva literalmente. |
+| Documentación, higiene y diff | Enlaces locales/ancla de autenticación, tamaños menores de 512 kB, ausencia de candidatos a secretos y diff verificados. Sin notebooks, datos, modelos o cambios en API/tablero. |
+
+No se repiten localmente suites completas de producto o pipeline por rutina:
+los cambios de ciencia/lifecycle se cubren con las 104 pruebas del alcance;
+la suite completa y la matriz nativa se verifican en CI del nuevo HEAD tras el
+push. No se confunden con los siete checks previos de e10b3f4. Se mantiene el
+borrador, el único PR #3 y el comando E2E. El contrato continúa propuesto;
+no se ejecuta ciencia real, usa 2025, selecciona campeón o hace merge.
+
+Reporte local: `pipeline/data/pr3-audit-fixes/focused.xml`, 124.744 s, SHA-256 `d2c58d7ef03da5a00065d2fb2745d0ab27ab139f9d24ede2129c79ccf422c47b`.
+
+### Dos hallazgos de revisión humana — 10 de noviembre de 2026
+
+**PASS técnico local del alcance dirigido**, sobre `eb65b87` en
+`feature/contrato-cientifico-fabrica-final`, con árbol inicialmente limpio.
+Solo se corrigen la prueba del manual y la prioridad del cupo del canal.
+
+- Skills: se elimina la comparación de tamaños con el manual y se mantienen
+  identidad, descripciones, enlaces, duplicación íntegra, rutas y secretos.
+  La prueba exige el enlace al manual en las cuatro skills; verificación carecía
+  de ese enlace directo y ahora lo incorpora. El manual conserva exactamente sus
+  6.421 bytes, sin ampliación.
+- Canal: el cupo ordena filas elegibles por `casos(T) − fracción × P75`, de mayor
+  a menor y con desempate municipal ascendente. Selección en desarrollo y emisión
+  usan la misma regla y la fracción propia; P75=0 sigue siendo elegible sin
+  prioridad automática. No cambian umbral estricto, cupo por departamento/mes,
+  persistencia, A/B/C, semillas ni otros umbrales. Contrato y guía documentan
+  explícitamente la propuesta científica pendiente de aprobación del equipo.
+
+| Verificación | Resultado real |
+|---|---|
+| pytest: test_channel_policy.py, test_agent_skills.py, test_scientific_evaluation.py, test_scientific_e2e.py, test_seed_aggregation.py y test_experiment_management.py | **123 PASS**, sin fallos ni omisiones, 124,72 s. Incluye 11 casos nuevos, cuatro skills y E2E exclusivamente artificial. |
+| Regresiones del canal frente al score anterior de HEAD, adaptando solo la firma en memoria | Diez fallos esperados; el caso de preservación de AP/AUROC pasa. Con la implementación nueva pasan los once. |
+| uv lock --check; uv sync --locked; Ruff | PASS. Un E501 inicial corregido; dependencias intactas. |
+| Registro; preservación normal y Python -O | VALID y PASS: 49 archivos, 16 recibos históricos, identidad N=3 T16 y 22 JSON intactos. |
+| Control extendido contra HEAD | 96 archivos históricos idénticos: evidencia, EXP001/EXP002, recetas, certificados, manual y plan maestro. |
+| Documentación, higiene y diff | Enlaces locales y tamaños comprobados; sin candidatos nuevos a secretos, notebooks ni cambios de producto. Diff local y origin/main...HEAD PASS. |
+
+La primera tanda amplia pasó 122 casos y falló únicamente por `budget_rate`
+omitido en el fixture de una prueba nueva; se corrigió el fixture y la tanda
+completa posterior pasó. Reporte final local ignorado por Git:
+`pipeline/data/pr3-human-review-fixes/focused.xml`; el reporte inicial se conserva
+por separado en ese directorio.
+
+Compatibilidad: C0 histórico no aplica cupo, según A/B/C, y conserva esa decisión;
+la prioridad con fracción 1 se prueba sin introducirle un cupo nuevo. El score
+de razón de AP/AUROC queda separado y preservado: solo cambia la asignación del
+cupo. No se encuentran otras incompatibilidades en el alcance probado.
+Se omiten suites completas de pipeline/API/tablero y consumidores porque este
+alcance pide pruebas dirigidas y no cambia producto, dependencias ni publicación.
+La validación es local y no acredita CI del próximo commit. Sin experimento
+científico real, aprobación del contrato, commit/push, otro PR ni merge.
+
+### Persistencia primaria y límites decisorios — 10 de noviembre de 2026
+
+**PASS técnico local del alcance dirigido.** Se continúa en la rama del PR #3,
+`feature/contrato-cientifico-fabrica-final`, HEAD `eb65b87`, conservando los cambios
+locales autorizados del apartado anterior. No se reescriben sus resultados.
+
+La celda recibe la lectura declarada de la receta. En la primaria, persistencia
+sin alertas por definición se registra con `degenerate: true`; la comparación
+expone causa `DEGENERATE_PRIMARY_COHORT`, estado `NO_EVALUABLE` y `superior: null`.
+B histórica queda `null` y la utilidad no se convierte en éxito ni en fallo de
+efecto por esa comparación, incluso si la comparación con el canal falla.
+Se conservan A/C, los conteos y los intervalos frente al canal y la precedencia
+de `INVALIDO`. La causa se conserva en los cortes de cada semilla; el caso no
+vota éxito ni permite `CUMPLE_BAJO_CONTRATO_PROPUESTO`. La secundaria T+2 sigue
+evaluando persistencia informativa con su decisión original.
+
+Contrato y guía describen este comportamiento manteniendo
+`PROPUESTA_PARA_APROBACION`. **Decisión pendiente:** el equipo debe aprobar
+prospectivamente cómo tratar B y la condición de persistencia de la utilidad
+cuando la cohorte las hace degeneradas, y enmendar su articulación con el
+veredicto afirmativo antes de permitirlo en la primaria. No se sustituye el
+comparador ni se decide otra regla final. No cambian los umbrales, cupos o votos.
+
+Se añaden **23 casos** en las pruebas existentes: límites de sensibilidad
+9,99/10/10,01 pp y carga 4,99/5/5,01 por 100, tanto puntual como cotas;
+C en 0,0499/0,05/0,0501; cupo floor alrededor del límite por departamento y mes;
+persistencia primaria/secundaria con modelo favorable o desfavorable al canal;
+voto que exige simultáneamente ambas reglas y una semilla que pierde el voto
+decisivo. Se comprueban resultado, condición aislada o causa explícita y su
+propagación. Las pruebas previas de invalidación usan ahora la lectura secundaria
+para aislar ese defecto sin apoyarse en persistencia degenerada.
+
+| Verificación ejecutada | Resultado real |
+|---|---|
+| pytest test_scientific_evaluation.py, test_seed_aggregation.py y test_channel_policy.py | 84 PASS en la primera tanda dirigida. |
+| pytest de esos tres módulos más test_agent_skills.py, test_scientific_e2e.py y test_experiment_management.py | **146 PASS**, sin fallos, errores u omisiones; 126,47 s. Incluye E2E de fuentes artificiales y preserva las correcciones previas. |
+| Alteraciones controladas en memoria, sin modificar fuentes | Las pruebas detectan las siete reglas: ganancia mínima, carga máxima, degeneración, margen C, floor, voto conjunto y unanimidad; fallos de aserción esperados, sin errores de preparación. Logs/XML solo locales. |
+| uv lock --check; uv sync --locked; Ruff | PASS; sin cambios de dependencias. Un E501 inicial en un docstring de prueba se corrigió. |
+| Registro y preservación normal/-O | VALID y PASS: 49 hashes, 16 recibos, identidad N=3 T16 y 22 JSON intactos. |
+| Control extendido y documentación | 96 archivos históricos idénticos a HEAD; enlaces locales, tamaños, ausencia de candidatos nuevos a secretos y diff comprobados. Manual, certificados, EXP001/EXP002 y evidencia previa sin cambios. |
+
+Reporte local ignorado: `pipeline/data/pr3-persistence-review/focused.xml`.
+No se repiten suites completas de pipeline/producto o consumidores: el alcance
+autorizado requiere pruebas dirigidas y no modifica API, tablero, dependencias
+ni publicaciones. La CI remota del próximo commit no se acredita con estos gates
+locales. Sin datos o entrenamientos reales, aprobación científica, commit/push,
+otro PR ni merge.
+
+### Decisión aprobada sobre B — implementación completada, 10 de noviembre de 2026
+
+**PASS técnico local.** Rama `feature/contrato-cientifico-fabrica-final`, PR #3,
+HEAD `2ba0bc8`. El preflight encontró cuatro archivos sin commit: contrato,
+`reporting.py`, `statistics.py` y `runner.py`. Se revisó el diff antes de editar
+y se conservó localmente en `pipeline/data/pr3-approved-b-rule/interrupted-input.patch`.
+Se retuvo la excepción primaria y la proyección al recibo que ya estaban
+iniciadas; se completaron celdas, causas, cortes/semillas y pruebas, y se corrigió
+el resumen secundario que solo informaba REQUIRED sin su evaluabilidad real.
+
+La solicitud comunica la decisión acotada aprobada por el equipo: en primaria B
+permanece `NO_EVALUABLE`, causa `DEGENERATE_PRIMARY_COHORT`, y no se exige para
+el veredicto. La utilidad frente al canal y A/C pueden dar voto afirmativo sin
+significar superioridad sobre persistencia. `ABC_HISTORICA` mantiene B `null` y
+su estado histórico; `applicable_abc_status` proyecta separadamente AC_CUMPLE,
+AC_NO_CUMPLE o AC_NO_EVALUABLE. No simula cumplimiento de A/B/C con B degenerada.
+
+En secundaria T+2 B es obligatoria: si persistencia no alerta en el soporte
+evaluado, queda no evaluable con causa NO_PERSISTENCE_ALERTS y el corte no aporta
+voto afirmativo. Una alerta fuera del soporte conocido no la vuelve evaluable.
+Se mantienen INVALIDO, controles negativos, mínimos de soporte, mayorías de
+cortes y unanimidad de las cinco semillas; no se cambian umbrales ni cupos.
+
+Cada celda, corte, consistencia, semilla (incluidas ausentes) y resumen conserva
+`B.status`, `B.reason`, `B.required_for_verdict` y `decision_basis`. EVALUABLE
+describe disponibilidad de B, no su cumplimiento; el booleano sigue en las
+condiciones históricas. El recibo publica los mismos campos por vista en
+`scientific_evaluation.summary`, derivados de los fragmentos inventariados.
+Se comprueban recorrido Kedro, CLI normal y terminales previos/posteriores a
+agregación; antes de agregar el resumen sigue vacío, sin inventar resultados.
+
+| Validación | Resultado real |
+|---|---|
+| Pruebas dirigidas: test_scientific_evaluation.py, test_seed_aggregation.py, test_channel_policy.py, test_agent_skills.py, test_scientific_e2e.py y test_experiment_management.py | **155 PASS**, sin fallos u omisiones, 127,90 s; nueve escenarios nuevos y pruebas previas adaptadas. |
+| Últimos ajustes de causas y semillas ausentes | 97 PASS; dos E2E deseleccionados solo en esta tanda rápida, cubiertos por la suite completa posterior. |
+| Suite completa `uv run --directory pipeline pytest` | **774 PASS**, sin fallos, errores u omisiones, 303,70 s. Seis avisos previos de deprecación de OmegaConf/Kedro. |
+| Ruff; uv lock --check; uv sync --locked | PASS; sin cambios de dependencias. |
+| Registro; preservación normal y Python -O | VALID y PASS: 49 archivos protegidos, 16 recibos históricos, identidad N=3 T16 y 22 JSON intactos. |
+| Control extendido, documentación e higiene | 96 archivos históricos idénticos a HEAD; EXP001/EXP002, certificados y manual intactos. Enlaces, tamaños, candidatos nuevos a secretos y diff comprobados. |
+
+La primera tanda pequeña pasó 92 casos y falló en un fixture nuevo por un array
+de pandas de solo lectura; se corrigió su copia antes de mutarlo. La tanda dirigida
+y la suite posteriores pasan. Los controles negativos secundarios ahora tienen
+persistencia con alertas para que B sea evaluable, sin quitar la invalidación.
+Reportes locales ignorados: `pipeline/data/pr3-approved-b-rule/focused.xml` y
+`pipeline-suite.xml` en ese directorio; diff final junto al snapshot interrumpido.
+
+Contrato y guía sincronizados. **La decisión sobre B queda implementada; el
+contrato completo sigue PROPUESTA_PARA_APROBACION.** Continúan pendientes su
+aprobación global, cohorte confirmatoria independiente y N=3 E2E de un eventual
+finalista. No se atribuye aprobación científica a las pruebas artificiales.
+No se ejecutan suites de API/tablero porque no cambia producto ni publicación;
+CI remota del próximo commit no verificada. Sin datos reales ni uso de 2025 para
+ajustar la regla, commit/push, merge u otro PR.
+
+### Auditoría final de objeciones humanas del PR #3 — 10 de noviembre de 2026
+
+**PASS técnico para nueva revisión humana; CI final pendiente al corte.**
+[Informe con matriz y límites](docs/reviews/pr3-human-objections-final-audit.md).
+Inicio en `2ba0bc8`, nueve archivos sin commit incluidos en la auditoría. Durante
+la ejecución se observó la incorporación externa de esos cambios en `48ec9cc`,
+ya publicado; los 431 archivos versionados conservaron exactamente sus bytes.
+No se repitieron suites por el cambio de SHA, ni se corrigió código.
+
+Las cuatro objeciones quedan resueltas técnicamente: manual breve/skills sin
+ratio de tamaños; cupo por exceso absoluto, sin excluir ni priorizar P75=0;
+B primaria no evaluable explícita y secundaria obligatoria; nueve sabotajes
+de reglas detectados. Etiqueta T+2, compuerta solo en T y procedencia posterior
+de la carga a la tanda 5 preservadas. La decisión aprobada de B llega a celdas,
+cortes, cinco semillas y recibo final, con causa, obligatoriedad y base del voto.
+Recibo del E2E artificial: 1.440 celdas/48 resúmenes; sondeo adicional sin ajuste
+compone 60 celdas con el finalizador normal e inventario para éxito primario,
+B secundaria evaluable/ausente y control negativo inválido. No es ciencia real.
+
+Una ejecución de cada suite: **774 pipeline**, **35 API**, **55 tablero**, todos
+PASS, sin omisiones; frozen/lint/build, lock/sync/Ruff, CLI synthetic, registro,
+preservación normal/-O, consumidores 22+22 y diff PASS. Se conservan 49 hashes,
+16 recibos e identidad N=3 T16, más 96 archivos históricos y los 22 JSON.
+Solo avisos previos OmegaConf/Kedro, Starlette/httpx, fast-refresh y Vite.
+Evidencia local: `pipeline/data/pr3-review-x2req86q/`.
+
+CI consultada sobre **48ec9cc64f9f638044631f3685dfb8829adceccc**:
+Pipeline quality, macOS y los jobs API/tablero/publicación SUCCESS (estos tres últimos
+con pasos omitidos por filtro); portabilidad Windows/Ubuntu IN_PROGRESS
+en run 42892096582. No se atribuyen los siete checks del SHA inicial al final.
+Descripción remota aún refiere validaciones de 5034056; no se modifica aquí.
+
+Listo para nueva revisión humana; no se declara listo para merge ni aprobado
+el contrato, que permanece PROPUESTA_PARA_APROBACION. Revisión científica
+independiente, aprobación global, confirmación y N=3 finalista siguen pendientes.
+Solo se escriben informe y plan; sin correcciones, datos reales, uso de 2025 para
+ajustar la regla, campeón, commit/push o merge por esta auditoría.

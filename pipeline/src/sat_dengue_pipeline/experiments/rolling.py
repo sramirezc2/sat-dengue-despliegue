@@ -86,6 +86,7 @@ class ExperimentData:
     X: pd.DataFrame
     y: pd.Series
     controls: pd.DataFrame
+    predictors: tuple[str, ...] = tuple(PREDICTORS)
 
 
 class FoldEstimator(Protocol):
@@ -158,7 +159,12 @@ def validate_data(data: ExperimentData, horizon: int, reserved_start: str = "202
         or keys.label_available_period.lt(keys.target_period).any()
     ):
         raise ValueError("Calendario objetivo/disponibilidad inválido")
-    if list(data.X) != PREDICTORS or data.X.columns.duplicated().any():
+    if (
+        not data.predictors
+        or list(data.predictors) != [p for p in PREDICTORS if p in data.predictors]
+        or list(data.X) != list(data.predictors)
+        or data.X.columns.duplicated().any()
+    ):
         raise ValueError("Predictores fuera del esquema canónico cerrado")
     if any(not obj.index.equals(keys.index) for obj in (data.X, data.y, data.controls)):
         raise ValueError("Claves/X/y/controles desalineados")

@@ -1,0 +1,157 @@
+{
+  "schema": "sat-dengue.proposed-seed-aggregation-validation/v1",
+  "status": "PASS",
+  "scope": "Technical implementation and artificial results only; no scientific approval",
+  "branch": "feature/contrato-cientifico-fabrica-final",
+  "pull_request": 3,
+  "base_commit": "1427ac1ce30b91edd1e467c80b4808a7eea8253c",
+  "contract": {
+    "path": "docs/experiments/contrato.md",
+    "version": "0.2.2-propuesta",
+    "sha256": "60cd1198003d4469ebb517fba8f301b1cd2510e6b9db49c8e5d43b08f78e6971",
+    "status": "PROPUESTA_PARA_APROBACION"
+  },
+  "aggregation_rule": "all_five_declared_seeds_cumple",
+  "team_approval_required": true,
+  "scientific_approval": false,
+  "scientific_conclusion": "NOT_APPROVED",
+  "source_sha256": {
+    "pipeline/src/sat_dengue_pipeline/evaluation/scientific/reporting.py": "63b427380a12ed652714f99027db8826942cb96195f116d19a9a944c0d95717b",
+    "pipeline/tests/test_seed_aggregation.py": "3af90b9e1554a4ec75948fd97fd10b8f72144b56423997d8eadf62ceab240c59",
+    "pipeline/tests/test_scientific_evaluation.py": "74c8dc69c930e9442aaba6f50e753044e966beb6d6c64f308d320aa14ad0e4a8",
+    "pipeline/tests/test_scientific_e2e.py": "4bc554806517bb54ea88658f5eb8c75131990ca7e2ec8abe6797d9f9dbe6cee4"
+  },
+  "lock_sha256": "5bd75700f0b6a9785478cf808e58544ac3d7d98bc36409c0e6086e5531a60fb7",
+  "artificial_cases": {
+    "5_of_5": "CUMPLE_BAJO_CONTRATO_PROPUESTO",
+    "4_of_5": "INCONCLUSO_POR_INESTABILIDAD",
+    "missing_seed": "NO_EVALUABLE",
+    "insufficient_support": "NO_EVALUABLE",
+    "invalid_run": "INVALIDO"
+  },
+  "additional_regressions": [
+    "2/3 usable cuts still pass within each seed",
+    "pending or missing policies and undefined denominators prevent success",
+    "missing declared cut prevents success",
+    "duplicates, foreign seeds and unpaired supports are invalid",
+    "invalid small cut cannot be excluded",
+    "no effect verdict inferred from nonpassing seeds",
+    "T+1, primary T+2, secondary T+2, arms, populations and territories remain separate; annual views do not add votes"
+  ],
+  "gates": [
+    {
+      "command": "uv lock --check --project pipeline",
+      "result": "PASS"
+    },
+    {
+      "command": "uv sync --locked --project pipeline",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --locked --directory pipeline ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --locked --directory pipeline pytest tests/test_seed_aggregation.py tests/test_scientific_evaluation.py -q --tb=short",
+      "result": "PASS",
+      "tests": 47
+    },
+    {
+      "command": "uv run --locked --directory pipeline pytest -q --junitxml=data/pr3-seed-aggregation/pipeline-pytest.xml --tb=short",
+      "result": "PASS",
+      "tests": 725,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 292.332,
+      "local_report": "pipeline/data/pr3-seed-aggregation/pipeline-pytest.xml",
+      "report_sha256": "716e42ac45b6889f5141a0f6f15f5837dc0d265e02bf98f70e5a8076992de976"
+    },
+    {
+      "command": "(cd app/api && python -m pytest)",
+      "result": "PASS",
+      "tests": 35
+    },
+    {
+      "command": "(cd app/dashboard && bun install --frozen-lockfile && bun run lint && bun run test && NITRO_PRESET=node_server bun run build)",
+      "result": "PASS",
+      "tests": 55
+    },
+    {
+      "command": "uv run --locked --directory pipeline kedro run --pipelines synthetic",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --locked --directory pipeline python -m sat_dengue_pipeline.experiment_management validate",
+      "result": "VALID"
+    },
+    {
+      "command": "uv run --locked --directory pipeline python tools/check_experiment_preservation.py",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --locked --directory pipeline python -O tools/check_experiment_preservation.py",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --locked --directory pipeline python tools/validate_publication_consumers.py --directory ../datos/resultados --api-python <installed API Python 3.12>",
+      "result": "PASS",
+      "pydantic": 22,
+      "zod": 22
+    },
+    {
+      "command": "git diff --check; git diff --check origin/main...HEAD; git diff --cached --check",
+      "result": "PASS"
+    }
+  ],
+  "preservation": {
+    "official_protected_files": 49,
+    "published_json": 22,
+    "historical_t16_receipts": 16,
+    "t16_n3_identity": "899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f",
+    "EXP001_EXP002_unchanged": true,
+    "certificates_unchanged": true,
+    "existing_pr3_receipt_unchanged": true,
+    "extended_closed_files_equal_base": 95
+  },
+  "structural": {
+    "status": "PASS",
+    "base": "1427ac1ce30b91edd1e467c80b4808a7eea8253c",
+    "protected_tracked_files_identical": 95,
+    "strict_json_files": 107,
+    "markdown_local_links": 52,
+    "all_changed_files_below_512kb": true,
+    "secret_pattern_candidates": 0,
+    "notebooks_changed": false,
+    "dependencies_changed": false
+  },
+  "review": {
+    "technical_alignment": "PASS",
+    "scientific_recipe_preapproval": "NOT_VERIFIED: no new scientific recipe/approval supplied or operated",
+    "independent_scientific_review": "NOT_VERIFIED",
+    "required_team_decision": "Approve prospectively the proposed unanimity rule and contract before any new scientific evaluation"
+  },
+  "remaining_limits": [
+    "team approval of contract and new recipe identities/hashes",
+    "independent confirmatory cohort",
+    "eventual finalist E2E N=3; canonical N=3 remains separate"
+  ],
+  "warnings": [
+    "Six existing OmegaConf deprecations",
+    "Existing API Starlette/httpx deprecation",
+    "Six existing React fast-refresh lint warnings",
+    "Existing Vite tsconfig-paths advisory"
+  ],
+  "not_executed": [
+    "real scientific experiment",
+    "use of 2025 to design or select this rule",
+    "new real canonical/model certification",
+    "merge",
+    "ruleset changes"
+  ],
+  "remote_checks": {
+    "observed_before_changes_head": "1427ac1ce30b91edd1e467c80b4808a7eea8253c",
+    "observed_before_changes_success": 7,
+    "new_commit": "Must be checked after publication; previous checks do not validate this change"
+  }
+}

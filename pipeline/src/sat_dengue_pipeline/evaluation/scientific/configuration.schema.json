@@ -1,0 +1,616 @@
+{
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "const": "docs/experiments/contrato.md"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "readings": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "primary",
+          "secondary_t2"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "contains": {
+        "const": "primary"
+      }
+    },
+    "seeds": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "minItems": 1
+    },
+    "arms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "predictors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "predictors"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "cuts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "roles_by_horizon": {
+            "type": "object",
+            "properties": {
+              "1": {
+                "type": "object",
+                "properties": {
+                  "train": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "string"
+                      },
+                      "end": {
+                        "type": "string"
+                      },
+                      "support": {
+                        "type": "object",
+                        "properties": {
+                          "n0": {
+                            "type": "integer"
+                          },
+                          "n1": {
+                            "type": "integer"
+                          },
+                          "municipalities": {
+                            "type": "integer"
+                          },
+                          "months": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "n0",
+                          "n1",
+                          "municipalities",
+                          "months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "end",
+                      "support"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "calibration_fit": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "string"
+                      },
+                      "end": {
+                        "type": "string"
+                      },
+                      "support": {
+                        "type": "object",
+                        "properties": {
+                          "n0": {
+                            "type": "integer"
+                          },
+                          "n1": {
+                            "type": "integer"
+                          },
+                          "municipalities": {
+                            "type": "integer"
+                          },
+                          "months": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "n0",
+                          "n1",
+                          "municipalities",
+                          "months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "end",
+                      "support"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "calibration_selection": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "string"
+                      },
+                      "end": {
+                        "type": "string"
+                      },
+                      "support": {
+                        "type": "object",
+                        "properties": {
+                          "n0": {
+                            "type": "integer"
+                          },
+                          "n1": {
+                            "type": "integer"
+                          },
+                          "municipalities": {
+                            "type": "integer"
+                          },
+                          "months": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "n0",
+                          "n1",
+                          "municipalities",
+                          "months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "end",
+                      "support"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "threshold_selection": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "string"
+                      },
+                      "end": {
+                        "type": "string"
+                      },
+                      "support": {
+                        "type": "object",
+                        "properties": {
+                          "n0": {
+                            "type": "integer"
+                          },
+                          "n1": {
+                            "type": "integer"
+                          },
+                          "municipalities": {
+                            "type": "integer"
+                          },
+                          "months": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "n0",
+                          "n1",
+                          "municipalities",
+                          "months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "end",
+                      "support"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "evaluation": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "string"
+                      },
+                      "end": {
+                        "type": "string"
+                      },
+                      "support": {
+                        "type": "object",
+                        "properties": {
+                          "n0": {
+                            "type": "integer"
+                          },
+                          "n1": {
+                            "type": "integer"
+                          },
+                          "municipalities": {
+                            "type": "integer"
+                          },
+                          "months": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "n0",
+                          "n1",
+                          "municipalities",
+                          "months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "end",
+                      "support"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "train",
+                  "calibration_fit",
+                  "calibration_selection",
+                  "threshold_selection",
+                  "evaluation"
+                ],
+                "additionalProperties": false
+              },
+              "2": {
+                "type": "object",
+                "properties": {
+                  "train": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "string"
+                      },
+                      "end": {
+                        "type": "string"
+                      },
+                      "support": {
+                        "type": "object",
+                        "properties": {
+                          "n0": {
+                            "type": "integer"
+                          },
+                          "n1": {
+                            "type": "integer"
+                          },
+                          "municipalities": {
+                            "type": "integer"
+                          },
+                          "months": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "n0",
+                          "n1",
+                          "municipalities",
+                          "months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "end",
+                      "support"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "calibration_fit": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "string"
+                      },
+                      "end": {
+                        "type": "string"
+                      },
+                      "support": {
+                        "type": "object",
+                        "properties": {
+                          "n0": {
+                            "type": "integer"
+                          },
+                          "n1": {
+                            "type": "integer"
+                          },
+                          "municipalities": {
+                            "type": "integer"
+                          },
+                          "months": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "n0",
+                          "n1",
+                          "municipalities",
+                          "months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "end",
+                      "support"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "calibration_selection": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "string"
+                      },
+                      "end": {
+                        "type": "string"
+                      },
+                      "support": {
+                        "type": "object",
+                        "properties": {
+                          "n0": {
+                            "type": "integer"
+                          },
+                          "n1": {
+                            "type": "integer"
+                          },
+                          "municipalities": {
+                            "type": "integer"
+                          },
+                          "months": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "n0",
+                          "n1",
+                          "municipalities",
+                          "months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "end",
+                      "support"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "threshold_selection": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "string"
+                      },
+                      "end": {
+                        "type": "string"
+                      },
+                      "support": {
+                        "type": "object",
+                        "properties": {
+                          "n0": {
+                            "type": "integer"
+                          },
+                          "n1": {
+                            "type": "integer"
+                          },
+                          "municipalities": {
+                            "type": "integer"
+                          },
+                          "months": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "n0",
+                          "n1",
+                          "municipalities",
+                          "months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "end",
+                      "support"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "evaluation": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "string"
+                      },
+                      "end": {
+                        "type": "string"
+                      },
+                      "support": {
+                        "type": "object",
+                        "properties": {
+                          "n0": {
+                            "type": "integer"
+                          },
+                          "n1": {
+                            "type": "integer"
+                          },
+                          "municipalities": {
+                            "type": "integer"
+                          },
+                          "months": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "n0",
+                          "n1",
+                          "municipalities",
+                          "months"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "end",
+                      "support"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "train",
+                  "calibration_fit",
+                  "calibration_selection",
+                  "threshold_selection",
+                  "evaluation"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "roles_by_horizon"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "channel_fraction_grid": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "null"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0
+            },
+            "minItems": 1
+          }
+        ]
+      }
+    },
+    "channel_selection": {
+      "const": "max_f1_then_fewer_alerts_then_larger_fraction_on_threshold_selection"
+    },
+    "budget_rate_by_horizon": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "minimum": 0,
+        "maximum": 1
+      }
+    },
+    "budget_rule": {
+      "const": "fixed_rate_monthly_department_cap_floor_ties_by_municipality"
+    },
+    "consistency_rule": {
+      "enum": [
+        "strict_majority_min_three",
+        null
+      ]
+    },
+    "uncertainty": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "const": "paired_target_month_bootstrap"
+        },
+        "replicates": {
+          "const": 2000
+        },
+        "seed": {
+          "const": 42
+        },
+        "level": {
+          "const": 0.95
+        }
+      },
+      "required": [
+        "method",
+        "replicates",
+        "seed",
+        "level"
+      ],
+      "additionalProperties": false
+    },
+    "consistency_vote": {
+      "enum": [
+        "both_rules_cumple",
+        null
+      ]
+    }
+  },
+  "required": [
+    "contract",
+    "readings",
+    "seeds",
+    "arms",
+    "cuts",
+    "channel_fraction_grid",
+    "channel_selection",
+    "budget_rate_by_horizon",
+    "budget_rule",
+    "consistency_rule",
+    "uncertainty",
+    "consistency_vote"
+  ],
+  "additionalProperties": false
+}

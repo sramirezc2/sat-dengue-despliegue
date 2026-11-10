@@ -69,6 +69,10 @@ class FactoryRun:
     prediction_complete: dict[int, bool] = field(default_factory=dict)
     label_reads: dict[str, int] = field(default_factory=dict)
     measurements: dict[str, float] = field(default_factory=dict)
+    history_cache: dict[str, pd.DataFrame] = field(default_factory=dict)
+    scientific_contexts: dict = field(default_factory=dict)
+    scientific_outcomes: dict = field(default_factory=dict)
+    scientific_policies: dict = field(default_factory=dict)
     stage: str = "initialization"
 
 
@@ -111,10 +115,25 @@ def _deferred_batch(
     """Preparar solo claves y X; y se construye al consumir su rol autorizado."""
     selected = history.set_index(KEYS).loc[pd.MultiIndex.from_frame(origins[KEYS])].reset_index()
     X = predictor_matrix(selected, run.schema)
+    scientific = run.config.get("schema_version") == 3
+    secondary = scientific and run.config["scientific_dimensions"]["reading"] == "secondary_t2"
+    features = run.config["predictors"] if scientific else list(X)
+    complete_features = (
+        [
+            p
+            for p in run.config["predictors"]
+            + [n for arm in run.config["scientific_evaluation"]["arms"] for n in arm["predictors"]]
+            if p in X
+        ]
+        if scientific and run.config["scientific_dimensions"]["population"] == "common"
+        else features
+    )
     usable = selected.zona_canal_t.notna() & selected.zona_canal_t.ne("EXCESO")
-    usable &= X.notna().all(axis=1)
+    if secondary:
+        usable = selected.zona_canal_t.notna()
+    usable &= X[complete_features].notna().all(axis=1)
     origins = selected.loc[usable, KEYS].reset_index(drop=True)
-    X = X.loc[usable].reset_index(drop=True)
+    X = X.loc[usable, features].reset_index(drop=True)
     keys = origins.rename(columns={"year_month": "origin_period"}).copy()
     keys["target_period"] = keys.origin_period.map(lambda t: add_months(t, h))
     keys["horizon"] = h
@@ -132,6 +151,18 @@ def _deferred_batch(
         run.label_reads[key] = run.label_reads.get(key, 0) + 1
         if run.label_reads[key] != 1:
             raise FactoryGateError("role_labels_read_more_than_once")
+        if scientific:
+            from sat_dengue_pipeline.domain.onset import build_labels
+
+            states = history[KEYS].copy()
+            states["excess"] = (
+                history.zona_canal_t.eq("EXCESO")
+                .astype("Int64")
+                .where(history.zona_canal_t.notna(), pd.NA)
+            )
+            outcome = build_labels(states, origins, h, TemporalPolicy(run.config["reserved_start"]))
+            run.scientific_outcomes[(h, role)] = outcome
+            return outcome[f"y_t{h}"].reset_index(drop=True)
         _, labels, _, _ = prepare_horizon(
             history,
             run.schema,
@@ -143,12 +174,18 @@ def _deferred_batch(
         values = labels.set_index(KEYS).loc[pd.MultiIndex.from_frame(origins[KEYS]), f"y_t{h}"]
         return values.reset_index(drop=True)
 
+    if scientific:
+        from sat_dengue_pipeline.evaluation.scientific.policy import origin_context
+
+        run.scientific_contexts[(h, role)] = origin_context(run.table, keys, h)
     return RoleBatch(
         role,
         keys,
         X,
         pd.DataFrame({"eligible_at_t": [True] * len(keys)}),
         deferred,
+        predictors=tuple(features),
+        allow_excess_at_origin=secondary,
     )
 
 
@@ -166,11 +203,15 @@ def prepare(run: FactoryRun) -> FactoryRun:
                 drop=True
             )
             guard_development(table[KEYS], origins, (h,), TemporalPolicy(plan.reserved_start))
-            history = table.loc[table.year_month.le(window.end)].reset_index(drop=True)
+            if window.end not in run.history_cache:
+                run.history_cache[window.end] = table.loc[
+                    table.year_month.le(window.end)
+                ].reset_index(drop=True)
+            history = run.history_cache[window.end]
             batch = _deferred_batch(run, h, window.role, origins, history)
             dummy_y = pd.Series(pd.NA, index=batch.keys.index, dtype="Int64")
             validate_data(
-                ExperimentData(batch.keys, batch.X, dummy_y, batch.controls),
+                ExperimentData(batch.keys, batch.X, dummy_y, batch.controls, batch.predictors),
                 h,
                 plan.reserved_start,
             )
@@ -241,6 +282,10 @@ def fit(run: FactoryRun) -> FactoryRun:
         )
         if run.label_reads.get(f"{h}:evaluation", 0):
             raise FactoryGateError("evaluation_labels_during_fit")
+    if run.config.get("schema_version") == 3:
+        from sat_dengue_pipeline.evaluation.scientific.policy import freeze_policy
+
+        freeze_policy(run)
     if len({id(f.model.adapter) for f in run.fitted.values()}) != len(run.fitted):
         raise FactoryGateError("shared_horizon_model")
     return run
@@ -294,6 +339,11 @@ def predict(run: FactoryRun) -> FactoryRun:
 
 def evaluate(run: FactoryRun) -> FactoryRun:
     """Leer y_eval una vez después de predicciones; fallar sin reajustar si falta soporte."""
+    if run.config.get("schema_version") == 3:
+        from sat_dengue_pipeline.evaluation.scientific.reporting import read_outcomes
+
+        read_outcomes(run)
+        return run
     run.stage = "evaluation_support"
     labels = {}
     failures = []

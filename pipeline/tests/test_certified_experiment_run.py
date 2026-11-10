@@ -192,9 +192,11 @@ def repository(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, artifacts: tuple
         check=True,
     )
     monkeypatch.setattr(runner, "project_root", lambda: root / "pipeline")
-    execute = runner.execute
+    begin = runner.begin_execution
     # La entrada Kedro permanece intacta; configurar solo raíz temporal y tracking desactivado.
-    monkeypatch.setattr(runner, "execute", lambda eid: execute(eid, root=root, tracking=False))
+    monkeypatch.setattr(
+        runner, "begin_execution", lambda eid: begin(eid, root=root, tracking=False)
+    )
     builds, loaded, prepared, fitted = [], [], [], []
     selected = {"artifact": artifact}
 
