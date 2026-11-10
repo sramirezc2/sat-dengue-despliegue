@@ -28,18 +28,3 @@ experiments:
   conclusions: docs/experiments/EXP002/CONCLUSIONS.md
   scientific_result: NOT_APPLICABLE
   champion_status: NOT_SELECTED
-- experiment_id: EXP003
-  experiment_slug: exp003-logistica-sin-clima-contrato-2007
-  hypothesis_id: EXP003-H1
-  title: "Regresi\xF3n log\xEDstica sin clima frente al canal condicionado (contrato\
-    \ v0.1.0, release 2007-2024)"
-  experiment_type: scientific
-  status: PROPOSED
-  protocol: docs/experiments/EXP003/SPECIFICATION.md
-  protocol_sha256: 59e13ced4f63cf1f5c36db2072e57e946343589711f4e933737e5a3a59d981ee
-  configuration: pipeline/conf/experiments/EXP003.yml
-  configuration_sha256: 1489452a1039fe00d1418dc4cb165fd82fda8c1ec867abf2caee1ff6e6db6927
-  pipeline: experiment_run
-  conclusions: docs/experiments/EXP003/CONCLUSIONS.md
-  scientific_result: PENDING
-  champion_status: NOT_SELECTED
