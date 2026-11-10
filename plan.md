@@ -1015,3 +1015,41 @@ finalista. No se atribuye aprobación científica a las pruebas artificiales.
 No se ejecutan suites de API/tablero porque no cambia producto ni publicación;
 CI remota del próximo commit no verificada. Sin datos reales ni uso de 2025 para
 ajustar la regla, commit/push, merge u otro PR.
+
+### Auditoría final de objeciones humanas del PR #3 — 10 de noviembre de 2026
+
+**PASS técnico para nueva revisión humana; CI final pendiente al corte.**
+[Informe con matriz y límites](docs/reviews/pr3-human-objections-final-audit.md).
+Inicio en `2ba0bc8`, nueve archivos sin commit incluidos en la auditoría. Durante
+la ejecución se observó la incorporación externa de esos cambios en `48ec9cc`,
+ya publicado; los 431 archivos versionados conservaron exactamente sus bytes.
+No se repitieron suites por el cambio de SHA, ni se corrigió código.
+
+Las cuatro objeciones quedan resueltas técnicamente: manual breve/skills sin
+ratio de tamaños; cupo por exceso absoluto, sin excluir ni priorizar P75=0;
+B primaria no evaluable explícita y secundaria obligatoria; nueve sabotajes
+de reglas detectados. Etiqueta T+2, compuerta solo en T y procedencia posterior
+de la carga a la tanda 5 preservadas. La decisión aprobada de B llega a celdas,
+cortes, cinco semillas y recibo final, con causa, obligatoriedad y base del voto.
+Recibo del E2E artificial: 1.440 celdas/48 resúmenes; sondeo adicional sin ajuste
+compone 60 celdas con el finalizador normal e inventario para éxito primario,
+B secundaria evaluable/ausente y control negativo inválido. No es ciencia real.
+
+Una ejecución de cada suite: **774 pipeline**, **35 API**, **55 tablero**, todos
+PASS, sin omisiones; frozen/lint/build, lock/sync/Ruff, CLI synthetic, registro,
+preservación normal/-O, consumidores 22+22 y diff PASS. Se conservan 49 hashes,
+16 recibos e identidad N=3 T16, más 96 archivos históricos y los 22 JSON.
+Solo avisos previos OmegaConf/Kedro, Starlette/httpx, fast-refresh y Vite.
+Evidencia local: `pipeline/data/pr3-review-x2req86q/`.
+
+CI consultada sobre **48ec9cc64f9f638044631f3685dfb8829adceccc**:
+Pipeline quality, macOS y los jobs API/tablero/publicación SUCCESS (estos tres últimos
+con pasos omitidos por filtro); portabilidad Windows/Ubuntu IN_PROGRESS
+en run 42892096582. No se atribuyen los siete checks del SHA inicial al final.
+Descripción remota aún refiere validaciones de 5034056; no se modifica aquí.
+
+Listo para nueva revisión humana; no se declara listo para merge ni aprobado
+el contrato, que permanece PROPUESTA_PARA_APROBACION. Revisión científica
+independiente, aprobación global, confirmación y N=3 finalista siguen pendientes.
+Solo se escriben informe y plan; sin correcciones, datos reales, uso de 2025 para
+ajustar la regla, campeón, commit/push o merge por esta auditoría.
