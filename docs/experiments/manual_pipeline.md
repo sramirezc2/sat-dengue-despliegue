@@ -61,12 +61,13 @@ uv sync --locked --project pipeline
 uv run --directory pipeline python -m sat_dengue_pipeline.experiment_management validate
 ```
 
-Para datos privados, configure el token sin escribirlo en el repositorio ni en el prompt de un agente:
-
-```sh
-read -s "HF_TOKEN?Token de Hugging Face: "
-export HF_TOKEN
-```
+Para datos privados, cada integrante configura `HF_TOKEN` en el entorno antes de
+ejecutar. Siga las instrucciones de [autenticación segura para zsh, Bash y
+PowerShell](../operations/pipeline-operations.md#autenticación-segura), que indican
+la lectura oculta y cómo retirar la variable al terminar. Use el bloque de su
+terminal. No muestre ni guarde el token en argumentos, archivos, historial,
+notebooks, logs o prompts de agentes. Este paso inicial no es una transferencia
+manual de datos entre etapas del E2E.
 
 ## Crear un experimento nuevo
 
@@ -141,7 +142,16 @@ shasum -a 256 docs/experiments/EXP003/SPECIFICATION.md
 shasum -a 256 pipeline/conf/experiments/EXP003.yml
 ```
 
-En Linux también puede usarse `sha256sum`. Copie los dos valores en `registration.yml`. Si después cambia cualquiera de esos archivos, debe recalcular el hash antes de registrar; una receta ya ejecutada no se modifica.
+En Linux también puede usarse `sha256sum`. En PowerShell:
+
+```powershell
+Get-FileHash -Algorithm SHA256 docs/experiments/EXP003/SPECIFICATION.md
+Get-FileHash -Algorithm SHA256 pipeline/conf/experiments/EXP003.yml
+```
+
+Copie los valores SHA-256 en minúsculas en `registration.yml`. Si después cambia
+cualquiera de esos archivos, debe recalcular el hash antes de registrar;
+una receta ya ejecutada no se modifica.
 
 ### 4. Crear la solicitud de registro
 

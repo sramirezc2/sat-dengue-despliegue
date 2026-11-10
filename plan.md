@@ -2,7 +2,7 @@
 
 **Versión:** 1.8
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado del alcance actual:** etapas documental y funcional COMPLETAS como implementación bajo contrato propuesto; agregación entre semillas COMPLETA como implementación propuesta, sin aprobación científica
+**Estado del alcance actual:** etapas documental y funcional COMPLETAS como implementación bajo contrato propuesto; agregación entre semillas COMPLETA como implementación propuesta; auditoría final FAIL histórica preservada; AUD-01/AUD-02/AUD-03 corregidos y verificados técnicamente, sin aprobación científica
 **Último corte histórico T1–T27:** 26/27; T27 BLOQUEADA en su registro previo, sin reauditar sus gates en este alcance
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama del alcance actual:** `feature/contrato-cientifico-fabrica-final`, creada desde `origin/main@a324f3c7f141b0ec53582b461cf6586643c5b569`
@@ -738,3 +738,135 @@ Persisten solo avisos previos de OmegaConf, Starlette/httpx, fast-refresh y Vite
 sin modificar el recibo anterior. Publicación en la misma rama y PR #3;
 los siete checks previos de 1427ac1 no validan el nuevo commit. Verificar CI por
 SHA tras el push, manteniendo borrador y aprobación del equipo pendiente. Sin merge.
+
+
+### Auditoría final de recorridos críticos — 10 de noviembre de 2026
+
+**Dictamen: FAIL para el cierre final.** El recorrido operativo E2E y el
+aislamiento de las ejecuciones probadas funcionan; queda un defecto bloqueante
+en la propagación de invalidación científica. Esta auditoría no corrige código,
+no crea otra hoja de ruta y no aprueba el contrato. Los cierres técnicos previos
+se conservan como historia; no acreditan ausencia del defecto identificado aquí.
+
+Revisión exacta: `e10b3f487695c3b5222ffd96bf1338abcff1fa93`, árbol Git
+`bd437d8177b8b5cea91009abb3d8b396d28a0c10`, rama actual y HEAD remoto del
+[PR #3](https://github.com/sramirezc2/sat-dengue-despliegue/pull/3) coincidentes.
+Árbol de trabajo limpio al empezar; el único cambio versionable de la auditoría
+es este registro local en `plan.md`, sin commit/push ni cambio del HEAD auditado.
+
+Se reutilizan los checks del HEAD y el gate local anterior de 725 pruebas,
+con hashes de fuente cotejados; no se repiten suites completas. Al corte del
+registro: seis checks SUCCESS (API, tablero, Publication contract, Pipeline
+quality y portabilidad Windows/macOS); Ubuntu continúa IN_PROGRESS en el
+[run 42816491599](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42816491599).
+Los recibos nativos Windows/macOS confirman 725 pruebas sin fallos/omisiones,
+lock/sync/Ruff, cuatro CLI sintéticos y árbol limpio antes/después. El checkout
+CI usa el merge temporal `03ee69b`, cuyo árbol coincide exactamente con e10b3f4;
+no se atribuyen a e10b3f4 checks históricos de otro contenido.
+
+| Recorrido auditado | Resultado y evidencia |
+|---|---|
+| E2E por comando documentado | PASS técnico. Clon local limpio de e10b3f4, instalación nueva desde lock; tres invocaciones reales de `uv run --locked --group tracking --directory pipeline kedro run --pipelines experiment_run --params experiment_id=ID`. Registro/aprobación técnica previos por CLI; cinco fuentes artificiales, cuarentena, certificación N=3, preparación, modelos, evaluación y evidencia automáticos. Las recetas de auditoría se preparan solo en el clon temporal, con dirty=true explícito y sin modificar código productivo. |
+| Dos recetas y repetición | PASS. AUDITA1/S53, AUDITB1/S7 y AUDITA2/repetición exacta de A: tres execution_id y firmas distintos, carpetas e inventarios separados; configuración de A y repetición idéntica y hashes de modelos efectivos iguales. Nueve runs MLflow FINISHED con padres/hijos propios. Reutilizar AUDITA1 se rechaza antes de otra ejecución. |
+| Fallo y aislamiento | PASS para fallo controlado. AUDITFAIL/controlled-failure introduce una identidad de predicción incorrecta tras inferir; termina BLOCKED en scientific_evaluation, padre MLflow FAILED y registro BLOCKED. Los 33 archivos de evidencia de las tres ejecuciones previas permanecen idénticos y compare sigue funcionando. No se retiran locks, borran terminales ni reintentan identidades. SIGKILL/disco lleno y cuatro máquinas simultáneas no se acreditan con esta prueba. |
+| Protección científica | FAIL por AUD-01. Se reutilizan las pruebas del HEAD sobre 2025, T+1/T+2, compuertas solo en T, poblaciones comunes/nativas, clima, A/B/C, cupo, bootstrap de 2.000 meses y cinco semillas; el E2E ampliado existente cubre 180 ajustes artificiales. Ningún resultado sintético se interpreta como ciencia. La regla entre semillas sigue PROPUESTA_PARA_APROBACION. |
+| Preservación y fronteras | PASS. Verificador oficial normal/-O: 49 hashes, 16 recibos históricos y N=3 T16 intactos; registro VALID. 91 archivos actuales de evidencia/recetas/resultados idénticos a HEAD; T16, EXP001/EXP002, certificados y resultados sin diff frente a a324f3c. Los 22 JSON conservan identidad. app/ y datos/resultados/ del clon temporal tampoco cambian. Sin candidatos a secretos en archivos versionados; 969 blobs alcanzables por HEAD sin objetos mayores de 5 MiB. Workspaces, crudos, tracking y .env ignorados. El escaneo por patrones no garantiza ausencia universal de secretos. |
+| Uso por el equipo | PASS_WITH_LIMITATIONS. Manual y guía operacional describen creación, hashes, revisión/aprobación, comando E2E, comparación, repetición con nuevo ID y recuperación conservadora. La autenticación individual, permisos y aprobación son prerrequisitos, no transferencias manuales entre etapas. Acceso privado de las cuatro cuentas y recursos reales de sus equipos NOT_VERIFIED; no se consulta HF ni se descargan datos privados. Portabilidad del ejemplo de autenticación incompleta: AUD-03. |
+
+Defectos reproducidos, sin corregir:
+
+- **AUD-01 — bloqueante:** `evaluation/scientific/reporting.py:457–459` sobrescribe
+  UTILIDAD_PROPUESTA=INVALIDO con NO_EVALUABLE cuando falla el soporte declarado
+  del productor. Prueba artificial aislada: 80 observaciones/40 inicios y control
+  negativo perfecto producen INVALIDO; al proyectar producer_support_passed=false,
+  el estado pasa a NO_EVALUABLE aunque negative_controls siga CUMPLE. Se usan
+  dobles de identidad/emisión solo para aislar esa proyección, sin entrenar.
+  Composición adicional de cuatro cortes/cinco semillas: si el cuarto corte
+  pierde así la invalidación y se excluye, los otros tres votos CUMPLE permiten
+  CUMPLE_BAJO_CONTRATO_PROPUESTO. Es una prueba artificial del defecto, no una
+  conclusión académica ni una corrida real que se haya aceptado como válida.
+- **AUD-02 — metadatos inconsistentes:** `experiment_management/runner.py:394–396`
+  fija summary=PENDING_SEED_AGGREGATION_RULE y seed_verdict_aggregation pendiente.
+  Reproducido en los tres recibos V3: sus fragmentos seed_stability ya contienen
+  NO_EVALUABLE y la regla implementada. El consumidor del recibo recibe un estado
+  obsoleto respecto del contrato 0.2.2 y la evidencia detallada.
+- **AUD-03 — documentación no portable:** `manual_pipeline.md:66–68` presenta
+  sintaxis zsh dentro de un bloque sh. Copiar `read -s "HF_TOKEN?Token de Hugging Face: "`
+  en Bash devuelve «not a valid identifier», sin llegar a cargar credencial.
+  La guía operacional sí distingue zsh/Bash/PowerShell. Los hashes del manual
+  usan shasum/sha256sum sin equivalente para PowerShell documentado allí.
+
+Evidencia adicional conservada solo localmente en
+`pipeline/data/pr3-final-audit/`: probe-result.json, invalid-support-probe.json,
+logs de las tres CLI, registro de ubicación del clon temporal, preservación y
+recibos de CI descargados. Se conserva también un fallo de preparación del
+sondeo antes de clonar: cwd cambió por --directory; no fue una corrida de fábrica.
+No se incorpora infraestructura nueva ni evidencia experimental oficial.
+
+Acciones mínimas posteriores, fuera de esta auditoría: preservar INVALIDO antes
+de excluir por soporte y cubrir esa composición con una regresión; sincronizar
+los metadatos del recibo con la agregación propuesta; aclarar los comandos por
+shell/enlazar la guía operacional. La aprobación del equipo, revisión científica
+independiente, cohorte confirmatoria y N=3 E2E de un eventual finalista siguen
+pendientes. Ningún check verde elimina AUD-01. Sin correcciones, campeón, uso de
+2025, experimentos científicos reales, acceso privado, publicación o merge.
+
+
+### Corrección autorizada de AUD-01/AUD-02/AUD-03 — PASS técnico local
+
+El usuario autoriza corregir exclusivamente los tres defectos en la rama actual
+y el PR #3. Se conserva íntegro el registro local de la auditoría sobre e10b3f4;
+su FAIL es histórico y no se elimina. El preflight confirma HEAD local/remoto
+coincidente y siete checks SUCCESS para e10b3f4; no validan el próximo commit.
+No se cambia el contrato 0.2.2-propuesta, el comando E2E ni la arquitectura Kedro.
+
+Se añaden seis casos dirigidos antes de la corrección: control negativo aprobado
+y predicción ausente con soporte insuficiente; soporte insuficiente sin invalidez;
+recibos de éxito y fallos anteriores/posteriores a la agregación. Cinco casos
+fallan por los defectos auditados; soporte insuficiente sin invalidez ya pasa.
+Después de las correcciones pasan los seis. Se comprueba la celda, sus causas,
+los cuatro cortes y cinco semillas, y la concordancia del recibo con fragmentos
+e inventario. Gates del alcance y preservación PASS, detallados a continuación.
+
+
+AUD-01: el soporte insuficiente queda reportado, sin sobrescribir INVALIDO ni
+sus causas (controles negativos/predicciones ausentes). La regresión ejercita
+métricas y agregación reales con dobles solo de emisión/procedencia y una vista:
+cuatro cortes y las cinco semillas, con tres cortes favorables y el cuarto
+inválido para una semilla. Celda, consistencia y resumen conservan INVALIDO;
+el caso sin invalidez mantiene la exclusión válida por soporte y puede cumplir.
+
+AUD-02: el recibo proyecta directamente los registros seed_stability de los
+fragmentos que se van a guardar, con las cinco dimensiones y su estado. No
+mezcla vistas ni inventa otro estado global. Si el fallo precede la agregación,
+summary es una lista vacía; si la agregación ya existe, se conserva también en
+terminal fallido. Se mantienen team_approval, independent_confirmatory_cohort
+y finalist_E2E_N3 como límites pendientes, sin seed_verdict_aggregation obsoleto.
+Pruebas de éxito/fallo cotejan recibo, fragmentos, inventario y hashes; el E2E
+artificial real coteja además la proyección efectivamente publicada.
+
+AUD-03: el manual enlaza sin ambigüedad la autenticación oculta por zsh, Bash y
+PowerShell ya documentada; se actualiza la referencia inversa de la guía
+operacional. Se añade Get-FileHash para preparar hashes desde PowerShell y se
+indica normalizarlos a minúsculas. No se solicita, muestra o almacena un token.
+La guía científica documenta la lista summary y su comportamiento ante fallos.
+
+| Validación ejecutada | Resultado comprobado |
+|---|---|
+| Seis regresiones nuevas, antes/después | Cinco fallos esperados y un caso válido antes; seis PASS después. Logs locales preservados bajo pipeline/data/pr3-audit-fixes/. |
+| pytest test_scientific_evaluation.py, test_seed_aggregation.py, test_scientific_e2e.py y test_experiment_management.py | 104 PASS, sin fallos, errores u omisiones. Incluye E2E de 180 ajustes artificiales, CLI real con MLflow, coexistencia y terminales. |
+| uv lock --check; uv sync --locked; Ruff | PASS; sin cambios de dependencias. |
+| Registro oficial | VALID; sin nuevas entradas ni ejecuciones oficiales. |
+| Preservación normal y Python -O | PASS: 49 hashes protegidos, 16 recibos históricos, N=3 T16 y los 22 JSON intactos. |
+| Pydantic/Zod de las publicaciones | 22 + 22 documentos válidos. |
+| Control extendido | 93 archivos de evidencia/recetas/resultados, contrato y plan maestro idénticos a e10b3f4. La auditoría local previa se conserva literalmente. |
+| Documentación, higiene y diff | Enlaces locales/ancla de autenticación, tamaños menores de 512 kB, ausencia de candidatos a secretos y diff verificados. Sin notebooks, datos, modelos o cambios en API/tablero. |
+
+No se repiten localmente suites completas de producto o pipeline por rutina:
+los cambios de ciencia/lifecycle se cubren con las 104 pruebas del alcance;
+la suite completa y la matriz nativa se verifican en CI del nuevo HEAD tras el
+push. No se confunden con los siete checks previos de e10b3f4. Se mantiene el
+borrador, el único PR #3 y el comando E2E. El contrato continúa propuesto;
+no se ejecuta ciencia real, usa 2025, selecciona campeón o hace merge.
+
+Reporte local: `pipeline/data/pr3-audit-fixes/focused.xml`, 124.744 s, SHA-256 `d2c58d7ef03da5a00065d2fb2745d0ab27ab139f9d24ede2129c79ccf422c47b`.

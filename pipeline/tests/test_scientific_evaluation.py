@@ -2,6 +2,7 @@
 
 import copy
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
@@ -9,6 +10,7 @@ import pytest
 from fixtures.scientific_fixture import recipe
 
 from sat_dengue_pipeline.domain.onset import build_labels
+from sat_dengue_pipeline.evaluation.scientific import reporting
 from sat_dengue_pipeline.evaluation.scientific.configuration import variants
 from sat_dengue_pipeline.evaluation.scientific.policy import (
     cap_alerts,
@@ -332,6 +334,93 @@ def test_negative_control_that_meets_invalidates_the_policy() -> None:
     assert cell["negative_controls"]["random_ranking"] == "CUMPLE"
     assert cell["UTILIDAD_PROPUESTA"] == "INVALIDO"
     assert cell["scientific_conclusion"] == "NOT_APPROVED"
+
+
+@pytest.mark.parametrize("cause", ["negative_control", "missing_prediction", "support_only"])
+def test_insufficient_producer_support_preserves_invalid_cell_cuts_and_five_seeds(
+    monkeypatch: pytest.MonkeyPatch, cause: str
+) -> None:
+    """Un corte inválido no desaparece tras tres votos favorables de cada una de cinco semillas."""
+    import copy
+
+    frame = observations()
+    perfect = frame.onset.eq(1).to_numpy()
+    weak = np.array([0, 1, 0, 0] * 20, dtype=bool)
+    decisions = {
+        "candidate": perfect,
+        "channel_C0": weak,
+        "channel_conditioned": weak,
+        "persistence": np.zeros(80, dtype=bool),
+        "random_ranking": weak,
+        "alert_everything": np.ones(80, dtype=bool),
+        "inflated_channel": weak,
+    }
+    affected_frame, affected_decisions = frame.copy(), copy.deepcopy(decisions)
+    if cause == "negative_control":
+        affected_decisions["random_ranking"] = perfect
+    elif cause == "missing_prediction":
+        affected_frame.loc[7, "candidate_probability"] = np.nan
+    policy = {"status": "FROZEN", "budget_rate": 1.0, "sha256": "a" * 64}
+    seeds = [7, 13, 31, 53, 101]
+    runs = {}
+    for seed in seeds:
+        for cut in range(4):
+            dimensions = dict(
+                arm="epi", population="native", reading="primary", seed=seed, cut=str(cut)
+            )
+            runs[f"{seed}.{cut}"] = SimpleNamespace(
+                artifact=SimpleNamespace(serialized_sha256="b" * 64, semantic_digest="c" * 64),
+                config={"horizons": [1], "scientific_dimensions": dimensions},
+                lineage={"canonical": {}},
+                identities={"1": {"model_json": "d" * 64}},
+                support={"1": {"evaluation": {"passed": not (seed == 53 and cut == 3)}}},
+                temporal={},
+                label_reads={},
+                scientific_policies={1: policy},
+            )
+
+    def artificial_emission(run, horizon):
+        """Sustituir solo procedencia de modelos: métricas y agregación usan funciones reales."""
+        dims = run.config["scientific_dimensions"]
+        if dims["seed"] == 53 and dims["cut"] == "3":
+            return affected_frame, affected_decisions, True
+        return frame, decisions, True
+
+    monkeypatch.setattr(reporting, "verify_artifact", lambda artifact: None)
+    monkeypatch.setattr(reporting, "emission_frame", artificial_emission)
+    monkeypatch.setattr(
+        reporting, "cells", lambda frame: [("primary_meta_tolima", "all", np.ones(80, dtype=bool))]
+    )
+    records, _ = reporting.evaluate_runs(
+        runs,
+        {
+            "horizons": [1],
+            "scientific_evaluation": {
+                "seeds": seeds,
+                "cuts": [{"id": str(cut)} for cut in range(4)],
+                "consistency_rule": "strict_majority_min_three",
+                "consistency_vote": "both_rules_cumple",
+            },
+        },
+    )
+    cell = next(r for r in records if r["kind"] == "cell" and r["seed"] == 53 and r["cut"] == "3")
+    assert cell["support_status"] == "INSUFFICIENT_DECLARED_ROLE_SUPPORT"
+    assert not cell["producer_support_passed"]
+    expected = "NO_EVALUABLE" if cause == "support_only" else "INVALIDO"
+    assert cell["UTILIDAD_PROPUESTA"] == expected
+    if cause == "negative_control":
+        assert cell["negative_controls"]["random_ranking"] == "CUMPLE"
+    elif cause == "missing_prediction":
+        assert cell["missing_predictions"] == 1 and cell["ABC_HISTORICA"]["status"] == "INVALIDO"
+    consistency = next(r for r in records if r["kind"] == "consistency" and r["seed"] == 53)
+    assert consistency["usable_cuts"] == consistency["votes"] == 3
+    assert consistency["status"] == ("CUMPLE" if cause == "support_only" else "INVALIDO")
+    combined = next(r for r in records if r["kind"] == "seed_stability")
+    assert len(combined["seeds"]) == 5
+    assert combined["status"] == (
+        "CUMPLE_BAJO_CONTRATO_PROPUESTO" if cause == "support_only" else "INVALIDO"
+    )
+    assert all(s["consistency"] == "CUMPLE" for s in combined["seeds"] if s["seed"] != 53)
 
 
 def test_scientific_fragment_hash_and_presence_are_required(tmp_path: Path) -> None:

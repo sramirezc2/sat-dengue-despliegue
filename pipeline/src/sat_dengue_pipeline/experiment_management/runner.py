@@ -391,9 +391,18 @@ def finish_execution(
                 "cuts": [c["id"] for c in config["scientific_evaluation"]["cuts"]],
                 "arms": [a["id"] for a in config["scientific_evaluation"]["arms"]],
                 "records": sorted(additions),
-                "summary": "PENDING_SEED_AGGREGATION_RULE",
+                "summary": [
+                    {
+                        key: record[key]
+                        for key in (
+                            "arm", "population", "reading", "horizon", "territory", "status"
+                        )
+                    }
+                    for fragment in additions.values()
+                    for record in fragment["records"]
+                    if record["kind"] == "seed_stability"
+                ],
                 "pending_scientific_limits": [
-                    "seed_verdict_aggregation",
                     "team_approval",
                     "finalist_E2E_N3",
                     "independent_confirmatory_cohort",

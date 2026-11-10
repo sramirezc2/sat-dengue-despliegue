@@ -455,7 +455,9 @@ def evaluate_runs(runs: dict[str, Any], configuration: dict) -> tuple[list[dict]
                 record = evaluate_cell(subframe, subdecisions, policy)
                 record["producer_support_passed"] = run.support[str(h)]["evaluation"]["passed"]
                 if not record["producer_support_passed"]:
-                    record["UTILIDAD_PROPUESTA"] = "NO_EVALUABLE"
+                    # El soporte no borra invalidez ni su causa; summaries le da precedencia.
+                    if record["UTILIDAD_PROPUESTA"] != "INVALIDO":
+                        record["UTILIDAD_PROPUESTA"] = "NO_EVALUABLE"
                     record["support_status"] = "INSUFFICIENT_DECLARED_ROLE_SUPPORT"
                 record.update(
                     **dimensions,

@@ -192,6 +192,12 @@ su registro completo identificado en los fragmentos. Esas proyecciones no se
 suman como si fueran lecturas o resultados independientes. No se versionan modelos, matrices,
 filas de predicción ni datos crudos. El recibo enlaza fragmentos/contrato y el
 registro sigue RUNNING hasta conclusiones humanas; COMPLETED describe el cálculo.
+En los recibos V3 nuevos, `scientific_evaluation.summary` proyecta los estados
+`seed_stability` de los fragmentos guardados, con brazo, población, lectura,
+horizonte y territorio separados. Si el fallo impide calcular la agregación,
+la lista queda vacía y el terminal/etapa del recibo identifica el fallo; si ya se
+calculó, conserva esos estados incluso en un terminal fallido. Los límites de
+aprobación del equipo, confirmación independiente y N=3 finalista siguen pendientes.
 Los fallos en cualquier nodo preservan terminal/evidencia y bloquean el registro.
 Las evidencias de versiones anteriores conservan sus esquemas y bytes.
 

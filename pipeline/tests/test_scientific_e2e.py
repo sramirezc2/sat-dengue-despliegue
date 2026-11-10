@@ -17,6 +17,95 @@ from sat_dengue_pipeline.pipelines.experiment_run.pipeline import create_pipelin
 from sat_dengue_pipeline.raw.contract import sha256
 
 
+@pytest.mark.parametrize(
+    "case", ["success", "failure_before_aggregation", "failure_after_aggregation"]
+)
+def test_receipt_summary_matches_saved_aggregation_and_inventory(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, case: str
+) -> None:
+    """Conservar estados por vista y solo los límites pendientes en éxito y terminal fallido."""
+    _, entry = repository(tmp_path)
+    monkeypatch.setattr(
+        runner,
+        "code_identity",
+        lambda root: {"git_sha": "a" * 40, "source_sha256": "b" * 64, "dirty": False},
+    )
+    session = runner.begin_execution(
+        entry["experiment_id"], root=tmp_path, execution_id=case, tracking=False
+    )
+    expected = (
+        [
+            dict(
+                arm="epi",
+                population="native",
+                reading="primary",
+                horizon=1,
+                territory="national",
+                status="CUMPLE_BAJO_CONTRATO_PROPUESTO",
+            ),
+            dict(
+                arm="climate",
+                population="common",
+                reading="secondary_t2",
+                horizon=2,
+                territory="primary_meta_tolima",
+                status="NO_EVALUABLE",
+            ),
+            dict(
+                arm="epi",
+                population="native",
+                reading="primary",
+                horizon=2,
+                territory="national",
+                status="INCONCLUSO_POR_INESTABILIDAD",
+            ),
+        ]
+        if case != "failure_before_aggregation"
+        else []
+    )
+    session.scientific_records = [
+        {"kind": "seed_stability", "label": "VEREDICTO_BAJO_CONTRATO_PROPUESTO", **row}
+        for row in expected
+    ]
+    session.gate = "scientific_evaluation"
+    if case == "success":
+        runner.finish_execution(session)
+    else:
+        with pytest.raises(runner.ExecutionError, match="BLOCKED:scientific_evaluation"):
+            runner.finish_execution(session, ValueError("controlled artificial terminal"))
+    reference = f"docs/evidence/experiments/{entry['experiment_id']}/{case}/inventory.json"
+    receipt = verify_execution(tmp_path, reference)
+    folder = (tmp_path / reference).parent
+    science = receipt["scientific_evaluation"]
+    records = [
+        r
+        for name in science["records"]
+        for r in json.loads((folder / name).read_bytes())["records"]
+    ]
+    assert science["summary"] == expected
+    assert records == [
+        {"kind": "seed_stability", "label": "VEREDICTO_BAJO_CONTRATO_PROPUESTO", **row}
+        for row in expected
+    ]
+    assert science["pending_scientific_limits"] == [
+        "team_approval",
+        "finalist_E2E_N3",
+        "independent_confirmatory_cohort",
+    ]
+    assert science["scientific_conclusion"] == "NOT_APPROVED"
+    assert receipt["status"] == ("COMPLETED" if case == "success" else "BLOCKED")
+    inventory = json.loads((folder / "inventory.json").read_bytes())
+    assert set(inventory) == {
+        "receipt.json",
+        "configuration.json",
+        "lineage.json",
+        "metrics.json",
+        "validation.json",
+        *science["records"],
+    }
+    assert all(sha256(folder / name) == digest for name, digest in inventory.items())
+
+
 def test_scientific_kedro_e2e_uses_its_certified_data_and_fitted_models(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -148,6 +237,13 @@ def test_scientific_kedro_e2e_uses_its_certified_data_and_fitted_models(
     stability = [r for r in records if r["kind"] == "seed_stability"]
     assert stability and all(r["status"] == "NO_EVALUABLE" for r in stability)
     assert all(len(r["seeds"]) == 5 and r["team_approval_required"] for r in stability)
+    assert receipt["scientific_evaluation"]["summary"] == [
+        {
+            key: row[key]
+            for key in ("arm", "population", "reading", "horizon", "territory", "status")
+        }
+        for row in stability
+    ]
     assert Registry(tmp_path).get(entry["experiment_id"])["status"] == "RUNNING"
     from sat_dengue_pipeline.experiment_management.compare import compare
 
@@ -233,6 +329,10 @@ def test_scientific_pipeline_runs_with_one_kedro_cli_command(tmp_path: Path) -> 
     assert len(references) == 1
     receipt = verify_execution(tmp_path, references[0].relative_to(tmp_path).as_posix())
     assert receipt["scientific_evaluation"]["scientific_conclusion"] == "NOT_APPROVED"
+    assert receipt["scientific_evaluation"]["summary"]
+    assert all(
+        row["status"] == "NO_EVALUABLE" for row in receipt["scientific_evaluation"]["summary"]
+    )
     assert receipt["mlflow"]["enabled"]
     store = tmp_path / "pipeline/.tracking/experiments/tracking.sqlite"
     with sqlite3.connect(f"file:{store}?mode=ro", uri=True) as db:
@@ -279,3 +379,4 @@ def test_scientific_stage_failure_preserves_terminal_and_signed_inventory(
     assert receipt["status"] == "BLOCKED" and receipt["gate"] == "scientific_evaluation"
     assert Registry(tmp_path).get(entry["experiment_id"])["status"] == "BLOCKED"
     assert receipt["scientific_evaluation"]["scientific_conclusion"] == "NOT_APPROVED"
+    assert receipt["scientific_evaluation"]["summary"] == []
