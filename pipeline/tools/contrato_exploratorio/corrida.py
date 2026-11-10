@@ -19,7 +19,8 @@ from pathlib import Path
 import yaml
 
 from sat_dengue_pipeline.domain.calendar import add_months
-from sat_dengue_pipeline.evaluation.contrato import PARAMETROS_DEFECTO
+import contrato_local as ct
+from contrato_local import PARAMETROS_DEFECTO
 from sat_dengue_pipeline.factory import engine
 from sat_dengue_pipeline.factory.rolling_protocol import filtrar_poblacion
 from sat_dengue_pipeline.raw.serialization import CanonicalArtifact, load_canonical
@@ -48,7 +49,6 @@ for h, roles in cfg["roles_by_horizon"].items():
             raise SystemExit(f"Cohorte no factible: train de {n} meses")
         tr["support"]["months"] = n
 cfg["population"] = {"department_codes": ["50", "73"]}
-cfg["contract"] = dict(PARAMETROS_DEFECTO)
 p = Path(
     sorted(
         glob.glob(
@@ -71,6 +71,13 @@ run = engine.FactoryRun(
 )
 for fn in (engine.prepare, engine.preflight, engine.fit, engine.predict, engine.evaluate):
     fn(run)
+# Evaluación del contrato (copia local; la oficial de la fábrica está en el PR #3).
+for h in list(run.results):
+    pred = run.predictions[int(h)]
+    run.results[h]["contract"] = ct.evaluar(
+        pred.keys, pred.raw_probability, run.batches[int(h)]["threshold_selection"].keys,
+        run.table, int(h), dict(PARAMETROS_DEFECTO),
+    )
 out = {
     "receta": receta,
     "desplazamiento": shift,

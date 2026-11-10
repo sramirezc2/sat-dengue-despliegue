@@ -1,6 +1,6 @@
 # Exploración bajo el contrato científico (tanda 10)
 
-Herramientas exploratorias. No pasan por el registro de la fábrica, no generan evidencia y no cambian estados. Usan el motor de `experiment_run` (cinco roles fijos) y `evaluation/contrato.py` sobre el panel canónico construido desde el manifiesto privado aprobado.
+Herramientas exploratorias. No pasan por el registro de la fábrica, no generan evidencia y no cambian estados. Usan el motor de `experiment_run` (cinco roles fijos) y una copia local de la evaluación del contrato (`contrato_local.py`; la evaluación oficial de la fábrica es la del PR #3) sobre el panel canónico construido desde el manifiesto privado aprobado.
 
 - `corrida.py <receta.yml> <desplazamiento> <salida.json>`: una corrida en Tolima y Meta. El desplazamiento 0 usa los roles de EXP001 (evaluación 2024); 1, 2 y 3 los mueven 12, 24 y 36 meses hacia atrás. En las cohortes antiguas, el entrenamiento se recorta a 2016-08, el primer mes con el canal de 5 años completo, y se declara su soporte real.
 - `corrida_nacional.py`: igual, pero entrena con todo el país y evalúa el contrato solo en Tolima y Meta (§4.4).

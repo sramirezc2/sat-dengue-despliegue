@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from sat_dengue_pipeline.evaluation import contrato as ct
+import contrato_local as ct
 from sat_dengue_pipeline.raw.serialization import CanonicalArtifact, load_canonical
 
 carpeta, receta = Path(sys.argv[1]), sys.argv[2]
