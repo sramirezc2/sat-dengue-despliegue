@@ -1,0 +1,1045 @@
+{
+  "schema": "sat-dengue.full-canonical-certification/v1",
+  "at_utc": "2026-11-10T00:54:40.698779+00:00",
+  "source_head": "9e06a519d20de5b86cf3f07f0420175cf5644fff",
+  "base_head": "0004185c6a850f66aad07290cf4fbba672dd5b7f",
+  "source_tree_clean_at_first_build_start": true,
+  "later_diff_only_authorized_documentation": true,
+  "status": "PASSED",
+  "profile": {
+    "profile": "operational_full",
+    "start": "2007-01",
+    "end": "2024-12",
+    "municipalities": 1122,
+    "epi_start": "2007-01",
+    "reserved_start": "2025-01"
+  },
+  "preflight": {
+    "status": "PASSED",
+    "base_head": "0004185c6a850f66aad07290cf4fbba672dd5b7f",
+    "release_id": "satd-raw-173d5856",
+    "revision": "173d5856874b89d8aeb0566accc65ce7f6759820",
+    "files": [
+      {
+        "logical_name": "divipola_catalog",
+        "size_bytes": 209867,
+        "sha256": "72eabcea0ff26370d23b9688e8d8f2246946cc815c040ccf1a6966b37a1de9f3",
+        "verified": true
+      },
+      {
+        "logical_name": "divipola_provenance",
+        "size_bytes": 925,
+        "sha256": "92091306f0130910f27de999776b5cf4ed36b7dd7c89bd724d58caeb74f8c158",
+        "verified": true
+      },
+      {
+        "logical_name": "dengue_notifications",
+        "size_bytes": 875694283,
+        "sha256": "58d277cfef7a60c28d488eefe4e7a1a7bf0f7b0df3dd88245971cd7b3d32c84b",
+        "verified": true
+      },
+      {
+        "logical_name": "severe_dengue_notifications",
+        "size_bytes": 24537734,
+        "sha256": "3d60e96ccbedc35a19a8f5f54be8d786aa599813259c914f131522bf17dd1d70",
+        "verified": true
+      },
+      {
+        "logical_name": "daily_climate",
+        "size_bytes": 1721511337,
+        "sha256": "a92fd7c7e013136280ba3766b870a303c22ad6196b5411a3fefb81b46670ec8e",
+        "verified": true
+      }
+    ],
+    "climate_min": "2007-01-01",
+    "climate_max": "2025-12-31",
+    "january_2007": {
+      "rows": 34782,
+      "municipalities": 1122,
+      "days": 31,
+      "unique_keys": 34782,
+      "duplicates": 0,
+      "complete_cartesian_grid": true
+    },
+    "january_2020": {
+      "rows": 34782,
+      "municipalities": 1122,
+      "days": 31,
+      "unique_keys": 34782,
+      "duplicates": 0,
+      "complete_cartesian_grid": true
+    },
+    "epidemiology": {
+      "dengue.csv": {
+        "min_valid_date": "2006-01-02",
+        "max_valid_date": "2026-01-03",
+        "rows_before_2007": 237,
+        "invalid_dates": 133
+      },
+      "dengue_grave.csv": {
+        "min_valid_date": "2006-01-13",
+        "max_valid_date": "2026-01-03",
+        "rows_before_2007": 56,
+        "invalid_dates": 3
+      }
+    },
+    "elapsed_seconds": 11.936217082999065
+  },
+  "scientific_review": {
+    "mode": "pre-execution canonical scope review",
+    "recommendation": "APPROVED_WITH_LIMITATIONS",
+    "authority": "User DEC-031 explicit scope",
+    "scope": "Only canonical coverage; no experiment or model approval",
+    "findings": [
+      "Raw integrity and requested initial coverage verified",
+      "2025-01 boundary remains fixed before all producers",
+      "Historical BuildConfig payload and original manifest unchanged",
+      "Training roles, horizons, predictors, models, calibrations, thresholds and metrics are unchanged",
+      "Raw timestamps and presence of events do not certify real-time reporting availability or completeness of surveillance"
+    ],
+    "training_executed": false,
+    "experiment_created": false
+  },
+  "manifest_sha256": "1b2a28a4c90d3225272c2103b27d3cef1bfb69f3a6aeb9470e4177fd3798ed01",
+  "validation_recovery": {
+    "construction_repeated": false,
+    "initial_validation_error": "AssertionError requiring zero climate nulls",
+    "corrected_scope": "User explicitly accepts complete keys with preserved climate nulls; fail on missing or null keys",
+    "initial_diagnostic_preserved": true,
+    "scientific_recipe_or_data_changed": false
+  },
+  "first_build": {
+    "status": "PASSED",
+    "rows": 242352,
+    "unique_keys": 242352,
+    "municipalities": 1122,
+    "months": 216,
+    "start": "2007-01",
+    "end": "2024-12",
+    "duplicates": 0,
+    "observations_from_2025": 0,
+    "schema_sha256": "b9ad238e2fac29edcb942964cfabf5b8b8222ef54e86c456c96cbdb6d0686fc0",
+    "keys_sha256": "db444bee79d02bd1f3a467f2d2bccd649fe674fda5dd9cd1b7853791696c8577",
+    "null_keys": 0,
+    "complete_daily_key_coverage_all_months": true,
+    "january_2020": {
+      "municipalities": 1122,
+      "complete_daily_keys": true,
+      "complete_values_by_variable": {
+        "rain_mm_month_sum": false,
+        "surface_runoff_mm_month_sum": false,
+        "total_evaporation_mm_month_sum_ecmwf": false,
+        "solar_radiation_mj_m2_month_sum": false,
+        "temp_mean_c_month_mean": false,
+        "dewpoint_mean_c_month_mean": false,
+        "soil_water_l1_month_mean": false,
+        "wind_u_ms_month_mean": false,
+        "wind_v_ms_month_mean": false
+      }
+    },
+    "climate_missingness": {
+      "municipalities": [
+        {
+          "municipality_code": "88001",
+          "municipality_name": "SAN ANDRÉS",
+          "start_date": "2007-01-01",
+          "end_date": "2024-12-31",
+          "affected_months": 216,
+          "variables": [
+            {
+              "raw_variable": "rain_mm_day",
+              "canonical_variable": "rain_mm_month_sum",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "surface_runoff_mm_day",
+              "canonical_variable": "surface_runoff_mm_month_sum",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "total_evaporation_mm_day_ecmwf",
+              "canonical_variable": "total_evaporation_mm_month_sum_ecmwf",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "solar_radiation_mj_m2_day",
+              "canonical_variable": "solar_radiation_mj_m2_month_sum",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 5943,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": false
+            },
+            {
+              "raw_variable": "temp_mean_c",
+              "canonical_variable": "temp_mean_c_month_mean",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "dewpoint_mean_c",
+              "canonical_variable": "dewpoint_mean_c_month_mean",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "soil_water_l1_mean",
+              "canonical_variable": "soil_water_l1_month_mean",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "wind_u_mean_ms",
+              "canonical_variable": "wind_u_ms_month_mean",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "wind_v_mean_ms",
+              "canonical_variable": "wind_v_ms_month_mean",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            }
+          ]
+        },
+        {
+          "municipality_code": "88564",
+          "municipality_name": "PROVIDENCIA",
+          "start_date": "2007-01-01",
+          "end_date": "2024-12-31",
+          "affected_months": 216,
+          "variables": [
+            {
+              "raw_variable": "rain_mm_day",
+              "canonical_variable": "rain_mm_month_sum",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "surface_runoff_mm_day",
+              "canonical_variable": "surface_runoff_mm_month_sum",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "total_evaporation_mm_day_ecmwf",
+              "canonical_variable": "total_evaporation_mm_month_sum_ecmwf",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "solar_radiation_mj_m2_day",
+              "canonical_variable": "solar_radiation_mj_m2_month_sum",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 5943,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": false
+            },
+            {
+              "raw_variable": "temp_mean_c",
+              "canonical_variable": "temp_mean_c_month_mean",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "dewpoint_mean_c",
+              "canonical_variable": "dewpoint_mean_c_month_mean",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "soil_water_l1_mean",
+              "canonical_variable": "soil_water_l1_month_mean",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "wind_u_mean_ms",
+              "canonical_variable": "wind_u_ms_month_mean",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            },
+            {
+              "raw_variable": "wind_v_mean_ms",
+              "canonical_variable": "wind_v_ms_month_mean",
+              "months": 216,
+              "start_month": "2007-01",
+              "end_month": "2024-12",
+              "daily_missing_values": 6575,
+              "canonical_missing_values": 216,
+              "zero_valid_days_in_every_affected_month": true
+            }
+          ]
+        }
+      ],
+      "effects": {
+        "canonical_rows_retained": 242352,
+        "rows_with_missing_climate": 432,
+        "rows_with_complete_climate": 241920,
+        "rows_with_all_predictors_complete": 174720,
+        "otherwise_complete_rows_missing_only_climate": 312,
+        "january_2020_rows_retained": 1122,
+        "january_2020_rows_with_complete_climate": 1120
+      },
+      "canonical_missing_cells": 3888,
+      "imputation_performed": false,
+      "conversion_to_zero": false
+    },
+    "epidemiology_status_counts": {
+      "zero_in_coverage": 147162,
+      "records_present": 95190
+    },
+    "semantic_digest": "de49b11bad43c35983a098ead2faa149d4e744da4172432aecdaadd828c73158",
+    "serialized_sha256": "b4562ba50def7a98dceede0b7e95feed0e799b4652939d8037f1604bef37a23d",
+    "serialized_bytes": 88683091,
+    "measurements": {
+      "cpu_seconds": 291.84967,
+      "peak_rss_bytes": 14170472448,
+      "stages_seconds": {
+        "daily_climate": 108.37567879199923,
+        "epidemiology": 8.478497290998348,
+        "geography": 0.004817791999812471,
+        "integrity_after": 1.2368515829984972,
+        "integrity_before": 1.2819484579995333,
+        "monthly_climate": 119.18395891599721,
+        "panel": 30.78239725000094,
+        "projection": 7.929035291999753,
+        "quarantine": 2.4058991670026444,
+        "serialization": 7.059632666001562,
+        "validation": 4.519111917001283
+      },
+      "wall_seconds": 292.8626270419991
+    },
+    "audit": {
+      "coverage": {
+        "end": "2024-12",
+        "municipalities": 1122,
+        "nulls": {
+          "climate_days_observed": 0,
+          "dengue_grave_notifications_count": 0,
+          "dengue_grave_notifications_count_lag1": 1122,
+          "dengue_grave_notifications_count_lag12": 13464,
+          "dengue_grave_notifications_count_lag2": 2244,
+          "dengue_grave_notifications_count_lag3": 3366,
+          "dengue_notifications_count": 0,
+          "dengue_notifications_count_lag1": 1122,
+          "dengue_notifications_count_lag12": 13464,
+          "dengue_notifications_count_lag2": 2244,
+          "dengue_notifications_count_lag3": 3366,
+          "department_code": 0,
+          "dewpoint_mean_c_month_mean": 432,
+          "dewpoint_mean_c_month_mean_valid_days": 0,
+          "epi_count_status": 0,
+          "expected_days_in_month": 0,
+          "history_valid_years_h5_t1": 0,
+          "history_valid_years_h5_t2": 0,
+          "in_epi_coverage": 0,
+          "month_of_year": 0,
+          "municipality_code": 0,
+          "municipality_name": 0,
+          "p25_canal_t": 67320,
+          "p25_h5_t1": 66198,
+          "p25_h5_t2": 65076,
+          "p50_canal_t": 67320,
+          "p75_canal_t": 67320,
+          "p75_h5_t1": 66198,
+          "p75_h5_t2": 65076,
+          "rain_mm_month_sum": 432,
+          "rain_mm_month_sum_valid_days": 0,
+          "soil_water_l1_month_mean": 432,
+          "soil_water_l1_month_mean_valid_days": 0,
+          "solar_radiation_mj_m2_month_sum": 432,
+          "solar_radiation_mj_m2_month_sum_valid_days": 0,
+          "surface_runoff_mm_month_sum": 432,
+          "surface_runoff_mm_month_sum_valid_days": 0,
+          "temp_mean_c_month_mean": 432,
+          "temp_mean_c_month_mean_valid_days": 0,
+          "total_evaporation_mm_month_sum_ecmwf": 432,
+          "total_evaporation_mm_month_sum_ecmwf_valid_days": 0,
+          "total_notifications_count": 0,
+          "total_notifications_count_lag1": 1122,
+          "total_notifications_count_lag12": 13464,
+          "total_notifications_count_lag2": 2244,
+          "total_notifications_count_lag3": 3366,
+          "wind_u_ms_month_mean": 432,
+          "wind_u_ms_month_mean_valid_days": 0,
+          "wind_v_ms_month_mean": 432,
+          "wind_v_ms_month_mean_valid_days": 0,
+          "year_month": 0,
+          "zona_canal_t": 67320
+        },
+        "rows": 242352,
+        "start": "2007-01"
+      },
+      "quarantine": {
+        "daily_climate": {
+          "digest": "acb3dd655810ec54f869de4cf28656272de5e8419a6985a879c69c09a1ee0672",
+          "input": 7786680,
+          "invalid_date": 0,
+          "reserved": 409530,
+          "retained": 7377150
+        },
+        "dengue_notifications": {
+          "digest": "b42c6eed13c9edd76c7d9ff60f580f40d4296f1516c431bb5ab7020c4e59189f",
+          "input": 1705604,
+          "invalid_date": 133,
+          "reserved": 119138,
+          "retained": 1586333
+        },
+        "severe_dengue_notifications": {
+          "digest": "daff297445fe1f049aae838451a77acd7dcae0aed6d8d0dbc2f493df128a4134",
+          "input": 50101,
+          "invalid_date": 3,
+          "reserved": 1259,
+          "retained": 48839
+        }
+      },
+      "stages": {
+        "climate": {
+          "accepted": 7377150,
+          "input": 7377150,
+          "outside_period": 0
+        },
+        "epidemiology": {
+          "dengue_notifications": {
+            "accepted": 1578798,
+            "input": 1586333,
+            "rejected": {
+              "invalid_residence": 0,
+              "outside_period": 233,
+              "unknown_municipality": 7302,
+              "wrong_event": 0
+            }
+          },
+          "severe_dengue_notifications": {
+            "accepted": 48301,
+            "input": 48839,
+            "rejected": {
+              "invalid_residence": 0,
+              "outside_period": 55,
+              "unknown_municipality": 483,
+              "wrong_event": 0
+            }
+          }
+        },
+        "monthly_climate_rows": 242352
+      }
+    }
+  },
+  "n3": {
+    "status": "PASSED",
+    "repetitions": 3,
+    "independent_processes": 3,
+    "serialized_hashes": [
+      "b4562ba50def7a98dceede0b7e95feed0e799b4652939d8037f1604bef37a23d",
+      "b4562ba50def7a98dceede0b7e95feed0e799b4652939d8037f1604bef37a23d",
+      "b4562ba50def7a98dceede0b7e95feed0e799b4652939d8037f1604bef37a23d"
+    ],
+    "semantic_digests": [
+      "de49b11bad43c35983a098ead2faa149d4e744da4172432aecdaadd828c73158",
+      "de49b11bad43c35983a098ead2faa149d4e744da4172432aecdaadd828c73158",
+      "de49b11bad43c35983a098ead2faa149d4e744da4172432aecdaadd828c73158"
+    ],
+    "measurements": [
+      {
+        "cpu_seconds": 289.15191999999996,
+        "peak_rss_bytes": 12370771968,
+        "stages_seconds": {
+          "daily_climate": 107.17992341700301,
+          "epidemiology": 8.092734916001064,
+          "geography": 0.004492000000027474,
+          "integrity_after": 1.2330362499997136,
+          "integrity_before": 1.1280987090030976,
+          "monthly_climate": 117.91315612499966,
+          "panel": 31.073052625000855,
+          "projection": 7.591343332998804,
+          "quarantine": 2.2884742919995915,
+          "serialization": 7.0644957090007665,
+          "validation": 4.525460624998232
+        },
+        "wall_seconds": 289.9827107079982
+      },
+      {
+        "cpu_seconds": 291.17332500000003,
+        "peak_rss_bytes": 12514246656,
+        "stages_seconds": {
+          "daily_climate": 107.71647433399994,
+          "epidemiology": 8.248400000000402,
+          "geography": 0.004565750001347624,
+          "integrity_after": 1.2327108749996114,
+          "integrity_before": 1.1300936249972438,
+          "monthly_climate": 118.55195824999828,
+          "panel": 31.432003124999028,
+          "projection": 7.59450066700083,
+          "quarantine": 2.316304500000115,
+          "serialization": 7.280281916999229,
+          "validation": 4.655752707996726
+        },
+        "wall_seconds": 292.10063187500054
+      },
+      {
+        "cpu_seconds": 291.725508,
+        "peak_rss_bytes": 12579438592,
+        "stages_seconds": {
+          "daily_climate": 107.90614291699967,
+          "epidemiology": 8.32672733399886,
+          "geography": 0.0046319169996422715,
+          "integrity_after": 1.232280542000808,
+          "integrity_before": 1.129115499999898,
+          "monthly_climate": 119.07096191700111,
+          "panel": 31.52013404200261,
+          "projection": 7.615839082998718,
+          "quarantine": 2.321475749999081,
+          "serialization": 7.094678999997996,
+          "validation": 4.6006075000004785
+        },
+        "wall_seconds": 292.77397550000023
+      }
+    ],
+    "audit": {
+      "coverage": {
+        "end": "2024-12",
+        "municipalities": 1122,
+        "nulls": {
+          "climate_days_observed": 0,
+          "dengue_grave_notifications_count": 0,
+          "dengue_grave_notifications_count_lag1": 1122,
+          "dengue_grave_notifications_count_lag12": 13464,
+          "dengue_grave_notifications_count_lag2": 2244,
+          "dengue_grave_notifications_count_lag3": 3366,
+          "dengue_notifications_count": 0,
+          "dengue_notifications_count_lag1": 1122,
+          "dengue_notifications_count_lag12": 13464,
+          "dengue_notifications_count_lag2": 2244,
+          "dengue_notifications_count_lag3": 3366,
+          "department_code": 0,
+          "dewpoint_mean_c_month_mean": 432,
+          "dewpoint_mean_c_month_mean_valid_days": 0,
+          "epi_count_status": 0,
+          "expected_days_in_month": 0,
+          "history_valid_years_h5_t1": 0,
+          "history_valid_years_h5_t2": 0,
+          "in_epi_coverage": 0,
+          "month_of_year": 0,
+          "municipality_code": 0,
+          "municipality_name": 0,
+          "p25_canal_t": 67320,
+          "p25_h5_t1": 66198,
+          "p25_h5_t2": 65076,
+          "p50_canal_t": 67320,
+          "p75_canal_t": 67320,
+          "p75_h5_t1": 66198,
+          "p75_h5_t2": 65076,
+          "rain_mm_month_sum": 432,
+          "rain_mm_month_sum_valid_days": 0,
+          "soil_water_l1_month_mean": 432,
+          "soil_water_l1_month_mean_valid_days": 0,
+          "solar_radiation_mj_m2_month_sum": 432,
+          "solar_radiation_mj_m2_month_sum_valid_days": 0,
+          "surface_runoff_mm_month_sum": 432,
+          "surface_runoff_mm_month_sum_valid_days": 0,
+          "temp_mean_c_month_mean": 432,
+          "temp_mean_c_month_mean_valid_days": 0,
+          "total_evaporation_mm_month_sum_ecmwf": 432,
+          "total_evaporation_mm_month_sum_ecmwf_valid_days": 0,
+          "total_notifications_count": 0,
+          "total_notifications_count_lag1": 1122,
+          "total_notifications_count_lag12": 13464,
+          "total_notifications_count_lag2": 2244,
+          "total_notifications_count_lag3": 3366,
+          "wind_u_ms_month_mean": 432,
+          "wind_u_ms_month_mean_valid_days": 0,
+          "wind_v_ms_month_mean": 432,
+          "wind_v_ms_month_mean_valid_days": 0,
+          "year_month": 0,
+          "zona_canal_t": 67320
+        },
+        "rows": 242352,
+        "start": "2007-01"
+      },
+      "quarantine": {
+        "daily_climate": {
+          "digest": "acb3dd655810ec54f869de4cf28656272de5e8419a6985a879c69c09a1ee0672",
+          "input": 7786680,
+          "invalid_date": 0,
+          "reserved": 409530,
+          "retained": 7377150
+        },
+        "dengue_notifications": {
+          "digest": "b42c6eed13c9edd76c7d9ff60f580f40d4296f1516c431bb5ab7020c4e59189f",
+          "input": 1705604,
+          "invalid_date": 133,
+          "reserved": 119138,
+          "retained": 1586333
+        },
+        "severe_dengue_notifications": {
+          "digest": "daff297445fe1f049aae838451a77acd7dcae0aed6d8d0dbc2f493df128a4134",
+          "input": 50101,
+          "invalid_date": 3,
+          "reserved": 1259,
+          "retained": 48839
+        }
+      },
+      "stages": {
+        "climate": {
+          "accepted": 7377150,
+          "input": 7377150,
+          "outside_period": 0
+        },
+        "epidemiology": {
+          "dengue_notifications": {
+            "accepted": 1578798,
+            "input": 1586333,
+            "rejected": {
+              "invalid_residence": 0,
+              "outside_period": 233,
+              "unknown_municipality": 7302,
+              "wrong_event": 0
+            }
+          },
+          "severe_dengue_notifications": {
+            "accepted": 48301,
+            "input": 48839,
+            "rejected": {
+              "invalid_residence": 0,
+              "outside_period": 55,
+              "unknown_municipality": 483,
+              "wrong_event": 0
+            }
+          }
+        },
+        "monthly_climate_rows": 242352
+      }
+    },
+    "audit_sha256": "4c76b58479abd1ba554d005e4b224213bdaf9af69d468b8bfc0eb38b5e4a121f",
+    "all_bytes_schema_keys_audits_exactly_equal": true,
+    "equals_first_build": true,
+    "elapsed_seconds": 893.3725998329974,
+    "certified_identity": {
+      "rows": 242352,
+      "unique_keys": 242352,
+      "municipalities": 1122,
+      "months": 216,
+      "start": "2007-01",
+      "end": "2024-12",
+      "duplicates": 0,
+      "observations_from_2025": 0,
+      "schema_sha256": "b9ad238e2fac29edcb942964cfabf5b8b8222ef54e86c456c96cbdb6d0686fc0",
+      "keys_sha256": "db444bee79d02bd1f3a467f2d2bccd649fe674fda5dd9cd1b7853791696c8577",
+      "null_keys": 0,
+      "complete_daily_key_coverage_all_months": true,
+      "january_2020": {
+        "municipalities": 1122,
+        "complete_daily_keys": true,
+        "complete_values_by_variable": {
+          "rain_mm_month_sum": false,
+          "surface_runoff_mm_month_sum": false,
+          "total_evaporation_mm_month_sum_ecmwf": false,
+          "solar_radiation_mj_m2_month_sum": false,
+          "temp_mean_c_month_mean": false,
+          "dewpoint_mean_c_month_mean": false,
+          "soil_water_l1_month_mean": false,
+          "wind_u_ms_month_mean": false,
+          "wind_v_ms_month_mean": false
+        }
+      },
+      "climate_missingness": {
+        "municipalities": [
+          {
+            "municipality_code": "88001",
+            "municipality_name": "SAN ANDRÉS",
+            "start_date": "2007-01-01",
+            "end_date": "2024-12-31",
+            "affected_months": 216,
+            "variables": [
+              {
+                "raw_variable": "rain_mm_day",
+                "canonical_variable": "rain_mm_month_sum",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "surface_runoff_mm_day",
+                "canonical_variable": "surface_runoff_mm_month_sum",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "total_evaporation_mm_day_ecmwf",
+                "canonical_variable": "total_evaporation_mm_month_sum_ecmwf",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "solar_radiation_mj_m2_day",
+                "canonical_variable": "solar_radiation_mj_m2_month_sum",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 5943,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": false
+              },
+              {
+                "raw_variable": "temp_mean_c",
+                "canonical_variable": "temp_mean_c_month_mean",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "dewpoint_mean_c",
+                "canonical_variable": "dewpoint_mean_c_month_mean",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "soil_water_l1_mean",
+                "canonical_variable": "soil_water_l1_month_mean",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "wind_u_mean_ms",
+                "canonical_variable": "wind_u_ms_month_mean",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "wind_v_mean_ms",
+                "canonical_variable": "wind_v_ms_month_mean",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              }
+            ]
+          },
+          {
+            "municipality_code": "88564",
+            "municipality_name": "PROVIDENCIA",
+            "start_date": "2007-01-01",
+            "end_date": "2024-12-31",
+            "affected_months": 216,
+            "variables": [
+              {
+                "raw_variable": "rain_mm_day",
+                "canonical_variable": "rain_mm_month_sum",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "surface_runoff_mm_day",
+                "canonical_variable": "surface_runoff_mm_month_sum",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "total_evaporation_mm_day_ecmwf",
+                "canonical_variable": "total_evaporation_mm_month_sum_ecmwf",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "solar_radiation_mj_m2_day",
+                "canonical_variable": "solar_radiation_mj_m2_month_sum",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 5943,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": false
+              },
+              {
+                "raw_variable": "temp_mean_c",
+                "canonical_variable": "temp_mean_c_month_mean",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "dewpoint_mean_c",
+                "canonical_variable": "dewpoint_mean_c_month_mean",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "soil_water_l1_mean",
+                "canonical_variable": "soil_water_l1_month_mean",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "wind_u_mean_ms",
+                "canonical_variable": "wind_u_ms_month_mean",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              },
+              {
+                "raw_variable": "wind_v_mean_ms",
+                "canonical_variable": "wind_v_ms_month_mean",
+                "months": 216,
+                "start_month": "2007-01",
+                "end_month": "2024-12",
+                "daily_missing_values": 6575,
+                "canonical_missing_values": 216,
+                "zero_valid_days_in_every_affected_month": true
+              }
+            ]
+          }
+        ],
+        "effects": {
+          "canonical_rows_retained": 242352,
+          "rows_with_missing_climate": 432,
+          "rows_with_complete_climate": 241920,
+          "rows_with_all_predictors_complete": 174720,
+          "otherwise_complete_rows_missing_only_climate": 312,
+          "january_2020_rows_retained": 1122,
+          "january_2020_rows_with_complete_climate": 1120
+        },
+        "canonical_missing_cells": 3888,
+        "imputation_performed": false,
+        "conversion_to_zero": false
+      },
+      "epidemiology_status_counts": {
+        "zero_in_coverage": 147162,
+        "records_present": 95190
+      },
+      "semantic_digest": "de49b11bad43c35983a098ead2faa149d4e744da4172432aecdaadd828c73158",
+      "serialized_sha256": "b4562ba50def7a98dceede0b7e95feed0e799b4652939d8037f1604bef37a23d",
+      "serialized_bytes": 88683091
+    }
+  },
+  "historical_control": {
+    "status": "PASSED",
+    "rows": 182886,
+    "semantic_digest": "a3326015581fd81b748820e1bce3ca2f4c5c88c2be96f08f7c822e37eb7dd722",
+    "serialized_sha256": "8fc8355af11644412b1d32a41f00ab3c369bd4de980bb0acd963c3a8c64e652c",
+    "audit_equals_T16": true,
+    "measurements": {
+      "cpu_seconds": 244.34482,
+      "peak_rss_bytes": 12223741952,
+      "stages_seconds": {
+        "daily_climate": 100.14105041700168,
+        "epidemiology": 8.125471583000035,
+        "geography": 0.0044720829973812215,
+        "integrity_after": 1.2287189579983533,
+        "integrity_before": 1.1227973329987435,
+        "monthly_climate": 90.37421549999999,
+        "panel": 23.540671375001693,
+        "projection": 7.666570083001716,
+        "quarantine": 2.3136833749995276,
+        "serialization": 5.305650124999374,
+        "validation": 3.4734980409994023
+      },
+      "wall_seconds": 245.03251595899928
+    },
+    "reference": "docs/evidence/task16/certify-real.json"
+  },
+  "preservation": {
+    "status": "PASSED",
+    "baseline_files": 88,
+    "all_sha256_unchanged": true,
+    "protected_49": true,
+    "published_json": 22,
+    "t16_receipts": 16
+  },
+  "initial_auxiliary_validation": {
+    "status": "FAILED",
+    "error_type": "AssertionError",
+    "scope": "Post-build helper wrongly required zero climate value nulls; no build or N3 failure",
+    "diagnostic_preserved_locally": true,
+    "elapsed_seconds": 300.14177445800306
+  },
+  "validation_and_certification_resume_elapsed_seconds": 1145.4910583329984,
+  "measured_active_elapsed_seconds": 1445.6328327910014,
+  "runtime": {
+    "system": "Darwin",
+    "architecture": "arm64",
+    "python": "3.12.13",
+    "peak_memory_method": "resource.getrusage(RUSAGE_SELF).ru_maxrss normalized to bytes; per-worker maximum, not simultaneous process-tree memory"
+  },
+  "entrypoints": {
+    "first_build": "sat_dengue_pipeline.raw.reproducibility.isolated_build",
+    "n3": "sat_dengue_pipeline.raw.reproducibility.canonical_reproducibility",
+    "historical_control": "isolated_build with BuildConfig() and original approved-raw.json",
+    "operational_command": "uv run --locked --directory pipeline python tools/build_approved_canonical.py",
+    "historical_command": "uv run --locked --directory pipeline python tools/build_approved_canonical.py --manifest conf/releases/approved-raw.json --profile approved"
+  },
+  "validation": {
+    "status": "PASSED",
+    "pytest_unique_tests": 193,
+    "pytest_files": {
+      "test_canonical.py": 21,
+      "test_canonical_profiles.py": 23,
+      "test_onset.py": 47,
+      "test_operational_command.py": 10,
+      "test_operational_releases.py": 9,
+      "test_raw_canonical.py": 68,
+      "test_raw_reproducibility.py": 15
+    },
+    "ruff": "PASS: uv run --locked --directory pipeline ruff check .",
+    "lockfile": "PASS: uv lock --check --project pipeline",
+    "official_preservation": "PASS: pipeline/.venv/bin/python pipeline/tools/check_experiment_preservation.py",
+    "diff_check": "PASS",
+    "full_API_dashboard_portability_suites_repeated": false
+  },
+  "climate_missingness_evidence": "docs/evidence/task27/climate-null-dates-93ac27fd.json",
+  "acceptance_criteria_clarification": {
+    "authority": "Explicit user response during this execution",
+    "complete_keys_required": true,
+    "null_municipality_or_date_forbidden": true,
+    "missing_climate_values_preserved": true,
+    "imputation": false,
+    "conversion_to_zero": false
+  },
+  "raw_cache_provenance": "docs/evidence/task27/operational-acceptance-0a4c4512a5c64a538829d999cfb58c5d.json",
+  "network_acquisition_executed": false,
+  "historical_factory_identity_preserved": "899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f",
+  "configured_operational_manifest_file_sha256": "846c72ecd2e641373d55b40e7a8e2b790ea02239b44cff08e412990bcdb404fe",
+  "lock_sha256": "5bd75700f0b6a9785478cf808e58544ac3d7d98bc36409c0e6086e5531a60fb7",
+  "initial_build_count": 1,
+  "full_profile_N3_build_count": 3,
+  "historical_control_build_count": 1,
+  "additional_full_builds_after_auxiliary_validation_failure": 0,
+  "task_status": {
+    "T27": "BLOQUEADA",
+    "progress": "26/27",
+    "canonical_certification": "PASS",
+    "remaining": "Local commits not published; final-HEAD GitHub checks and independent approval required before closure",
+    "merge_verdict": "NOT_READY"
+  },
+  "prohibited_actions": {
+    "models_trained": false,
+    "experiments_created": false,
+    "EXP003_created": false,
+    "published_JSON_changed": false,
+    "raw_reexported": false,
+    "push": false,
+    "merge": false,
+    "force_push": false,
+    "ruleset_changed": false
+  }
+}

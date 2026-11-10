@@ -160,8 +160,11 @@ digests. Epidemiología mantiene eventos 210/220 separados, usa residencia e
 descartes se reconcilian por causa. Clima produce cuatro sumas y cinco medias;
 los meses incompletos quedan nulos, nunca se rellenan con cero.
 
-La dimensión aprobada tiene 1.122 municipios; la cuadrícula de desarrollo abarca
-163 meses (`2011-06`–`2024-12`), 182.886 claves únicas. Los joins declaran
+DEC-031 conserva dos contratos reales cerrados de 1.122 municipios: histórico
+`approved`, `2011-06`–`2024-12` (163 meses, 182.886 claves), y operacional
+`operational_full`, `2007-01`–`2024-12` (216 meses, 242.352 claves). El primero
+conserva el manifiesto y la identidad de T16; el helper operacional selecciona el
+segundo por defecto y ambos usan los mismos nodos/productores. Los joins declaran
 cardinalidad y conservan conteos y ausencias. Se reutiliza `domain/canonical.py`
 para canal, lags y predictores; `TemporalPolicy` y `guard_development` son las
 únicas autoridades temporales. T+1 admite orígenes hasta noviembre de 2024;
@@ -173,7 +176,8 @@ reconstruye N=3 en procesos y directorios aislados desde los crudos, sin compart
 derivados. Cualquier diferencia bloquea al consumidor de entrenamiento; únicamente
 se libera una salida certificada. Las pruebas usan un perfil sintético explícito
 de menor tamaño, sin atribuirle los hashes ni la certificación del release real.
-La conexión y reproducción del release privado corresponden a la tarea 16.
+La conexión histórica corresponde a T16. La certificación separada del perfil
+completo y el release corregido se registra dentro de T27; no sustituye T16.
 
 El observador local existente recibe solo agregados: manifiesto/hashes crudos,
 Git SHA, configuración y lock, cuarentena, cobertura, conteos/rechazos, digest
@@ -198,6 +202,24 @@ productores y las claves de evaluación pasan antes del primer ajuste. Las etiqu
 de evaluación se construyen después de congelar y predecir ambos horizontes.
 Un gate fallido o divergencia detiene el procedimiento sin otra receta ni cuarta
 corrida. Solo se emiten agregados/huellas, preservando la evidencia existente.
+
+## Coberturas y calendarios separados (DEC-031)
+
+- Crudos operacionales: manifiesto corregido `satd-raw-173d5856`, revisión
+  inmutable ya registrada; cobertura declarada `2007-01-01`–`2025-12-31`.
+  Se verificaron días climáticos desde enero de 2007 y fechas epidemiológicas de
+  2006; esa presencia no demuestra disponibilidad histórica en tiempo real.
+- Canónico operacional: enero de 2007–diciembre de 2024; canónico histórico:
+  junio de 2011–diciembre de 2024. Desde 2025 se conserva la cuarentena previa.
+- Entrenamiento: comienza en `2018-01` según la receta, sin adelantarse a 2007.
+  Los cinco roles, horizontes, predictores y decisiones de ajuste siguen intactos.
+- Evaluación: el arnés rolling mínimo mantiene primer origen `2019-01`.
+  La receta histórica T16 mantiene primer objetivo de evaluación `2024-01`,
+  equivalente a origen `2023-12` en T+1 y `2023-11` en T+2; no se ejecuta aquí.
+
+Ampliar historia para lags y H5 no habilita un nuevo entrenamiento, experimento,
+comparación científica ni uso de 2025. Selección y comandos en
+[la guía operacional](../operations/pipeline-operations.md).
 
 ## Tratamiento de 2025
 

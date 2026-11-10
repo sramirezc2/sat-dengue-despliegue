@@ -533,8 +533,10 @@ La tabla de entrenamiento no será descargada ni construida por un script monol�
 #### D8.4. Integración municipio-mes y derivación canónica
 
 - el universo es la dimensión DIVIPOLA de 1.122 municipios;
-- la salida de desarrollo cubre `2011-06` a `2024-12`: 163 meses y 182.886 claves
-  municipio-mes esperadas;
+- DEC-031 conserva el perfil histórico `approved`, `2011-06`–`2024-12`,
+  163 meses/182.886 claves, y añade únicamente `operational_full`,
+  `2007-01`–`2024-12`, 216 meses/242.352 claves; ambos con 1.122 municipios
+  y reserva `2025-01`, sin fechas arbitrarias ni nuevos productores;
 - la cuadrícula territorial-temporal se define antes de observar densidad de
   casos; dentro de cobertura, ausencia de filas epidemiológicas significa cero;
 - fuera de cobertura, ausencia permanece nula y nunca se convierte en cero;
@@ -583,6 +585,14 @@ La clave de linaje será, como mínimo:
 raw_manifest_digest + builder_git_sha + builder_config_digest + lock_digest
     -> canonical_semantic_digest
 ```
+
+DEC-031 amplía únicamente cobertura canónica dentro de T27. El release
+operacional corregido declara crudos desde `2007-01-01`; el manifiesto histórico
+queda intacto. La ventana de entrenamiento continúa desde `2018-01`; el arnés
+rolling conserva primer origen `2019-01`. En T16 el primer objetivo de evaluación
+sigue siendo `2024-01` (orígenes `2023-12`/`2023-11` para T+1/T+2).
+Ninguno de esos calendarios se modifica al ampliar historia para lags y H5.
+No hay entrenamiento ni EXP003 en esta ampliación.
 
 ### D9. Experimentos declarativos y preinscritos
 
@@ -1188,8 +1198,10 @@ pendientes y sin publicar. Se exige además:
   la API y el tablero;
 - una descarga interrumpida o corrupta no se publica en caché y falla antes de
   cualquier transformación;
-- la transformación cruda reproduce una cuadrícula de 1.122 municipios por 163
-  meses, 182.886 claves únicas entre `2011-06` y `2024-12`;
+- la transformación cruda reproduce el contrato histórico de 1.122 municipios
+  por 163 meses/182.886 claves (`2011-06`–`2024-12`) y el operacional completo
+  de 216 meses/242.352 claves (`2007-01`–`2024-12`), con certificaciones e
+  identidades separadas;
 - los dos productores epidemiológicos usan residencia e `INI_SIN`, conservan
   eventos 210/220 separados, no aplican fallback de fecha y no deduplican por
   `CONSECUTIVE`;

@@ -1,7 +1,8 @@
 # Auditoría final de merge — T27
 
 Última revisión local: 2026-11-09. **Veredicto vigente: `NOT_READY`.**
-Aceptación operacional real: **`PASS`, aprobada por el usuario**. La prueba real
+Certificación del canónico completo: **PASS N=3** (DEC-031), según evidencia nueva.
+La aceptación operacional previa conserva **PASS, aprobada por el usuario**. La prueba real
 desde clon limpio pasó y las novedades operativas quedaron corregidas (DEC-029).
 **No se requiere modificar el ruleset** según la instrucción vigente (DEC-030).
 La consulta
@@ -9,11 +10,150 @@ de gobernanza descrita abajo corresponde a la auditoría previa; no se volvió a
 consultar ni modificar el ruleset en esta reanudación.
 **T27 BLOQUEADA; progreso 26/27. No autoriza merge.**
 
-## Cierre local aprobado y acciones externas vigentes
+## Ampliación canónica completa y certificación N=3 — DEC-031
+
+**Resultado técnico: PASS**, con cobertura completa por claves y nulos climáticos
+conservados según aclaración expresa del usuario. Código ejecutado:
+`9e06a519d20de5b86cf3f07f0420175cf5644fff`. El preflight partió de `0004185`, rama correcta,
+HEAD local/remoto coincidentes y árbol limpio. No se crean tareas nuevas.
+[Certificación agregada](../evidence/task27/canonical-full-93ac27fd-certification.json).
+
+### Contratos, selección y calendarios
+
+| Perfil real cerrado | Inicio | Fin | Municipios | Meses | Claves |
+|---|---|---|---:|---:|---:|
+| Histórico `approved` | 2011-06 | 2024-12 | 1.122 | 163 | 182.886 |
+| Completo `operational_full` | 2007-01 | 2024-12 | 1.122 | 216 | 242.352 |
+
+Ambos fijan reserva `2025-01`; no aceptan fechas arbitrarias. El perfil sintético
+sigue siendo un fixture. Se usan el mismo pipeline, nodos y productores, con
+selección `canonical.profile`. El helper operacional usa el completo por defecto;
+para reproducir T16 se seleccionan manifiesto original y `--profile approved`.
+
+El release operacional sigue fijado a
+`173d5856874b89d8aeb0566accc65ce7f6759820`; solo cambia su `coverage_start` a
+`2007-01-01`. Revisión, nombres, tamaños, SHA-256 y fin no cambian.
+`approved-raw.json` se mantiene byte a byte. Los cinco crudos cacheados de la
+aceptación anterior volvieron a verificarse por tamaño y SHA-256, antes y después
+de cada construcción; no hubo descarga, reexportación ni credencial cacheada.
+
+El clima crudo abarca `2007-01-01`–`2025-12-31`; ambos CSV epidemiológicos tienen
+fechas válidas de 2006. Esto no acredita disponibilidad histórica en tiempo real
+ni completitud de vigilancia. El canónico completo termina en `2024-12` y el
+entrenamiento continúa desde `2018-01`. El arnés rolling mantiene primer origen
+`2019-01`; T16 conserva primer objetivo evaluado `2024-01`, con orígenes iniciales
+`2023-12`/`2023-11` para T+1/T+2. No se modifican cinco roles, horizontes,
+predictores, modelos, semillas, hiperparámetros, calibración, umbrales, métricas
+ni líneas base; no se ejecuta entrenamiento ni EXP003.
+
+### Resultado y comparación exacta
+
+242.352 claves únicas, 1.122 municipios y 216 meses, `2007-01`–`2024-12`.
+Duplicados, claves canónicas nulas y observaciones desde 2025: **0**.
+La cobertura diaria climática está completa en todos los meses; enero 2020
+conserva 1.122 × 31 = 34.782 claves, sin duplicados ni municipio/fecha nulos.
+La cuarentena desde `2025-01` precede a los productores y permanece intacta.
+
+Tres procesos/directorios nuevos, cada uno con crudos verificados y sin canónico
+compartido, produjeron bytes, esquema, claves, valores/nulos y auditorías
+exactamente iguales. También coinciden con la construcción inicial. Los hashes
+son nuevos y no sustituyen ninguna identidad de T16:
+
+- Digest semántico: `de49b11bad43c35983a098ead2faa149d4e744da4172432aecdaadd828c73158`.
+- SHA-256 serializado: `b4562ba50def7a98dceede0b7e95feed0e799b4652939d8037f1604bef37a23d`.
+- Esquema: `b9ad238e2fac29edcb942964cfabf5b8b8222ef54e86c456c96cbdb6d0686fc0`.
+- Claves: `db444bee79d02bd1f3a467f2d2bccd649fe674fda5dd9cd1b7853791696c8577`.
+
+| Ejecución | Pared (s) | Pico RSS (bytes) |
+|---|---:|---:|
+| Primera construcción | 292.863 | 14,170,472,448 |
+| N=3, proceso 1 | 289.983 | 12,370,771,968 |
+| N=3, proceso 2 | 292.101 | 12,514,246,656 |
+| N=3, proceso 3 | 292.774 | 12,579,438,592 |
+| Control histórico | 245.033 | 12,223,741,952 |
+
+El coordinador N=3 tardó 893.373 s. RSS es máximo por proceso
+medido con `resource.getrusage`, no memoria simultánea total del árbol de procesos.
+Los tiempos se separan de las auditorías deterministas.
+
+### Nulos climáticos conservados y efecto en filas completas
+
+El usuario aceptó completitud por claves, sin imputación ni conversión a cero;
+claves faltantes o municipio/fecha nulos implicarían FAIL. La inspección cruda
+confirmó cero claves climáticas nulas en todo el archivo.
+
+San Andrés (`88001`) y Providencia (`88564`) tienen los nueve agregados climáticos
+nulos en los 216 meses, `2007-01`–`2024-12`. Las fechas diarias afectadas abarcan
+`2007-01-01`–`2024-12-31`. La radiación tiene algunos días válidos, pero ningún
+mes completo. Los 90 intervalos inclusivos exactos, con variables y conteos por
+municipio, están en [la evidencia de fechas nulas](../evidence/task27/climate-null-dates-93ac27fd.json).
+El siguiente patrón es igual **por cada municipio**:
+
+| Variable diaria | Valores diarios ausentes | Agregados mensuales ausentes |
+|---|---:|---:|
+| `rain_mm_day` | 6,575 | 216 |
+| `surface_runoff_mm_day` | 6,575 | 216 |
+| `total_evaporation_mm_day_ecmwf` | 6,575 | 216 |
+| `solar_radiation_mj_m2_day` | 5,943 | 216 |
+| `temp_mean_c` | 6,575 | 216 |
+| `dewpoint_mean_c` | 6,575 | 216 |
+| `soil_water_l1_mean` | 6,575 | 216 |
+| `wind_u_mean_ms` | 6,575 | 216 |
+| `wind_v_mean_ms` | 6,575 | 216 |
+
+Entre ambos: **117.086 valores diarios** y **3.888 agregados mensuales** ausentes.
+Enero 2020 contiene 558 valores diarios y 18 agregados mensuales ausentes;
+conserva sus 1.122 filas y los 31 días por municipio.
+
+Las 242.352 filas canónicas se conservan: 432 tienen clima incompleto y 241.920
+clima completo. Hay **174.720 filas completas en las 52 columnas**, también
+completas en los 33 predictores. **312 filas adicionales** tienen los demás
+predictores completos y carecen solo de clima. Estos conteos no constituyen una
+cohorte entrenada o evaluada. No se eliminaron filas; las ausencias iniciales por
+calentamiento de lags/H5 se distinguen de las ausencias climáticas.
+
+La distinción epidemiológica entre cero dentro de cobertura y ausencia fuera de
+cobertura, los lags y H5 conservan su implementación y pruebas. No se imputa
+clima ni se leen valores de reserva para producir features.
+
+### Control histórico, diagnóstico y validaciones
+
+El perfil histórico, ejecutado con el release original, produjo nuevamente
+182.886 claves y exactamente la identidad de `docs/evidence/task16/certify-real.json`:
+
+- Digest semántico: `a3326015581fd81b748820e1bce3ca2f4c5c88c2be96f08f7c822e37eb7dd722`.
+- SHA-256 serializado: `8fc8355af11644412b1d32a41f00ab3c369bd4de980bb0acd963c3a8c64e652c`.
+- Auditoría idéntica a T16. La identidad N=3 de fábrica
+  `899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f`
+  se conserva; no se repite la fábrica ni sus modelos.
+
+La primera construcción terminó correctamente. Una comprobación auxiliar
+posterior exigía cero valores climáticos nulos y falló con AssertionError antes
+de N=3. Tras aclaración explícita del usuario se corrigió solo el criterio,
+se conservó el diagnóstico y se validó la misma salida ya construida. No hubo
+una segunda construcción inicial, cambio de datos ni reparación del canónico.
+Las tres reconstrucciones N=3 posteriores fueron nuevas e independientes.
+
+Pasaron 193 pruebas específicas: contrato/BuildConfig, construcción, guard
+temporal, reproducibilidad y selección de perfiles; Ruff completo, lockfile y
+verificador oficial de preservación. Los 88 archivos de la línea base ampliada
+mantienen SHA-256. Por separado, el verificador oficial confirma los 49 protegidos,
+22 JSON, 16 recibos e identidad N=3; T16 y EXP001/EXP002 permanecen intactos.
+La comprobación del manifiesto se hizo autocontenida para no depender de historial
+Git ausente en checkouts superficiales: se revalidó ese test y Ruff del archivo,
+sin modificar ni repetir los constructores reales ya certificados.
+No se repiten API, tablero ni la matriz completa de portabilidad.
+
+**T27 continúa BLOQUEADA, 26/27**, solo por publicación autorizada futura,
+checks del HEAD final y aprobación independiente. No hay push, merge, force push
+ni cambios de ruleset. La revisión científica es técnica y limitada a cobertura:
+no aprueba contrato científico, campeón, resultados académicos u operación sanitaria.
+
+## Cierre local previo aprobado y acciones externas vigentes
 
 El usuario aprobó la aceptación operacional PASS y autorizó el commit local final
 con esta auditoría, `plan.md` y el recibo agregado pendiente. El HEAD probado
-continúa siendo `002f122f09a80743041e3a71c6fe0936c4cbc960`; este cierre es
+de aquel cierre era `002f122f09a80743041e3a71c6fe0936c4cbc960`; aquel cierre fue
 documental, sin nueva ejecución científica ni cambios de código/configuración.
 No se deben repetir localmente las suites delegadas a GitHub.
 

@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 26/27; T22–T26 COMPLETAS; T27 EN CURSO; ampliación canónica autorizada
+**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; certificación canónica completa PASS N=3
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -128,7 +128,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 24 | Validar las correcciones operativas acumuladas | `COMPLETA` | 23 | 578 pipeline, API 35, tablero 55/frozen/lint/build; contratos 22+22; skills, enlaces, filtros e higiene verdes. Checkout limpio de 5768331 con 29 pruebas nuevas y ayuda/error controlado; evidencia preservada. [Recibo](docs/evidence/task24/operational-validation.json). |
 | 25 | Elaborar reporte ejecutivo final | `COMPLETA` | 24 | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md): síntesis con evidencia y límites, navegación desde guías y arquitectura actualizada hasta T24. Auditoría documental, registro, skills y preservación verdes; publicación pendiente de autorización. |
 | 26 | Publicar cambios y validar el PR #1 | `COMPLETA` | 25 | Push normal y descripción autorizados. Siete checks verdes sobre 524c38e ([recibo remoto/local](docs/evidence/task26/publication-validation.json)) y sobre su cierre publicado 0222d6d ([snapshot](docs/evidence/task27/t26-closure-checks.json)). Cada nuevo HEAD requiere checks propios. |
-| 27 | Ejecutar auditoría final de merge | `EN CURSO` | 26 | DEC-031: ampliar y certificar canónico operacional 2007-01–2024-12, preservando perfil histórico/T16; sin modelos, experimentos ni publicación. Preflight crudo PASS sobre 0004185. |
+| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | DEC-031: perfil completo 2007-01–2024-12 certificado N=3, 242.352 claves, cero duplicados/claves nulas/observaciones desde 2025. Histórico reproduce identidad T16; nulos climáticos conservados por aclaración del usuario. [Certificación](docs/evidence/task27/canonical-full-93ac27fd-certification.json) y [auditoría](docs/reviews/final-merge-audit.md). Pendientes publicación futura autorizada, CI del HEAD final y aprobación independiente; sin push ni merge. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
 
@@ -224,10 +224,10 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 26/27 |
-| Tarea activa | T27 — Ampliación y certificación canónica operacional |
-| Tareas bloqueadas | Ninguna durante la ejecución local autorizada; gates externos pendientes antes del cierre de T27 |
+| Tarea activa | Ninguna |
+| Tareas bloqueadas | T27 — Certificación canónica completa PASS; publicación futura autorizada, CI del HEAD final y aprobación independiente pendientes |
 | Última tarea completada | T26 — Publicar cambios y validar el PR #1 |
-| Próxima tarea | Construcción completa y certificación N=3; después cierre documental y gates externos |
+| Próxima tarea | Publicar solo bajo autorización y verificar checks/revisión del HEAD final; no más cambios científicos |
 | Última actualización | 9 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -360,6 +360,8 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 
 | 2026-11-09 | 27 | EN CURSO | Base sincronizada `0004185` | Rama correcta, HEAD remoto exacto y árbol limpio. Caché del release operacional fijado verificada por cinco tamaños/SHA-256; clima desde 2007-01-01, enero 2007/2020 nacionales completos; ambos CSV epidemiológicos contienen fechas de 2006. | DEC-031 autoriza exclusivamente segundo perfil cerrado y certificación N=3 real, con evidencia separada. No requiere credencial de red: se reutilizan solo crudos íntegros de la aceptación anterior. Sin entrenamiento, EXP003, exportación, push, merge, force push ni cambios de ruleset. |
 
+| 2026-11-09 | 27 | BLOQUEADA | Código probado `9e06a51`; cierre documental en este commit | Construcción real completa PASS y N=3 exacto: 242.352 claves, 216 meses, 1.122 municipios, cero claves nulas/duplicadas y observaciones desde 2025. Control histórico coincide con T16; 88 hashes previos y verificador oficial 49/22/16 PASS. 193 pruebas, Ruff y lockfile PASS. [Recibo](docs/evidence/task27/canonical-full-93ac27fd-certification.json). | Usuario acepta cobertura por claves y conservación de nulos: San Andrés/Providencia, 117.086 valores diarios/3.888 agregados ausentes, sin imputar; [fechas y efectos](docs/evidence/task27/climate-null-dates-93ac27fd.json). Se conserva diagnóstico de comprobación auxiliar demasiado estricta, sin repetir construcción inicial. Canónico certificado PASS; T27 26/27 bloqueada por publicación futura, checks finales y revisión. Sin modelos, experimentos, reexportación, push, merge, force push o cambios de ruleset. |
+
 ### Riesgos de la extensión operacional
 
 - Un recibo operativo no puede reemplazar historia: destino exclusivo bajo pipeline/data/.
@@ -441,8 +443,9 @@ El trabajo solo puede considerarse terminado cuando:
   credenciales individuales, sin depender de otro integrante en cada corrida;
 - el pipeline funcione con proveedor local, Hugging Face, Zenodo y S3 simulado;
 - el manifiesto acepte solo los cinco archivos, tamaños y hashes aprobados;
-- Kedro construya desde crudos una cuadrícula única de 1.122 municipios por 163
-  meses (`2011-06` a `2024-12`), equivalente a 182.886 claves;
+- Kedro conserve el contrato histórico de 1.122 municipios/163 meses/182.886 claves
+  (`2011-06`–`2024-12`) y certifique el operacional completo de 216 meses/242.352
+  claves (`2007-01`–`2024-12`), con identidades separadas y reserva `2025-01`;
 - la certificación canónica N=3 produzca esquema, orden, tipos, claves, valores,
   nulos, digest semántico y SHA-256 serializado idénticos;
 - la cuarentena previa y `guard_development` impidan que 2025 llegue a cualquier
@@ -482,4 +485,4 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 26/27, T22–T26 COMPLETAS, T27 BLOQUEADA y ninguna tarea activa.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 26/27, T22–T26 COMPLETAS, T27 BLOQUEADA y ninguna tarea activa; canónico completo PASS N=3, gates externos pendientes.

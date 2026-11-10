@@ -162,10 +162,38 @@ DEC-029 fija el default del helper al nuevo release operacional
 de integridad del archivo climático. El manifiesto histórico `approved-raw.json`
 se conserva byte a byte; el constructor directo y el adquiridor directo mantienen
 su selección histórica por defecto. Para seleccionar ese release mediante el
-helper, usar `--manifest conf/releases/approved-raw.json`. El helper transmite la
+helper, usar `--manifest conf/releases/approved-raw.json --profile approved`. El helper transmite la
 misma selección a adquisición y al parámetro `canonical.manifest`; las cachés se
-separan por `release_id` y digest del manifiesto. No se cambian ventanas,
-predictores ni configuración científica; T16 no selecciona el release operacional.
+separan por `release_id` y digest del manifiesto. DEC-031 añade el perfil
+canónico completo; T16 mantiene manifiesto, perfil y configuración históricos.
+
+El helper recomendado selecciona ahora `operational_full`: 1.122 municipios ×
+216 meses, `2007-01`–`2024-12`, 242.352 claves. El perfil histórico `approved`
+permanece explícito, con 163 meses y 182.886 claves. No se aceptan fechas libres.
+Ambos conservan reserva `2025-01` y comparten nodos/productores. El constructor
+Kedro directo conserva por compatibilidad el perfil histórico cuando no se
+especifica `canonical.profile`; el helper siempre transmite su selección.
+
+Para reproducir el perfil histórico desde su release original:
+
+```sh
+uv run --locked --directory pipeline python tools/build_approved_canonical.py --manifest conf/releases/approved-raw.json --profile approved
+```
+
+Para seleccionar el completo directamente en Kedro después de adquirir su caché:
+
+```sh
+uv run --locked --directory pipeline kedro run --pipelines canonical_build --params canonical.mode=approved,canonical.profile=operational_full,canonical.manifest=conf/releases/operational-raw-173d5856.json,canonical.workspace=data/canonical-full-manual,canonical.tracking=false
+```
+
+El helper produce un provisional; la certificación N=3 se ejecuta separadamente
+sobre crudos verificados, con tres procesos/directorios y sin reutilizar derivados.
+La cobertura cruda declarada operacional comienza en `2007-01-01` y termina en
+`2025-12-31`; la salida canónica termina en `2024-12`. La ventana de entrenamiento
+sigue desde `2018-01`, sin adelantar cinco roles o evaluación. El arnés rolling
+mantiene primer origen `2019-01`; T16 mantiene primer objetivo de evaluación
+`2024-01` (orígenes `2023-12` para T+1 y `2023-11` para T+2).
+No se autoriza entrenamiento ni se crea EXP003 al construir o certificar.
 
 Los dos comandos históricos internos siguen visibles para aislar fallos:
 
