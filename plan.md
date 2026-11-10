@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; tres reparaciones locales PASS, publicación/CI/revisión final pendientes
+**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; aceptación técnica E2E real PASS, publicación/CI/revisión final pendientes
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -224,7 +224,7 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 26/27 |
-| Tarea activa | Ninguna; tercera reparación local PASS |
+| Tarea activa | Ninguna; aceptación técnica E2E real PASS en checkout temporal |
 | Tareas bloqueadas | T27 — Publicación bajo autorización, descripción del PR #1, siete checks del HEAD final y aprobación independiente pendientes |
 | Última tarea completada | T26 — Publicar cambios y validar el PR #1 |
 | Próxima tarea | Publicar solo bajo autorización y verificar checks/revisión del HEAD final; no más cambios científicos |
@@ -437,6 +437,36 @@ obtener aprobación independiente y completar la auditoría de merge sobre esa
 revisión. Este trabajo no autoriza ninguna acción remota ni cambio de ruleset.
 No se repiten API, tablero, suites completas de GitHub o N=3 real; fuera del
 alcance. La revisión científica y el estado de EXP001/EXP002 no se modifican.
+
+| 2026-11-09 | 27 | EN CURSO | Base local limpia `24ac37d` | Rama feature/pipeline-e2e correcta; árbol inicialmente limpio. Certificado completo versionado aplicable mediante verificador de recetas, sin reconstruir N=3. HF_TOKEN inicialmente ausente; se solicitó habilitarlo, sin valor en argumentos/logs/archivos. | Usuario autoriza corrida técnica con cinco crudos reales, receta y aprobación exclusivamente en checkout temporal, entrada normal Kedro, entrenamiento/predicción/evaluación y evidencia consultable; sin aprobación científica del equipo ni registro oficial/EXP003, comparación científica con T16, campeón, push o merge. Diagnosticar y corregir solo defecto de implementación confirmado si falla; preservar todo intento. |
+
+| 2026-11-09 | 27 | BLOQUEADA | Código probado `24ac37d84b2343ea725318b09bd563b0268c88a7`, sin cambios de implementación | Aceptación técnica real PASS: Kedro exit 0, 409,58 s y pico RSS 13.046.136.832 bytes (12,15 GiB). Cinco crudos privados adquiridos y verificados; construcción nueva de 242.352 claves, 1.122 municipios, 2007-01–2024-12, exactamente igual al certificado versionado; N=3 no repetido. Preparación, diez soportes/guards, dos ajustes independientes, predicción, evaluación diferida, inventario/firma y MLflow padre/dos hijos FINISHED PASS. Lock/sync/Ruff, 54 pruebas enfocadas (17,29 s), registro oficial VALID, preservación 49/22/16 y 92 archivos originales sin cambios PASS. [Recibo de aceptación](docs/evidence/task27/technical-e2e-24ac37d-24q4bmiu.json). | `ACCEPTV3REAL01`, ejecución `b0a09b94fa9e45ccafed0f4d568ef82f`: receta/aprobación exclusivamente temporales mediante CLI, sin aprobación científica del equipo. Recibo COMPLETED; registro temporal RUNNING/PENDING, sin cierre científico ni entrada oficial nueva. Modelo implementado XGBoost/v1 S53, cuatro rondas, soportes mínimos y FAR máxima 1.0 solo técnicos. Cero observaciones de 2025 en canónico/aprendizaje; disponibilidad máxima de evaluación 2024-12. Sin defectos de implementación ni reintentos E2E; fallo ambiental de red en sandbox superado antes de la corrida y diagnóstico conservado. Otro preflight bloqueado por credencial ausente se conserva intacto y separado. Sin comparación científica con T16, campeón, publicación, push o merge. T27 sigue 26/27 por gates externos pendientes. |
+
+Comando real desde el checkout temporal de `24ac37d`:
+
+```sh
+uv run --locked --group tracking --directory pipeline kedro run --pipeline experiment_run --params experiment_id=ACCEPTV3REAL01
+```
+
+La aprobación temporal permite ejercer el contrato `experiment_run`; el enum
+`experiment_type: scientific` es obligatorio para entradas raw y no representa
+aprobación científica. Datos, construcción, preparación, entrenamiento,
+predicción, métricas y tracking fueron reales. La receta, sus periodos,
+soportes mínimos y FAR permisiva pertenecen únicamente a esta aceptación.
+La sensibilidad 1.0 con umbral 0.0 y alert_fraction 1.0 refleja esa receta;
+no acredita utilidad ni éxito científico. No se cambia el registro oficial,
+EXP001/EXP002, T16 ni sus conclusiones.
+
+El checkout se conserva en `/private/tmp/satd-v3-acceptance-24q4bmiu/checkout`.
+Una copia local ignorada de los seis archivos de evidencia, receta, snapshot del
+registro, logs, recursos, verificaciones y SQLite consultable queda bajo
+`pipeline/data/acceptance/ACCEPTV3REAL01-b0a09b94fa9e45ccafed0f4d568ef82f/`.
+El canónico consumido tiene SHA-256 serializado
+`b4562ba50def7a98dceede0b7e95feed0e799b4652939d8037f1604bef37a23d`
+y digest semántico
+`de49b11bad43c35983a098ead2faa149d4e744da4172432aecdaadd828c73158`.
+No se repiten suites completas delegadas a GitHub, API/tablero ni CI remota:
+sin cambios de implementación y fuera del alcance de esta aceptación local.
 
 ### Riesgos de la extensión operacional
 
