@@ -1,0 +1,497 @@
+"""Validación año a año (ventana expansiva) de un candidato contra líneas base del canal endémico.
+
+Definiciones de docs/politica-de-decision-v2.md:
+
+- inicio: exceso en el mes objetivo y no exceso en el mes anterior al objetivo.
+- una alerta es verdadera solo si coincide con un inicio; falsas = alertas - inicios detectados.
+- carga: falsas por cada 100 municipio-mes de la cohorte (denominador fijo).
+
+Elegibilidad observable: el municipio no está en exceso en el mes de origen T. En T+1 equivale a
+"puede empezar un inicio"; en T+2 es la versión sin fuga (no usa el exceso de T+1).
+
+Líneas base, todas sin modelo:
+
+- canal_p75: casos de T > P75 del mes objetivo (regla de vigilancia actual).
+- canal_ajustado: casos de T > f * P75, con f elegido en el año t-1 (máximo F1 sobre inicios).
+- canal_fuera_exceso: canal_ajustado, pero solo alerta si el municipio no está en exceso en T.
+- persistencia: alerta si el municipio está en exceso en T (descriptiva).
+
+El candidato emite en cada mes de origen el mismo número de alertas que la línea base (las de
+mayor score). Se evalúa 2018-2024; 2025 está reservado hasta tener campeón.
+"""
+
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+ANIOS_DEFECTO = tuple(range(2018, 2025))
+GRILLA_F = tuple(float(x) for x in np.round(np.arange(0.0, 1.51, 0.05), 2))
+COLUMNAS = [
+    "municipio",
+    "anio_objetivo",
+    "origen",
+    "score",
+    "objetivo",
+    "inicio",
+    "casos_t",
+    "p75_objetivo",
+    "exceso_t",
+]
+
+
+def validar_entrada(
+    df: pd.DataFrame, anios=ANIOS_DEFECTO, permitir_2025: bool = False
+) -> pd.DataFrame:
+    """Revisar columnas y años, y conservar los años evaluados más el previo.
+
+    Args:
+        df: Tabla con las columnas de COLUMNAS; origen ordena los meses (anio * 12 + mes).
+        anios: Años objetivo a evaluar.
+        permitir_2025: Habilita 2025, reservado por defecto.
+
+    Returns:
+        Copia filtrada con tipos enteros en las banderas.
+
+    Raises:
+        ValueError: Si faltan columnas o se pide 2025 sin permiso.
+    """
+    falta = [c for c in COLUMNAS if c not in df.columns]
+    if falta:
+        raise ValueError(f"Faltan columnas: {falta}")
+    if not permitir_2025 and max(anios) >= 2025:
+        raise ValueError("2025 está reservado hasta tener campeón")
+    out = df[df.anio_objetivo.isin([*anios, min(anios) - 1])].copy()
+    for c in ("objetivo", "inicio", "exceso_t"):
+        out[c] = out[c].astype(int)
+    return out
+
+
+def _panel_con_exceso(panel: pd.DataFrame, col_casos: str, horizonte: int) -> pd.DataFrame:
+    """Columnas del panel que usa la validación, con el exceso del mes en curso.
+
+    El exceso sale de zona_canal_t == "EXCESO", la misma definición de prepare_horizon; si el
+    panel no trae la zona, se usa casos > p75_canal_t.
+
+    Args:
+        panel: Panel canónico.
+        col_casos: Columna de casos.
+        horizonte: 1 o 2.
+
+    Returns:
+        Copia reducida con la columna exceso (1/0, nula si la zona es nula).
+    """
+    cols = ["municipality_code", "year_month", col_casos, "p75_canal_t", f"p75_h5_t{horizonte}"]
+    tiene_zona = "zona_canal_t" in panel.columns
+    p = panel[cols + (["zona_canal_t"] if tiene_zona else [])].copy()
+    if tiene_zona:
+        p["exceso"] = p.zona_canal_t.eq("EXCESO").astype(float).where(p.zona_canal_t.notna())
+    else:
+        p["exceso"] = (p[col_casos].astype(float) > p.p75_canal_t.astype(float)).astype(float)
+    return p
+
+
+def historia_desde_panel(
+    panel: pd.DataFrame, horizonte: int, col_casos: str = "dengue_notifications_count"
+) -> pd.DataFrame:
+    """Filas del panel, sin predicciones, para elegir f del canal con el año anterior.
+
+    Args:
+        panel: Panel canónico.
+        horizonte: 1 o 2.
+        col_casos: Columna de casos.
+
+    Returns:
+        DataFrame con municipio, anio_objetivo, inicio, casos_t, p75_objetivo y exceso_t.
+    """
+    p = _panel_con_exceso(panel, col_casos, horizonte)
+    exceso = p.set_index(["municipality_code", "year_month"]).exceso
+    periodo = pd.PeriodIndex(p.year_month, freq="M")
+    objetivo = [str(x + horizonte) for x in periodo]
+    previo = [str(x + horizonte - 1) for x in periodo]
+    p["exc_obj"] = [exceso.get(k, np.nan) for k in zip(p.municipality_code, objetivo)]
+    p["exc_prev"] = [exceso.get(k, np.nan) for k in zip(p.municipality_code, previo)]
+    p["anio_objetivo"] = [int(x[:4]) for x in objetivo]
+    ok = p.exc_obj.notna() & p.exc_prev.notna() & p.exceso.notna()
+    ok &= p[col_casos].notna() & p[f"p75_h5_t{horizonte}"].notna()
+    p = p[ok]
+    return pd.DataFrame(
+        {
+            "municipio": p.municipality_code.values,
+            "anio_objetivo": p.anio_objetivo.values,
+            "inicio": ((p.exc_obj == 1) & (p.exc_prev == 0)).astype(int).values,
+            "casos_t": p[col_casos].astype(float).values,
+            "p75_objetivo": p[f"p75_h5_t{horizonte}"].astype(float).values,
+            "exceso_t": p.exceso.astype(int).values,
+        }
+    )
+
+
+def desde_pipeline(
+    panel: pd.DataFrame,
+    predicciones: pd.DataFrame,
+    candidato: str,
+    horizonte: int,
+    col_casos: str = "dengue_notifications_count",
+    col_prob: str = "raw_probability",
+    col_fold: str = "fold_id",
+    permitir_un_fold: bool = False,
+) -> pd.DataFrame:
+    """Adaptar el panel canónico y las predicciones del arnés al formato de la validación.
+
+    Usa los contratos del pipeline: panel con municipality_code, year_month, <col_casos>,
+    p75_canal_t y p75_h5_t<h>; predicciones con municipality_code, origin_period, target_period,
+    horizon, fold_id, candidate y <col_prob>. Exceso, objetivo e inicio se derivan del panel, así
+    que no hace falta y_true.
+
+    Args:
+        panel: Panel canónico mensual.
+        predicciones: Predicciones fuera de muestra por fila.
+        candidato: Candidato a evaluar.
+        horizonte: 1 o 2.
+        col_casos: Columna de casos que usa el canal.
+        col_prob: Columna de probabilidad a ordenar (cruda o calibrada).
+        col_fold: Identificador del reentrenamiento que produjo cada fila.
+        permitir_un_fold: Acepta un único fold (corte fijo); por defecto se exige ventana
+            expansiva, con más de un reentrenamiento.
+
+    Returns:
+        DataFrame con las columnas de COLUMNAS y fold.
+
+    Raises:
+        ValueError: Si falta el fold o hay un único reentrenamiento sin permiso.
+    """
+    p = _panel_con_exceso(panel, col_casos, horizonte)
+    exceso = p.set_index(["municipality_code", "year_month"]).exceso
+
+    q = predicciones[
+        (predicciones.candidate == candidato)
+        & (predicciones.horizon.astype(int) == int(horizonte))
+    ].copy()
+    if col_fold not in q.columns:
+        raise ValueError(f"Las predicciones no traen '{col_fold}'")
+    if q[col_fold].nunique() < 2 and not permitir_un_fold:
+        raise ValueError("Un único reentrenamiento: no es una ventana expansiva")
+    q = q.merge(
+        p.rename(columns={"year_month": "origin_period"}),
+        on=["municipality_code", "origin_period"],
+        how="inner",
+    )
+    previo = [
+        str(pd.Period(t, freq="M") - 1) for t in q.target_period
+    ]
+    q["exceso_obj"] = [exceso.get(k, np.nan) for k in zip(q.municipality_code, q.target_period)]
+    q["exceso_prev"] = [exceso.get(k, np.nan) for k in zip(q.municipality_code, previo)]
+    q = q[q.exceso_obj.notna() & q.exceso_prev.notna() & q.exceso.notna()]
+    origen = pd.PeriodIndex(q.origin_period, freq="M")
+    objetivo = pd.PeriodIndex(q.target_period, freq="M")
+    return pd.DataFrame(
+        {
+            "municipio": q.municipality_code.values,
+            "anio_objetivo": objetivo.year,
+            "origen": origen.year * 12 + origen.month,
+            "score": q[col_prob].astype(float).values,
+            "objetivo": q.exceso_obj.astype(int).values,
+            "inicio": ((q.exceso_obj == 1) & (q.exceso_prev == 0)).astype(int).values,
+            "casos_t": q[col_casos].astype(float).values,
+            "p75_objetivo": q[f"p75_h5_t{horizonte}"].astype(float).values,
+            "exceso_t": q.exceso.astype(int).values,
+            "fold": q[col_fold].values,
+        }
+    )
+
+
+def metricas(alerta, d: pd.DataFrame) -> dict:
+    """Calcular alertas, inicios detectados, falsas, carga y falsas por acierto.
+
+    Args:
+        alerta: Vector 0/1 alineado con d.
+        d: Filas evaluadas, con la columna inicio.
+
+    Returns:
+        Diccionario de métricas con la definición v2.
+    """
+    a = np.asarray(alerta).astype(bool)
+    ini = d.inicio.values == 1
+    n_alertas, det = int(a.sum()), int((a & ini).sum())
+    falsas = n_alertas - det
+    return {
+        "alertas": n_alertas,
+        "inicios": int(ini.sum()),
+        "inicios_detectados": det,
+        "falsas": falsas,
+        "sensibilidad_inicios": det / max(int(ini.sum()), 1),
+        "carga_100mm": 100 * falsas / max(len(d), 1),
+        "falsas_por_acierto": falsas / det if det else np.inf,
+    }
+
+
+def canal(d: pd.DataFrame, f: float = 1.0, fuera_exceso: bool = False) -> np.ndarray:
+    """Alertas del canal: casos de T > f * P75 del mes objetivo.
+
+    Args:
+        d: Filas con casos_t, p75_objetivo y exceso_t.
+        f: Fracción del P75.
+        fuera_exceso: Alerta solo si el municipio no está en exceso en T.
+
+    Returns:
+        Vector 0/1.
+    """
+    a = d.casos_t.values > f * d.p75_objetivo.values
+    if fuera_exceso:
+        a &= d.exceso_t.values == 0
+    return a.astype(int)
+
+
+def elegir_f(d_prev: pd.DataFrame, fuera_exceso: bool, grilla=GRILLA_F) -> float:
+    """Elegir ex ante el f que maximiza el F1 sobre inicios en el año previo.
+
+    Args:
+        d_prev: Filas del año anterior al evaluado.
+        fuera_exceso: Si el canal solo alerta fuera de exceso.
+        grilla: Valores candidatos de f.
+
+    Returns:
+        El f elegido.
+    """
+    mejor, f_mejor = -1.0, 1.0
+    ini = d_prev.inicio.values == 1
+    for f in grilla:
+        a = canal(d_prev, f, fuera_exceso).astype(bool)
+        f1 = 2 * (a & ini).sum() / max(a.sum() + ini.sum(), 1)
+        if f1 > mejor:
+            mejor, f_mejor = f1, f
+    return float(f_mejor)
+
+
+def emparejar(d: pd.DataFrame, alerta_base) -> np.ndarray:
+    """Emitir en cada mes de origen tantas alertas como la línea base, las de mayor score.
+
+    Args:
+        d: Filas con origen y score.
+        alerta_base: Vector 0/1 de la línea base alineado con d.
+
+    Returns:
+        Vector 0/1 del candidato.
+    """
+    k = pd.Series(np.asarray(alerta_base), index=d.index).groupby(d.origen).transform("sum")
+    r = d.score.groupby(d.origen).rank(ascending=False, method="first")
+    return (r <= k).astype(int).values
+
+
+def bootstrap_dif(d: pd.DataFrame, a_mod, a_base, n: int = 1000, semilla: int = 42):
+    """IC 95 % bootstrap por municipio de la diferencia de inicios detectados.
+
+    Args:
+        d: Filas evaluadas.
+        a_mod: Alertas del candidato.
+        a_base: Alertas de la línea base.
+        n: Remuestreos.
+        semilla: Semilla del generador.
+
+    Returns:
+        Tupla (diferencia, límite inferior, límite superior).
+    """
+    ini = d.inicio.values == 1
+    dif = pd.Series((np.asarray(a_mod) - np.asarray(a_base)) * ini, index=d.index)
+    pm = dif.groupby(d.municipio).sum().values
+    b = np.random.default_rng(semilla).choice(pm, size=(n, len(pm)), replace=True).sum(axis=1)
+    return int(pm.sum()), float(np.percentile(b, 2.5)), float(np.percentile(b, 97.5))
+
+
+def lineas_base_por_anio(
+    df: pd.DataFrame, anios=ANIOS_DEFECTO, historia: pd.DataFrame | None = None
+) -> pd.DataFrame:
+    """Agregar una columna 0/1 por línea base y el f usado, solo en los años evaluados.
+
+    Args:
+        df: Salida de validar_entrada.
+        anios: Años evaluados.
+        historia: Filas del panel para elegir f con el año anterior; si falta, se usa df.
+
+    Returns:
+        DataFrame con índice nuevo y columnas de líneas base.
+    """
+    partes = []
+    for t in anios:
+        d = df[df.anio_objetivo == t].copy()
+        fuente = df if historia is None else historia
+        prev = fuente[fuente.anio_objetivo == t - 1]
+        f_aj = elegir_f(prev, False) if len(prev) else 1.0
+        f_fe = elegir_f(prev, True) if len(prev) else 1.0
+        d["canal_p75"] = canal(d, 1.0)
+        d["canal_ajustado"] = canal(d, f_aj)
+        d["canal_fuera_exceso"] = canal(d, f_fe, True)
+        d["persistencia"] = d.exceso_t.values
+        d["f_ajustado"], d["f_fuera_exceso"] = f_aj, f_fe
+        partes.append(d)
+    return pd.concat(partes, ignore_index=True)
+
+
+def comparar(
+    df: pd.DataFrame,
+    anios=ANIOS_DEFECTO,
+    permitir_2025: bool = False,
+    bases=("canal_p75", "canal_ajustado", "canal_fuera_exceso"),
+    n_boot: int = 1000,
+    historia: pd.DataFrame | None = None,
+) -> pd.DataFrame:
+    """Comparar el candidato contra cada línea base con las mismas alertas por mes.
+
+    Args:
+        df: Tabla de entrada.
+        anios: Años evaluados.
+        permitir_2025: Habilita 2025.
+        bases: Líneas base a comparar.
+        n_boot: Remuestreos del IC.
+        historia: Filas del panel para elegir f con el año anterior.
+
+    Returns:
+        Una fila por línea base, más persistencia como referencia descriptiva.
+    """
+    big = lineas_base_por_anio(validar_entrada(df, anios, permitir_2025), anios, historia)
+    periodo = f"{min(anios)}-{max(anios)}"
+    filas = []
+    for base in bases:
+        a_base = big[base].values
+        a_mod = np.zeros(len(big), int)
+        for _, g in big.groupby("anio_objetivo"):
+            a_mod[g.index.values] = emparejar(g, g[base].values)
+        mb, mm = metricas(a_base, big), metricas(a_mod, big)
+        dif, lo, hi = bootstrap_dif(big, a_mod, a_base, n_boot)
+        filas.append(
+            {
+                "linea_base": base,
+                "anios": periodo,
+                "inicios": mb["inicios"],
+                "alertas": mb["alertas"],
+                "base_detectados": mb["inicios_detectados"],
+                "candidato_detectados": mm["inicios_detectados"],
+                "diferencia": dif,
+                "ic95_lo": lo,
+                "ic95_hi": hi,
+                "base_falsas": mb["falsas"],
+                "candidato_falsas": mm["falsas"],
+                "base_carga_100mm": round(mb["carga_100mm"], 2),
+                "candidato_carga_100mm": round(mm["carga_100mm"], 2),
+                "base_falsas_por_acierto": round(mb["falsas_por_acierto"], 2),
+                "candidato_falsas_por_acierto": round(mm["falsas_por_acierto"], 2),
+            }
+        )
+    pers = metricas(big.persistencia.values, big)
+    filas.append(
+        {
+            "linea_base": "persistencia (descriptiva)",
+            "anios": periodo,
+            "inicios": pers["inicios"],
+            "alertas": pers["alertas"],
+            "base_detectados": pers["inicios_detectados"],
+            "base_falsas": pers["falsas"],
+            "base_carga_100mm": round(pers["carga_100mm"], 2),
+        }
+    )
+    return pd.DataFrame(filas)
+
+
+def por_anio(
+    df: pd.DataFrame,
+    base: str = "canal_fuera_exceso",
+    anios=ANIOS_DEFECTO,
+    permitir_2025: bool = False,
+    historia: pd.DataFrame | None = None,
+) -> pd.DataFrame:
+    """Detalle anual del candidato contra una línea base.
+
+    Args:
+        df: Tabla de entrada.
+        base: Línea base.
+        anios: Años evaluados.
+        permitir_2025: Habilita 2025.
+        historia: Filas del panel para elegir f con el año anterior.
+
+    Returns:
+        Una fila por año con f, inicios, alertas y detectados.
+    """
+    big = lineas_base_por_anio(validar_entrada(df, anios, permitir_2025), anios, historia)
+    col_f = {"canal_ajustado": "f_ajustado", "canal_fuera_exceso": "f_fuera_exceso"}.get(base)
+    filas = []
+    for t, g in big.groupby("anio_objetivo"):
+        mb, mm = metricas(g[base].values, g), metricas(emparejar(g, g[base].values), g)
+        filas.append(
+            {
+                "anio": t,
+                "f": g[col_f].iloc[0] if col_f else 1.0,
+                "inicios": mb["inicios"],
+                "alertas": mb["alertas"],
+                "base_detectados": mb["inicios_detectados"],
+                "candidato_detectados": mm["inicios_detectados"],
+            }
+        )
+    return pd.DataFrame(filas)
+
+
+def curva(
+    df: pd.DataFrame,
+    anios=ANIOS_DEFECTO,
+    permitir_2025: bool = False,
+    solo_elegibles: bool = True,
+    grilla=GRILLA_F,
+) -> pd.DataFrame:
+    """Inicios detectados según alertas emitidas: canal f * P75 contra el candidato emparejado.
+
+    Args:
+        df: Tabla de entrada.
+        anios: Años evaluados.
+        permitir_2025: Habilita 2025.
+        solo_elegibles: El canal solo alerta fuera de exceso.
+        grilla: Valores de f.
+
+    Returns:
+        Una fila por f, ordenada por alertas.
+    """
+    d = validar_entrada(df, anios, permitir_2025)
+    d = d[d.anio_objetivo.isin(anios)].reset_index(drop=True)
+    filas = []
+    for f in grilla:
+        a = canal(d, f, fuera_exceso=solo_elegibles)
+        m = emparejar(d, a)
+        filas.append(
+            {
+                "f": f,
+                "alertas": int(a.sum()),
+                "canal_detectados": metricas(a, d)["inicios_detectados"],
+                "candidato_detectados": metricas(m, d)["inicios_detectados"],
+            }
+        )
+    return pd.DataFrame(filas).sort_values("alertas")
+
+
+def validar_candidato(panel: pd.DataFrame, predictions: pd.DataFrame, params: dict):
+    """Resumen, detalle por año y curva para un candidato y un horizonte.
+
+    Los años evaluados salen de los datos (años objetivo presentes, sin 2025) y f se elige con
+    las filas del panel del año anterior, aunque ese año no tenga predicciones.
+
+    Args:
+        panel: Panel canónico.
+        predictions: Predicciones del arnés por fila.
+        params: candidato, horizonte y, opcional, permitir_un_fold.
+
+    Returns:
+        Tupla (resumen, por_anio, curva) de DataFrames.
+    """
+    h = int(params["horizonte"])
+    df = desde_pipeline(
+        panel,
+        predictions,
+        params["candidato"],
+        h,
+        permitir_un_fold=bool(params.get("permitir_un_fold", False)),
+    )
+    anios = tuple(sorted(int(a) for a in df.anio_objetivo.unique() if a < 2025))
+    historia = historia_desde_panel(panel, h)
+    return (
+        comparar(df, anios, historia=historia),
+        por_anio(df, anios=anios, historia=historia),
+        curva(df, anios),
+    )

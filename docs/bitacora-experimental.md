@@ -1547,6 +1547,33 @@ después de publicar.
 
 ---
 
+### Tanda 10, línea R — Retroanálisis con datos reales y regresión logística
+
+Documentada en detalle en [tanda-10-retroanalisis.md](bitacora/tanda-10-retroanalisis.md).
+
+**Origen.** Llevar la línea G a datos reales y a la evaluación del contrato. El
+modelo de la tanda es una regresión logística (`logistic_onset`) construida
+sobre el bloque de margen de G: usa el margen contra el umbral del mes objetivo
+y el del mes en curso, el cambio del umbral, la tendencia de casos y si hubo
+casos.
+
+**Resultado.** Con el release `satd-raw-173d5856` (2007-2024), en siete cohortes
+de 2018 a 2024 (593 inicios en T+1 y 431 en T+2), frente al canal condicionado
+de la línea Q y con el mismo presupuesto de alertas:
+
+| Combinación | T+1: Δ sensibilidad (IC 95 %) | T+2: Δ sensibilidad (IC 95 %) |
+| --- | --- | --- |
+| Logística con clima | +3.4 pp (0.5 a 6.2) | +8.1 pp (4.2 a 11.8) |
+| Logística sin clima | +2.7 pp (−0.2 a 5.9) | +7.7 pp (3.7 a 11.8) |
+| XGBoost con clima | −0.5 pp (−3.6 a 2.6) | +1.9 pp (−3.2 a 6.6) |
+
+La logística le gana a XGBoost en los dos horizontes, pero ninguna combinación
+llega a la meta de 10 puntos del contrato. En T+1 la ganancia viene de picos de
+un mes; en brotes sostenidos el canal sigue igual o mejor. Encadenar el puntaje
+T+1 con el T+2 no ayuda. Son cifras exploratorias, calculadas con una
+evaluación local fuera del registro; la cifra oficial saldrá de EXP003 con la
+evaluación científica del contrato.
+
 ## 6. Estado de las líneas de trabajo
 
 | Línea | Estado |
@@ -1570,6 +1597,7 @@ después de publicar.
 | O. Banco de evaluación de origen móvil | **Confirmada** en la tanda 7; sostiene G sobre 647 inicios en siete años |
 | P. Canal con umbral ajustado como línea base | **Confirmada** en la tanda 8; lleva al canal de 181 a 365 inicios y pasa a ser línea base publicada |
 | Q. Canal condicionado a no estar en exceso | **Confirmada** en la tanda 9 a T+1 y **rechazada a T+2 por fuga**; pasa a ser la línea base principal y reduce la ventaja publicada del modelo a +22 % en el punto de operación |
+| R. Regresión logística sobre el margen, con datos reales | **Exploratoria** en la tanda 10: supera al canal condicionado y a XGBoost, sin llegar a la meta de 10 puntos; pendiente de confirmar en EXP003 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres

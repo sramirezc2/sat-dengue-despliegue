@@ -219,6 +219,13 @@
         },
         "channel_budget": {
           "const": false
+        },
+        "log1p_columns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
         }
       },
       "required": [
@@ -820,6 +827,14 @@
         },
         "seed_selection": {
           "const": false
+        },
+        "C": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 1
         }
       },
       "required": [
@@ -827,16 +842,89 @@
         "adapter_version",
         "library",
         "library_version",
-        "rounds",
-        "parameters",
-        "expected_native_configuration",
         "early_stopping",
         "hyperparameter_search",
         "class_balancing",
         "refit",
         "seed_selection"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "family": {
+                "const": "xgboost_onset"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "rounds",
+              "parameters",
+              "expected_native_configuration"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "C"
+                  ]
+                },
+                {
+                  "required": [
+                    "max_iter"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "family": {
+                "const": "logistic_onset"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "C",
+              "max_iter"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "rounds"
+                  ]
+                },
+                {
+                  "required": [
+                    "parameters"
+                  ]
+                },
+                {
+                  "required": [
+                    "expected_native_configuration"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "family": {
+              "enum": [
+                "xgboost_onset",
+                "logistic_onset"
+              ]
+            }
+          }
+        }
+      ]
     },
     "calibration": {
       "type": "object",
@@ -1530,6 +1618,48 @@
     },
     "scientific_evaluation": {
       "type": "object"
+    },
+    "protocol": {
+      "enum": [
+        "fixed_roles",
+        "rolling_origin"
+      ]
+    },
+    "population": {
+      "type": "object",
+      "properties": {
+        "department_codes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]{2}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "department_codes"
+      ],
+      "additionalProperties": false
+    },
+    "rolling": {
+      "type": "object",
+      "properties": {
+        "first_origin": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+        },
+        "last_target": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+        }
+      },
+      "required": [
+        "first_origin",
+        "last_target"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [

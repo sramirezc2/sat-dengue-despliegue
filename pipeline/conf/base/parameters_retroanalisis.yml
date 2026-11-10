@@ -1,0 +1,11 @@
+# Retroanálisis de ventana expansiva (pipeline retroanalisis). Receta por defecto: logística sin clima
+# (tanda 10). También acepta configuraciones de experimento XGBoost. La receta se toma de
+# una configuración de experimento existente; 2025 no se usa.
+retroanalisis:
+  configuracion: conf/retroanalisis/logistica_sin_clima.yml
+  horizontes: [1, 2]
+  primer_origen: "2019-01"
+  ultimo_objetivo: "2024-12"
+  salida: data/retroanalisis
+  # El panel canónico es nacional; por defecto Tolima (73) y Meta (50), como la propuesta.
+  departamentos: ["50", "73"]
