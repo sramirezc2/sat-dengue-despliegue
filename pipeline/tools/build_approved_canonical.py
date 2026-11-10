@@ -13,12 +13,13 @@ MANIFESTS = (
 )
 
 
-def run(root: Path, manifest: str = MANIFESTS[1]) -> int:
+def run(root: Path, manifest: str = MANIFESTS[1], profile: str = "operational_full") -> int:
     """Coordinar dos comandos existentes y detenerse ante el primer fallo.
 
     Args:
         root: Raíz del subproyecto, usada como cwd de ambos procesos.
         manifest: Release operacional nuevo o histórico, sin modificar sus metadatos.
+        profile: Uno de los dos contratos canónicos cerrados.
 
     Returns:
         Código del primer proceso fallido o del comando Kedro final.
@@ -42,7 +43,7 @@ def run(root: Path, manifest: str = MANIFESTS[1]) -> int:
                 "canonical_build",
                 "--params",
                 f"canonical.mode=approved,canonical.workspace={workspace},"
-                f"canonical.tracking=false,canonical.manifest={manifest}",
+                f"canonical.tracking=false,canonical.manifest={manifest},canonical.profile={profile}",
             ],
             cwd=root,
             env=environment,
@@ -60,8 +61,11 @@ def main() -> int:
     """Mostrar ayuda sin efectos o ejecutar el flujo operacional explícito."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", choices=MANIFESTS, default=MANIFESTS[1])
+    parser.add_argument(
+        "--profile", choices=("approved", "operational_full"), default="operational_full"
+    )
     arguments = parser.parse_args()
-    return run(Path(__file__).resolve().parents[1], arguments.manifest)
+    return run(Path(__file__).resolve().parents[1], arguments.manifest, arguments.profile)
 
 
 if __name__ == "__main__":

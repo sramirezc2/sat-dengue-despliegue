@@ -95,19 +95,29 @@ class BuildConfig:
             validate_period(period)
         TemporalPolicy(self.reserved_start)
         if (
-            self.profile not in {"approved", "synthetic"}
+            self.profile not in {"approved", "operational_full", "synthetic"}
             or type(self.municipalities) is not int
             or self.municipalities <= 0
             or not self.start <= self.epi_start <= self.end < self.reserved_start
         ):
             raise ValueError("Configuración canónica inválida")
-        if self.profile == "approved" and (
+        expected = {
+            "approved": ("2011-06", "2024-12", 1122, "2011-06", "2025-01"),
+            "operational_full": ("2007-01", "2024-12", 1122, "2007-01", "2025-01"),
+        }
+        if self.profile != "synthetic" and (
             self.start,
             self.end,
             self.municipalities,
             self.epi_start,
-        ) != ("2011-06", "2024-12", 1122, "2011-06"):
-            raise ValueError("No se puede reducir el contrato aprobado")
+            self.reserved_start,
+        ) != expected[self.profile]:
+            raise ValueError("No se puede alterar el contrato del perfil canónico")
+
+    @classmethod
+    def operational_full(cls) -> "BuildConfig":
+        """Seleccionar el único contrato completo, sin permitir fechas arbitrarias."""
+        return cls(profile="operational_full", start="2007-01", epi_start="2007-01")
 
     @property
     def periods(self) -> list[str]:
@@ -137,11 +147,15 @@ def raw_contract_validation(
     if bundle.release_kind != "raw_sources":
         raise ValueError("Solo raw_sources; tablas, features y derivados prohibidos")
     approved = OPERATIONAL_INVENTORY if bundle.release_id == OPERATIONAL_RELEASE_ID else INVENTORY
-    expected = approved if config.profile == "approved" else synthetic_inventory
+    expected = approved if config.profile != "synthetic" else synthetic_inventory
     if expected is None or set(expected) != set(INVENTORY):
         raise ValueError("Falta contrato sintético explícito")
-    if config.profile == "approved" and synthetic_inventory is not None:
+    if config.profile != "synthetic" and synthetic_inventory is not None:
         raise ValueError("No se puede sustituir el inventario aprobado")
+    if config.profile == "operational_full" and (
+        bundle.coverage_start > "2007-01-01" or bundle.coverage_end < "2024-12-31"
+    ):
+        raise ValueError("El release no declara cobertura para el perfil completo")
     if len(bundle.files) != 5 or len({f.logical_name for f in bundle.files}) != 5:
         raise ValueError("Inventario faltante, adicional o duplicado")
     actual = {f.logical_name: (f.path.name, f.size_bytes, f.sha256) for f in bundle.files}

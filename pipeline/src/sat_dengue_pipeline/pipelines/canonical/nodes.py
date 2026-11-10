@@ -33,10 +33,9 @@ class BuildInput:
 def build_input(parameters: dict) -> BuildInput:
     """Elegir fixture o caché aprobada verificada; nunca descargar desde ciencia."""
     required = {"mode", "workspace", "tracking"}
-    if set(parameters) not in (required, required | {"manifest"}) or parameters["mode"] not in {
-        "synthetic",
-        "approved",
-    }:
+    if not required <= set(parameters) <= required | {"manifest", "profile"} or (
+        parameters["mode"] not in {"synthetic", "approved"}
+    ):
         raise ValueError("Modo canónico desconocido")
     workspace = Path(parameters["workspace"])
     if (
@@ -46,8 +45,14 @@ def build_input(parameters: dict) -> BuildInput:
     ):
         raise ValueError("Workspace relativo bajo data/ requerido")
     if parameters["mode"] == "synthetic":
+        if "profile" in parameters:
+            raise ValueError("El fixture no admite un perfil real")
         bundle, inventory = synthetic_bundle(workspace / "raw")
         return BuildInput(bundle, fixture_config(), inventory, workspace, parameters["tracking"])
+    profile = parameters.get("profile", "approved")
+    if profile not in {"approved", "operational_full"}:
+        raise ValueError("Perfil canónico desconocido")
+    config = BuildConfig.operational_full() if profile == "operational_full" else BuildConfig()
     manifest_path = parameters.get("manifest", RAW_MANIFESTS[0])
     if manifest_path not in RAW_MANIFESTS:
         raise ValueError("Manifiesto operacional no aprobado")
@@ -66,7 +71,7 @@ def build_input(parameters: dict) -> BuildInput:
         ),
         manifest.release_kind,
     )
-    return BuildInput(bundle, BuildConfig(), None, workspace, parameters["tracking"])
+    return BuildInput(bundle, config, None, workspace, parameters["tracking"])
 
 
 def validate_input(source: BuildInput) -> ResolvedBundle:

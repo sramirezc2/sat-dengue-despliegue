@@ -4,7 +4,7 @@
   "provider": "huggingface",
   "location": "sat-dengue/data_raw",
   "revision": "173d5856874b89d8aeb0566accc65ce7f6759820",
-  "coverage_start": "2011-06-01",
+  "coverage_start": "2007-01-01",
   "coverage_end": "2025-12-31",
   "files": [
     {

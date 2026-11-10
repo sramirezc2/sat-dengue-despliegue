@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; ninguna tarea activa
+**Estado general:** 26/27; T22–T26 COMPLETAS; T27 EN CURSO; ampliación canónica autorizada
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -128,7 +128,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 24 | Validar las correcciones operativas acumuladas | `COMPLETA` | 23 | 578 pipeline, API 35, tablero 55/frozen/lint/build; contratos 22+22; skills, enlaces, filtros e higiene verdes. Checkout limpio de 5768331 con 29 pruebas nuevas y ayuda/error controlado; evidencia preservada. [Recibo](docs/evidence/task24/operational-validation.json). |
 | 25 | Elaborar reporte ejecutivo final | `COMPLETA` | 24 | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md): síntesis con evidencia y límites, navegación desde guías y arquitectura actualizada hasta T24. Auditoría documental, registro, skills y preservación verdes; publicación pendiente de autorización. |
 | 26 | Publicar cambios y validar el PR #1 | `COMPLETA` | 25 | Push normal y descripción autorizados. Siete checks verdes sobre 524c38e ([recibo remoto/local](docs/evidence/task26/publication-validation.json)) y sobre su cierre publicado 0222d6d ([snapshot](docs/evidence/task27/t26-closure-checks.json)). Cada nuevo HEAD requiere checks propios. |
-| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | [Auditoría](docs/reviews/final-merge-audit.md): aceptación operacional PASS aprobada; prueba real desde clon limpio sobre `002f122` pasó y novedades operativas corregidas. Segundo release inmutable 173d585, cinco archivos íntegros, enero 2020 completo y provisional de 182.886 claves. 116 pruebas específicas PASS; preservación oficial 49/49 y 90 archivos históricos intactos. DEC-030: no se requiere modificar ruleset ni repetir localmente suites delegadas a GitHub. Solo quedan push normal autorizado, siete checks del HEAD final y aprobación independiente; sin push/merge/force push en este cierre local. |
+| 27 | Ejecutar auditoría final de merge | `EN CURSO` | 26 | DEC-031: ampliar y certificar canónico operacional 2007-01–2024-12, preservando perfil histórico/T16; sin modelos, experimentos ni publicación. Preflight crudo PASS sobre 0004185. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
 
@@ -224,10 +224,10 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 26/27 |
-| Tarea activa | Ninguna |
-| Tareas bloqueadas | T27 — Aceptación real PASS aprobada; solo push normal autorizado, siete checks del HEAD final y aprobación independiente pendientes |
+| Tarea activa | T27 — Ampliación y certificación canónica operacional |
+| Tareas bloqueadas | Ninguna durante la ejecución local autorizada; gates externos pendientes antes del cierre de T27 |
 | Última tarea completada | T26 — Publicar cambios y validar el PR #1 |
-| Próxima tarea | Push normal bajo autorización de publicación, siete checks del HEAD final y aprobación independiente; no modificar ruleset ni repetir localmente suites delegadas a GitHub. Este cierre termina sin push/merge/force push. |
+| Próxima tarea | Construcción completa y certificación N=3; después cierre documental y gates externos |
 | Última actualización | 9 de noviembre de 2026 |
 
 ### Registro de ejecución
@@ -358,6 +358,8 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 
 | 2026-11-09 | 27 | BLOQUEADA | Commit local final de auditoría, recibo y plan; HEAD real probado `002f122` | El usuario aprueba la aceptación operacional PASS: prueba desde clon limpio y novedades operativas corregidas. Cierre documental exclusivamente; comprobación del contenido staged y `git diff --cached --check` antes del commit. Se conserva el recibo original y toda evidencia cerrada. | DEC-030: no se requiere modificar el ruleset; no se deben repetir localmente las suites delegadas a GitHub. Únicas acciones externas: push normal autorizado, siete checks del HEAD final y aprobación independiente. Progreso 26/27 hasta esos gates; sin push, merge ni force push. |
 
+| 2026-11-09 | 27 | EN CURSO | Base sincronizada `0004185` | Rama correcta, HEAD remoto exacto y árbol limpio. Caché del release operacional fijado verificada por cinco tamaños/SHA-256; clima desde 2007-01-01, enero 2007/2020 nacionales completos; ambos CSV epidemiológicos contienen fechas de 2006. | DEC-031 autoriza exclusivamente segundo perfil cerrado y certificación N=3 real, con evidencia separada. No requiere credencial de red: se reutilizan solo crudos íntegros de la aceptación anterior. Sin entrenamiento, EXP003, exportación, push, merge, force push ni cambios de ruleset. |
+
 ### Riesgos de la extensión operacional
 
 - Un recibo operativo no puede reemplazar historia: destino exclusivo bajo pipeline/data/.
@@ -419,6 +421,8 @@ Toda desviación debe registrarse antes de continuar.
 | DEC-029 | 2026-11-09 | Registrar un segundo release operacional inmutable `sat-dengue/data_raw@173d5856874b89d8aeb0566accc65ce7f6759820`, sin sustituir el histórico. | Autorización expresa posterior al bloqueo por nueva identidad climática; consulta fijada al SHA confirma solo clima distinto, con cuatro tamaños/hashes anteriores coincidentes. | Nuevo manifiesto de cinco archivos y selección explícita operacional; coexistencia/cachés separadas con mecanismo existente, sin dependencias ni cambios científicos. Manifiesto anterior, T16, EXP001/EXP002 y evidencia cerrada inmutables. Continuar descarga, cobertura enero 2020 y helper desde clon limpio; pruebas específicas únicamente. Detener ante otro archivo cambiado o decisión científica. Sin push, merge ni ruleset. | Autorización explícita del usuario en esta reanudación; no autoriza modificar ventanas, predictores, roles, modelos, hiperparámetros ni resultados históricos. |
 
 | DEC-030 | 2026-11-09 | Aprobar aceptación operacional PASS y autorizar únicamente el commit local final de auditoría, recibo y cierre documental. | La prueba real desde clon limpio pasó y las novedades operativas quedaron corregidas; aprobación expresa del usuario. | No se requiere modificar el ruleset; las propuestas históricas de configuración dejan de ser acciones pendientes. No repetir localmente suites delegadas a GitHub. T27 conserva 26/27 por las únicas acciones externas: push normal autorizado, siete checks del HEAD final y aprobación independiente. No se reescribe evidencia cerrada ni se alteran ciencia o resultados; esta ejecución termina con árbol limpio y sin push, merge o force push. | Instrucción explícita del usuario para este cierre local; no se atribuye una nueva consulta remota ni se autoriza publicación en esta ejecución. |
+
+| DEC-031 | 2026-11-09 | Añadir únicamente perfil operacional completo 2007-01–2024-12 (1.122 municipios, epi_start 2007-01, reserva 2025-01), dentro de T27. | Autorización urgente del usuario; release operacional corregido ya registrado y cobertura cruda comprobada. | Mantener approved-raw.json, perfil histórico, T16, EXP001/EXP002 y publicados intactos. Solo cobertura inicial del manifiesto operacional cambia a 2007-01-01; construir una vez y, si pasa, certificar N=3 independiente. Entrenamiento desde 2018, roles, horizontes, predictores y decisiones científicas no cambian. Commits locales separados; no publicación ni reglas remotas. | Instrucción explícita del usuario en esta ejecución. |
 
 ## 8. Condición de finalización
 

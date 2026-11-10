@@ -81,7 +81,7 @@ def validate_canonical_tracking(payload: dict) -> None:
     _closed(payload["source_hashes"], set(INVENTORY))
     for value in payload["source_hashes"].values():
         _digest(value)
-    if payload["profile"] not in {"approved", "synthetic"}:
+    if payload["profile"] not in {"approved", "operational_full", "synthetic"}:
         raise ValueError("Perfil inválido")
     hashes = payload["reconstruction_hashes"]
     if not isinstance(hashes, list):
