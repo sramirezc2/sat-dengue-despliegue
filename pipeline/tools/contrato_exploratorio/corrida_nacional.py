@@ -15,12 +15,12 @@ import json
 import sys
 from pathlib import Path
 
+import contrato_local as ct
 import pandas as pd
 import yaml
+from contrato_local import PARAMETROS_DEFECTO
 
 from sat_dengue_pipeline.domain.calendar import add_months
-import contrato_local as ct
-from contrato_local import PARAMETROS_DEFECTO
 from sat_dengue_pipeline.factory import engine
 from sat_dengue_pipeline.raw.serialization import CanonicalArtifact, load_canonical
 

@@ -13,10 +13,10 @@ import json
 import sys
 from pathlib import Path
 
+import contrato_local as ct
 import numpy as np
 import pandas as pd
 
-import contrato_local as ct
 from sat_dengue_pipeline.raw.serialization import CanonicalArtifact, load_canonical
 
 carpeta, receta = Path(sys.argv[1]), sys.argv[2]
