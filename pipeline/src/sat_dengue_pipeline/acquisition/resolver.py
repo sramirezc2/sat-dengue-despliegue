@@ -5,6 +5,8 @@ import os
 import tempfile
 from pathlib import Path
 
+from sat_dengue_pipeline.canonical_cache import reject_cache_symlinks
+
 from .contracts import DataSource, ReleaseFile, ReleaseManifest, ResolvedBundle, ResolvedFile
 from .errors import AcquisitionError, CacheError, DownloadError, IntegrityError
 
@@ -60,8 +62,17 @@ def resolve_release(
         from .raw_manifest import validate_raw_manifest
 
         validate_raw_manifest(manifest)
-    root = cache_root.resolve()
+    # Conservar la ruta léxica: resolve() ocultaría enlaces en la raíz de caché.
+    root = cache_root.absolute()
     bundle_root = contained_path(root, f"{manifest.release_id}/{manifest.manifest_sha256}")
+    try:
+        reject_cache_symlinks(bundle_root)
+        for file in manifest.files:
+            reject_cache_symlinks(contained_path(bundle_root, file.relative_path))
+    except ValueError:
+        raise CacheError(
+            "Caché con enlaces simbólicos no permitida; no se escriben crudos"
+        ) from None
     resolved: list[ResolvedFile] = []
     for file in manifest.files:
         path = contained_path(bundle_root, file.relative_path)

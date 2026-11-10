@@ -6,8 +6,13 @@ from pathlib import Path
 import pandas as pd
 
 from sat_dengue_pipeline.acquisition.contracts import ReleaseManifest, ResolvedBundle, ResolvedFile
-from sat_dengue_pipeline.acquisition.raw_manifest import RAW_MANIFESTS, validate_raw_manifest
-from sat_dengue_pipeline.canonical_cache import ACQUIRE_COMMAND, preflight_cache
+from sat_dengue_pipeline.acquisition.raw_manifest import (
+    OPERATIONAL_MANIFEST,
+    OPERATIONAL_PROFILE,
+    RAW_MANIFESTS,
+    validate_raw_manifest,
+)
+from sat_dengue_pipeline.canonical_cache import acquire_command, preflight_cache
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy
 from sat_dengue_pipeline.raw import build as io
 from sat_dengue_pipeline.raw.contract import BuildConfig, raw_contract_validation
@@ -28,6 +33,7 @@ class BuildInput:
     inventory: dict | None
     workspace: Path
     tracking: bool
+    manifest: str = OPERATIONAL_MANIFEST
 
 
 def build_input(parameters: dict) -> BuildInput:
@@ -49,17 +55,17 @@ def build_input(parameters: dict) -> BuildInput:
             raise ValueError("El fixture no admite un perfil real")
         bundle, inventory = synthetic_bundle(workspace / "raw")
         return BuildInput(bundle, fixture_config(), inventory, workspace, parameters["tracking"])
-    profile = parameters.get("profile", "approved")
+    profile = parameters.get("profile", OPERATIONAL_PROFILE)
     if profile not in {"approved", "operational_full"}:
         raise ValueError("Perfil canónico desconocido")
     config = BuildConfig.operational_full() if profile == "operational_full" else BuildConfig()
-    manifest_path = parameters.get("manifest", RAW_MANIFESTS[0])
+    manifest_path = parameters.get("manifest", OPERATIONAL_MANIFEST)
     if manifest_path not in RAW_MANIFESTS:
         raise ValueError("Manifiesto operacional no aprobado")
     manifest = ReleaseManifest.from_json(Path(manifest_path).read_text(encoding="utf-8"))
     validate_raw_manifest(manifest)
     cache = Path("data/01_raw/inbox") / manifest.release_id / manifest.manifest_sha256
-    preflight_cache(cache, {file.relative_path for file in manifest.files})
+    preflight_cache(cache, {file.relative_path for file in manifest.files}, manifest=manifest_path)
     bundle = ResolvedBundle(
         manifest.release_id,
         manifest.manifest_sha256,
@@ -71,7 +77,7 @@ def build_input(parameters: dict) -> BuildInput:
         ),
         manifest.release_kind,
     )
-    return BuildInput(bundle, config, None, workspace, parameters["tracking"])
+    return BuildInput(bundle, config, None, workspace, parameters["tracking"], manifest_path)
 
 
 def validate_input(source: BuildInput) -> ResolvedBundle:
@@ -82,7 +88,7 @@ def validate_input(source: BuildInput) -> ResolvedBundle:
         if source.config.profile == "synthetic":
             raise
         raise ValueError(
-            f"Caché corrupta o contrato crudo inválido. Ejecute: {ACQUIRE_COMMAND}"
+            f"Caché corrupta o contrato crudo inválido. Ejecute: {acquire_command(source.manifest)}"
         ) from None
 
 

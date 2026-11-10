@@ -37,10 +37,25 @@ uv run --locked --directory pipeline python tools/acquire_private_raw.py
 uv run --locked --directory pipeline kedro run --pipelines canonical_build --params canonical.mode=approved,canonical.workspace=data/canonical-approved-manual,canonical.tracking=false
 ```
 
+El comando único y estas dos etapas manuales seleccionan por defecto el mismo
+release corregido `satd-raw-173d5856` y el perfil `operational_full`,
+`2007-01`–`2024-12`. Una caché solo histórica no sustituye al release solicitado.
+Kedro conserva su modo sintético por defecto: para construir desde crudos se
+requiere `canonical.mode=approved`, como en el ejemplo.
+
+La reproducción histórica se selecciona explícitamente:
+
+```sh
+uv run --locked --directory pipeline python tools/build_approved_canonical.py --manifest conf/releases/approved-raw.json --profile approved
+```
+
 La salida es **provisional**, no certificada ni entrenable automáticamente. El
 helper no ejecuta N=3, entrenamiento, publicación ni cambios al registro. Cada
 adquisición conserva un recibo nuevo en `pipeline/data/acquisition/`, ignorado por
-Git. Para recursos medidos, límites de memoria y fallos, consulte
+Git. `VERIFIED` exige los cinco archivos exactos e íntegros. Los enlaces en la
+caché se rechazan antes de escribir crudos; los adicionales se informan y conservan.
+La adquisición puede recuperar archivos faltantes o corruptos. Para recursos
+medidos, límites de memoria y fallos, consulte
 [operación y recuperación](docs/operations/pipeline-operations.md#recursos-medidos).
 Estos comandos privados no son el smoke sintético ni autorización para ejecutarlos.
 

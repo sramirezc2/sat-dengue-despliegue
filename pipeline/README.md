@@ -496,7 +496,8 @@ ni reutilices una salida anterior como certificación de la corrida fallida.
 La conexión privada, cobertura/formatos y N=3 reales se registran en
 [la evidencia de tarea 16](../docs/decisions/task16-reproduction.md).
 
-El manifiesto `conf/releases/approved-raw.json` fija los cinco crudos privados.
+El manifiesto `conf/releases/operational-raw-173d5856.json` fija por defecto los
+cinco crudos privados del release corregido `satd-raw-173d5856`.
 Desde la raíz, tras `uv sync --locked --project pipeline` y autenticación explícita:
 
 ```sh
@@ -515,8 +516,22 @@ uv run --locked --directory pipeline python tools/acquire_private_raw.py
 uv run --locked --directory pipeline kedro run --pipelines canonical_build --params canonical.mode=approved,canonical.workspace=data/canonical-approved-manual,canonical.tracking=false
 ```
 
+Ambas rutas construyen con el mismo release y perfil `operational_full`,
+`2007-01`–`2024-12`. El modo predeterminado de Kedro sigue siendo sintético;
+`canonical.mode=approved` activa la selección real operacional. No hay fallback a
+la caché histórica cuando falta la del release solicitado.
+
+Para reproducir el histórico, fijar ambos valores:
+
+```sh
+uv run --locked --directory pipeline python tools/build_approved_canonical.py --manifest conf/releases/approved-raw.json --profile approved
+```
+
 El adquiridor reutiliza `DataSource`/`ResolvedBundle`, exige privacidad y revisión
-fija, y verifica inventario y bytes. Guarda un recibo exclusivo por intento en
+fija, y solo emite `VERIFIED` tras verificar inventario físico exacto y bytes de
+los cinco archivos. Rechaza enlaces en la ruta de caché antes de escribir crudos;
+los adicionales se informan sin borrarse. Faltantes o corruptos se recuperan por
+adquisición; los nodos científicos no descargan ni reparan. Guarda un recibo exclusivo por intento en
 `data/acquisition/<execution_id>/receipt.json`, incluso ante fallo de adquisición;
 no escribe en evidencia histórica. Sin permisos o espacio para el recibo, falla
 con `ReceiptError`; no puede garantizar persistencia ante un filesystem fallido.

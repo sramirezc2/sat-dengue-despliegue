@@ -15,7 +15,10 @@ from sat_dengue_pipeline.pipelines.canonical import nodes
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND = "uv run --locked --directory pipeline python tools/acquire_private_raw.py"
-PARAMS = {"mode": "approved", "workspace": "data/test-work", "tracking": False}
+PARAMS = {
+    "mode": "approved", "workspace": "data/test-work", "tracking": False,
+    "manifest": "conf/releases/approved-raw.json", "profile": "approved",
+}
 
 
 @pytest.fixture
@@ -139,7 +142,13 @@ def acquisition_tool(
     """Cargar el CLI y sustituir toda adquisición por un doble local."""
     module = runpy.run_path(str(ROOT / "tools/acquire_private_raw.py"))
     run = module["run"]
-    manifest = ReleaseManifest.from_json((ROOT / "conf/releases/approved-raw.json").read_text())
+    manifest_path = "conf/releases/operational-raw-173d5856.json"
+    content = (ROOT / manifest_path).read_text()
+    manifest = ReleaseManifest.from_json(content)
+    local = tmp_path / manifest_path
+    local.parent.mkdir(parents=True, exist_ok=True)
+    local.write_text(content, encoding="utf-8")
+    cache = tmp_path / "data/01_raw/inbox" / manifest.release_id / manifest.manifest_sha256
     from sat_dengue_pipeline.acquisition.contracts import ResolvedBundle, ResolvedFile
 
     bundle = ResolvedBundle(
@@ -148,27 +157,24 @@ def acquisition_tool(
         manifest.coverage_start,
         manifest.coverage_end,
         tuple(
-            ResolvedFile(f.logical_name, tmp_path / f.relative_path, f.size_bytes, f.sha256)
+            ResolvedFile(f.logical_name, cache / f.relative_path, f.size_bytes, f.sha256)
             for f in manifest.files
         ),
         manifest.release_kind,
     )
-    monkeypatch.setitem(
-        run.__globals__,
-        "acquire",
-        lambda config, root: (
-            (bundle, {"status": "PASSED"})
-            if success
-            else (
-                None,
-                {
-                    "status": "FAILED",
-                    "error_type": "SecretType_private_marker",
-                    "message": "private_marker /private/location",
-                },
-            )
-        ),
-    )
+    def acquire(config: dict, root: Path) -> tuple:
+        """Simular transporte; el inventario físico conserva el contrato de Kedro."""
+        if success:
+            cache.mkdir(parents=True, exist_ok=True)
+            for file in bundle.files:
+                file.path.write_bytes(b"fixture")
+            return bundle, {"status": "PASSED"}
+        return None, {
+            "status": "FAILED", "error_type": "SecretType_private_marker",
+            "message": "private_marker /private/location",
+        }
+
+    monkeypatch.setitem(run.__globals__, "acquire", acquire)
     monkeypatch.setitem(run.__globals__, "raw_contract_validation", lambda *args: args[0])
     return run
 

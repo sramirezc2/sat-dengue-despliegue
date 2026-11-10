@@ -160,10 +160,12 @@ DEC-029 fija el default del helper al nuevo release operacional
 `173d5856874b89d8aeb0566accc65ce7f6759820`, declarado en
 `pipeline/conf/releases/operational-raw-173d5856.json`. Solo cambia la identidad
 de integridad del archivo climático. El manifiesto histórico `approved-raw.json`
-se conserva byte a byte; el constructor directo y el adquiridor directo mantienen
-su selección histórica por defecto. Para seleccionar ese release mediante el
-helper, usar `--manifest conf/releases/approved-raw.json --profile approved`. El helper transmite la
-misma selección a adquisición y al parámetro `canonical.manifest`; las cachés se
+se conserva byte a byte. DEC-032 unifica el helper, el adquiridor directo y
+Kedro real en ese release corregido por defecto; las dos rutas de construcción
+seleccionan `operational_full`. La selección se declara una sola vez en
+`acquisition/raw_manifest.py`. Para el histórico, usar
+`--manifest conf/releases/approved-raw.json --profile approved`. El helper transmite
+la misma selección a adquisición y al parámetro `canonical.manifest`; las cachés se
 separan por `release_id` y digest del manifiesto. DEC-031 añade el perfil
 canónico completo; T16 mantiene manifiesto, perfil y configuración históricos.
 
@@ -171,8 +173,9 @@ El helper recomendado selecciona ahora `operational_full`: 1.122 municipios ×
 216 meses, `2007-01`–`2024-12`, 242.352 claves. El perfil histórico `approved`
 permanece explícito, con 163 meses y 182.886 claves. No se aceptan fechas libres.
 Ambos conservan reserva `2025-01` y comparten nodos/productores. El constructor
-Kedro directo conserva por compatibilidad el perfil histórico cuando no se
-especifica `canonical.profile`; el helper siempre transmite su selección.
+Kedro real usa `operational_full` cuando no se especifica `canonical.profile`;
+el helper transmite su selección explícitamente. Sin `canonical.mode=approved`,
+Kedro conserva el modo sintético predeterminado.
 
 Para reproducir el perfil histórico desde su release original:
 
@@ -195,16 +198,33 @@ mantiene primer origen `2019-01`; T16 mantiene primer objetivo de evaluación
 `2024-01` (orígenes `2023-12` para T+1 y `2023-11` para T+2).
 No se autoriza entrenamiento ni se crea EXP003 al construir o certificar.
 
-Los dos comandos históricos internos siguen visibles para aislar fallos:
+Las dos etapas manuales equivalentes al comando único permiten aislar fallos:
 
 ```sh
 uv run --locked --directory pipeline python tools/acquire_private_raw.py
 uv run --locked --directory pipeline kedro run --pipelines canonical_build --params canonical.mode=approved,canonical.workspace=data/canonical-approved-manual,canonical.tracking=false
 ```
 
+Ambas etapas seleccionan `satd-raw-173d5856` y `operational_full` por defecto.
+Una caché solo histórica produce un error accionable, nunca una sustitución
+silenciosa. Para reproducir el histórico mediante las dos etapas:
+
+```sh
+uv run --locked --directory pipeline python tools/acquire_private_raw.py --manifest conf/releases/approved-raw.json
+uv run --locked --directory pipeline kedro run --pipelines canonical_build --params canonical.mode=approved,canonical.manifest=conf/releases/approved-raw.json,canonical.profile=approved,canonical.workspace=data/canonical-historical-manual,canonical.tracking=false
+```
+
+`VERIFIED` requiere el inventario físico exacto y la integridad de los cinco
+archivos, conforme al preflight y validador que usa Kedro. Antes de escribir
+crudos se rechazan enlaces en raíz, ancestros y archivos de caché. Los faltantes
+y corruptos pueden recuperarse por adquisición; los adicionales se informan y
+conservan, sin borrado automático. Los errores que recomiendan adquirir incluyen
+el `--manifest` solicitado, también para una selección histórica explícita.
+No se incluyen nombres privados de archivos adicionales en el diagnóstico.
+
 El helper crea un workspace relativo único `pipeline/data/canonical-approved/<id>`;
-el comando manual usa un workspace explícito distinto. Los defaults siguen siendo
-sintéticos: no omita `canonical.mode=approved` en el diagnóstico real.
+el comando manual usa un workspace explícito distinto. El modo predeterminado de
+Kedro sigue siendo sintético: no omita `canonical.mode=approved` en el diagnóstico real.
 **La salida es provisional**, no certificada ni entrenable automáticamente. No se
 invocan N=3, entrenamiento, experimentos o publicación. No ejecutar estos comandos
 privados como parte de validación rutinaria ni repetir la ciencia cerrada de T16.
@@ -359,8 +379,11 @@ y cuatro CLI artificiales; no sustituye la consulta de checks nativos del PR.
 
 ## Release crudo y autenticación
 
-La autoridad es [`approved-raw.json`](../../pipeline/conf/releases/approved-raw.json),
-revisión inmutable y cinco nombres/tamaños/SHA-256 de
+La operación por defecto usa
+[`operational-raw-173d5856.json`](../../pipeline/conf/releases/operational-raw-173d5856.json),
+con revisión inmutable y cinco nombres/tamaños/SHA-256. El histórico
+[`approved-raw.json`](../../pipeline/conf/releases/approved-raw.json) permanece
+explícito e intacto, con el inventario de
 [plan.md §4.1](../../plan.md#41-contrato-crudo-aprobado-para-la-tarea-13): DIVIPOLA y
 su procedencia, dengue, dengue grave y clima completo de 18 columnas. Excel,
 clima recortado, canónicos remotos, matrices y revisiones mutables se rechazan.

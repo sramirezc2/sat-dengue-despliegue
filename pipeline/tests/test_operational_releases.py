@@ -90,17 +90,21 @@ def test_releases_coexist_in_cache_and_historical_input_remains_valid(
         path.write_text(json.dumps(asdict(release)), encoding="utf-8")
         bundle = resolve_release(release, Path("data/01_raw/inbox"), LocalSource(source))
         params = {"mode": "approved", "workspace": "data/work", "tracking": False}
-        if name == NEW:
-            params["manifest"] = name
+        params["manifest"] = name
+        if name == OLD:
+            params["profile"] = "approved"
         built = nodes.build_input(params)
         assert nodes.validate_input(built) is built.bundle
         assert built.bundle.manifest_sha256 == bundle.manifest_sha256
         assert [f.path.resolve() for f in built.bundle.files] == [f.path for f in bundle.files]
-        assert built.config == contract.BuildConfig()
+        assert built.config == (
+            contract.BuildConfig() if name == OLD else contract.BuildConfig.operational_full()
+        )
         sources.append(built)
     assert sources[0].bundle.files[-1].path != sources[1].bundle.files[-1].path
     assert nodes.validate_input(nodes.build_input(
-        {"mode": "approved", "workspace": "data/old-again", "tracking": False}
+        {"mode": "approved", "workspace": "data/old-again", "tracking": False,
+         "manifest": OLD, "profile": "approved"}
     )) == sources[0].bundle
     for source in sources:
         climate = source.bundle.files[-1].path
@@ -136,6 +140,10 @@ def test_acquisition_tool_selects_manifest_without_rewriting_history(
 
     monkeypatch.setitem(run.__globals__, "acquire", acquire)
     monkeypatch.setitem(run.__globals__, "raw_contract_validation", lambda *args: bundle)
+    monkeypatch.setitem(run.__globals__, "preflight_cache", lambda *args, **kwargs: None)
+    selected = tmp_path / name
+    selected.parent.mkdir(parents=True, exist_ok=True)
+    selected.write_text((ROOT / name).read_text(encoding="utf-8"), encoding="utf-8")
     assert run(tmp_path, manifest=name) == 0
     assert calls == [name]
     assert not (tmp_path / "docs").exists()

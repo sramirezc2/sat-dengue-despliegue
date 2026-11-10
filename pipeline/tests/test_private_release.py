@@ -73,7 +73,10 @@ def test_real_input_rejects_extra_file_and_unverified_bytes(monkeypatch, tmp_pat
     for file in manifest.files:
         (cache / file.relative_path).write_bytes(b"invalid synthetic bytes")
     monkeypatch.chdir(tmp_path)
-    params = {"mode": "approved", "workspace": "data/work", "tracking": False}
+    params = {
+        "mode": "approved", "workspace": "data/work", "tracking": False,
+        "manifest": "conf/releases/approved-raw.json", "profile": "approved",
+    }
     source = build_input(params)
     assert source.inventory is None and source.config.profile == "approved"
     with pytest.raises(ValueError):

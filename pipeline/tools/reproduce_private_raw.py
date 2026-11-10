@@ -8,6 +8,7 @@ import time
 from dataclasses import asdict
 from pathlib import Path
 
+from sat_dengue_pipeline.acquisition.raw_manifest import HISTORICAL_MANIFEST
 from sat_dengue_pipeline.pipelines.canonical.nodes import build_input, observe
 from sat_dengue_pipeline.raw.build import build
 from sat_dengue_pipeline.raw.reproducibility import canonical_reproducibility
@@ -23,7 +24,10 @@ def main() -> int:
     os.chdir(root)
     os.environ.pop("HF_TOKEN", None)
     enforce_boundaries(False)
-    source = build_input({"mode": "approved", "workspace": "data/task16-real", "tracking": True})
+    source = build_input({
+        "mode": "approved", "workspace": "data/task16-real", "tracking": True,
+        "manifest": HISTORICAL_MANIFEST, "profile": "approved",
+    })
     evidence = root.parent / "docs/evidence/task16"
     evidence.mkdir(parents=True, exist_ok=True)
     stages = {}

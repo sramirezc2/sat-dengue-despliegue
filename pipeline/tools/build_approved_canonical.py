@@ -7,13 +7,16 @@ import sys
 import uuid
 from pathlib import Path
 
-MANIFESTS = (
-    "conf/releases/approved-raw.json",
-    "conf/releases/operational-raw-173d5856.json",
+from sat_dengue_pipeline.acquisition.raw_manifest import (
+    OPERATIONAL_MANIFEST,
+    OPERATIONAL_PROFILE,
+    RAW_MANIFESTS,
 )
 
 
-def run(root: Path, manifest: str = MANIFESTS[1], profile: str = "operational_full") -> int:
+def run(
+    root: Path, manifest: str = OPERATIONAL_MANIFEST, profile: str = OPERATIONAL_PROFILE
+) -> int:
     """Coordinar dos comandos existentes y detenerse ante el primer fallo.
 
     Args:
@@ -60,9 +63,9 @@ def run(root: Path, manifest: str = MANIFESTS[1], profile: str = "operational_fu
 def main() -> int:
     """Mostrar ayuda sin efectos o ejecutar el flujo operacional explícito."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--manifest", choices=MANIFESTS, default=MANIFESTS[1])
+    parser.add_argument("--manifest", choices=RAW_MANIFESTS, default=OPERATIONAL_MANIFEST)
     parser.add_argument(
-        "--profile", choices=("approved", "operational_full"), default="operational_full"
+        "--profile", choices=("approved", OPERATIONAL_PROFILE), default=OPERATIONAL_PROFILE
     )
     arguments = parser.parse_args()
     return run(Path(__file__).resolve().parents[1], arguments.manifest, arguments.profile)

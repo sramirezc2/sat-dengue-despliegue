@@ -14,6 +14,8 @@ RAW_MANIFESTS = (
     "conf/releases/approved-raw.json",
     "conf/releases/operational-raw-173d5856.json",
 )
+HISTORICAL_MANIFEST, OPERATIONAL_MANIFEST = RAW_MANIFESTS
+OPERATIONAL_PROFILE = "operational_full"
 
 
 def validate_raw_manifest(manifest: ReleaseManifest) -> None:

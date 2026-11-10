@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; certificación canónica completa PASS N=3
+**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; selección operacional unificada y certificación previa preservada
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -128,7 +128,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 24 | Validar las correcciones operativas acumuladas | `COMPLETA` | 23 | 578 pipeline, API 35, tablero 55/frozen/lint/build; contratos 22+22; skills, enlaces, filtros e higiene verdes. Checkout limpio de 5768331 con 29 pruebas nuevas y ayuda/error controlado; evidencia preservada. [Recibo](docs/evidence/task24/operational-validation.json). |
 | 25 | Elaborar reporte ejecutivo final | `COMPLETA` | 24 | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md): síntesis con evidencia y límites, navegación desde guías y arquitectura actualizada hasta T24. Auditoría documental, registro, skills y preservación verdes; publicación pendiente de autorización. |
 | 26 | Publicar cambios y validar el PR #1 | `COMPLETA` | 25 | Push normal y descripción autorizados. Siete checks verdes sobre 524c38e ([recibo remoto/local](docs/evidence/task26/publication-validation.json)) y sobre su cierre publicado 0222d6d ([snapshot](docs/evidence/task27/t26-closure-checks.json)). Cada nuevo HEAD requiere checks propios. |
-| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | DEC-031: perfil completo 2007-01–2024-12 certificado N=3, 242.352 claves, cero duplicados/claves nulas/observaciones desde 2025. Histórico reproduce identidad T16; nulos climáticos conservados por aclaración del usuario. [Certificación](docs/evidence/task27/canonical-full-93ac27fd-certification.json) y [auditoría](docs/reviews/final-merge-audit.md). Pendientes publicación futura autorizada, CI del HEAD final y aprobación independiente; sin push ni merge. |
+| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | DEC-031 conserva certificación canónica completa PASS N=3. DEC-032 unifica defaults y caché de comando único/manual: release satd-raw-173d5856, perfil operational_full desde 2007-01. 164 pruebas dirigidas artificiales, Ruff, preservación y diff PASS; histórico explícito y sintético predeterminado conservados. Sin repetir N=3. Pendientes publicación futura autorizada, CI del HEAD final y revisión independiente; sin acciones remotas. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
 
@@ -225,7 +225,7 @@ Actualizar esta sección al cerrar cada tarea.
 |---|---:|
 | Tareas completas | 26/27 |
 | Tarea activa | Ninguna |
-| Tareas bloqueadas | T27 — Certificación canónica completa PASS; publicación futura autorizada, CI del HEAD final y aprobación independiente pendientes |
+| Tareas bloqueadas | T27 — Reparación operacional PASS; publicación futura autorizada, CI del HEAD final y aprobación independiente pendientes |
 | Última tarea completada | T26 — Publicar cambios y validar el PR #1 |
 | Próxima tarea | Publicar solo bajo autorización y verificar checks/revisión del HEAD final; no más cambios científicos |
 | Última actualización | 9 de noviembre de 2026 |
@@ -362,6 +362,10 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 
 | 2026-11-09 | 27 | BLOQUEADA | Código probado `9e06a51`; cierre documental en este commit | Construcción real completa PASS y N=3 exacto: 242.352 claves, 216 meses, 1.122 municipios, cero claves nulas/duplicadas y observaciones desde 2025. Control histórico coincide con T16; 88 hashes previos y verificador oficial 49/22/16 PASS. 193 pruebas, Ruff y lockfile PASS. [Recibo](docs/evidence/task27/canonical-full-93ac27fd-certification.json). | Usuario acepta cobertura por claves y conservación de nulos: San Andrés/Providencia, 117.086 valores diarios/3.888 agregados ausentes, sin imputar; [fechas y efectos](docs/evidence/task27/climate-null-dates-93ac27fd.json). Se conserva diagnóstico de comprobación auxiliar demasiado estricta, sin repetir construcción inicial. Canónico certificado PASS; T27 26/27 bloqueada por publicación futura, checks finales y revisión. Sin modelos, experimentos, reexportación, push, merge, force push o cambios de ruleset. |
 
+| 2026-11-09 | 27 | EN CURSO | Base local limpia `1cf14d2`, cuatro commits previos conservados | Rama feature/pipeline-e2e correcta; HEAD local 1cf14d2 y tracking 0004185, sin acciones remotas. | Reparación autorizada: defaults comunes del release corregido y perfil completo, caché segura antes de escrituras/VERIFIED, histórico explícito, README/guía y pruebas artificiales. Sin modificar experiment_run, N=3, datos privados, modelos, ruleset, push ni merge. |
+
+| 2026-11-09 | 27 | BLOQUEADA | Reparación local sobre `1cf14d2`; commits previos conservados | 164 pruebas dirigidas PASS: CLI únicos/manuales de tres documentos observan satd-raw-173d5856/operational_full/2007-01; histórico explícito, sin fallback de caché; recuperación faltantes/corruptos; adicionales antes/después del resolver nunca VERIFIED y conservados; enlaces nativos/controlados sin escrituras al destino, incluido enlace interno con hash válido. Ruff y preservación oficial 49/22/16 PASS; diff y enlaces documentales verificados. | Defaults compartidos desde acquisition/raw_manifest.py. El reproductor cerrado fija su selección histórica; experiment_run no cambia. README raíz/pipeline y guía coherentes. Solo fixtures artificiales, sin adquisición privada, modelos, N=3, cambios de ruleset o acciones remotas. Reparación PASS; T27 queda 26/27 BLOQUEADA por publicación autorizada futura, CI y aprobación independiente del HEAD final. |
+
 ### Riesgos de la extensión operacional
 
 - Un recibo operativo no puede reemplazar historia: destino exclusivo bajo pipeline/data/.
@@ -425,6 +429,8 @@ Toda desviación debe registrarse antes de continuar.
 | DEC-030 | 2026-11-09 | Aprobar aceptación operacional PASS y autorizar únicamente el commit local final de auditoría, recibo y cierre documental. | La prueba real desde clon limpio pasó y las novedades operativas quedaron corregidas; aprobación expresa del usuario. | No se requiere modificar el ruleset; las propuestas históricas de configuración dejan de ser acciones pendientes. No repetir localmente suites delegadas a GitHub. T27 conserva 26/27 por las únicas acciones externas: push normal autorizado, siete checks del HEAD final y aprobación independiente. No se reescribe evidencia cerrada ni se alteran ciencia o resultados; esta ejecución termina con árbol limpio y sin push, merge o force push. | Instrucción explícita del usuario para este cierre local; no se atribuye una nueva consulta remota ni se autoriza publicación en esta ejecución. |
 
 | DEC-031 | 2026-11-09 | Añadir únicamente perfil operacional completo 2007-01–2024-12 (1.122 municipios, epi_start 2007-01, reserva 2025-01), dentro de T27. | Autorización urgente del usuario; release operacional corregido ya registrado y cobertura cruda comprobada. | Mantener approved-raw.json, perfil histórico, T16, EXP001/EXP002 y publicados intactos. Solo cobertura inicial del manifiesto operacional cambia a 2007-01-01; construir una vez y, si pasa, certificar N=3 independiente. Entrenamiento desde 2018, roles, horizontes, predictores y decisiones científicas no cambian. Commits locales separados; no publicación ni reglas remotas. | Instrucción explícita del usuario en esta ejecución. |
+
+| DEC-032 | 2026-11-09 | Unificar comando único, adquiridor directo y Kedro real en satd-raw-173d5856; construcción operacional_full desde 2007-01. | La ruta manual conservaba defaults históricos y podía divergir del README; VERIFIED no exigía el mismo inventario físico que Kedro. | Reutilizar declaraciones y validaciones existentes; histórico explícito, modo sintético predeterminado intacto. Rechazar enlaces antes de escribir crudos y adicionales sin borrarlos; recuperar faltantes/corruptos y recomendar el manifiesto solicitado. Solo reparación, documentación operacional y pruebas dirigidas artificiales; no cambia la tabla ya certificada ni sus productores. | Instrucción expresa del usuario; sin acciones remotas, adquisición privada, experimentos o repetición N=3. |
 
 ## 8. Condición de finalización
 
