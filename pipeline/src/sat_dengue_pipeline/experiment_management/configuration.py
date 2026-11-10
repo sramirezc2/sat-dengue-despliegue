@@ -122,6 +122,13 @@ def load_configuration(root: Path, entry: dict) -> dict:
         from sat_dengue_pipeline.acquisition.raw_manifest import validate_raw_manifest
 
         validate_raw_manifest(ReleaseManifest.from_json(manifest.read_text(encoding="utf-8")))
+        # V1 sigue siendo legible. La compuerta de ejecución exige selección y N=3;
+        # no se infiere un perfil para volver entrenable una receta histórica incompleta.
+        if "canonical" in data:
+            from sat_dengue_pipeline.acquisition.raw_manifest import canonical_build_config
+
+            canonical_build_config(data["canonical"]["profile"])
+            confined(root, data["canonical"]["certificate"], "docs/evidence", exists=False)
     config["specification"] = entry["experiment_id"]
     config["governance"] = {
         "purpose": entry["experiment_type"],

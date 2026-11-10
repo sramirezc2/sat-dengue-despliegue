@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; selección operacional unificada y certificación previa preservada
+**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; reparaciones operacionales y de experiment_run PASS, controles restantes pendientes
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -128,7 +128,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 24 | Validar las correcciones operativas acumuladas | `COMPLETA` | 23 | 578 pipeline, API 35, tablero 55/frozen/lint/build; contratos 22+22; skills, enlaces, filtros e higiene verdes. Checkout limpio de 5768331 con 29 pruebas nuevas y ayuda/error controlado; evidencia preservada. [Recibo](docs/evidence/task24/operational-validation.json). |
 | 25 | Elaborar reporte ejecutivo final | `COMPLETA` | 24 | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md): síntesis con evidencia y límites, navegación desde guías y arquitectura actualizada hasta T24. Auditoría documental, registro, skills y preservación verdes; publicación pendiente de autorización. |
 | 26 | Publicar cambios y validar el PR #1 | `COMPLETA` | 25 | Push normal y descripción autorizados. Siete checks verdes sobre 524c38e ([recibo remoto/local](docs/evidence/task26/publication-validation.json)) y sobre su cierre publicado 0222d6d ([snapshot](docs/evidence/task27/t26-closure-checks.json)). Cada nuevo HEAD requiere checks propios. |
-| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | DEC-031 conserva certificación canónica completa PASS N=3. DEC-032 unifica defaults y caché de comando único/manual: release satd-raw-173d5856, perfil operational_full desde 2007-01. 164 pruebas dirigidas artificiales, Ruff, preservación y diff PASS; histórico explícito y sintético predeterminado conservados. Sin repetir N=3. Pendientes publicación futura autorizada, CI del HEAD final y revisión independiente; sin acciones remotas. |
+| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | DEC-031 conserva canónico completo PASS N=3. DEC-032 unifica rutas operacionales; DEC-033 vincula experiment_run al release/perfil/certificado aprobados y verifica bytes/digest del artefacto antes de matrices/fit. 112 pruebas dirigidas, Ruff, lock, registro, preservación y diff PASS en esta reparación. T27 abierta para reparaciones/controles restantes, publicación bajo autorización, CI del HEAD final y revisión independiente; sin acciones remotas. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
 
@@ -224,8 +224,8 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 26/27 |
-| Tarea activa | Ninguna |
-| Tareas bloqueadas | T27 — Reparación operacional PASS; publicación futura autorizada, CI del HEAD final y aprobación independiente pendientes |
+| Tarea activa | Ninguna; reparación local de experiment_run PASS |
+| Tareas bloqueadas | T27 — Reparaciones locales PASS; reparaciones/controles restantes, publicación bajo autorización, CI del HEAD final y aprobación independiente pendientes |
 | Última tarea completada | T26 — Publicar cambios y validar el PR #1 |
 | Próxima tarea | Publicar solo bajo autorización y verificar checks/revisión del HEAD final; no más cambios científicos |
 | Última actualización | 9 de noviembre de 2026 |
@@ -366,6 +366,44 @@ documental `a450c52`, posteriormente invalidado por DEC-014 y restablecido media
 
 | 2026-11-09 | 27 | BLOQUEADA | Reparación local sobre `1cf14d2`; commits previos conservados | 164 pruebas dirigidas PASS: CLI únicos/manuales de tres documentos observan satd-raw-173d5856/operational_full/2007-01; histórico explícito, sin fallback de caché; recuperación faltantes/corruptos; adicionales antes/después del resolver nunca VERIFIED y conservados; enlaces nativos/controlados sin escrituras al destino, incluido enlace interno con hash válido. Ruff y preservación oficial 49/22/16 PASS; diff y enlaces documentales verificados. | Defaults compartidos desde acquisition/raw_manifest.py. El reproductor cerrado fija su selección histórica; experiment_run no cambia. README raíz/pipeline y guía coherentes. Solo fixtures artificiales, sin adquisición privada, modelos, N=3, cambios de ruleset o acciones remotas. Reparación PASS; T27 queda 26/27 BLOQUEADA por publicación autorizada futura, CI y aprobación independiente del HEAD final. |
 
+| 2026-11-09 | 27 | EN CURSO | Base local limpia `e2293d2`, cinco commits locales previos conservados | Revisión de configuración, esquema, runner, verificador de artefactos y certificado versionado DEC-031. | Reparación autorizada: receta real explícita, N=3 aplicable y verificación de la tabla antes de preparación/ajuste; linaje sin ambigüedad. Aceptación por entrada Kedro normal en repositorio temporal con datos artificiales y detector de fit. Sin descargas privadas, nueva N=3, entrenamiento científico, EXP003, push ni merge. |
+
+| 2026-11-09 | 27 | BLOQUEADA | Reparación local sobre `e2293d2`; cinco commits anteriores conservados | 112 pruebas dirigidas PASS (13 de certificación/aceptación, 48 gestión, 28 rutas operacionales y 23 perfiles). Once escenarios por nodo Kedro normal en repositorios temporales: uno llega al detector con identidad exacta y diez bloquean antes de carga/preparación/fit. Referencia versionada auténtica aplicable sin igualdad de HEAD; recibos históricos legibles y sin reescritura. Ruff, lockfile, registro VALID, preservación oficial 49 archivos/22 JSON/16 recibos e identidad T16 y ambos diff --check PASS. | Receta V2 exige release/perfil/certificado fijado por hash; V1 sigue legible, pero sin selección completa no autoriza nuevo entrenamiento. Linaje separa bytes de manifiesto y digest normalizado, cobertura, perfil y certificado/identidad consumidos. No se fija ninguna huella en código. Solo fixtures artificiales con detectores, sin datos privados, nueva N=3, entrenamiento científico, EXP003 o acciones remotas. Reparación PASS; T27 abierta/BLOQUEADA 26/27 para reparaciones y controles restantes, publicación bajo autorización, CI y revisión independiente del HEAD final. |
+
+Aceptación DEC-033: entrada `experiment_run` normal, receta APPROVED de prueba y
+canónico artificial de 242.352 claves. El ajuste se sustituye por un detector;
+no se ajustan modelos. Los bloqueos se comprueban también antes de cargar la tabla.
+
+| Caso | Resultado esperado y observado | Alcanzó ajuste |
+|---|---|---|
+| Certificado y tabla coincidentes | PASS; detector recibió SHA-256 serializado y digest semántico esperados | Sí, solo detector |
+| Certificado ausente | BLOCKED: certificate_missing_or_unsafe | No |
+| N=3 fallido | BLOCKED: certificate_n3_not_approved | No |
+| Tabla histórica presentada como operational_full | BLOCKED: consumed_serialized_identity_mismatch | No |
+| Bytes del canónico alterados | BLOCKED: consumed_artifact_integrity_failed | No |
+| Digest semántico declarado alterado | BLOCKED: consumed_semantic_identity_mismatch | No |
+| Bytes del certificado alterados | BLOCKED: certificate_file_hash_mismatch | No |
+| Release de receta distinto | BLOCKED: recipe_release_mismatch | No |
+| Perfil de receta distinto | BLOCKED: certificate_profile_mismatch | No |
+| Lockfile distinto del certificado | BLOCKED: certificate_lock_mismatch | No |
+| Receta V1 real sin selección canónica | BLOCKED: canonical_selection_missing; lectura V1 conservada | No |
+
+Comandos de validación de esta reparación (todos PASS):
+
+```sh
+uv run --locked --directory pipeline pytest -q tests/test_certified_experiment_run.py tests/test_experiment_management.py tests/test_operational_paths.py tests/test_canonical_profiles.py --tb=short
+uv run --locked --directory pipeline ruff check .
+uv lock --check --project pipeline
+uv run --locked --directory pipeline python -m sat_dengue_pipeline.experiment_management validate
+uv run --locked --directory pipeline python tools/check_experiment_preservation.py
+git diff --check
+git diff --check origin/main...HEAD
+```
+
+No se repiten API, tablero, matriz completa ni N=3: fuera del alcance autorizado.
+La comparación de recibos previos se prueba sin reescritura; fuentes privadas y
+publicaciones no participan en los casos artificiales.
+
 ### Riesgos de la extensión operacional
 
 - Un recibo operativo no puede reemplazar historia: destino exclusivo bajo pipeline/data/.
@@ -431,6 +469,8 @@ Toda desviación debe registrarse antes de continuar.
 | DEC-031 | 2026-11-09 | Añadir únicamente perfil operacional completo 2007-01–2024-12 (1.122 municipios, epi_start 2007-01, reserva 2025-01), dentro de T27. | Autorización urgente del usuario; release operacional corregido ya registrado y cobertura cruda comprobada. | Mantener approved-raw.json, perfil histórico, T16, EXP001/EXP002 y publicados intactos. Solo cobertura inicial del manifiesto operacional cambia a 2007-01-01; construir una vez y, si pasa, certificar N=3 independiente. Entrenamiento desde 2018, roles, horizontes, predictores y decisiones científicas no cambian. Commits locales separados; no publicación ni reglas remotas. | Instrucción explícita del usuario en esta ejecución. |
 
 | DEC-032 | 2026-11-09 | Unificar comando único, adquiridor directo y Kedro real en satd-raw-173d5856; construcción operacional_full desde 2007-01. | La ruta manual conservaba defaults históricos y podía divergir del README; VERIFIED no exigía el mismo inventario físico que Kedro. | Reutilizar declaraciones y validaciones existentes; histórico explícito, modo sintético predeterminado intacto. Rechazar enlaces antes de escribir crudos y adicionales sin borrarlos; recuperar faltantes/corruptos y recomendar el manifiesto solicitado. Solo reparación, documentación operacional y pruebas dirigidas artificiales; no cambia la tabla ya certificada ni sus productores. | Instrucción expresa del usuario; sin acciones remotas, adquisición privada, experimentos o repetición N=3. |
+
+| DEC-033 | 2026-11-09 | Exigir selección canónica y certificación aplicable en nuevas ejecuciones reales de experiment_run. | La ruta real usaba BuildConfig() implícito y sobrescribía el hash de bytes del manifiesto con su digest normalizado. | Reutilizar selección cerrada y verificadores; contrastar el artefacto realmente consumido con N=3 ya aprobado, antes de matrices/fit. Recetas/evidencia históricas siguen legibles, sin reescritura; formatos sin selección no autorizan entrenamiento nuevo. Aceptación artificial por entrada normal con detector, sin ciencia, N=3 nueva ni acciones remotas. | Instrucción expresa del usuario en esta reparación local dentro de T27. |
 
 ## 8. Condición de finalización
 

@@ -1460,7 +1460,10 @@
       "minItems": 1
     },
     "schema_version": {
-      "const": 1
+      "enum": [
+        1,
+        2
+      ]
     },
     "data": {
       "type": "object",
@@ -1485,6 +1488,35 @@
         },
         "require_private": {
           "type": "boolean"
+        },
+        "release_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonical": {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "enum": [
+                "approved",
+                "operational_full"
+              ]
+            },
+            "certificate": {
+              "type": "string",
+              "minLength": 1
+            },
+            "certificate_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "profile",
+            "certificate",
+            "certificate_sha256"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -1514,5 +1546,33 @@
     "schema_version",
     "data"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "const": 2
+          },
+          "data": {
+            "properties": {
+              "mode": {
+                "const": "raw"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "required": [
+              "release_id",
+              "canonical"
+            ]
+          }
+        }
+      }
+    }
+  ]
 }

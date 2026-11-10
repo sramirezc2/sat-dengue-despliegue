@@ -6,6 +6,7 @@ from sat_dengue_pipeline.raw.contract import (
     INVENTORY,
     OPERATIONAL_INVENTORY,
     OPERATIONAL_RELEASE_ID,
+    BuildConfig,
 )
 
 from .contracts import ReleaseManifest
@@ -16,6 +17,15 @@ RAW_MANIFESTS = (
 )
 HISTORICAL_MANIFEST, OPERATIONAL_MANIFEST = RAW_MANIFESTS
 OPERATIONAL_PROFILE = "operational_full"
+
+
+def canonical_build_config(profile: str) -> BuildConfig:
+    """Seleccionar únicamente uno de los dos contratos canónicos reales cerrados."""
+    if profile == "approved":
+        return BuildConfig()
+    if profile == OPERATIONAL_PROFILE:
+        return BuildConfig.operational_full()
+    raise ValueError("Perfil canónico desconocido")
 
 
 def validate_raw_manifest(manifest: ReleaseManifest) -> None:

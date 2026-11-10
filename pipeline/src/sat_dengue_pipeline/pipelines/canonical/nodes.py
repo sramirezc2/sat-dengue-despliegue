@@ -10,6 +10,7 @@ from sat_dengue_pipeline.acquisition.raw_manifest import (
     OPERATIONAL_MANIFEST,
     OPERATIONAL_PROFILE,
     RAW_MANIFESTS,
+    canonical_build_config,
     validate_raw_manifest,
 )
 from sat_dengue_pipeline.canonical_cache import acquire_command, preflight_cache
@@ -56,9 +57,7 @@ def build_input(parameters: dict) -> BuildInput:
         bundle, inventory = synthetic_bundle(workspace / "raw")
         return BuildInput(bundle, fixture_config(), inventory, workspace, parameters["tracking"])
     profile = parameters.get("profile", OPERATIONAL_PROFILE)
-    if profile not in {"approved", "operational_full"}:
-        raise ValueError("Perfil canónico desconocido")
-    config = BuildConfig.operational_full() if profile == "operational_full" else BuildConfig()
+    config = canonical_build_config(profile)
     manifest_path = parameters.get("manifest", OPERATIONAL_MANIFEST)
     if manifest_path not in RAW_MANIFESTS:
         raise ValueError("Manifiesto operacional no aprobado")

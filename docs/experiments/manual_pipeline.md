@@ -92,12 +92,43 @@ Cree `pipeline/conf/experiments/EXP003.yml`. Use una configuración existente ú
 Para un experimento científico con datos reales, la sección de datos debe tener esta forma:
 
 ```yaml
+schema_version: 2
 data:
   mode: raw
-  manifest: pipeline/conf/releases/<manifiesto-aprobado>.json
-  manifest_sha256: <sha256-del-manifiesto>
+  release_id: satd-raw-173d5856
+  manifest: pipeline/conf/releases/operational-raw-173d5856.json
+  manifest_sha256: <sha256-de-los-bytes-del-archivo-manifiesto>
   require_private: true
+  canonical:
+    profile: operational_full
+    certificate: docs/evidence/task27/canonical-full-93ac27fd-certification.json
+    certificate_sha256: <sha256-de-los-bytes-del-recibo-versionado>
 ```
+
+El perfil real se declara explícitamente: `operational_full` significa
+`2007-01`–`2024-12`; `approved` identifica el histórico. Se reutiliza N=3 ya
+obtenido: el ejecutor no certifica de nuevo. El hash del certificado queda dentro
+de la receta aprobada, junto con release, perfil y manifiesto; no basta una ruta
+mutable o un indicador de éxito. Antes de cargar la tabla o preparar matrices se
+verifican N=3 aprobado, identidad de inputs, perfil/configuración, lockfile y ambos
+hashes del artefacto realmente construido. Un fallo deja diagnóstico concreto y
+bloquea el ajuste. El commit del constructor certificado se registra separado
+del HEAD de ejecución: un cambio documental no exige que esos commits coincidan.
+
+`manifest_sha256` identifica **bytes del archivo**, no el digest de su contenido
+normalizado. En nuevas ejecuciones, `lineage.json` conserva por separado
+`dataset_manifest_file_sha256` y `dataset_manifest_digest`, además de perfil,
+cobertura, certificado y hashes del canónico consumido. El alias legado
+`dataset_manifest_sha256` conserva el digest normalizado y no se sobrescribe con
+un hash de archivo. Los recibos anteriores mantienen sus campos originales;
+las columnas explícitas nuevas pueden ser nulas al leerlos.
+
+Las recetas V1 siguen siendo legibles, pero una receta real sin selección y
+certificado completos no puede iniciar un entrenamiento nuevo. No complete por
+omisión ni edite recetas cerradas: registre otra identidad con aprobación humana.
+Los fixtures sintéticos previos conservan su configuración e historial. Los
+recibos antiguos sin las identidades necesarias se pueden consultar, pero no
+sustituyen una referencia N=3 aplicable y fijada por hash para otra ejecución.
 
 La configuración debe conservar los contratos implementados: predictores canónicos en su orden, familia `xgboost_onset` versión `v1`, preparación soportada, cinco roles temporales, métricas y líneas base oficiales. Cualquier opción no implementada será rechazada antes de adquirir datos o entrenar.
 
@@ -162,7 +193,7 @@ Durante la ejecución, la fábrica:
 
 1. verifica identidad, aprobación y hashes;
 2. obtiene el release fijado y comprueba su integridad;
-3. reconstruye la tabla canónica desde los datos crudos;
+3. reconstruye con el perfil aprobado y contrasta el artefacto consumido con N=3 ya obtenido;
 4. aplica la frontera temporal y los soportes mínimos;
 5. entrena, calibra y selecciona el umbral sin usar la evaluación para ajustar;
 6. calcula métricas y líneas base;

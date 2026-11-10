@@ -11,9 +11,10 @@ from sat_dengue_pipeline.experiments.rolling import stable_digest
 from sat_dengue_pipeline.factory import engine
 from sat_dengue_pipeline.factory.configuration import project_root
 from sat_dengue_pipeline.raw.build import build
-from sat_dengue_pipeline.raw.contract import BuildConfig, sha256
+from sat_dengue_pipeline.raw.contract import sha256
 from sat_dengue_pipeline.raw.serialization import load_canonical
 
+from .certification import CertificationError, load_certified_recipe, verify_consumed
 from .configuration import load_configuration
 from .evidence import publish
 from .registry import Registry, confined, identifier, registry_lock
@@ -61,10 +62,12 @@ def acquire_and_build(root: Path, config: dict, workspace: Path) -> tuple:
         from .synthetic import acceptance_bundle
 
         bundle, inventory, build_config = acceptance_bundle(workspace / "raw")
+        proof = None
     else:
         from sat_dengue_pipeline.acquisition.factory import acquire
 
         settings = config["data"]
+        proof = load_certified_recipe(root, settings)
         bundle, receipt = acquire(
             {
                 "acquisition": {
@@ -77,11 +80,22 @@ def acquire_and_build(root: Path, config: dict, workspace: Path) -> tuple:
         )
         if bundle is None:
             raise ExecutionError("acquisition_failed")
-        inventory, build_config = None, BuildConfig()
+        inventory, build_config = None, proof.config
     artifact, audit = build(bundle, build_config, workspace / "canonical", inventory)
+    canonical_lineage = (
+        verify_consumed(proof, bundle, artifact, audit)
+        if proof is not None
+        else {
+            "profile": build_config.payload(),
+            "coverage": audit["coverage"],
+            "certificate": None,
+            "semantic_digest": artifact.semantic_digest,
+            "serialized_sha256": artifact.serialized_sha256,
+        }
+    )
     table, schema = load_canonical(artifact)
     # load_canonical verifica bytes, digest semántico, esquema y tipos antes del consumidor.
-    return bundle, artifact, audit, table, schema
+    return bundle, artifact, audit, table, schema, canonical_lineage
 
 
 def execute(
@@ -119,7 +133,12 @@ def execute(
         root, f"pipeline/data/experiments/{execution_id}", "pipeline/data", exists=False
     )
     started = utc_now()
-    lineage["dataset_manifest_sha256"] = config["data"]["manifest_sha256"]
+    lineage.update(
+        dataset_manifest_file_sha256=config["data"]["manifest_sha256"],
+        dataset_manifest_digest=None,
+        dataset_manifest_sha256=None,  # Alias legado del digest normalizado, nunca de bytes.
+        requested_canonical=config["data"].get("canonical"),
+    )
     run = None
     error: BaseException | None = None
     status = "FAILED"
@@ -142,13 +161,17 @@ def execute(
         parent = tracker.start(tags)
         workspace.mkdir(parents=True)
         gate = "acquisition_canonical_build"
-        bundle, artifact, audit, table, schema = acquire_and_build(root, config, workspace)
+        bundle, artifact, audit, table, schema, canonical_lineage = acquire_and_build(
+            root, config, workspace
+        )
         lineage.update(
             dataset_manifest_sha256=bundle.manifest_sha256,
+            dataset_manifest_digest=bundle.manifest_sha256,
             release_id=bundle.release_id,
             raw_hashes={f.logical_name: f.sha256 for f in bundle.files},
             canonical_semantic_sha256=artifact.semantic_digest,
             canonical_serialized_sha256=artifact.serialized_sha256,
+            canonical=canonical_lineage,
         )
         run = engine.FactoryRun(
             bundle,
@@ -172,6 +195,8 @@ def execute(
         status = "COMPLETED"
     except BaseException as exc:
         error = exc
+        if isinstance(exc, CertificationError):
+            gate = "canonical_certification"
         status = (
             "KILLED"
             if isinstance(exc, (KeyboardInterrupt, SystemExit))
@@ -214,7 +239,7 @@ def execute(
                     run_id, RunStatus.KILLED if status == "KILLED" else RunStatus.FAILED, None, None
                 )
     receipt = {
-        "schema_version": 1,
+        "schema_version": 2,
         "experiment_id": experiment_id,
         "execution_id": execution_id,
         "experiment_type": entry["experiment_type"],
@@ -229,6 +254,7 @@ def execute(
         "seed": config["seed"],
         "gate": gate,
         "error_type": type(error).__name__ if error else None,
+        "diagnostic": error.code if isinstance(error, CertificationError) else None,
         "mlflow": {"enabled": tracking, "parent_run_id": parent, "children": children},
         "champion_status": "NOT_SELECTED",
         "operational_authorization": False,
@@ -288,7 +314,8 @@ def execute(
             Registry(root).transition(experiment_id, "BLOCKED", "BLOCKED")
         if isinstance(error, (KeyboardInterrupt, SystemExit)):
             raise error
-        raise ExecutionError(f"{status}:{gate}; execution_id={execution_id}") from None
+        diagnostic = f":{error.code}" if isinstance(error, CertificationError) else ""
+        raise ExecutionError(f"{status}:{gate}{diagnostic}; execution_id={execution_id}") from None
     # RUNNING significa resultados disponibles pendientes de conclusiones humanas.
     return receipt
 
