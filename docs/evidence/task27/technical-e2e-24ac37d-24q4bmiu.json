@@ -876,5 +876,38 @@
     },
     "omissions": "No full GitHub-delegated suites, API/dashboard or remote CI repeated: no implementation changes and current local acceptance scope. No new N=3, push, merge or publication."
   },
-  "scientific_interpretation": "No scientific verdict, no champion, no comparison with T16. Metrics depend on temporary recipe, permissive FAR and supports; 2025 is previously used retrospective evidence, never pristine holdout."
+  "scientific_interpretation": "No scientific verdict, no champion, no comparison with T16. Metrics depend on temporary recipe, permissive FAR and supports; 2025 is previously used retrospective evidence, never pristine holdout.",
+  "metric_rows_queryable_unit": "Aggregate comparison rows, including null values: horizon × reference × metric name; not MLflow metric-table rows",
+  "metric_accounting": {
+    "unit": "One aggregate comparison row per horizon, reference and metric name, including null values",
+    "horizons": 2,
+    "references": 3,
+    "metric_names": 7,
+    "comparison_rows": 42,
+    "numeric_aggregate_values": 30,
+    "null_aggregate_values": 12,
+    "null_values_by_status": {
+      "NOT_PROBABILISTIC": 2,
+      "NO_ALERTS": 2,
+      "NO_DECISION_POLICY": 8
+    },
+    "mlflow_metric_table_rows": 60,
+    "mlflow_latest_metric_table_rows": 60,
+    "mlflow_rows_by_run": {
+      "5353ed24d39044c18e2398ffd71f4fed": 30,
+      "868e0cf797994343866542d1380c41d5": 15,
+      "b46a4ef9fa914ee3b50f71bfaf72b58f": 15
+    },
+    "mlflow_distinct_key_strings": 45,
+    "mlflow_mapping": "Parent uses horizon.reference.metric keys (30); each child uses reference.metric keys (15). The same 30 aggregate numeric values are logged in parent and children; 60 rows are not 60 independent results. Zero is numeric; null values are not logged."
+  },
+  "execution_started_utc": "2026-11-10T02:22:21.813922+00:00",
+  "execution_finished_utc": "2026-11-10T02:29:08.216919+00:00",
+  "documentary_clarification": {
+    "review_date_local": "2026-11-09",
+    "original_report_sha256": "3b1173781c9eaacc13f5531ed15c22abf1d743232e7a1e079fc68557dfd8e905",
+    "evidence": "docs/evidence/task27/technical-e2e-documentary-closure.json",
+    "review": "docs/reviews/task27-technical-e2e-closure.md",
+    "scope": "Clarifies count units and execution timestamps only; generated evidence, numeric results, recipe, approvals and terminals unchanged. at_utc is report creation, not execution start or finish."
+  }
 }

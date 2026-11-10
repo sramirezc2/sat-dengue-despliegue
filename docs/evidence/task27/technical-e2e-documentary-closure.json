@@ -1,0 +1,164 @@
+{
+  "schema": "sat-dengue.technical-e2e-documentary-closure/v1",
+  "status": "PASS",
+  "scope": "Read-only reconciliation of retained technical acceptance; no scientific closure",
+  "base_commit": "e8fae62161e96711023a1c71a9ee3ffca9b3699e",
+  "acceptance_code_commit": "24ac37d84b2343ea725318b09bd563b0268c88a7",
+  "experiment_id": "ACCEPTV3REAL01",
+  "execution_id": "b0a09b94fa9e45ccafed0f4d568ef82f",
+  "execution_started_utc": "2026-11-10T02:22:21.813922+00:00",
+  "execution_finished_utc": "2026-11-10T02:29:08.216919+00:00",
+  "report_created_utc": "2026-11-10T02:30:38.862437+00:00",
+  "metric_accounting": {
+    "unit": "One aggregate comparison row per horizon, reference and metric name, including null values",
+    "horizons": 2,
+    "references": 3,
+    "metric_names": 7,
+    "comparison_rows": 42,
+    "numeric_aggregate_values": 30,
+    "null_aggregate_values": 12,
+    "null_values_by_status": {
+      "NOT_PROBABILISTIC": 2,
+      "NO_ALERTS": 2,
+      "NO_DECISION_POLICY": 8
+    },
+    "mlflow_metric_table_rows": 60,
+    "mlflow_latest_metric_table_rows": 60,
+    "mlflow_rows_by_run": {
+      "5353ed24d39044c18e2398ffd71f4fed": 30,
+      "868e0cf797994343866542d1380c41d5": 15,
+      "b46a4ef9fa914ee3b50f71bfaf72b58f": 15
+    },
+    "mlflow_distinct_key_strings": 45,
+    "mlflow_mapping": "Parent uses horizon.reference.metric keys (30); each child uses reference.metric keys (15). The same 30 aggregate numeric values are logged in parent and children; 60 rows are not 60 independent results. Zero is numeric; null values are not logged."
+  },
+  "mlflow_runs": {
+    "5353ed24d39044c18e2398ffd71f4fed": {
+      "status": "FINISHED",
+      "role": "parent"
+    },
+    "868e0cf797994343866542d1380c41d5": {
+      "status": "FINISHED",
+      "role": "child_horizon_1"
+    },
+    "b46a4ef9fa914ee3b50f71bfaf72b58f": {
+      "status": "FINISHED",
+      "role": "child_horizon_2"
+    }
+  },
+  "inputs_sha256": {
+    "original_versioned_report": "3b1173781c9eaacc13f5531ed15c22abf1d743232e7a1e079fc68557dfd8e905",
+    "archived_report": "3b1173781c9eaacc13f5531ed15c22abf1d743232e7a1e079fc68557dfd8e905",
+    "archived_verification": "692bf109bf7502346d89de1a4eb9412942f600806e76ad8578dd1e930014c2a9",
+    "archived_compare": "b7824f606305b3ce06329d71db85b4bae58b5f12facc0a45d7c9bdffc443f9a4",
+    "archived_tracking_sqlite": "0df4bb49e188f1ff69ea931cabf28a4ab4aadd05a70fb343f3fa556ee79d7885",
+    "original_tracking_sqlite": "09ac195bc20c5be5c210295acbd8f7085a617fbd69c2b0c114b4e6fdde4c017f",
+    "certificate": "5c1d2adc0a7967be9ee5e3398b5541cf74963ed6f6b4ee94e6f4a4838a77a966",
+    "canonical_serialized": "b4562ba50def7a98dceede0b7e95feed0e799b4652939d8037f1604bef37a23d",
+    "canonical_semantic": "de49b11bad43c35983a098ead2faa149d4e744da4172432aecdaadd828c73158",
+    "inventory": "5a95e0cdca26746011d5c86080bf648194d867361e24ffbf0776f5c726e59edb"
+  },
+  "checks": {
+    "inventory_and_execution_signature": "PASS",
+    "six_archived_evidence_files_match_inventory_and_report": "PASS",
+    "frozen_recipe_and_protocol_hashes": "PASS",
+    "source_and_lock_identity": "PASS",
+    "canonical_actual_bytes_semantics_and_certificate_audit": "PASS",
+    "canonical_periods_and_2025_exclusion": "PASS",
+    "ten_role_supports_availability_embargo_and_deferred_label_flags": "PASS",
+    "quarantine_counts_reconcile": "PASS",
+    "one_fit_per_horizon_recorded": "PASS",
+    "comparison_rows_match_archived_cli": "PASS",
+    "mlflow_values_keys_parentage_and_terminals": "PASS",
+    "sqlite_stores_unchanged_and_metrics_latest_runs_tags_logically_equal": "PASS",
+    "original_92_file_preservation_snapshot": "PASS",
+    "official_registry_contains_only_EXP001_EXP002": "PASS"
+  },
+  "approval": {
+    "scope": "TEMPORARY_TECHNICAL_ACCEPTANCE_ONLY",
+    "authority": "Explicit user request for this isolated acceptance",
+    "scientific_team_approval": false,
+    "official_registry_modified": false,
+    "raw_route_requires_schema_experiment_type": "scientific",
+    "semantic_scientific_approval": false
+  },
+  "scientific_review": {
+    "mode": "post-run technical documentary review",
+    "recommendation": "APPROVED_WITH_LIMITATIONS",
+    "scientific_team_approval": false,
+    "independent_final_review_completed": false,
+    "findings": [
+      "Ambiguous count clarified without changing metrics or generated evidence.",
+      "Temporal compliance is supported by stored guards, role aggregates and implementation order; historical real-time availability is not established.",
+      "Permissive fixture supports and FAR 1.0 serve technical acceptance only; no scientific verdict, champion or operational utility claim."
+    ],
+    "scientific_result": "PENDING",
+    "temporary_registry": "RUNNING",
+    "official_registry_modified": false
+  },
+  "task27": {
+    "technical_acceptance": "PASS",
+    "documentary_closure": "PASS",
+    "task_status": "BLOQUEADA",
+    "progress": "26/27",
+    "pending": [
+      "Authorized normal publication and PR #1 description update",
+      "Seven required checks on final HEAD",
+      "Independent approval and final merge audit on that revision"
+    ]
+  },
+  "not_repeated": [
+    "acquisition",
+    "canonical_build",
+    "training",
+    "N=3 certification",
+    "API/dashboard and full GitHub-delegated suites",
+    "remote CI"
+  ],
+  "external_actions": [],
+  "review_date_local": "2026-11-09",
+  "sqlite_backup_note": "The archived SQLite was made with sqlite3.Connection.backup. Its file SHA256 differs from the original store, while metrics, latest_metrics, runs and tags have identical rows. Both files remained unchanged during read-only verification.",
+  "validation_scope": "Documentation-only closure. Required JSON, preservation, modified-link and diff gates; full API/dashboard, training and GitHub-delegated suites are excluded by T27/DEC-030.",
+  "validation": {
+    "structural": {
+      "status": "PASS",
+      "strict_json_files": 105,
+      "local_markdown_links_checked": 40,
+      "receipt_original_fields_unchanged": true,
+      "receipt_original_hash_matches_git": true,
+      "explicit_protected_files_equal_base": 66,
+      "json_documentary_references_exist": true,
+      "commands": [
+        "python: strict JSON parse of all tracked JSON plus new closure receipt",
+        "python: local Markdown target/anchor checks in plan.md and closure review",
+        "python: documentary JSON references and original receipt fields/hash",
+        "git show HEAD:<path>: protected file byte comparison"
+      ]
+    },
+    "preservation": {
+      "status": "PASS",
+      "protected_files": 49,
+      "published_json": 22,
+      "previous_t16_receipts": 16,
+      "t16_n3_identity": "899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f",
+      "normal_exit_code": 0,
+      "optimized_exit_code": 0
+    },
+    "official_registry_validation": {
+      "status": "VALID",
+      "exit_code": 0
+    },
+    "diff_checks": {
+      "git diff --check": 0,
+      "git diff --cached --check": 0,
+      "git diff --check origin/main...HEAD": 0
+    },
+    "omissions_reason": "Documentation-only change; T27/DEC-030 excludes repeating API/dashboard and full GitHub-delegated suites. No remote-state verification or independent approval is claimed.",
+    "new_runtime_warnings": [],
+    "historical_warnings_preserved": [
+      "OmegaConf resolver deprecation",
+      "Kedro --pipeline option deprecation",
+      "VIRTUAL_ENV mismatch"
+    ]
+  }
+}

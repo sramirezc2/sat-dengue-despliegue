@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; aceptación técnica E2E real PASS, publicación/CI/revisión final pendientes
+**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; aceptación técnica E2E real y cierre documental PASS, publicación/CI/revisión final pendientes
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -128,7 +128,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 24 | Validar las correcciones operativas acumuladas | `COMPLETA` | 23 | 578 pipeline, API 35, tablero 55/frozen/lint/build; contratos 22+22; skills, enlaces, filtros e higiene verdes. Checkout limpio de 5768331 con 29 pruebas nuevas y ayuda/error controlado; evidencia preservada. [Recibo](docs/evidence/task24/operational-validation.json). |
 | 25 | Elaborar reporte ejecutivo final | `COMPLETA` | 24 | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md): síntesis con evidencia y límites, navegación desde guías y arquitectura actualizada hasta T24. Auditoría documental, registro, skills y preservación verdes; publicación pendiente de autorización. |
 | 26 | Publicar cambios y validar el PR #1 | `COMPLETA` | 25 | Push normal y descripción autorizados. Siete checks verdes sobre 524c38e ([recibo remoto/local](docs/evidence/task26/publication-validation.json)) y sobre su cierre publicado 0222d6d ([snapshot](docs/evidence/task27/t26-closure-checks.json)). Cada nuevo HEAD requiere checks propios. |
-| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | DEC-031 conserva canónico completo PASS N=3; DEC-032/033 conservan selección operacional y certificación de experiment_run. DEC-034 evita sobrescribir T16 y verifica preservación con Python normal/-O y rutas POSIX. 63 pruebas dirigidas (20 nuevas), Ruff, lockfile, registro, preservación y diff PASS. Pendientes publicación bajo autorización, descripción PR #1, siete checks del HEAD final, revisión independiente y auditoría final; sin acciones remotas. |
+| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | Aceptación E2E real PASS sobre 24ac37d y [cierre documental](docs/reviews/task27-technical-e2e-closure.md) PASS: 42 filas agregadas (30 valores numéricos y 12 nulos); MLflow 60 registros numéricos, 30 padre + 15 por hijo. Canónico consumido idéntico al certificado N=3; aprobación solo técnica, sin cierre científico. DEC-031–034 y evidencia protegida intactas. Pendientes publicación bajo autorización, descripción PR #1, siete checks del HEAD final, aprobación independiente y auditoría final; sin acciones remotas. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
 
@@ -467,6 +467,35 @@ y digest semántico
 `de49b11bad43c35983a098ead2faa149d4e744da4172432aecdaadd828c73158`.
 No se repiten suites completas delegadas a GitHub, API/tablero ni CI remota:
 sin cambios de implementación y fuera del alcance de esta aceptación local.
+
+#### Cierre documental de la aceptación E2E real
+
+Revisión del 9 de noviembre de 2026 sobre base local limpia `e8fae62`:
+[cierre y límites](docs/reviews/task27-technical-e2e-closure.md) y
+[recibo de conciliación](docs/evidence/task27/technical-e2e-documentary-closure.json).
+«42 registros métricos» significa **42 filas de comparación agregada**
+(2 horizontes × 3 métodos × 7 nombres de métrica), con **30 valores numéricos
+y 12 nulos justificados**. MLflow contiene **60 registros numéricos**:
+30 en el padre y los mismos valores repartidos entre dos hijos de 15.
+Se aclara la unidad de `metric_rows_queryable: 42` en el recibo original;
+no se cambian métricas, receta ni evidencia generada.
+
+La ejecución ocurrió el 9 de noviembre, 21:22:21–21:29:08 de Bogotá
+(10 de noviembre, 02:22:21–02:29:08 UTC); `at_utc` es la creación del informe.
+La relectura del canónico conservado confirma ambos hashes anteriores y la
+auditoría certificada. Inventario/firma, diez soportes, demora/embargo y banderas
+de lectura diferida concuerdan; MLflow padre/dos hijos FINISHED. JSON,
+preservación normal/-O (49 archivos/22 JSON/16 recibos e identidad N=3 T16),
+snapshot extendido de 92 archivos, registro oficial, enlaces modificados y
+diff pasan. T16, EXP001/EXP002 y el certificado completo N=3 se conservan.
+
+**Aceptación técnica y cierre documental PASS; T27 sigue BLOQUEADA, 26/27.**
+La aprobación de la receta fue solo para aceptación técnica temporal; el registro
+temporal sigue RUNNING/PENDING. No hay aprobación científica del equipo ni
+veredicto científico. Quedan publicación normal autorizada y descripción del
+PR #1, siete checks sobre el HEAD final, aprobación independiente y auditoría
+final de esa revisión. Este cierre no repite adquisición, construcción canónica,
+entrenamiento, N=3 ni suites delegadas a GitHub; no hace push ni merge.
 
 ### Riesgos de la extensión operacional
 
