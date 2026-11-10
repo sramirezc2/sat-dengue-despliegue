@@ -327,7 +327,7 @@ def test_negative_control_that_meets_invalidates_the_policy() -> None:
         "candidate": weak,
         "channel_C0": weak,
         "channel_conditioned": weak,
-        "persistence": np.zeros(80, dtype=bool),
+        "persistence": np.arange(80) == 1,
         "random_ranking": perfect,
         "alert_everything": np.ones(80, dtype=bool),
         "inflated_channel": np.ones(80, dtype=bool),
@@ -336,6 +336,7 @@ def test_negative_control_that_meets_invalidates_the_policy() -> None:
         frame, decisions, {"status": "FROZEN", "budget_rate": 1.0}, reading="secondary_t2"
     )
     assert cell["negative_controls"]["random_ranking"] == "CUMPLE"
+    assert cell["B"] == {"status": "EVALUABLE", "reason": None, "required_for_verdict": True}
     assert cell["UTILIDAD_PROPUESTA"] == "INVALIDO"
     assert cell["scientific_conclusion"] == "NOT_APPROVED"
 
@@ -354,7 +355,7 @@ def test_insufficient_producer_support_preserves_invalid_cell_cuts_and_five_seed
         "candidate": perfect,
         "channel_C0": weak,
         "channel_conditioned": weak,
-        "persistence": np.zeros(80, dtype=bool),
+        "persistence": np.arange(80) == 1,
         "random_ranking": weak,
         "alert_everything": np.ones(80, dtype=bool),
         "inflated_channel": weak,
@@ -686,7 +687,7 @@ def test_historical_C_absolute_far_margin_boundary(margin: float, passes: bool) 
 def test_primary_degeneracy_preserves_channel_evidence_and_propagates_to_seeds(
     reading: str, weak_model: bool
 ) -> None:
-    """Ceros por cohorte no aprueban B ni utilidad en celda, cortes o cinco semillas."""
+    """La excepción primaria permite A/C y utilidad, sin atribuir una victoria sobre B."""
     frame = observations()
     perfect = frame.onset.eq(1).to_numpy()
     weak = np.array([0, 1, 0, 0] * 20, dtype=bool)
@@ -712,6 +713,7 @@ def test_primary_degeneracy_preserves_channel_evidence_and_propagates_to_seeds(
         "status": "NO_EVALUABLE" if primary else "EVALUABLE",
         "reason": "DEGENERATE_PRIMARY_COHORT" if primary else None,
         "superior": None if primary else True,
+        "required_for_verdict": not primary,
     }
     abc = cell["ABC_HISTORICA"]
     assert abc["persistence_comparison"] == comparison
@@ -722,8 +724,17 @@ def test_primary_degeneracy_preserves_channel_evidence_and_propagates_to_seeds(
     assert cell["intervals"]["channel_conditioned"]["intervals"]["delta_sensitivity_pp"][
         "lower"
     ] == (0 if weak_model else 50)
-    expected = "NO_EVALUABLE" if primary else "NO_CUMPLE_POR_EFECTO" if weak_model else "CUMPLE"
+    expected = "NO_CUMPLE_POR_EFECTO" if weak_model else "CUMPLE"
     assert cell["UTILIDAD_PROPUESTA"] == expected
+    b = {k: comparison[k] for k in ("status", "reason", "required_for_verdict")}
+    assert cell["B"] == b
+    basis = ["UTILIDAD_PROPUESTA", "A", "C"] if primary else ["UTILIDAD_PROPUESTA", "A", "B", "C"]
+    assert cell["decision_basis"] == basis
+    assert cell["applicable_abc_status"] == (
+        ("AC_NO_CUMPLE" if weak_model else "AC_CUMPLE")
+        if primary
+        else ("ABC_HISTORICA_NO_CUMPLE" if weak_model else "ABC_HISTORICA_CUMPLE")
+    )
     rows = [
         dict(
             cell,
@@ -749,21 +760,130 @@ def test_primary_degeneracy_preserves_channel_evidence_and_propagates_to_seeds(
         },
     )
     consistency = [r for r in results if r["kind"] == "consistency"]
-    assert all(r["votes"] == (0 if primary or weak_model else 3) for r in consistency)
-    assert all(
-        r["status"] == ("NO_EVALUABLE" if primary else "NO_CUMPLE" if weak_model else "CUMPLE")
-        for r in consistency
-    )
+    assert all(r["votes"] == (0 if weak_model else 3) for r in consistency)
+    assert all(r["status"] == ("NO_CUMPLE" if weak_model else "CUMPLE") for r in consistency)
     combined = results[-1]
     assert combined["status"] == (
-        "NO_EVALUABLE"
-        if primary
-        else "INCONCLUSO_POR_INESTABILIDAD"
-        if weak_model
-        else "CUMPLE_BAJO_CONTRATO_PROPUESTO"
+        "INCONCLUSO_POR_INESTABILIDAD" if weak_model else "CUMPLE_BAJO_CONTRATO_PROPUESTO"
     )
     assert all(
         cut["utility_persistence_comparison"] == comparison
         for seed in combined["seeds"]
         for cut in seed["cuts"]
     )
+    assert combined["B"] == b and combined["decision_basis"] == basis
+    assert all(seed["B"] == b and seed["decision_basis"] == basis for seed in combined["seeds"])
+
+
+@pytest.mark.parametrize(
+    "case,reading,expected,b_reason",
+    [
+        ("primary_pass", "primary", "CUMPLE", "DEGENERATE_PRIMARY_COHORT"),
+        ("A_fails", "primary", "NO_CUMPLE", "DEGENERATE_PRIMARY_COHORT"),
+        ("C_fails", "primary", "NO_CUMPLE", "DEGENERATE_PRIMARY_COHORT"),
+        ("B_passes", "secondary_t2", "CUMPLE", None),
+        ("B_fails", "secondary_t2", "NO_CUMPLE", None),
+        ("B_no_alerts", "secondary_t2", "NO_EVALUABLE", "NO_PERSISTENCE_ALERTS"),
+        ("B_alerts_only_outside_support", "secondary_t2", "NO_EVALUABLE", "NO_PERSISTENCE_ALERTS"),
+        ("negative_control", "primary", "INVALIDO", "DEGENERATE_PRIMARY_COHORT"),
+        ("invalid_secondary_no_alerts", "secondary_t2", "INVALIDO", "NO_PERSISTENCE_ALERTS"),
+    ],
+)
+def test_declared_B_rule_controls_votes_and_preserves_causes(
+    case: str, reading: str, expected: str, b_reason: str | None
+) -> None:
+    """Evaluar A/C, B obligatoria y controles sin borrar sus causas al agregar cinco semillas."""
+    frame = observations().assign(horizon=2)
+    perfect = frame.onset.eq(1).to_numpy()
+    weak = np.array([0, 1, 0, 0] * 20, dtype=bool)
+    persistence = np.zeros(80, dtype=bool)
+    if reading == "secondary_t2" and "no_alerts" not in case:
+        persistence[1] = True
+    if case == "B_fails":
+        persistence = perfect.copy()
+    if case == "B_alerts_only_outside_support":
+        frame.loc[1, "onset"] = None
+    if case == "invalid_secondary_no_alerts":
+        frame.loc[0, "candidate_probability"] = np.nan
+    decisions = {
+        "candidate": perfect.copy(),
+        "channel_C0": perfect if case == "A_fails" else weak,
+        "channel_conditioned": weak,
+        "persistence": persistence,
+        "random_ranking": perfect if case == "negative_control" else weak,
+        "alert_everything": np.ones(80, dtype=bool),
+        "inflated_channel": weak,
+    }
+    if case == "C_fails":
+        # Las continuaciones benefician la FAR de C0; tres alertas falsas del modelo
+        # superan el margen C sin romper los cinco falsos por cien frente al condicionado.
+        frame.loc[frame.onset.eq(0), "excess_target"] = 1
+        decisions["channel_C0"] = ~perfect
+        decisions["candidate"][[0, 20, 40]] = True
+        frame.loc[[0, 20, 40], "excess_target"] = 0
+        decisions["channel_C0"][[0, 20, 40]] = False
+    cell = evaluate_cell(
+        frame, decisions, {"status": "FROZEN", "budget_rate": 1.0}, reading=reading
+    )
+    primary = reading == "primary"
+    assert cell["B"] == {
+        "status": "NO_EVALUABLE" if b_reason else "EVALUABLE",
+        "reason": b_reason,
+        "required_for_verdict": not primary,
+    }
+    assert cell["ABC_HISTORICA"]["conditions"]["B_superar_persistencia"] is (
+        None if b_reason else case != "B_fails"
+    )
+    if case in {"A_fails", "C_fails"}:
+        condition = "A_superar_canal" if case == "A_fails" else "C_margen_FAR_exceso"
+        assert cell["ABC_HISTORICA"]["conditions"][condition] is False
+        assert cell["UTILIDAD_PROPUESTA"] == "CUMPLE"
+    if case == "negative_control":
+        assert cell["negative_controls"]["random_ranking"] == "CUMPLE"
+    if case == "primary_pass":
+        assert cell["ABC_HISTORICA"]["status"] == "ABC_HISTORICA_NO_EVALUABLE"
+        assert cell["applicable_abc_status"] == "AC_CUMPLE"
+        assert cell["UTILIDAD_PROPUESTA"] == "CUMPLE"
+    rows = [
+        dict(
+            cell,
+            reading=reading,
+            arm="epi",
+            population="native",
+            horizon=2,
+            territory="primary_meta_tolima",
+            year="all",
+            seed=seed,
+            cut=str(cut),
+        )
+        for seed in (7, 13, 31, 53, 101)
+        for cut in range(3)
+    ]
+    results = summaries(
+        rows,
+        {
+            "seeds": [7, 13, 31, 53, 101],
+            "cuts": [{"id": str(c)} for c in range(3)],
+            "consistency_rule": "strict_majority_min_three",
+            "consistency_vote": "both_rules_cumple",
+        },
+    )
+    assert all(r["status"] == expected for r in results if r["kind"] == "consistency")
+    assert all(
+        r["votes"] == (3 if expected == "CUMPLE" else 0)
+        for r in results
+        if r["kind"] == "consistency"
+    )
+    combined = results[-1]
+    assert (
+        combined["status"]
+        == {
+            "CUMPLE": "CUMPLE_BAJO_CONTRATO_PROPUESTO",
+            "NO_CUMPLE": "INCONCLUSO_POR_INESTABILIDAD",
+            "NO_EVALUABLE": "NO_EVALUABLE",
+            "INVALIDO": "INVALIDO",
+        }[expected]
+    )
+    assert combined["B"] == cell["B"]
+    assert combined["decision_basis"] == cell["decision_basis"]
+    assert all(c["B"] == cell["B"] for s in combined["seeds"] for c in s["cuts"])

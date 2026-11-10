@@ -278,16 +278,19 @@ condicionado del apartado 8.1. Persistencia es **C1 histórica**:
 `alerta_persistencia_h = exceso(T)`, conocida en T para ambos horizontes.
 En la cohorte principal sin exceso en T resulta cero siempre; su FAR queda no
 definida y el comparador se registra como degenerado por definición de cohorte.
-B histórica y la condición de utilidad frente a persistencia son **no evaluables**:
-superar sus cero aciertos no es una victoria informativa. En una cohorte no restringida, T+1
+B histórica y la comparación de utilidad frente a persistencia son **no evaluables**;
+la decisión aprobada del apartado 11 permite decidir con canal y A/C, sin atribuir
+una victoria sobre sus cero aciertos. En una cohorte no restringida, T+1
 sigue detectando cero inicios, pero T+2 puede detectar una transición posterior:
 no se debe imponer cero por definición a esa lectura.
 
-La fábrica actual usa una referencia degenerada `non_excess_persists_no_new_onset`
+La validación histórica de fábrica usa `non_excess_persists_no_new_onset`,
 de ceros en ambos horizontes. Coincide con C1 solo dentro de la cohorte restringida;
 no implementa por sí sola la persistencia histórica para la lectura secundaria.
 Persistencia es referencia de la regla nueva y comparador obligatorio de la
-**condición B histórica**; superarla no acredita utilidad por sí solo.
+**condición B histórica**. La evaluación científica actual usa C1, con B no
+exigida en primaria y obligatoria en secundaria T+2. Superarla no acredita
+utilidad por sí solo; si no alerta en el soporte secundario, B no es evaluable.
 
 El contrato V2 también conserva C2/R0, C3/G0 regional OFF/ON y C4/G1 nacional.
 Solo se citan sus predicciones congeladas si existe identidad y soporte
@@ -465,7 +468,8 @@ solo si simultáneamente:
 1. pasa todas las compuertas de datos, tiempo, soporte, identidad y evidencia;
 2. se compara con el canal condicionado sobre las mismas claves y el punto de
    operación fue fijado antes de evaluación;
-3. supera a persistencia en inicios detectados, con comparador informativo;
+3. en secundaria T+2 supera a persistencia en inicios detectados con comparador
+   informativo; en primaria se aplica la excepción aprobada que sigue;
 4. la estimación puntual de `S_modelo - S_canal` es al menos 10 puntos y la cota
    inferior de su intervalo también es al menos 10 puntos;
 5. la estimación puntual de `carga_FA_inicio_100mm_modelo - carga_FA_inicio_100mm_canal`
@@ -475,24 +479,30 @@ solo si simultáneamente:
    suficiente; toda heterogeneidad material queda reportada.
 
 Esta salida no modifica `ABC_HISTORICA`: un resultado puede cumplir una regla y
-fallar la otra, y debe decirlo. Se propone exigir ambas para una respuesta
-académica afirmativa, además de consistencia y evidencia confirmatoria; esa
+fallar la otra, y debe decirlo. La respuesta afirmativa propuesta exige utilidad
+y las condiciones históricas aplicables (A/C en primaria; A/B/C en secundaria),
+además de consistencia y evidencia confirmatoria; esa
 articulación también requiere aprobación del equipo. Ningún umbral, comparador
 o condición cambia a posteriori para resolver una discrepancia favorablemente.
 
-Si persistencia es degenerada por la cohorte primaria, su condición es
-`NO_EVALUABLE` y `UTILIDAD_PROPUESTA` también queda `NO_EVALUABLE`, incluso si
-una comparación con el canal falla o cumple los umbrales. Se conservan conteos,
-intervalos y resultados frente al canal; un defecto de validez sigue siendo
-`INVALIDO`. Esta falta de evaluación se propaga por corte y semilla: no vota
-como éxito ni permite `CUMPLE_BAJO_CONTRATO_PROPUESTO`.
+**Decisión del equipo para esta propuesta:** en la lectura primaria B se informa
+`NO_EVALUABLE`, causa `DEGENERATE_PRIMARY_COHORT`, y queda fuera del voto. La
+utilidad se decide por el canal condicionado, los márgenes de sensibilidad y
+falsas alertas, sus intervalos y las demás compuertas; A y C siguen siendo
+obligatorias en el voto histórico aplicable. Un `CUMPLE` primario significa que
+se superaron esas condiciones, **no** que se superó persistencia. El recibo
+expone B, su causa y la base exacta de decisión junto al veredicto.
+`ABC_HISTORICA` conserva B `null` y su estado histórico no evaluable si A/C
+cumplen; `applicable_abc_status` separa `AC_CUMPLE`, `AC_NO_CUMPLE` o
+`AC_NO_EVALUABLE` para votar en primaria, sin simular `ABC_HISTORICA_CUMPLE`.
+`INVALIDO` conserva precedencia también en esta proyección.
 
-**Decisión pendiente del equipo:** aprobar prospectivamente cómo tratar B y la
-condición de persistencia de la utilidad en una cohorte que las hace degeneradas,
-y enmendar explícitamente su articulación con el veredicto afirmativo. Mientras
-esa decisión no exista, la cohorte primaria no puede obtenerlo bajo estas reglas.
-Esta corrección no sustituye el comparador, elimina B ni adopta otra regla final;
-el contrato sigue `PROPUESTA_PARA_APROBACION`.
+En la lectura secundaria T+2, B y la comparación de utilidad con persistencia
+siguen siendo obligatorias. Si persistencia no emite alertas en el soporte
+evaluado, se informa `NO_EVALUABLE` con causa `NO_PERSISTENCE_ALERTS`; no se
+convierte una comparación vacía en éxito. Los defectos de validez siguen siendo
+`INVALIDO`. Esta decisión no reinterpreta evidencia previa ni aprueba por sí
+sola el contrato completo, que permanece `PROPUESTA_PARA_APROBACION`.
 
 ## 12. Veredictos y respuesta final
 
@@ -509,8 +519,9 @@ La tabla anterior se refiere solo a `UTILIDAD_PROPUESTA`. Se reportan además
 global que esconda desacuerdos. La conclusión propuesta del proyecto, pendiente
 de aprobación del equipo, se redacta por horizonte:
 
-- **Sí:** existe un resultado confirmatorio con `ABC_HISTORICA_CUMPLE`,
-  `UTILIDAD_PROPUESTA: CUMPLE` y consistencia según el apartado 13.
+- **Sí:** existe un resultado confirmatorio con `UTILIDAD_PROPUESTA: CUMPLE`,
+  condiciones aplicables satisfechas (`AC_CUMPLE` en primaria, con B no evaluable
+  explícita; `ABC_HISTORICA_CUMPLE` en secundaria) y consistencia según el apartado 13.
 - **No con la evidencia evaluada:** una evaluación confirmatoria válida obtiene
   incumplimiento definido de una regla exigida, con soporte suficiente.
 - **Inconcluso:** la evidencia es exploratoria, imprecisa, inválida o no
@@ -576,8 +587,11 @@ determinista debe demostrarlo con ejecuciones aisladas.
 **Agregación entre semillas — propuesta que requiere aprobación del equipo.**
 Para cada combinación de horizonte, lectura, brazo, población y territorio se
 conserva primero la mayoría estricta de cortes utilizables **dentro de cada
-semilla**, con mínimo de tres cortes y el voto predeclarado que exige A/B/C y
-utilidad. T+1, T+2 primario y T+2 secundario producen resúmenes separados; tampoco
+semilla**, con mínimo de tres cortes y el voto predeclarado que exige utilidad
+y A/C en primaria o A/B/C en secundaria T+2. Un corte secundario con B no
+evaluable no aporta voto afirmativo y conserva su causa; la falta en un corte
+con soporte suficiente mantiene la consistencia no evaluable. T+1, T+2 primario
+y T+2 secundario producen resúmenes separados; tampoco
 se mezclan poblaciones nativas/comunes, brazos con/sin clima o vistas territoriales.
 Las vistas anuales no se añaden como cortes extra a la consistencia de todos los años.
 
@@ -702,8 +716,8 @@ Antes de convertir esta propuesta en norma, el equipo debe aprobar explícitamen
    compuertas simétricas, sin adoptar la regla futura que produjo 329 inicios;
 4. C0/C1 para A/B/C y canal condicionado para la regla adicional, con sus puntos
    de operación, así como exigir ambas reglas para una respuesta afirmativa;
-   resolver explícitamente la no evaluabilidad de B y de la condición de utilidad
-   frente a persistencia degenerada antes de habilitar ese veredicto en la cohorte primaria;
+   incorporar la decisión acotada ya aprobada de B no exigida en primaria y
+   obligatoria en secundaria T+2, sin extender esa aprobación al contrato completo;
 5. adopción de la carga por 100 municipio-mes, su justificación frente a la FAR
    histórica y umbrales propuestos de 10 puntos/5 falsas por 100, todavía sin
    calibración de capacidad real; no se interpreta 5 como unidad equivalente;

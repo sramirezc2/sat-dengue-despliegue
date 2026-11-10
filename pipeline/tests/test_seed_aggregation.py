@@ -79,6 +79,15 @@ def test_five_required_seed_cases(case: str, expected: str) -> None:
     assert result["status"] == expected
     assert len(result["seeds"]) == 5
     assert [r["seed"] for r in result["seeds"]] == SEEDS
+    assert all(
+        s["B"]
+        == {
+            "status": "NO_EVALUABLE",
+            "reason": "DEGENERATE_PRIMARY_COHORT",
+            "required_for_verdict": False,
+        }
+        for s in result["seeds"]
+    )
     assert result["scientific_conclusion"] == "NOT_APPROVED"
     assert result["contract_status"] == "PROPUESTA_PARA_APROBACION"
     assert result["team_approval_required"]

@@ -395,7 +395,14 @@ def finish_execution(
                     {
                         key: record[key]
                         for key in (
-                            "arm", "population", "reading", "horizon", "territory", "status"
+                            "arm",
+                            "population",
+                            "reading",
+                            "horizon",
+                            "territory",
+                            "status",
+                            "B",
+                            "decision_basis",
                         )
                     }
                     for fragment in additions.values()

@@ -960,3 +960,58 @@ autorizado requiere pruebas dirigidas y no modifica API, tablero, dependencias
 ni publicaciones. La CI remota del próximo commit no se acredita con estos gates
 locales. Sin datos o entrenamientos reales, aprobación científica, commit/push,
 otro PR ni merge.
+
+### Decisión aprobada sobre B — implementación completada, 10 de noviembre de 2026
+
+**PASS técnico local.** Rama `feature/contrato-cientifico-fabrica-final`, PR #3,
+HEAD `2ba0bc8`. El preflight encontró cuatro archivos sin commit: contrato,
+`reporting.py`, `statistics.py` y `runner.py`. Se revisó el diff antes de editar
+y se conservó localmente en `pipeline/data/pr3-approved-b-rule/interrupted-input.patch`.
+Se retuvo la excepción primaria y la proyección al recibo que ya estaban
+iniciadas; se completaron celdas, causas, cortes/semillas y pruebas, y se corrigió
+el resumen secundario que solo informaba REQUIRED sin su evaluabilidad real.
+
+La solicitud comunica la decisión acotada aprobada por el equipo: en primaria B
+permanece `NO_EVALUABLE`, causa `DEGENERATE_PRIMARY_COHORT`, y no se exige para
+el veredicto. La utilidad frente al canal y A/C pueden dar voto afirmativo sin
+significar superioridad sobre persistencia. `ABC_HISTORICA` mantiene B `null` y
+su estado histórico; `applicable_abc_status` proyecta separadamente AC_CUMPLE,
+AC_NO_CUMPLE o AC_NO_EVALUABLE. No simula cumplimiento de A/B/C con B degenerada.
+
+En secundaria T+2 B es obligatoria: si persistencia no alerta en el soporte
+evaluado, queda no evaluable con causa NO_PERSISTENCE_ALERTS y el corte no aporta
+voto afirmativo. Una alerta fuera del soporte conocido no la vuelve evaluable.
+Se mantienen INVALIDO, controles negativos, mínimos de soporte, mayorías de
+cortes y unanimidad de las cinco semillas; no se cambian umbrales ni cupos.
+
+Cada celda, corte, consistencia, semilla (incluidas ausentes) y resumen conserva
+`B.status`, `B.reason`, `B.required_for_verdict` y `decision_basis`. EVALUABLE
+describe disponibilidad de B, no su cumplimiento; el booleano sigue en las
+condiciones históricas. El recibo publica los mismos campos por vista en
+`scientific_evaluation.summary`, derivados de los fragmentos inventariados.
+Se comprueban recorrido Kedro, CLI normal y terminales previos/posteriores a
+agregación; antes de agregar el resumen sigue vacío, sin inventar resultados.
+
+| Validación | Resultado real |
+|---|---|
+| Pruebas dirigidas: test_scientific_evaluation.py, test_seed_aggregation.py, test_channel_policy.py, test_agent_skills.py, test_scientific_e2e.py y test_experiment_management.py | **155 PASS**, sin fallos u omisiones, 127,90 s; nueve escenarios nuevos y pruebas previas adaptadas. |
+| Últimos ajustes de causas y semillas ausentes | 97 PASS; dos E2E deseleccionados solo en esta tanda rápida, cubiertos por la suite completa posterior. |
+| Suite completa `uv run --directory pipeline pytest` | **774 PASS**, sin fallos, errores u omisiones, 303,70 s. Seis avisos previos de deprecación de OmegaConf/Kedro. |
+| Ruff; uv lock --check; uv sync --locked | PASS; sin cambios de dependencias. |
+| Registro; preservación normal y Python -O | VALID y PASS: 49 archivos protegidos, 16 recibos históricos, identidad N=3 T16 y 22 JSON intactos. |
+| Control extendido, documentación e higiene | 96 archivos históricos idénticos a HEAD; EXP001/EXP002, certificados y manual intactos. Enlaces, tamaños, candidatos nuevos a secretos y diff comprobados. |
+
+La primera tanda pequeña pasó 92 casos y falló en un fixture nuevo por un array
+de pandas de solo lectura; se corrigió su copia antes de mutarlo. La tanda dirigida
+y la suite posteriores pasan. Los controles negativos secundarios ahora tienen
+persistencia con alertas para que B sea evaluable, sin quitar la invalidación.
+Reportes locales ignorados: `pipeline/data/pr3-approved-b-rule/focused.xml` y
+`pipeline-suite.xml` en ese directorio; diff final junto al snapshot interrumpido.
+
+Contrato y guía sincronizados. **La decisión sobre B queda implementada; el
+contrato completo sigue PROPUESTA_PARA_APROBACION.** Continúan pendientes su
+aprobación global, cohorte confirmatoria independiente y N=3 E2E de un eventual
+finalista. No se atribuye aprobación científica a las pruebas artificiales.
+No se ejecutan suites de API/tablero porque no cambia producto ni publicación;
+CI remota del próximo commit no verificada. Sin datos reales ni uso de 2025 para
+ajustar la regla, commit/push, merge u otro PR.

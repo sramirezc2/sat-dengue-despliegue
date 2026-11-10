@@ -101,13 +101,26 @@ secundaria puede detectar inicios T+2 y no se reemplaza por ceros.
 
 En la lectura primaria, la persistencia sin alertas por definición se reporta
 con `degenerate: true` y causa `DEGENERATE_PRIMARY_COHORT`. B histórica es `null`
-y su comparación es `NO_EVALUABLE`; la condición frente a persistencia de la
-utilidad también es `NO_EVALUABLE`, aun si el canal es superado. Se conservan
-las comparaciones con el canal y la precedencia de `INVALIDO`. Esta causa se
-mantiene en los cortes por semilla y bloquea un resumen afirmativo. El equipo
-debe aprobar cómo tratar ambas condiciones y su articulación con el veredicto
-antes de permitirlo en esta cohorte; no se adopta aquí una regla alternativa.
-El contrato permanece `PROPUESTA_PARA_APROBACION`.
+y su comparación es `NO_EVALUABLE`. Según la decisión acotada aprobada por el
+equipo, B no se exige en primaria: la utilidad frente al canal y A/C pueden
+dar un voto afirmativo, sin significar superioridad sobre persistencia.
+`ABC_HISTORICA` conserva B `null`; `applicable_abc_status` distingue `AC_CUMPLE`,
+`AC_NO_CUMPLE` y `AC_NO_EVALUABLE`. En secundaria T+2 se exige B: cero alertas
+en el soporte evaluado produce `NO_EVALUABLE`, causa `NO_PERSISTENCE_ALERTS`,
+y ese corte no vota afirmativamente. Si tiene soporte suficiente, mantiene
+la consistencia no evaluable. `INVALIDO`, controles negativos, soportes mínimos
+y unanimidad conservan precedencia y reglas. El contrato completo permanece
+`PROPUESTA_PARA_APROBACION`.
+
+Cada celda, corte, consistencia, semilla y resumen conserva `B` con `status`,
+`reason` y `required_for_verdict`, además de `decision_basis`: utilidad/A/C en
+primaria y utilidad/A/B/C en secundaria. `EVALUABLE` indica que B pudo calcularse,
+no que se cumplió; su resultado booleano permanece en `ABC_HISTORICA.conditions`.
+En los resúmenes B describe los cortes utilizables (si no hay ninguno, los
+observados), conservando una causa no evaluable cuando existe; no sustituye el
+voto por corte. Los campos llegan al `scientific_evaluation.summary` del recibo
+publicado y a los fragmentos inventariados, tanto en éxito como tras agregación
+en un terminal fallido. Antes de agregar, el resumen sigue siendo una lista vacía.
 
 El cupo es `floor(tasa × N_emisión)` por mes objetivo y departamento, aplicado
 antes de consultar etiquetas. Candidato y canal usan el mismo cupo y claves;

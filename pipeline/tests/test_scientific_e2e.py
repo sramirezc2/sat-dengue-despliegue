@@ -33,6 +33,11 @@ def test_receipt_summary_matches_saved_aggregation_and_inventory(
     session = runner.begin_execution(
         entry["experiment_id"], root=tmp_path, execution_id=case, tracking=False
     )
+    primary_b = {
+        "status": "NO_EVALUABLE",
+        "reason": "DEGENERATE_PRIMARY_COHORT",
+        "required_for_verdict": False,
+    }
     expected = (
         [
             dict(
@@ -42,6 +47,8 @@ def test_receipt_summary_matches_saved_aggregation_and_inventory(
                 horizon=1,
                 territory="national",
                 status="CUMPLE_BAJO_CONTRATO_PROPUESTO",
+                B=primary_b,
+                decision_basis=["UTILIDAD_PROPUESTA", "A", "C"],
             ),
             dict(
                 arm="climate",
@@ -50,6 +57,12 @@ def test_receipt_summary_matches_saved_aggregation_and_inventory(
                 horizon=2,
                 territory="primary_meta_tolima",
                 status="NO_EVALUABLE",
+                B={
+                    "status": "NO_EVALUABLE",
+                    "reason": "NO_PERSISTENCE_ALERTS",
+                    "required_for_verdict": True,
+                },
+                decision_basis=["UTILIDAD_PROPUESTA", "A", "B", "C"],
             ),
             dict(
                 arm="epi",
@@ -58,6 +71,8 @@ def test_receipt_summary_matches_saved_aggregation_and_inventory(
                 horizon=2,
                 territory="national",
                 status="INCONCLUSO_POR_INESTABILIDAD",
+                B=primary_b,
+                decision_basis=["UTILIDAD_PROPUESTA", "A", "C"],
             ),
         ]
         if case != "failure_before_aggregation"
@@ -240,10 +255,40 @@ def test_scientific_kedro_e2e_uses_its_certified_data_and_fitted_models(
     assert receipt["scientific_evaluation"]["summary"] == [
         {
             key: row[key]
-            for key in ("arm", "population", "reading", "horizon", "territory", "status")
+            for key in (
+                "arm",
+                "population",
+                "reading",
+                "horizon",
+                "territory",
+                "status",
+                "B",
+                "decision_basis",
+            )
         }
         for row in stability
     ]
+    for row in receipt["scientific_evaluation"]["summary"]:
+        if row["reading"] == "primary":
+            assert row["B"] == {
+                "status": "NO_EVALUABLE",
+                "reason": "DEGENERATE_PRIMARY_COHORT",
+                "required_for_verdict": False,
+            }
+            assert row["decision_basis"] == ["UTILIDAD_PROPUESTA", "A", "C"]
+        else:
+            assert row["B"]["required_for_verdict"] is True
+            assert row["decision_basis"] == ["UTILIDAD_PROPUESTA", "A", "B", "C"]
+    for cell in cells:
+        assert cell["decision_basis"] == (
+            ["UTILIDAD_PROPUESTA", "A", "C"]
+            if cell["reading"] == "primary"
+            else ["UTILIDAD_PROPUESTA", "A", "B", "C"]
+        )
+        if cell["reading"] == "primary":
+            assert cell["B"]["status"] == "NO_EVALUABLE"
+            assert cell["B"]["reason"] == "DEGENERATE_PRIMARY_COHORT"
+            assert cell["ABC_HISTORICA"]["conditions"]["B_superar_persistencia"] is None
     assert Registry(tmp_path).get(entry["experiment_id"])["status"] == "RUNNING"
     from sat_dengue_pipeline.experiment_management.compare import compare
 
@@ -332,6 +377,16 @@ def test_scientific_pipeline_runs_with_one_kedro_cli_command(tmp_path: Path) -> 
     assert receipt["scientific_evaluation"]["summary"]
     assert all(
         row["status"] == "NO_EVALUABLE" for row in receipt["scientific_evaluation"]["summary"]
+    )
+    assert all(
+        row["B"]
+        == {
+            "status": "NO_EVALUABLE",
+            "reason": "DEGENERATE_PRIMARY_COHORT",
+            "required_for_verdict": False,
+        }
+        and row["decision_basis"] == ["UTILIDAD_PROPUESTA", "A", "C"]
+        for row in receipt["scientific_evaluation"]["summary"]
     )
     assert receipt["mlflow"]["enabled"]
     store = tmp_path / "pipeline/.tracking/experiments/tracking.sqlite"

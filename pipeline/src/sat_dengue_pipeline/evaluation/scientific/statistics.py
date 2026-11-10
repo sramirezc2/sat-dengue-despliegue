@@ -60,6 +60,8 @@ def persistence_comparison(
     reason = (
         "DEGENERATE_PRIMARY_COHORT"
         if persistence.get("degenerate", False)
+        else "NO_PERSISTENCE_ALERTS"
+        if persistence["L"] == 0
         else "NO_ONSETS"
         if not model["I"]
         else None
@@ -68,6 +70,7 @@ def persistence_comparison(
         "status": "NO_EVALUABLE" if reason else "EVALUABLE",
         "reason": reason,
         "superior": None if reason else model["TP"] > persistence["TP"],
+        "required_for_verdict": not persistence.get("degenerate", False),
     }
 
 
@@ -195,24 +198,20 @@ def utility_verdict(
     missing_predictions: int = 0,
 ) -> str:
     """Devolver solo el veredicto bajo contrato propuesto, separado de A/B/C."""
-    model, channel, persistence = (
-        methods[n] for n in (candidate, "channel_conditioned", "persistence")
-    )
+    model, channel = (methods[n] for n in (candidate, "channel_conditioned"))
     if missing_predictions:
         return "INVALIDO"
-    if (
-        not policy_defined
-        or model["I"] < 30
-        or not model["N"]
-        or persistence_comparison(methods, candidate)["status"] == "NO_EVALUABLE"
-    ):
+    if not policy_defined or model["I"] < 30 or not model["N"]:
+        return "NO_EVALUABLE"
+    comparison = persistence_comparison(methods, candidate)
+    if comparison["status"] == "NO_EVALUABLE" and comparison["required_for_verdict"]:
         return "NO_EVALUABLE"
     gain = 100 * (model["onset_sensitivity"] - channel["onset_sensitivity"])
     burden = model["carga_FA_inicio_100mm"] - channel["carga_FA_inicio_100mm"]
     if (
         gain < 10 - 1e-12
         or burden > 5 + 1e-12
-        or model["TP"] <= persistence["TP"]
+        or (comparison["status"] == "EVALUABLE" and not comparison["superior"])
         or not budget_respected
     ):
         return "NO_CUMPLE_POR_EFECTO"

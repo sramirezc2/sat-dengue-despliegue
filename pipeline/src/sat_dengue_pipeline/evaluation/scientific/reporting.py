@@ -186,7 +186,11 @@ def evaluate_cell(
     if missing_predictions:
         abc["status"] = "INVALIDO"
         verdict = "INVALIDO"
-    return {
+    b = {
+        key: abc["persistence_comparison"][key]
+        for key in ("status", "reason", "required_for_verdict")
+    }
+    record = {
         "kind": "cell",
         "label": PROPOSED,
         "contract_status": "PROPUESTA_PARA_APROBACION",
@@ -199,6 +203,8 @@ def evaluate_cell(
         "municipalities": int(support.municipality_code.nunique()),
         "methods": methods,
         "ABC_HISTORICA": abc,
+        "B": b,
+        "decision_basis": decision_basis(b),
         "intervals": intervals,
         "UTILIDAD_PROPUESTA": verdict,
         "utility_persistence_comparison": persistence_comparison(methods),
@@ -215,6 +221,8 @@ def evaluate_cell(
         "scientific_conclusion": "NOT_APPROVED",
         "operational_authorization": False,
     }
+    record["applicable_abc_status"] = applicable_abc_status({**record, "reading": reading})
+    return record
 
 
 def aggregate_seed_consistency(seed_rows: list[dict], declared_seeds: list[int]) -> str:
@@ -250,6 +258,53 @@ def aggregate_seed_consistency(seed_rows: list[dict], declared_seeds: list[int])
     )
 
 
+def applicable_abc_status(record: dict) -> str:
+    """Exigir A/C en la lectura primaria y A/B/C en la secundaria."""
+    abc = record["ABC_HISTORICA"]
+    if abc["status"] == "INVALIDO":
+        return "INVALIDO"
+    comparison = abc.get("persistence_comparison", {})
+    if record["reading"] != "primary" or comparison.get("reason") != "DEGENERATE_PRIMARY_COHORT":
+        return abc["status"]
+    values = [abc["conditions"][name] for name in ("A_superar_canal", "C_margen_FAR_exceso")]
+    if False in values:
+        return "AC_NO_CUMPLE"
+    if None in values:
+        return "AC_NO_EVALUABLE"
+    return "AC_CUMPLE"
+
+
+def decision_basis(b: dict) -> list[str]:
+    """Nombrar las reglas exigidas sin atribuir superioridad sobre B degenerada."""
+    return (
+        ["UTILIDAD_PROPUESTA", "A", "B", "C"]
+        if b["required_for_verdict"]
+        else ["UTILIDAD_PROPUESTA", "A", "C"]
+    )
+
+
+def summarize_b(records: list[dict], reading: str) -> dict:
+    """Conservar evaluabilidad de B de los cortes utilizables, sin exigirla en primaria."""
+    if reading == "primary":
+        return {
+            "status": "NO_EVALUABLE",
+            "reason": "DEGENERATE_PRIMARY_COHORT",
+            "required_for_verdict": False,
+        }
+    comparisons = [r.get("B") for r in records]
+    reason = next(
+        (b["reason"] for b in comparisons if b and b["status"] == "NO_EVALUABLE"),
+        None,
+    )
+    if not comparisons or any(b is None for b in comparisons):
+        reason = reason or "MISSING_B_COMPARISON"
+    return {
+        "status": "NO_EVALUABLE" if reason else "EVALUABLE",
+        "reason": reason,
+        "required_for_verdict": True,
+    }
+
+
 def summaries(records: list[dict], policy: dict) -> list[dict]:
     """Conservar consistencia por semilla y agregar solo dentro de cada vista declarada."""
     by_seed: dict[tuple, list] = defaultdict(list)
@@ -272,7 +327,7 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
         )
         votes = sum(
             r["UTILIDAD_PROPUESTA"] == "CUMPLE"
-            and r["ABC_HISTORICA"]["status"] == "ABC_HISTORICA_CUMPLE"
+            and applicable_abc_status(r) in {"AC_CUMPLE", "ABC_HISTORICA_CUMPLE"}
             for r in usable
         )
         k = len(usable)
@@ -288,7 +343,7 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
             if set(cut_ids) != {cut["id"] for cut in policy["cuts"]}
             or any(
                 r["UTILIDAD_PROPUESTA"] == "NO_EVALUABLE"
-                or r["ABC_HISTORICA"]["status"] == "ABC_HISTORICA_NO_EVALUABLE"
+                or applicable_abc_status(r) in {"AC_NO_EVALUABLE", "ABC_HISTORICA_NO_EVALUABLE"}
                 for r in usable
             )
             else "INSUFFICIENT_CUTS"
@@ -300,6 +355,7 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
         dims = dict(
             zip(("arm", "population", "reading", "horizon", "territory", "seed"), key, strict=True)
         )
+        b = summarize_b(usable or group, dims["reading"])
         result.append(
             {
                 "kind": "consistency",
@@ -310,12 +366,16 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
                 "excluded_insufficient_support": len(group) - k,
                 "votes": votes,
                 "required_votes": required,
+                "B": b,
+                "decision_basis": decision_basis(b),
                 "status": status,
             }
         )
         by_seeds[key[:-1]].append(
             {
                 "seed": key[-1],
+                "B": b,
+                "decision_basis": decision_basis(b),
                 "consistency": status,
                 "planned_cuts": len(policy["cuts"]),
                 "usable_cuts": k,
@@ -328,6 +388,9 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
                         "policy_status": r.get("policy_status"),
                         "UTILIDAD_PROPUESTA": r["UTILIDAD_PROPUESTA"],
                         "ABC_HISTORICA": r["ABC_HISTORICA"],
+                        "B": r.get("B"),
+                        "decision_basis": r.get("decision_basis"),
+                        "applicable_abc_status": applicable_abc_status(r),
                         "utility_persistence_comparison": r.get("utility_persistence_comparison"),
                         "TP": r["methods"]["candidate"]["TP"],
                         "delta_TP_C0": r["methods"]["candidate"]["TP"]
@@ -379,8 +442,16 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
                 )
         declared_seeds = policy["seeds"]
         observed = {row["seed"] for row in seed_rows}
+        missing_b = summarize_b([], key[2])
         seed_rows += [
-            {"seed": seed, "consistency": "NO_EVALUABLE", "cuts": [], "missing_run": True}
+            {
+                "seed": seed,
+                "consistency": "NO_EVALUABLE",
+                "cuts": [],
+                "missing_run": True,
+                "B": missing_b,
+                "decision_basis": decision_basis(missing_b),
+            }
             for seed in declared_seeds
             if seed not in observed
         ]
@@ -388,6 +459,7 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
         status = aggregate_seed_consistency(seed_rows, declared_seeds)
         if any(not row["support_comparable"] for row in distributions):
             status = "INVALIDO"
+        b = summarize_b(seed_rows, key[2])
         result.append(
             {
                 "kind": "seed_stability",
@@ -402,6 +474,8 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
                 else "NOT_VERIFIED",
                 "aggregation_rule": "all_five_declared_seeds_cumple",
                 "contract_status": "PROPUESTA_PARA_APROBACION",
+                "B": b,
+                "decision_basis": decision_basis(b),
                 "team_approval_required": True,
                 "status": status,
                 "scientific_conclusion": "NOT_APPROVED",
