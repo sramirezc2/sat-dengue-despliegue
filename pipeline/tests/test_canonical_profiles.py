@@ -1,5 +1,6 @@
 """Dos contratos reales cerrados, sin leer fuentes privadas ni modificar T16."""
 
+import hashlib
 import json
 import runpy
 import subprocess
@@ -116,8 +117,11 @@ def test_helper_selects_full_by_default_and_historical_explicitly(
 def test_operational_manifest_changes_only_declared_start() -> None:
     """Conservar revisión, nombres, tamaños, hashes y fin del release corregido."""
     path = ROOT / "conf/releases/operational-raw-173d5856.json"
-    old = json.loads(subprocess.check_output([
-        "git", "show", "0004185:pipeline/conf/releases/operational-raw-173d5856.json"
-    ], cwd=ROOT, text=True))
     current = json.loads(path.read_text(encoding="utf-8"))
-    assert current == {**old, "coverage_start": "2007-01-01"}
+    assert current["coverage_start"] == "2007-01-01"
+    historical_metadata = {**current, "coverage_start": "2011-06-01"}
+    # Identidad previa fijada, sin exigir objetos Git ausentes en clones superficiales.
+    encoded = (json.dumps(historical_metadata, indent=2) + "\n").encode()
+    assert hashlib.sha256(encoded).hexdigest() == (
+        "ee36be0affe23b1bad99044853e48f6396c556f39851852c769002d029f8b550"
+    )
