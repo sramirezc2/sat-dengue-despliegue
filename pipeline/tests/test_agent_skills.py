@@ -77,7 +77,10 @@ def test_skill_frontmatter_references_and_hygiene() -> None:
         assert not PLACEHOLDERS.search(source)
         assert not ABSOLUTE_PATH.search(source)
         assert not SECRET.search(source)
-        assert manual not in source and len(body) < len(manual) // 2
+        assert manual not in source
+        assert "../../../docs/experiments/manual_pipeline.md" in re.findall(
+            r"\[[^]]+\]\(([^)]+)\)", body
+        )
         for target in re.findall(r"\[[^]]+\]\(([^)]+)\)", body):
             if "://" in target or target.startswith("#"):
                 continue

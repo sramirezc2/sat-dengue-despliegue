@@ -12,11 +12,12 @@ from sat_dengue_pipeline.experiments.roles import support_passes
 from sat_dengue_pipeline.experiments.rolling import LINK, stable_digest
 from sat_dengue_pipeline.raw.serialization import verify_artifact
 
-from .policy import cap_alerts, channel_decision, channel_score
+from .policy import cap_alerts, channel_decision, channel_ranking_score, channel_score
 from .statistics import (
     historical_abc,
     method_counts,
     paired_intervals,
+    persistence_comparison,
     probability_metrics,
     utility_verdict,
 )
@@ -78,7 +79,10 @@ def emission_frame(run: Any, h: int) -> tuple[pd.DataFrame, dict[str, np.ndarray
             frame, frame.candidate_probability.to_numpy(), raw, rate
         )
         decisions["channel_conditioned"] = cap_alerts(
-            frame, channel_score(frame), channel_decision(frame, policy["channel_fraction"]), rate
+            frame,
+            channel_score(frame, policy["channel_fraction"]),
+            channel_decision(frame, policy["channel_fraction"]),
+            rate,
         )
         random_score = np.array(
             [
@@ -128,19 +132,22 @@ def cells(frame: pd.DataFrame) -> list[tuple[str, str, np.ndarray]]:
 
 
 def evaluate_cell(
-    frame: pd.DataFrame, decisions: dict[str, np.ndarray], policy: dict
+    frame: pd.DataFrame, decisions: dict[str, np.ndarray], policy: dict, *, reading: str = "primary"
 ) -> dict[str, Any]:
     """Calcular las dos reglas en soporte común y mantener las limitaciones visibles."""
     known = frame.onset.notna().to_numpy() & frame.excess_target.notna().to_numpy()
     support = frame.loc[known].reset_index(drop=True)
     masked = {name: value[known] for name, value in decisions.items()}
     methods = {name: method_counts(support, value) for name, value in masked.items()}
+    methods["persistence"]["degenerate"] = (
+        reading == "primary" and not decisions["persistence"].any()
+    )
     score_metrics = {"candidate": probability_metrics(support)}
     for name, decision in masked.items():
         if name == "candidate":
             continue
         score = (
-            channel_score(support)
+            channel_ranking_score(support)
             if name in {"channel_C0", "channel_conditioned"}
             else decision.astype(float)
         )
@@ -194,6 +201,7 @@ def evaluate_cell(
         "ABC_HISTORICA": abc,
         "intervals": intervals,
         "UTILIDAD_PROPUESTA": verdict,
+        "utility_persistence_comparison": persistence_comparison(methods),
         "negative_controls": controls,
         "score_metrics": score_metrics,
         "support_status": "SUFFICIENT"
@@ -320,6 +328,7 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
                         "policy_status": r.get("policy_status"),
                         "UTILIDAD_PROPUESTA": r["UTILIDAD_PROPUESTA"],
                         "ABC_HISTORICA": r["ABC_HISTORICA"],
+                        "utility_persistence_comparison": r.get("utility_persistence_comparison"),
                         "TP": r["methods"]["candidate"]["TP"],
                         "delta_TP_C0": r["methods"]["candidate"]["TP"]
                         - r["methods"]["channel_C0"]["TP"],
@@ -452,7 +461,9 @@ def evaluate_runs(runs: dict[str, Any], configuration: dict) -> tuple[list[dict]
             for territory, year, mask in cells(frame):
                 subframe = frame.loc[mask].reset_index(drop=True)
                 subdecisions = {method: value[mask] for method, value in decisions.items()}
-                record = evaluate_cell(subframe, subdecisions, policy)
+                record = evaluate_cell(
+                    subframe, subdecisions, policy, reading=dimensions["reading"]
+                )
                 record["producer_support_passed"] = run.support[str(h)]["evaluation"]["passed"]
                 if not record["producer_support_passed"]:
                     # El soporte no borra invalidez ni su causa; summaries le da precedencia.

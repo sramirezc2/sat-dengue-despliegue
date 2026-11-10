@@ -72,8 +72,24 @@ def cap_alerts(
     return result
 
 
-def channel_score(context: pd.DataFrame) -> np.ndarray:
-    """Ordenar razones casos/P75 incluyendo explícitamente P75=0 sin infinitos."""
+def channel_score(context: pd.DataFrame, fraction: float) -> np.ndarray:
+    """Priorizar el cupo por exceso absoluto sobre el umbral, incluso con P75=0.
+
+    Args:
+        context: Casos en T y P75 del objetivo disponibles al emitir.
+        fraction: Fracción del canal; 1 para C0 o la congelada para el condicionado.
+
+    Returns:
+        Casos(T) menos fracción por P75; la elegibilidad se determina por separado.
+    """
+    return (
+        context.cases_at_origin.to_numpy(dtype=float)
+        - fraction * context.target_p75_at_origin.to_numpy(dtype=float)
+    )
+
+
+def channel_ranking_score(context: pd.DataFrame) -> np.ndarray:
+    """Conservar el score de razón para AP/AUROC, separado de la prioridad del cupo."""
     cases = context.cases_at_origin.to_numpy(dtype=float)
     p75 = context.target_p75_at_origin.to_numpy(dtype=float)
     ratio = np.divide(cases, p75, out=np.zeros(len(cases)), where=p75 > 0)
@@ -105,7 +121,10 @@ def freeze_policy(run: Any) -> None:
         if rate is not None and grid is not None:
             for fraction in grid:
                 decision = cap_alerts(
-                    context, channel_score(context), channel_decision(context, fraction), rate
+                    context,
+                    channel_score(context, fraction),
+                    channel_decision(context, fraction),
+                    rate,
                 )
                 tp, alerts, positives = (
                     int((decision & (y == 1)).sum()),

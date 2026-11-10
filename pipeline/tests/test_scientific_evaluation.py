@@ -144,7 +144,7 @@ def test_abc_preserves_historical_far_and_B_is_not_burden() -> None:
     methods = {
         "candidate": method_counts(frame, model),
         "channel_C0": method_counts(frame, channel),
-        "persistence": method_counts(frame, np.zeros(80, dtype=bool)),
+        "persistence": method_counts(frame, np.arange(80) == 1),
     }
     abc = historical_abc(methods)
     assert abc["conditions"] == {
@@ -160,8 +160,10 @@ def test_abc_preserves_historical_far_and_B_is_not_burden() -> None:
     all_alerts = method_counts(frame, np.ones(80, dtype=bool))
     assert all_alerts["FP_exceso"] == 39 and all_alerts["FP_inicio"] == 40
     assert all_alerts["carga_FA_inicio_100mm"] == 50
-    assert methods["persistence"]["FAR_exceso"] is None
-    undefined = historical_abc({**methods, "channel_C0": methods["persistence"]})
+    assert methods["persistence"]["L"] == 1 and methods["persistence"]["FAR_exceso"] == 0
+    undefined = historical_abc(
+        {**methods, "channel_C0": method_counts(frame, np.zeros(80, dtype=bool))}
+    )
     assert undefined["status"] == "ABC_HISTORICA_NO_EVALUABLE"
 
 
@@ -216,7 +218,7 @@ def test_utility_uses_both_paired_bounds_and_remains_distinct_from_abc() -> None
         "candidate": candidate,
         "channel_conditioned": channel,
         "channel_C0": channel,
-        "persistence": np.zeros(80, dtype=bool),
+        "persistence": np.arange(80) == 1,
     }
     methods = {m: method_counts(frame, d) for m, d in decisions.items()}
     interval = paired_intervals(frame, decisions)
@@ -330,7 +332,9 @@ def test_negative_control_that_meets_invalidates_the_policy() -> None:
         "alert_everything": np.ones(80, dtype=bool),
         "inflated_channel": np.ones(80, dtype=bool),
     }
-    cell = evaluate_cell(frame, decisions, {"status": "FROZEN", "budget_rate": 1.0})
+    cell = evaluate_cell(
+        frame, decisions, {"status": "FROZEN", "budget_rate": 1.0}, reading="secondary_t2"
+    )
     assert cell["negative_controls"]["random_ranking"] == "CUMPLE"
     assert cell["UTILIDAD_PROPUESTA"] == "INVALIDO"
     assert cell["scientific_conclusion"] == "NOT_APPROVED"
@@ -366,7 +370,7 @@ def test_insufficient_producer_support_preserves_invalid_cell_cuts_and_five_seed
     for seed in seeds:
         for cut in range(4):
             dimensions = dict(
-                arm="epi", population="native", reading="primary", seed=seed, cut=str(cut)
+                arm="epi", population="native", reading="secondary_t2", seed=seed, cut=str(cut)
             )
             runs[f"{seed}.{cut}"] = SimpleNamespace(
                 artifact=SimpleNamespace(serialized_sha256="b" * 64, semantic_digest="c" * 64),
@@ -603,3 +607,163 @@ def test_stricter_declared_role_support_is_not_overridden_by_thirty_onsets() -> 
     read_outcomes(run)
     assert counts["n1"] == 40 and counts["passed"] is False
     assert counts["label_stage"] == "after_freeze_and_predictions"
+
+
+def decisive_methods(gain: float = 10.0, burden: float = 5.0) -> dict[str, dict]:
+    """Crear conteos agregados artificiales con persistencia informativa y límites aislables."""
+    methods = {}
+    for name, tp, fp in (
+        ("candidate", 4000 + round(gain * 100), 5000 + round(burden * 1000)),
+        ("channel_C0", 4000, 5000),
+        ("channel_conditioned", 4000, 5000),
+        ("persistence", 100, 100),
+    ):
+        methods[name] = dict(
+            N=100_000,
+            I=10_000,
+            TP=tp,
+            L=tp + fp,
+            onset_sensitivity=tp / 10_000,
+            carga_FA_inicio_100mm=fp / 1000,
+            FAR_exceso=0.2,
+        )
+    return methods
+
+
+@pytest.mark.parametrize(
+    "rule,point,bound,expected",
+    [
+        ("gain", 9.99, 10.0, "NO_CUMPLE_POR_EFECTO"),
+        ("gain", 10.0, 10.0, "CUMPLE"),
+        ("gain", 10.01, 10.0, "CUMPLE"),
+        ("gain", 10.01, 9.99, "PRECISION_INSUFICIENTE"),
+        ("gain", 10.01, 10.01, "CUMPLE"),
+        ("burden", 4.99, 5.0, "CUMPLE"),
+        ("burden", 5.0, 5.0, "CUMPLE"),
+        ("burden", 5.01, 5.0, "NO_CUMPLE_POR_EFECTO"),
+        ("burden", 4.99, 5.01, "PRECISION_INSUFICIENTE"),
+        ("burden", 4.99, 4.99, "CUMPLE"),
+    ],
+)
+def test_utility_decision_limits_and_the_single_failing_cause(
+    rule: str, point: float, bound: float, expected: str
+) -> None:
+    """Separar fallo de efecto y precisión a ambos lados de 10 pp y cinco falsas por 100."""
+    methods = decisive_methods(**{rule: point})
+    interval = {
+        "intervals": {
+            "delta_sensitivity_pp": {"lower": bound if rule == "gain" else 10.0},
+            "delta_carga_FA_inicio_100mm": {"upper": bound if rule == "burden" else 5.0},
+        }
+    }
+    model, channel = methods["candidate"], methods["channel_conditioned"]
+    actual_gain = 100 * (model["onset_sensitivity"] - channel["onset_sensitivity"])
+    actual_burden = model["carga_FA_inicio_100mm"] - channel["carga_FA_inicio_100mm"]
+    assert model["TP"] > methods["persistence"]["TP"]
+    assert actual_gain == pytest.approx(point if rule == "gain" else 10.0)
+    assert actual_burden == pytest.approx(point if rule == "burden" else 5.0)
+    # Solo cambia la regla nombrada: una puntual inválida es efecto, una cota es precisión.
+    assert utility_verdict(methods, interval) == expected
+
+
+@pytest.mark.parametrize("margin,passes", [(0.0499, True), (0.05, True), (0.0501, False)])
+def test_historical_C_absolute_far_margin_boundary(margin: float, passes: bool) -> None:
+    """C usa cinco puntos de FAR de exceso, sin confundirlos con carga o margen relativo."""
+    methods = decisive_methods()
+    methods["candidate"]["FAR_exceso"] = 0.2 + margin
+    abc = historical_abc(methods)
+    assert abc["conditions"] == {
+        "A_superar_canal": True,
+        "B_superar_persistencia": True,
+        "C_margen_FAR_exceso": passes,
+    }
+    assert abc["status"] == ("ABC_HISTORICA_CUMPLE" if passes else "ABC_HISTORICA_NO_CUMPLE")
+    assert abc["margin_FAR_exceso"] == 0.05
+
+
+@pytest.mark.parametrize("reading", ["primary", "secondary_t2"])
+@pytest.mark.parametrize("weak_model", [False, True])
+def test_primary_degeneracy_preserves_channel_evidence_and_propagates_to_seeds(
+    reading: str, weak_model: bool
+) -> None:
+    """Ceros por cohorte no aprueban B ni utilidad en celda, cortes o cinco semillas."""
+    frame = observations()
+    perfect = frame.onset.eq(1).to_numpy()
+    weak = np.array([0, 1, 0, 0] * 20, dtype=bool)
+    persistence = np.zeros(80, dtype=bool)
+    if reading == "secondary_t2":
+        persistence[1] = True
+    decisions = {
+        "candidate": weak if weak_model else perfect,
+        "channel_C0": weak,
+        "channel_conditioned": weak,
+        "persistence": persistence,
+        "random_ranking": weak,
+        "alert_everything": np.ones(80, dtype=bool),
+        "inflated_channel": weak,
+    }
+    cell = evaluate_cell(
+        frame, decisions, {"status": "FROZEN", "budget_rate": 1.0}, reading=reading
+    )
+    primary = reading == "primary"
+    comparison = cell["utility_persistence_comparison"]
+    assert cell["methods"]["persistence"]["degenerate"] is primary
+    assert comparison == {
+        "status": "NO_EVALUABLE" if primary else "EVALUABLE",
+        "reason": "DEGENERATE_PRIMARY_COHORT" if primary else None,
+        "superior": None if primary else True,
+    }
+    abc = cell["ABC_HISTORICA"]
+    assert abc["persistence_comparison"] == comparison
+    assert abc["conditions"]["B_superar_persistencia"] is (None if primary else True)
+    assert abc["conditions"]["A_superar_canal"] is (not weak_model)
+    assert abc["conditions"]["C_margen_FAR_exceso"] is True
+    assert cell["methods"]["channel_conditioned"]["TP"] == 20
+    assert cell["intervals"]["channel_conditioned"]["intervals"]["delta_sensitivity_pp"][
+        "lower"
+    ] == (0 if weak_model else 50)
+    expected = "NO_EVALUABLE" if primary else "NO_CUMPLE_POR_EFECTO" if weak_model else "CUMPLE"
+    assert cell["UTILIDAD_PROPUESTA"] == expected
+    rows = [
+        dict(
+            cell,
+            year="all",
+            cut=str(cut),
+            arm="epi",
+            population="native",
+            reading=reading,
+            horizon=2,
+            territory="primary_meta_tolima",
+            seed=seed,
+        )
+        for seed in (7, 13, 31, 53, 101)
+        for cut in range(3)
+    ]
+    results = summaries(
+        rows,
+        {
+            "seeds": [7, 13, 31, 53, 101],
+            "cuts": [{"id": str(c)} for c in range(3)],
+            "consistency_rule": "strict_majority_min_three",
+            "consistency_vote": "both_rules_cumple",
+        },
+    )
+    consistency = [r for r in results if r["kind"] == "consistency"]
+    assert all(r["votes"] == (0 if primary or weak_model else 3) for r in consistency)
+    assert all(
+        r["status"] == ("NO_EVALUABLE" if primary else "NO_CUMPLE" if weak_model else "CUMPLE")
+        for r in consistency
+    )
+    combined = results[-1]
+    assert combined["status"] == (
+        "NO_EVALUABLE"
+        if primary
+        else "INCONCLUSO_POR_INESTABILIDAD"
+        if weak_model
+        else "CUMPLE_BAJO_CONTRATO_PROPUESTO"
+    )
+    assert all(
+        cut["utility_persistence_comparison"] == comparison
+        for seed in combined["seeds"]
+        for cut in seed["cuts"]
+    )

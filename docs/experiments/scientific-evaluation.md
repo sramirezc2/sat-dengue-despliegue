@@ -99,6 +99,16 @@ compuerta de la lectura. Se conservan aparte C0 (`f=1`, regla histórica sin
 ajuste) y C1 (`exceso(T)`). En la lectura primaria C1 degenera en cero; en la
 secundaria puede detectar inicios T+2 y no se reemplaza por ceros.
 
+En la lectura primaria, la persistencia sin alertas por definición se reporta
+con `degenerate: true` y causa `DEGENERATE_PRIMARY_COHORT`. B histórica es `null`
+y su comparación es `NO_EVALUABLE`; la condición frente a persistencia de la
+utilidad también es `NO_EVALUABLE`, aun si el canal es superado. Se conservan
+las comparaciones con el canal y la precedencia de `INVALIDO`. Esta causa se
+mantiene en los cortes por semilla y bloquea un resumen afirmativo. El equipo
+debe aprobar cómo tratar ambas condiciones y su articulación con el veredicto
+antes de permitirlo en esta cohorte; no se adopta aquí una regla alternativa.
+El contrato permanece `PROPUESTA_PARA_APROBACION`.
+
 El cupo es `floor(tasa × N_emisión)` por mes objetivo y departamento, aplicado
 antes de consultar etiquetas. Candidato y canal usan el mismo cupo y claves;
 se ordenan sus scores congelados con desempate por código municipal. Primero
@@ -107,6 +117,15 @@ regla no alerta para simular igualdad de volumen. Se informa el volumen realizad
 el tope idéntico permite que un método se sature antes. C0/C1 conservan su punto
 histórico para A/B/C y no se retocan para pasar C. Si faltan desenlaces, el cupo
 original no se recalcula para gastar de nuevo sus alertas en las filas restantes.
+
+**Propuesta científica pendiente de aprobación del equipo:** la prioridad del
+cupo del canal es el exceso absoluto `casos(T) − fracción × P75_h5(T+h)`, de mayor
+a menor, entre filas elegibles; los empates se resuelven por código municipal
+ascendente. Se usa la fracción propia (1 en el estándar, la congelada en el
+condicionado) al seleccionar en `threshold_selection` y al emitir en evaluación,
+sin fijar la regla con sus etiquetas. P75=0 sigue siendo elegible bajo la misma
+regla estricta y no recibe prioridad automática. AP/AUROC conservan el score de
+razón previo; este cambio solo ordena el cupo. C0 de A/B/C sigue sin cupo.
 
 ## Clima y población común
 

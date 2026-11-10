@@ -52,6 +52,25 @@ def method_counts(frame: pd.DataFrame, decision: np.ndarray) -> dict[str, Any]:
     }
 
 
+def persistence_comparison(
+    methods: dict[str, dict[str, Any]], candidate: str = "candidate"
+) -> dict[str, Any]:
+    """Distinguir una comparación informativa de la persistencia degenerada por cohorte."""
+    model, persistence = methods[candidate], methods["persistence"]
+    reason = (
+        "DEGENERATE_PRIMARY_COHORT"
+        if persistence.get("degenerate", False)
+        else "NO_ONSETS"
+        if not model["I"]
+        else None
+    )
+    return {
+        "status": "NO_EVALUABLE" if reason else "EVALUABLE",
+        "reason": reason,
+        "superior": None if reason else model["TP"] > persistence["TP"],
+    }
+
+
 def historical_abc(methods: dict[str, dict[str, Any]]) -> dict[str, Any]:
     """Aplicar A/B/C histórica con C0, C1 y FAR de exceso; sin reutilizar la carga como B."""
     candidate, channel, persistence = (
@@ -60,9 +79,10 @@ def historical_abc(methods: dict[str, dict[str, Any]]) -> dict[str, Any]:
     if len({(m["N"], m["I"]) for m in (candidate, channel, persistence)}) != 1:
         raise ValueError("A/B/C sobre soportes distintos")
     enough = candidate["I"] > 0
+    comparison = persistence_comparison(methods)
     conditions = {
         "A_superar_canal": candidate["TP"] > channel["TP"] if enough else None,
-        "B_superar_persistencia": candidate["TP"] > persistence["TP"] if enough else None,
+        "B_superar_persistencia": comparison["superior"],
         "C_margen_FAR_exceso": (
             candidate["FAR_exceso"] - channel["FAR_exceso"] <= 0.05 + 1e-12
             if candidate["FAR_exceso"] is not None and channel["FAR_exceso"] is not None
@@ -79,6 +99,7 @@ def historical_abc(methods: dict[str, dict[str, Any]]) -> dict[str, Any]:
     return {
         "status": status,
         "conditions": conditions,
+        "persistence_comparison": comparison,
         "margin_FAR_exceso": 0.05,
         "support_sufficient": candidate["I"] >= 30,
         "descriptive_only": True,
@@ -179,7 +200,12 @@ def utility_verdict(
     )
     if missing_predictions:
         return "INVALIDO"
-    if not policy_defined or model["I"] < 30 or not model["N"]:
+    if (
+        not policy_defined
+        or model["I"] < 30
+        or not model["N"]
+        or persistence_comparison(methods, candidate)["status"] == "NO_EVALUABLE"
+    ):
         return "NO_EVALUABLE"
     gain = 100 * (model["onset_sensitivity"] - channel["onset_sensitivity"])
     burden = model["carga_FA_inicio_100mm"] - channel["carga_FA_inicio_100mm"]

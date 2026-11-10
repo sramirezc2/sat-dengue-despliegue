@@ -870,3 +870,93 @@ borrador, el único PR #3 y el comando E2E. El contrato continúa propuesto;
 no se ejecuta ciencia real, usa 2025, selecciona campeón o hace merge.
 
 Reporte local: `pipeline/data/pr3-audit-fixes/focused.xml`, 124.744 s, SHA-256 `d2c58d7ef03da5a00065d2fb2745d0ab27ab139f9d24ede2129c79ccf422c47b`.
+
+### Dos hallazgos de revisión humana — 10 de noviembre de 2026
+
+**PASS técnico local del alcance dirigido**, sobre `eb65b87` en
+`feature/contrato-cientifico-fabrica-final`, con árbol inicialmente limpio.
+Solo se corrigen la prueba del manual y la prioridad del cupo del canal.
+
+- Skills: se elimina la comparación de tamaños con el manual y se mantienen
+  identidad, descripciones, enlaces, duplicación íntegra, rutas y secretos.
+  La prueba exige el enlace al manual en las cuatro skills; verificación carecía
+  de ese enlace directo y ahora lo incorpora. El manual conserva exactamente sus
+  6.421 bytes, sin ampliación.
+- Canal: el cupo ordena filas elegibles por `casos(T) − fracción × P75`, de mayor
+  a menor y con desempate municipal ascendente. Selección en desarrollo y emisión
+  usan la misma regla y la fracción propia; P75=0 sigue siendo elegible sin
+  prioridad automática. No cambian umbral estricto, cupo por departamento/mes,
+  persistencia, A/B/C, semillas ni otros umbrales. Contrato y guía documentan
+  explícitamente la propuesta científica pendiente de aprobación del equipo.
+
+| Verificación | Resultado real |
+|---|---|
+| pytest: test_channel_policy.py, test_agent_skills.py, test_scientific_evaluation.py, test_scientific_e2e.py, test_seed_aggregation.py y test_experiment_management.py | **123 PASS**, sin fallos ni omisiones, 124,72 s. Incluye 11 casos nuevos, cuatro skills y E2E exclusivamente artificial. |
+| Regresiones del canal frente al score anterior de HEAD, adaptando solo la firma en memoria | Diez fallos esperados; el caso de preservación de AP/AUROC pasa. Con la implementación nueva pasan los once. |
+| uv lock --check; uv sync --locked; Ruff | PASS. Un E501 inicial corregido; dependencias intactas. |
+| Registro; preservación normal y Python -O | VALID y PASS: 49 archivos, 16 recibos históricos, identidad N=3 T16 y 22 JSON intactos. |
+| Control extendido contra HEAD | 96 archivos históricos idénticos: evidencia, EXP001/EXP002, recetas, certificados, manual y plan maestro. |
+| Documentación, higiene y diff | Enlaces locales y tamaños comprobados; sin candidatos nuevos a secretos, notebooks ni cambios de producto. Diff local y origin/main...HEAD PASS. |
+
+La primera tanda amplia pasó 122 casos y falló únicamente por `budget_rate`
+omitido en el fixture de una prueba nueva; se corrigió el fixture y la tanda
+completa posterior pasó. Reporte final local ignorado por Git:
+`pipeline/data/pr3-human-review-fixes/focused.xml`; el reporte inicial se conserva
+por separado en ese directorio.
+
+Compatibilidad: C0 histórico no aplica cupo, según A/B/C, y conserva esa decisión;
+la prioridad con fracción 1 se prueba sin introducirle un cupo nuevo. El score
+de razón de AP/AUROC queda separado y preservado: solo cambia la asignación del
+cupo. No se encuentran otras incompatibilidades en el alcance probado.
+Se omiten suites completas de pipeline/API/tablero y consumidores porque este
+alcance pide pruebas dirigidas y no cambia producto, dependencias ni publicación.
+La validación es local y no acredita CI del próximo commit. Sin experimento
+científico real, aprobación del contrato, commit/push, otro PR ni merge.
+
+### Persistencia primaria y límites decisorios — 10 de noviembre de 2026
+
+**PASS técnico local del alcance dirigido.** Se continúa en la rama del PR #3,
+`feature/contrato-cientifico-fabrica-final`, HEAD `eb65b87`, conservando los cambios
+locales autorizados del apartado anterior. No se reescriben sus resultados.
+
+La celda recibe la lectura declarada de la receta. En la primaria, persistencia
+sin alertas por definición se registra con `degenerate: true`; la comparación
+expone causa `DEGENERATE_PRIMARY_COHORT`, estado `NO_EVALUABLE` y `superior: null`.
+B histórica queda `null` y la utilidad no se convierte en éxito ni en fallo de
+efecto por esa comparación, incluso si la comparación con el canal falla.
+Se conservan A/C, los conteos y los intervalos frente al canal y la precedencia
+de `INVALIDO`. La causa se conserva en los cortes de cada semilla; el caso no
+vota éxito ni permite `CUMPLE_BAJO_CONTRATO_PROPUESTO`. La secundaria T+2 sigue
+evaluando persistencia informativa con su decisión original.
+
+Contrato y guía describen este comportamiento manteniendo
+`PROPUESTA_PARA_APROBACION`. **Decisión pendiente:** el equipo debe aprobar
+prospectivamente cómo tratar B y la condición de persistencia de la utilidad
+cuando la cohorte las hace degeneradas, y enmendar su articulación con el
+veredicto afirmativo antes de permitirlo en la primaria. No se sustituye el
+comparador ni se decide otra regla final. No cambian los umbrales, cupos o votos.
+
+Se añaden **23 casos** en las pruebas existentes: límites de sensibilidad
+9,99/10/10,01 pp y carga 4,99/5/5,01 por 100, tanto puntual como cotas;
+C en 0,0499/0,05/0,0501; cupo floor alrededor del límite por departamento y mes;
+persistencia primaria/secundaria con modelo favorable o desfavorable al canal;
+voto que exige simultáneamente ambas reglas y una semilla que pierde el voto
+decisivo. Se comprueban resultado, condición aislada o causa explícita y su
+propagación. Las pruebas previas de invalidación usan ahora la lectura secundaria
+para aislar ese defecto sin apoyarse en persistencia degenerada.
+
+| Verificación ejecutada | Resultado real |
+|---|---|
+| pytest test_scientific_evaluation.py, test_seed_aggregation.py y test_channel_policy.py | 84 PASS en la primera tanda dirigida. |
+| pytest de esos tres módulos más test_agent_skills.py, test_scientific_e2e.py y test_experiment_management.py | **146 PASS**, sin fallos, errores u omisiones; 126,47 s. Incluye E2E de fuentes artificiales y preserva las correcciones previas. |
+| Alteraciones controladas en memoria, sin modificar fuentes | Las pruebas detectan las siete reglas: ganancia mínima, carga máxima, degeneración, margen C, floor, voto conjunto y unanimidad; fallos de aserción esperados, sin errores de preparación. Logs/XML solo locales. |
+| uv lock --check; uv sync --locked; Ruff | PASS; sin cambios de dependencias. Un E501 inicial en un docstring de prueba se corrigió. |
+| Registro y preservación normal/-O | VALID y PASS: 49 hashes, 16 recibos, identidad N=3 T16 y 22 JSON intactos. |
+| Control extendido y documentación | 96 archivos históricos idénticos a HEAD; enlaces locales, tamaños, ausencia de candidatos nuevos a secretos y diff comprobados. Manual, certificados, EXP001/EXP002 y evidencia previa sin cambios. |
+
+Reporte local ignorado: `pipeline/data/pr3-persistence-review/focused.xml`.
+No se repiten suites completas de pipeline/producto o consumidores: el alcance
+autorizado requiere pruebas dirigidas y no modifica API, tablero, dependencias
+ni publicaciones. La CI remota del próximo commit no se acredita con estos gates
+locales. Sin datos o entrenamientos reales, aprobación científica, commit/push,
+otro PR ni merge.

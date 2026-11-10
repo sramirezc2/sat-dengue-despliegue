@@ -5,7 +5,7 @@ description: Select and run the SAT DENGUE validation gates before completion, e
 
 # SAT DENGUE Verification
 
-Verify the changed surface and report evidence before work is declared complete or ready for commit/push. Read [AGENTS.md](../../../AGENTS.md), the [operations guide](../../../docs/operations/pipeline-operations.md), and [plan.md](../../../plan.md). Verification never authorizes a push or merge.
+Verify the changed surface and report evidence before work is declared complete or ready for commit/push. Read [AGENTS.md](../../../AGENTS.md), the [factory manual](../../../docs/experiments/manual_pipeline.md), the [operations guide](../../../docs/operations/pipeline-operations.md), and [plan.md](../../../plan.md). Verification never authorizes a push or merge.
 
 ## Inputs
 

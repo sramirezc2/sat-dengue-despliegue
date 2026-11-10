@@ -189,3 +189,29 @@ def test_horizons_readings_populations_arms_and_territories_never_mix() -> None:
             assert result["status"] == expected
             assert len(result["seeds"]) == 5
             assert all(s["usable_cuts"] == 4 for s in result["seeds"])
+
+
+@pytest.mark.parametrize("failed_rule", [None, "ABC_HISTORICA", "UTILIDAD_PROPUESTA"])
+def test_one_failed_rule_in_one_seed_prevents_unanimity(failed_rule: str | None) -> None:
+    """Dos votos de cuatro no bastan; el tercero exige A/B/C y utilidad simultáneas."""
+    rows = artificial_results()
+    changed = next(r for r in rows if r["seed"] == 101 and r["cut"] == "2")
+    if failed_rule == "ABC_HISTORICA":
+        changed[failed_rule] = {
+            "status": "ABC_HISTORICA_NO_CUMPLE",
+            "conditions": {"B_superar_persistencia": False},
+        }
+    elif failed_rule == "UTILIDAD_PROPUESTA":
+        changed[failed_rule] = "NO_CUMPLE_POR_EFECTO"
+    result = stability(rows)
+    last_seed = result["seeds"][-1]
+    assert all(s["consistency"] == "CUMPLE" for s in result["seeds"][:-1])
+    assert last_seed["required_votes"] == 3 and last_seed["usable_cuts"] == 4
+    assert last_seed["votes"] == (3 if failed_rule is None else 2)
+    assert last_seed["consistency"] == ("CUMPLE" if failed_rule is None else "NO_CUMPLE")
+    cut = next(c for c in last_seed["cuts"] if c["cut"] == "2")
+    assert cut["ABC_HISTORICA"] == changed["ABC_HISTORICA"]
+    assert cut["UTILIDAD_PROPUESTA"] == changed["UTILIDAD_PROPUESTA"]
+    assert result["status"] == (
+        "CUMPLE_BAJO_CONTRATO_PROPUESTO" if failed_rule is None else "INCONCLUSO_POR_INESTABILIDAD"
+    )

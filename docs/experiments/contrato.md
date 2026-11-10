@@ -277,7 +277,9 @@ Para A/B/C, el canal es **C0 histórico**, sin fracción ajustada:
 condicionado del apartado 8.1. Persistencia es **C1 histórica**:
 `alerta_persistencia_h = exceso(T)`, conocida en T para ambos horizontes.
 En la cohorte principal sin exceso en T resulta cero siempre; su FAR queda no
-definida y la condición B resulta débil. En una cohorte no restringida, T+1
+definida y el comparador se registra como degenerado por definición de cohorte.
+B histórica y la condición de utilidad frente a persistencia son **no evaluables**:
+superar sus cero aciertos no es una victoria informativa. En una cohorte no restringida, T+1
 sigue detectando cero inicios, pero T+2 puede detectar una transición posterior:
 no se debe imponer cero por definición a esa lectura.
 
@@ -319,6 +321,15 @@ bajar el umbral y emitir más alertas.
 Si existe una capacidad real de las secretarías de salud, esa capacidad debe
 reemplazar el presupuesto proxy mediante una enmienda aprobada antes del
 experimento confirmatorio.
+
+**Propuesta científica pendiente de aprobación del equipo:** para asignar el
+cupo del canal, ordenar solo las filas elegibles por exceso absoluto descendente,
+`casos(T) − fracción × P75_histórico(T+h)`, con desempate por código municipal
+ascendente. Usar la fracción propia del canal (1 para el estándar; la congelada
+para el condicionado), tanto al seleccionar en desarrollo como al evaluar, sin
+consultar etiquetas de evaluación para fijar la regla. P75=0 no excluye ni da
+prioridad automática. Se conservan la elegibilidad y el cupo por departamento y
+mes; C0 histórico para A/B/C mantiene su punto sin cupo.
 
 ## 10. Métricas y denominadores
 
@@ -375,7 +386,7 @@ Por cada horizonte, sobre exactamente el mismo soporte para modelo, C0 y C1:
 | Condición histórica | Cálculo | Denominador y límite |
 |---|---|---|
 | **A — superar canal C0** | `TP_modelo > TP_canal_C0` | Conteos absolutos; comparar sensibilidades es equivalente solo con el mismo `I > 0`. Sin margen nuevo. |
-| **B — superar persistencia C1** | `TP_modelo > TP_persistencia_C1` | Mismo `I > 0`; una referencia incapaz de acertar no demuestra utilidad. |
+| **B — superar persistencia C1** | `TP_modelo > TP_persistencia_C1`, solo si el comparador es informativo | Mismo `I > 0`; no evaluable cuando la cohorte primaria obliga a emitir cero alertas. |
 | **C — margen de FAR de exceso** | `FAR_exceso_modelo - FAR_exceso_canal_C0 <= 0,05` | Cada FAR divide por las alertas del propio método `L_m`, sobre soporte común. Son cinco puntos porcentuales, no 5 % relativo. |
 
 Las tres deben cumplirse simultáneamente para `ABC_HISTORICA_CUMPLE`.
@@ -387,6 +398,12 @@ con `L_m = 0` la FAR de ese método permanece no definida. Un soporte inválido
 invalida la evaluación común. Con `0 < I < 30` se reportan los cálculos
 descriptivos y soporte insuficiente, sin conclusión científica ni voto de
 consistencia, según el apartado 13.
+
+La persistencia degenerada se identifica con `degenerate: true` y causa
+`DEGENERATE_PRIMARY_COHORT`. B queda `null` con estado `NO_EVALUABLE`, aun con
+`I > 0` y TP del modelo positivos. A y C conservan sus cálculos y sus posibles
+incumplimientos definidos; nunca se emite `ABC_HISTORICA_CUMPLE` apoyándose en B
+degenerada. No se reescriben los resultados históricos de T16 o EXP001/EXP002.
 
 Se conservan los puntos de operación históricos al describir resultados previos.
 Una evaluación nueva predeclara los suyos; no retoca umbrales para hacer pasar
@@ -448,7 +465,7 @@ solo si simultáneamente:
 1. pasa todas las compuertas de datos, tiempo, soporte, identidad y evidencia;
 2. se compara con el canal condicionado sobre las mismas claves y el punto de
    operación fue fijado antes de evaluación;
-3. supera a persistencia en inicios detectados;
+3. supera a persistencia en inicios detectados, con comparador informativo;
 4. la estimación puntual de `S_modelo - S_canal` es al menos 10 puntos y la cota
    inferior de su intervalo también es al menos 10 puntos;
 5. la estimación puntual de `carga_FA_inicio_100mm_modelo - carga_FA_inicio_100mm_canal`
@@ -462,6 +479,20 @@ fallar la otra, y debe decirlo. Se propone exigir ambas para una respuesta
 académica afirmativa, además de consistencia y evidencia confirmatoria; esa
 articulación también requiere aprobación del equipo. Ningún umbral, comparador
 o condición cambia a posteriori para resolver una discrepancia favorablemente.
+
+Si persistencia es degenerada por la cohorte primaria, su condición es
+`NO_EVALUABLE` y `UTILIDAD_PROPUESTA` también queda `NO_EVALUABLE`, incluso si
+una comparación con el canal falla o cumple los umbrales. Se conservan conteos,
+intervalos y resultados frente al canal; un defecto de validez sigue siendo
+`INVALIDO`. Esta falta de evaluación se propaga por corte y semilla: no vota
+como éxito ni permite `CUMPLE_BAJO_CONTRATO_PROPUESTO`.
+
+**Decisión pendiente del equipo:** aprobar prospectivamente cómo tratar B y la
+condición de persistencia de la utilidad en una cohorte que las hace degeneradas,
+y enmendar explícitamente su articulación con el veredicto afirmativo. Mientras
+esa decisión no exista, la cohorte primaria no puede obtenerlo bajo estas reglas.
+Esta corrección no sustituye el comparador, elimina B ni adopta otra regla final;
+el contrato sigue `PROPUESTA_PARA_APROBACION`.
 
 ## 12. Veredictos y respuesta final
 
@@ -671,6 +702,8 @@ Antes de convertir esta propuesta en norma, el equipo debe aprobar explícitamen
    compuertas simétricas, sin adoptar la regla futura que produjo 329 inicios;
 4. C0/C1 para A/B/C y canal condicionado para la regla adicional, con sus puntos
    de operación, así como exigir ambas reglas para una respuesta afirmativa;
+   resolver explícitamente la no evaluabilidad de B y de la condición de utilidad
+   frente a persistencia degenerada antes de habilitar ese veredicto en la cohorte primaria;
 5. adopción de la carga por 100 municipio-mes, su justificación frente a la FAR
    histórica y umbrales propuestos de 10 puntos/5 falsas por 100, todavía sin
    calibración de capacidad real; no se interpreta 5 como unidad equivalente;
