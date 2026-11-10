@@ -248,7 +248,10 @@ def advance(session: RegisteredExecution, *, stage: str) -> RegisteredExecution:
             )
             if session.config.get("protocol", "fixed_roles") == "rolling_origin":
                 session.gate = "rolling_origin"
-                session.runs["legacy"] = rolling_protocol.ejecutar(table, schema, session.config, audit)
+                session.runs["legacy"] = rolling_protocol.ejecutar(
+                    table, schema, session.config, audit
+                )
+                configurations = []
             elif session.config.get("schema_version") == 3:
                 from sat_dengue_pipeline.evaluation.scientific.configuration import variants
 
@@ -306,7 +309,8 @@ def finish_execution(
         else "BLOCKED"
         if isinstance(error, (engine.FactoryGateError, ValueError))
         else "FAILED"
-    )    signature_fields = {
+    )
+    signature_fields = {
         "experiment_id": experiment_id,
         "protocol_sha256": entry["protocol_sha256"],
         "configuration_sha256": entry["configuration_sha256"],
