@@ -15,6 +15,7 @@ Uso: python analisis_contrato.py <carpeta_runs> <salida.json>
 import glob
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -26,7 +27,13 @@ from sat_dengue_pipeline.evaluation import contrato as ct
 from sat_dengue_pipeline.raw.serialization import CanonicalArtifact, load_canonical
 
 carpeta, salida = Path(sys.argv[1]), Path(sys.argv[2])
-p = Path(sorted(glob.glob("data/retro-real/provisional/*/canonical.json"))[-1])
+p = Path(
+    sorted(
+        glob.glob(
+            os.environ.get("PANEL_DIR", "data/retro-real") + "/**/canonical.json", recursive=True
+        )
+    )[-1]
+)
 table, _ = load_canonical(
     CanonicalArtifact(p, p.parent.name, hashlib.sha256(p.read_bytes()).hexdigest())
 )
@@ -146,7 +153,7 @@ for receta in sorted(set(R.receta)):
                 f"   {nombre}: {int(mask.sum())} | canal {int(ev.a_c.values[mask].sum())} vs modelo {int(ev.a_m.values[mask].sum())}"  # noqa: E501
             )
 print("\n== 3) Ensamble de rangos logística + XGBoost (cada cohorte disponible en ambos)")
-for s in range(5):
+for s in range(7):
     a, b = runs.get(f"log_sinclima_C1_s{s}"), runs.get(f"xgb_300d4_conclima_s{s}")
     if not (a and b):
         continue
@@ -246,7 +253,7 @@ for receta in ("log_sinclima_C1", "xgb_300d4_conclima"):
 print("\n== 7) Logística vs XGBoost, emparejado (mismas cohortes, mismo presupuesto)")
 for h in ("1", "2"):
     filas_l, filas_x = [], []
-    for s in range(5):
+    for s in range(7):
         a, b = runs.get(f"log_sinclima_C1_s{s}"), runs.get(f"xgb_300d4_conclima_s{s}")
         if a and b:
             filas_l.append(filas_alertas(a, h))
