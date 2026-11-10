@@ -1,40 +1,62 @@
-"""Construcción real y certificación local con recibos agregados, sin microdatos."""
+"""Reproducción histórica local con salidas exclusivas, sin modificar evidencia T16."""
 
 import argparse
 import json
 import os
 import sys
+import tempfile
 import time
 from dataclasses import asdict
 from pathlib import Path
 
 from sat_dengue_pipeline.acquisition.raw_manifest import HISTORICAL_MANIFEST
+from sat_dengue_pipeline.canonical_cache import reject_cache_symlinks
+from sat_dengue_pipeline.experiment_management.evidence import exclusive_json
 from sat_dengue_pipeline.pipelines.canonical.nodes import build_input, observe
 from sat_dengue_pipeline.raw.build import build
 from sat_dengue_pipeline.raw.reproducibility import canonical_reproducibility
 from sat_dengue_pipeline.raw.worker import enforce_boundaries
 
 
-def main() -> int:
-    """Reutilizar productores y gate existentes; persistir solo evidencia agregada."""
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("phase", choices=("build", "certify"))
-    args = parser.parse_args()
-    root = Path(__file__).resolve().parents[1]
+def run(root: Path, phase: str) -> int:
+    """Reutilizar productores históricos y guardar cada intento bajo data/.
+
+    Args:
+        root: Raíz del subproyecto Kedro.
+        phase: Construcción provisional (build) o certificación (certify).
+
+    Returns:
+        Cero ante éxito, uno ante fallo; nunca reabrir un destino existente.
+    """
+    if phase not in {"build", "certify"}:
+        raise ValueError("Fase desconocida")
     os.chdir(root)
-    os.environ.pop("HF_TOKEN", None)
-    enforce_boundaries(False)
-    source = build_input({
-        "mode": "approved", "workspace": "data/task16-real", "tracking": True,
-        "manifest": HISTORICAL_MANIFEST, "profile": "approved",
-    })
-    evidence = root.parent / "docs/evidence/task16"
-    evidence.mkdir(parents=True, exist_ok=True)
+    try:
+        data = root / "data"
+        reject_cache_symlinks(data)
+        data.mkdir(parents=True, exist_ok=True)
+        workspace = Path(tempfile.mkdtemp(prefix=f"private-raw-{phase}-", dir=data))
+    except (OSError, ValueError):
+        print(json.dumps({"status": "FAILED", "error_type": "ReceiptError"}))
+        return 1
     stages = {}
     started, cpu = time.perf_counter(), time.process_time()
-    record = {"phase": args.phase, "status": "FAILED"}
+    record = {
+        "phase": phase,
+        "status": "FAILED",
+        "workspace": workspace.relative_to(root).as_posix(),
+    }
     try:
-        if args.phase == "build":
+        source = build_input(
+            {
+                "mode": "approved",
+                "workspace": record["workspace"],
+                "tracking": False,
+                "manifest": HISTORICAL_MANIFEST,
+                "profile": "approved",
+            }
+        )
+        if phase == "build":
             artifact, audit = build(
                 source.bundle,
                 source.config,
@@ -54,6 +76,10 @@ def main() -> int:
                 reconstructions=certificate.measurements,
             )
         receipt = observe(source, artifact, audit, hashes)
+        exclusive_json(
+            workspace / (phase + "-artifact.json"),
+            {**asdict(artifact), "path": str(artifact.path.resolve())},
+        )
         record.update(
             status="PASSED",
             audit=audit,
@@ -62,9 +88,6 @@ def main() -> int:
             serialized_sha256=artifact.serialized_sha256,
             serialized_bytes=artifact.path.stat().st_size,
         )
-        local = source.workspace / (args.phase + "-artifact.json")
-        local.parent.mkdir(parents=True, exist_ok=True)
-        local.write_text(json.dumps({**asdict(artifact), "path": str(artifact.path.resolve())}))
     except Exception as error:
         record["error_type"] = type(error).__name__
         # No exception text: third-party parsers may include source values or paths.
@@ -81,9 +104,23 @@ def main() -> int:
         cpu_seconds=time.process_time() - cpu,
         stages_seconds=stages,
     )
-    (evidence / (args.phase + "-real.json")).write_text(json.dumps(record, indent=2) + "\n")
+    try:
+        exclusive_json(workspace / (phase + "-real.json"), record)
+    except (OSError, ValueError):
+        print(json.dumps({"status": "FAILED", "error_type": "ReceiptError"}))
+        return 1
     print(json.dumps({k: v for k, v in record.items() if k not in {"audit", "tracking"}}))
     return 0 if record["status"] == "PASSED" else 1
+
+
+def main() -> int:
+    """Resolver el proyecto instalado sin aceptar destinos de evidencia histórica."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase", choices=("build", "certify"))
+    args = parser.parse_args()
+    os.environ.pop("HF_TOKEN", None)
+    enforce_boundaries(False)
+    return run(Path(__file__).resolve().parents[1], args.phase)
 
 
 if __name__ == "__main__":

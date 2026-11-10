@@ -302,6 +302,58 @@ COMPLETED. Los terminales fallidos no se convierten en éxito ni autorizan reint
 Los hashes identifican bytes; no prueban por sí solos calidad de una hipótesis.
 La configuración nativa efectiva de XGBoost también se coteja después del ajuste.
 
+### Herramientas auxiliares históricas y preservación
+
+`reproduce_private_raw.py` conserva explícitos `approved-raw.json` y el perfil
+`approved` (`2011-06`–`2024-12`); no selecciona el operacional completo.
+Solo bajo autorización para repetir la operación privada, estos comandos usan
+la caché local verificada, sin adquisición:
+
+```sh
+uv run --locked --directory pipeline python tools/reproduce_private_raw.py build
+uv run --locked --directory pipeline python tools/reproduce_private_raw.py certify
+```
+
+Cada invocación reserva `pipeline/data/private-raw-<fase>-<id>/`. Allí quedan
+`<fase>-real.json`, la referencia `<fase>-artifact.json` y los artefactos de ese
+intento; el recibo indica `workspace` relativo al subproyecto y el estado
+`PASSED`/`FAILED`. Se conserva el fallo incluso si no se resolvió la entrada.
+El observador entrega metadatos sin persistir en el store compartido de tracking.
+No se reabren carpetas anteriores ni se escribe en `docs/evidence/task16/`.
+`certify` ejecuta N=3: no forma parte de una comprobación rutinaria ni de esta
+reparación. Estos recibos auxiliares no sustituyen la certificación fijada en
+una receta de `experiment_run`.
+
+Para validar el resultado de una certificación histórica nueva, sustituir el
+marcador `<id>` por el `workspace` informado por `certify`:
+
+```sh
+uv run --locked --directory pipeline python tools/validate_private_canonical.py --certification data/private-raw-certify-<id>/certify-real.json --artifact data/private-raw-certify-<id>/certify-artifact.json
+```
+
+Sin opciones, el validador lee el recibo cerrado
+`docs/evidence/task16/certify-real.json` y la referencia local antigua
+`pipeline/data/task16-real/certify-artifact.json`. Ambas entradas siguen siendo
+solo de lectura. Cada intento escribe un `canonical-quality.json` nuevo bajo
+`pipeline/data/private-canonical-validation-<id>/`, incluso ante fallo. La
+validación reutiliza carga, roundtrip y guards temporales; no entrena ni certifica
+N=3 de nuevo. Las referencias locales a artefactos no se versionan ni publican.
+Un error al reservar o escribir la salida devuelve código 1 y `ReceiptError`;
+se rechazan enlaces en la ruta de salida antes de escribir.
+
+El control de preservación no ejecuta ciencia y compara los 49 archivos
+protegidos, 22 JSON e identidad N=3 de T16 con el snapshot versionado. Las rutas
+relativas se comparan en formato POSIX también en Windows, y las comprobaciones
+siguen activas con Python optimizado:
+
+```sh
+uv run --locked --directory pipeline python tools/check_experiment_preservation.py
+uv run --locked --directory pipeline python -O tools/check_experiment_preservation.py
+```
+
+Una discrepancia produce código no nulo; no recalcular el snapshot para aceptar
+una alteración. La evidencia cerrada se conserva byte a byte para consulta.
+
 ### Publicación y contratos
 
 `experiment_run` no promociona ni publica modelos. El publicador consume panel,

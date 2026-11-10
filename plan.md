@@ -2,7 +2,7 @@
 
 **Versión:** 1.5
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; reparaciones operacionales y de experiment_run PASS, controles restantes pendientes
+**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; tres reparaciones locales PASS, publicación/CI/revisión final pendientes
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama única de implementación:** `feature/pipeline-e2e`
 **Entrega:** un único Pull Request
@@ -128,7 +128,7 @@ cambiar el alcance se debe registrar primero la decisión en la sección 7.
 | 24 | Validar las correcciones operativas acumuladas | `COMPLETA` | 23 | 578 pipeline, API 35, tablero 55/frozen/lint/build; contratos 22+22; skills, enlaces, filtros e higiene verdes. Checkout limpio de 5768331 con 29 pruebas nuevas y ayuda/error controlado; evidencia preservada. [Recibo](docs/evidence/task24/operational-validation.json). |
 | 25 | Elaborar reporte ejecutivo final | `COMPLETA` | 24 | [Reporte ejecutivo](docs/reports/pipeline-e2e-executive-report.md): síntesis con evidencia y límites, navegación desde guías y arquitectura actualizada hasta T24. Auditoría documental, registro, skills y preservación verdes; publicación pendiente de autorización. |
 | 26 | Publicar cambios y validar el PR #1 | `COMPLETA` | 25 | Push normal y descripción autorizados. Siete checks verdes sobre 524c38e ([recibo remoto/local](docs/evidence/task26/publication-validation.json)) y sobre su cierre publicado 0222d6d ([snapshot](docs/evidence/task27/t26-closure-checks.json)). Cada nuevo HEAD requiere checks propios. |
-| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | DEC-031 conserva canónico completo PASS N=3. DEC-032 unifica rutas operacionales; DEC-033 vincula experiment_run al release/perfil/certificado aprobados y verifica bytes/digest del artefacto antes de matrices/fit. 112 pruebas dirigidas, Ruff, lock, registro, preservación y diff PASS en esta reparación. T27 abierta para reparaciones/controles restantes, publicación bajo autorización, CI del HEAD final y revisión independiente; sin acciones remotas. |
+| 27 | Ejecutar auditoría final de merge | `BLOQUEADA` | 26 | DEC-031 conserva canónico completo PASS N=3; DEC-032/033 conservan selección operacional y certificación de experiment_run. DEC-034 evita sobrescribir T16 y verifica preservación con Python normal/-O y rutas POSIX. 63 pruebas dirigidas (20 nuevas), Ruff, lockfile, registro, preservación y diff PASS. Pendientes publicación bajo autorización, descripción PR #1, siete checks del HEAD final, revisión independiente y auditoría final; sin acciones remotas. |
 
 ### 4.1. Contrato crudo aprobado para la tarea 13
 
@@ -224,8 +224,8 @@ Actualizar esta sección al cerrar cada tarea.
 | Indicador | Valor |
 |---|---:|
 | Tareas completas | 26/27 |
-| Tarea activa | Ninguna; reparación local de experiment_run PASS |
-| Tareas bloqueadas | T27 — Reparaciones locales PASS; reparaciones/controles restantes, publicación bajo autorización, CI del HEAD final y aprobación independiente pendientes |
+| Tarea activa | Ninguna; tercera reparación local PASS |
+| Tareas bloqueadas | T27 — Publicación bajo autorización, descripción del PR #1, siete checks del HEAD final y aprobación independiente pendientes |
 | Última tarea completada | T26 — Publicar cambios y validar el PR #1 |
 | Próxima tarea | Publicar solo bajo autorización y verificar checks/revisión del HEAD final; no más cambios científicos |
 | Última actualización | 9 de noviembre de 2026 |
@@ -404,6 +404,40 @@ No se repiten API, tablero, matriz completa ni N=3: fuera del alcance autorizado
 La comparación de recibos previos se prueba sin reescritura; fuentes privadas y
 publicaciones no participan en los casos artificiales.
 
+| 2026-11-09 | 27 | EN CURSO | Base local limpia `2490f45`; reparaciones anteriores conservadas | Rama feature/pipeline-e2e y commit base comprobados; AGENTS, plan, arquitectura y guía operacional revisados. | Tercera reparación autorizada: salidas nuevas exclusivas bajo pipeline/data para reproduce_private_raw y validate_private_canonical; preservación fail-closed con Python normal/-O y rutas POSIX. Pruebas artificiales de éxito/fallo, recibos históricos intactos y validación proporcional; sin datos privados, N=3 nueva, ciencia, push ni merge. |
+
+| 2026-11-09 | 27 | BLOQUEADA | Tercera reparación sobre `2490f45`; cierre en este commit local | 63 pruebas PASS en 80,29 s: 20 nuevas, 28 rutas operacionales, 13 certificación de experiment_run y 2 checkout. Cada éxito/fallo de auxiliares se repite en carpetas distintas con recibos históricos preexistentes intactos. Preservación real normal/-O PASS: 49 archivos, 22 JSON, 16 recibos e identidad N=3 T16. EXP001/EXP002 y certificado canónico completo sin diferencias contra 2490f45. Ruff, lockfile, registro VALID, ayuda de ambas CLI y diff --check local/acumulado PASS. | Salidas exclusivas bajo pipeline/data, escritura exclusiva existente, guard de enlaces y observador sin persistencia compartida; validador conserva lectura histórica y admite referencias nuevas. Errores explícitos de preservación no desaparecen con -O; rutas POSIX comprobadas con representación Windows simulada, sin afirmar ejecución nativa. Se corrigió una incoherencia municipio/departamento del fixture durante el primer pase; ningún dato real o contrato se alteró. T27 sigue abierta/BLOQUEADA, 26/27. Sin adquisición privada, nueva N=3, entrenamiento científico, EXP003, push, merge ni cambios de ruleset. |
+
+Aceptación DEC-034, mediante las entradas CLI y datos artificiales:
+
+| Caso | Resultado |
+|---|---|
+| Reproductor build/certify: éxito y fallos de entrada/productor/observación | 8 casos PASS, cada uno con dos intentos; rutas distintas y hashes históricos conservados |
+| Validador: éxito, certificado fallido y referencia de artefacto distinta | 3 casos PASS, cada uno con dos intentos; recibos nuevos PASSED/FAILED, entradas intactas; éxito con roundtrip y guards reales sobre 182.886 claves artificiales |
+| Verificador: archivo íntegro/alterado con Python normal/-O | 4 casos PASS; alteración retorna 1 en ambos intérpretes y nunca PASSED |
+| Comparación completa con rutas relativas Windows | 1 caso PASS, normalizadas a POSIX; sin CI Windows nueva |
+| Enlace de salida a evidencia histórica, ambos auxiliares | 4 casos PASS, nativos/controlados; sin escrituras al destino |
+
+Validación proporcional de esta reparación (PASS):
+
+```sh
+uv run --locked --directory pipeline pytest tests/test_private_tool_preservation.py tests/test_operational_paths.py tests/test_certified_experiment_run.py tests/test_checkout_integrity.py --tb=short
+uv run --locked --directory pipeline ruff check .
+uv lock --check --project pipeline
+uv run --locked --directory pipeline python -m sat_dengue_pipeline.experiment_management validate
+uv run --locked --directory pipeline python tools/check_experiment_preservation.py
+uv run --locked --directory pipeline python -O tools/check_experiment_preservation.py
+git diff --check
+git diff --check origin/main...HEAD
+```
+
+Pendientes concretos de T27: autorizar/publicar los commits locales y actualizar
+la descripción del único PR #1; verificar sus siete checks sobre el HEAD final;
+obtener aprobación independiente y completar la auditoría de merge sobre esa
+revisión. Este trabajo no autoriza ninguna acción remota ni cambio de ruleset.
+No se repiten API, tablero, suites completas de GitHub o N=3 real; fuera del
+alcance. La revisión científica y el estado de EXP001/EXP002 no se modifican.
+
 ### Riesgos de la extensión operacional
 
 - Un recibo operativo no puede reemplazar historia: destino exclusivo bajo pipeline/data/.
@@ -471,6 +505,8 @@ Toda desviación debe registrarse antes de continuar.
 | DEC-032 | 2026-11-09 | Unificar comando único, adquiridor directo y Kedro real en satd-raw-173d5856; construcción operacional_full desde 2007-01. | La ruta manual conservaba defaults históricos y podía divergir del README; VERIFIED no exigía el mismo inventario físico que Kedro. | Reutilizar declaraciones y validaciones existentes; histórico explícito, modo sintético predeterminado intacto. Rechazar enlaces antes de escribir crudos y adicionales sin borrarlos; recuperar faltantes/corruptos y recomendar el manifiesto solicitado. Solo reparación, documentación operacional y pruebas dirigidas artificiales; no cambia la tabla ya certificada ni sus productores. | Instrucción expresa del usuario; sin acciones remotas, adquisición privada, experimentos o repetición N=3. |
 
 | DEC-033 | 2026-11-09 | Exigir selección canónica y certificación aplicable en nuevas ejecuciones reales de experiment_run. | La ruta real usaba BuildConfig() implícito y sobrescribía el hash de bytes del manifiesto con su digest normalizado. | Reutilizar selección cerrada y verificadores; contrastar el artefacto realmente consumido con N=3 ya aprobado, antes de matrices/fit. Recetas/evidencia históricas siguen legibles, sin reescritura; formatos sin selección no autorizan entrenamiento nuevo. Aceptación artificial por entrada normal con detector, sin ciencia, N=3 nueva ni acciones remotas. | Instrucción expresa del usuario en esta reparación local dentro de T27. |
+
+| DEC-034 | 2026-11-09 | Tercera reparación local T27: salidas privadas exclusivas y preservación explícita/portable. | Los auxiliares históricos podían sobrescribir recibos cerrados de T16 y el verificador perdía sus comprobaciones con Python -O, además de comparar separadores nativos Windows. | Reservar cada intento bajo pipeline/data, reutilizar escritura exclusiva y guards, mantener entradas históricas solo de lectura, reemplazar asserts de preservación por errores explícitos y comparar rutas POSIX. Pruebas artificiales por CLI, incluidos éxito/fallo, Python normal/-O y rutas Windows simuladas. | Instrucción expresa del usuario sobre 2490f45; conservar las dos reparaciones previas, sin push, merge ni operaciones científicas reales. |
 
 ## 8. Condición de finalización
 
