@@ -1,11 +1,18 @@
 # Hoja de ruta de implementación — Pipeline E2E SAT DENGUE
 
-**Versión:** 1.5
+**Versión:** 1.6
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado general:** 26/27; T22–T26 COMPLETAS; T27 BLOQUEADA; aceptación técnica E2E real PASS, publicación/CI/revisión final pendientes
+**Estado del alcance actual:** etapa documental COMPLETA como propuesta para revisión; segunda etapa funcional PENDIENTE, sin aprobación científica ni autorización de ejecución
+**Último corte histórico T1–T27:** 26/27; T27 BLOQUEADA en su registro previo, sin reauditar sus gates en este alcance
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
-**Rama única de implementación:** `feature/pipeline-e2e`
-**Entrega:** un único Pull Request
+**Rama del alcance actual:** `feature/contrato-cientifico-fabrica-final`, creada desde `origin/main@a324f3c7f141b0ec53582b461cf6586643c5b569`
+**Entrega actual:** un PR nuevo con etapa documental y posterior etapa funcional en la misma rama; PR #1 ya fusionado
+
+El [PR #1](https://github.com/sramirezc2/sat-dengue-despliegue/pull/1) está
+fusionado y `main` actualizado ya contiene la fábrica. No hay dependencia de un
+PR de fábrica sin integrar. El alcance posterior se registra en la sección 10;
+las tareas y decisiones previas se conservan como historia, sin atribuirles una
+nueva revisión de merge o aprobación científica.
 
 ### Corrección de CI posterior al cierre de tarea 16
 
@@ -54,7 +61,8 @@ cuya identidad completa haya sido certificada.
 
 ## 2. Reglas obligatorias
 
-- Toda la implementación se acumula en la misma rama y termina en un único PR.
+- T1–T27 se acumularon en `feature/pipeline-e2e` y el PR #1. El alcance posterior
+  autorizado en la sección 10 usa su propia rama y un único PR nuevo para ambas etapas.
 - Ningún cambio se realiza directamente sobre `main`.
 - Antes de cada tarea se revisan `AGENTS.md`, este documento y el estado de Git.
 - Se conservan los cambios preexistentes del usuario.
@@ -98,7 +106,7 @@ cuya identidad completa haya sido certificada.
 Solo puede existir una tarea `EN CURSO`. Las tareas se ejecutan en orden. Para
 cambiar el alcance se debe registrar primero la decisión en la sección 7.
 
-## 4. Hoja de ruta
+## 4. Hoja de ruta histórica del PR #1
 
 | # | Tarea | Estado | Dependencia | Evidencia de cierre |
 |---:|---|---|---|---|
@@ -190,7 +198,7 @@ El registro Kedro debe exponer al menos `canonical_build` y
 `canonical_reproducibility`. Las pruebas usarán un bundle sintético pequeño; la
 descarga y reproducción científica real corresponden a la tarea 16.
 
-## 5. Secuencia de integración
+## 5. Secuencia histórica de integración del PR #1
 
 Aunque toda la implementación terminará en un solo PR, los commits deben conservar
 esta secuencia lógica:
@@ -217,9 +225,11 @@ No se mezclará en un mismo commit:
 - refactorizaciones cosméticas con cambios científicos;
 - correcciones de API con adquisición de datos de entrenamiento.
 
-## 6. Control de avance
+## 6. Control histórico de avance del PR #1
 
-Actualizar esta sección al cerrar cada tarea.
+Snapshot previo a la integración del PR #1. El avance del alcance actual se
+registra exclusivamente en la sección 10; este historial no es una instrucción
+para volver a publicar en el PR #1.
 
 | Indicador | Valor |
 |---|---:|
@@ -538,7 +548,9 @@ Toda desviación debe registrarse antes de continuar.
 
 | DEC-034 | 2026-11-09 | Tercera reparación local T27: salidas privadas exclusivas y preservación explícita/portable. | Los auxiliares históricos podían sobrescribir recibos cerrados de T16 y el verificador perdía sus comprobaciones con Python -O, además de comparar separadores nativos Windows. | Reservar cada intento bajo pipeline/data, reutilizar escritura exclusiva y guards, mantener entradas históricas solo de lectura, reemplazar asserts de preservación por errores explícitos y comparar rutas POSIX. Pruebas artificiales por CLI, incluidos éxito/fallo, Python normal/-O y rutas Windows simuladas. | Instrucción expresa del usuario sobre 2490f45; conservar las dos reparaciones previas, sin push, merge ni operaciones científicas reales. |
 
-## 8. Condición de finalización
+| DEC-035 | 2026-11-09 | Abrir alcance posterior al PR #1: corrección del contrato y posterior mejora final de fábrica en un único PR nuevo. | PR #1 fusionado en a324f3c, confirmado por GitHub y fetch local; árbol inicial limpio. Usuario solicita rama desde main actualizado y publicación de un PR nuevo. | Esta ejecución solo modifica contrato y los dos planes: T+2, A/B/C, procedencia de métricas y reglas de método. Segunda etapa funcional PENDIENTE, sin implementación ni aprobación. Se autoriza publicar esta propuesta en su rama/PR nuevo; no modificar PR #1, fusionar, entrenar ni alterar evidencia cerrada. | Instrucción explícita del usuario, que sustituye para este alcance la restricción histórica de rama/PR único de AGENTS.md. Aprobación científica reservada al equipo. |
+
+## 8. Condición de finalización histórica del PR #1
 
 El trabajo solo puede considerarse terminado cuando:
 
@@ -597,4 +609,48 @@ integrantes y fecha formal del acta no se comunicaron; el documento registra el
 mecanismo de aprobación recibido y la fecha de registro, sin inventarlos.
 Esta autorización resolvió el bloqueo anterior. Al reanudar se mantuvo 16 EN CURSO
 y 15/21 hasta comprobar los gates y N=3. Ese conteo pertenece a la numeración
-anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Estado vigente: 26/27, T22–T26 COMPLETAS, T27 BLOQUEADA y ninguna tarea activa; canónico completo PASS N=3, gates externos pendientes.
+anterior a DEC-024. Cierre de T16: COMPLETA e intacta. Último corte histórico:
+26/27, T22–T26 COMPLETAS, T27 BLOQUEADA; canónico completo PASS N=3 y gates
+externos pendientes en ese registro. La integración observada del PR #1 no
+reescribe esa evidencia. El alcance vigente se detalla a continuación.
+
+## 10. Contrato científico y mejora final de fábrica — PR nuevo
+
+Base `main@a324f3c`, ya actualizada y con fábrica integrada. La rama
+`feature/contrato-cientifico-fabrica-final` nace directamente de esa base; no
+requiere apilar o duplicar el historial del PR #1. Se conserva un único
+`plan.md` y el [plan maestro existente](PLAN_pipeline_e2e_experimentos_sat_dengue.md).
+
+| Etapa del mismo PR | Estado | Alcance y condición de salida |
+|---|---|---|
+| Documental, ejecución actual | COMPLETA | [Contrato V3](docs/experiments/contrato.md) corregido, mantiene PROPUESTA_PARA_APROBACION; contrastado con V2/bitácora/código. Enlaces, coherencia, preservación y diff PASS; propuesta para revisión del equipo, sin aprobación científica. |
+| Funcional, ejecución posterior | PENDIENTE | Evaluación automática modelo/canal/persistencia sobre soporte común; A/B/C, presupuesto de alertas, incertidumbre emparejada, resultados por horizonte/año/territorio, veredicto reproducible y recetas con/sin clima. Requiere autorización posterior de implementación y decisiones científicas explícitas; no está implementada ni aprobada. |
+
+La propuesta mantiene el evento T+1 → T+2 y diferencia compuerta observable en T
+de información futura. Conserva la cohorte académica principal sin exceso en T,
+propone lectura secundaria T+2 sin esa restricción y separa los 209/329 TP de la
+bitácora. A/B/C histórica se reporta separada de UTILIDAD_PROPUESTA; la carga
+`carga_FA_inicio_100mm` no se denomina B ni sustituye la condición de persistencia.
+Se incorpora la procedencia posterior a resultados del cambio del 4 de noviembre,
+el mínimo histórico de 30 inicios por celda, cinco semillas para diferencias de
+uno o dos inicios y una generalización propuesta de consistencia a mayoría
+estricta con al menos tres cortes utilizables. Todo requiere revisión del equipo.
+
+En la segunda etapa deberán fijarse comparadores y compuertas por horizonte,
+semillas/cortes/territorios, presupuesto y puntos de operación antes de evaluar.
+Las recetas con y sin clima compararán sobre soporte común predeclarado y
+reportarán aparte cualquier cobertura adicional. No se crearán recetas aprobadas
+ni experimentos reales por el mero hecho de aprobar documentación o código.
+
+Se preservan T16, EXP001/EXP002, certificados N=3, bitácora, política v2 y los
+22 JSON publicados. Esta ejecución no cambia código, configuración ejecutable,
+notebooks, datos ni resultados; no hace entrenamientos ni merge. Los gates de
+la etapa funcional y la CI/revisión final deberán corresponder a su futuro HEAD.
+
+Validación documental PASS: 45 enlaces locales, fuente V2 remota fijada por
+commit y SHA-256, 104 JSON leídos sin cambios, coherencia de los tres documentos,
+registro oficial VALID y preservación normal/-O (49 archivos, 22 JSON, 16 recibos
+históricos e identidad N=3 T16). Solo cambian contrato y estos dos planes; el
+resto del contenido versionado permanece idéntico a la base. `git diff --check`
+local, staged y contra `origin/main` PASS. No se ejecutan suites de producto,
+entrenamientos o reconstrucciones: el alcance es exclusivamente documental.

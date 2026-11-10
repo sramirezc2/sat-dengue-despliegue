@@ -1,8 +1,8 @@
 # Contrato científico de experimentación y decisión — SAT DENGUE V3
 
-- **Versión:** 0.1.0-propuesta
+- **Versión:** 0.2.0-propuesta
 - **Estado:** `PROPUESTA_PARA_APROBACION`
-- **Fecha:** 8 de noviembre de 2026
+- **Fecha de revisión:** 9 de noviembre de 2026 (propuesta inicial: 8 de noviembre)
 - **Autoridad requerida:** equipo SAT DENGUE
 - **Alcance:** todo experimento científico futuro de V3, sin importar la familia
   de modelo, la arquitectura, los predictores o el volumen de datos.
@@ -13,6 +13,11 @@ un modelo, no selecciona un campeón y no autoriza alertas operativas. Mientras
 no exista aprobación formal del equipo, este documento es una propuesta
 normativa: sirve para revisar y cerrar las decisiones pendientes, pero no
 reclasifica resultados históricos.
+
+Esta revisión constituye la etapa documental de un PR nuevo posterior al PR #1.
+La mejora funcional de la fábrica queda para una segunda etapa de **este mismo
+PR**, pendiente de autorización e implementación según [plan.md](../../plan.md).
+No aprueba recetas, no cambia etiquetas del código y no recalcula experimentos.
 
 ## 1. Jerarquía y alcance normativo
 
@@ -57,11 +62,12 @@ que debe evaluarse separadamente: el estado de T+1 puede utilizarse después par
 determinar el desenlace, pero nunca para elegir la cohorte, construir una alerta
 o ajustar una decisión emitida en T.
 
-La pregunta histórica —superar al canal endémico y a persistencia sin aumentar
-la FAR en más de cinco puntos porcentuales frente al canal— se debe conservar y
-reportar para trazabilidad. No puede ser la única regla de decisión: la bitácora
-demostró que mezcla sensibilidad de inicio con falsas alarmas de exceso y usa un
-denominador que cambia con el número de alertas del candidato.
+La pregunta histórica se evalúa explícitamente mediante las condiciones A/B/C
+del apartado 10.3. La pregunta ampliada y la regla de utilidad del apartado 11
+son propuestas adicionales. Sus resultados deben presentarse por separado:
+cumplir la regla nueva no convierte un incumplimiento de A/B/C en cumplimiento
+académico. La diferencia entre falsas alertas de exceso e inicio y entre sus
+denominadores debe permanecer visible.
 
 ## 3. Qué afirmaciones puede producir un experimento
 
@@ -109,14 +115,44 @@ inicio(p) = 1 si exceso(p-1) = 0 y exceso(p) = 1
 
 ### 4.3 Elegibilidad
 
-La cohorte principal contiene municipios-mes con estado de T observado y sin
-exceso en T. La elegibilidad se decide exclusivamente con información disponible
-en T. Para T+2 está prohibido condicionar la cohorte o la alerta con el estado
-observado de T+1.
+**Propuesta de continuidad con el contrato académico V2:** la cohorte principal
+contiene municipios-mes con estado de T observado y sin exceso en T para ambos
+horizontes. Se fija antes de evaluar. En T+2 esta restricción define la población
+estudiada, no la etiqueta: `inicio(T+2) = [exceso(T+1)=0 y exceso(T+2)=1]`.
+No se sustituye por `no exceso en T y exceso en T+2`, que contaría una
+continuación iniciada en T+1 como inicio.
+
+La compuerta de emisión es `g_T = 1[exceso(T)=0]`, con estado conocido al cierre
+de T. Un estado ausente no habilita alerta. Para T+2 está prohibido seleccionar
+filas o alertas usando `g_futura = 1[exceso(T+1)=0]`. El estado de T+1 solo se
+lee después del freeze y las predicciones para construir el desenlace; que el
+inicio requiera no exceso en T+1 no autoriza a usarlo como compuerta.
+
+En evaluación, la máscara común exige contexto declarado y ambos estados del
+desenlace conocidos. Se cuentan las etiquetas ausentes; esa máscara retrospectiva
+no puede realimentar entrenamiento, elegibilidad o emisión.
 
 Todos los candidatos y comparadores deben evaluarse sobre exactamente las mismas
 claves elegibles y con etiquetas conocidas. Una predicción ausente invalida la
 comparación común; no autoriza a reducir silenciosamente la cohorte de un método.
+
+**Contraste con la bitácora, tanda 9, línea Q:** el canal T+2 con compuerta del
+origen detectó **209 inicios en 1.190 alertas** (4,69 falsas por acierto); con
+compuerta del mes anterior al objetivo detectó **329 en 942** (1,86). Son TP
+detectados por dos reglas distintas, no totales de inicios evaluables ni cifras
+equivalentes. La bitácora atribuye la diferencia de 120 a información futura.
+La segunda regla es un diagnóstico retrospectivo con fuga, inadmisible como
+comparador anticipatorio. Este documento cita esos resultados; no los reproduce.
+
+La misma entrada muestra que imponer la compuerta observable al modelo T+2
+reduce sus aciertos de **350 a 309**. Por tanto, conservar la cohorte académica
+no demuestra que sea la mejor política operativa a dos meses. Se propone además
+una **lectura secundaria T+2** con todos los estados conocidos en T, tanto
+exceso como no exceso, sin esa restricción de emisión para modelo y canal.
+Mantiene exactamente el mismo evento T+1 → T+2 y usa soporte común propio,
+identificado por separado. Ambas lecturas y sus reglas se predeclaran; no se
+elige la favorable después de evaluar. La aprobación de esta doble lectura
+corresponde al equipo y no habilita cambiar hoy la cohorte del ejecutor.
 
 ### 4.4 Población primaria
 
@@ -216,10 +252,18 @@ desarrollo y queda congelada antes de evaluación.
 Para T+2, el comparador solo puede condicionarse con información observable en T.
 Condicionarlo con el estado de T+1 es fuga temporal.
 
+En la cohorte principal del apartado 4.3 se propone la decisión
+`alerta_canal_h = g_T y [casos(T) > f_h × P75_histórico(T+h)]`, con P75 construido
+solo con historia permitida y disponible en T. `f_h`, la grilla, los empates y
+el periodo de selección se fijan en desarrollo por horizonte. Modelo y canal
+reciben la misma compuerta `g_T`; no se compara modelo sin compuerta contra
+canal con ella como si fuera una comparación simétrica. La lectura secundaria
+T+2 usa ambos sin `g_T`, con políticas propias predeclaradas. Ninguna usa T+1.
+
 Cada especificación debe declarar la ventana, la grilla y la regla exacta del
 canal condicionado. No se admite reconstruirlas después de ver los resultados.
 
-### 8.2 Referencias descriptivas obligatorias
+### 8.2 Comparadores históricos y referencias obligatorias
 
 También deben reportarse, sobre las mismas claves:
 
@@ -228,9 +272,25 @@ También deben reportarse, sobre las mismas claves:
 - persistencia;
 - prevalencia de entrenamiento cuando exista una probabilidad constante.
 
-Persistencia es una referencia, no el comparador decisivo: en T+1 detecta cero
-inicios por construcción. Superarla es necesario para conservar trazabilidad con
-la pregunta histórica, pero no demuestra utilidad.
+Para A/B/C, el canal es **C0 histórico**, sin fracción ajustada:
+`casos(T) > P75_histórico(T+h)`. No se lo sustituye silenciosamente por el canal
+condicionado del apartado 8.1. Persistencia es **C1 histórica**:
+`alerta_persistencia_h = exceso(T)`, conocida en T para ambos horizontes.
+En la cohorte principal sin exceso en T resulta cero siempre; su FAR queda no
+definida y la condición B resulta débil. En una cohorte no restringida, T+1
+sigue detectando cero inicios, pero T+2 puede detectar una transición posterior:
+no se debe imponer cero por definición a esa lectura.
+
+La fábrica actual usa una referencia degenerada `non_excess_persists_no_new_onset`
+de ceros en ambos horizontes. Coincide con C1 solo dentro de la cohorte restringida;
+no implementa por sí sola la persistencia histórica para la lectura secundaria.
+Persistencia es referencia de la regla nueva y comparador obligatorio de la
+**condición B histórica**; superarla no acredita utilidad por sí solo.
+
+El contrato V2 también conserva C2/R0, C3/G0 regional OFF/ON y C4/G1 nacional.
+Solo se citan sus predicciones congeladas si existe identidad y soporte
+exactamente comparable; su ausencia se marca NOT_VERIFIED. No sustituyen C0/C1,
+no se importan como dependencia y esta revisión no los reentrena ni los aprueba.
 
 ### 8.3 Controles negativos
 
@@ -262,36 +322,39 @@ experimento confirmatorio.
 
 ## 10. Métricas y denominadores
 
-Sea `N` el número de municipio-mes evaluables comunes, `I` el número de inicios,
-`TP` los inicios alertados, `A` las alertas y `FP_inicio = A - TP`.
+Sea `N` el número de municipio-mes evaluables comunes, `I` los inicios reales de
+ese soporte, `TP_m` los inicios alertados por el método `m`, `L_m` sus alertas,
+`FP_inicio_m = L_m - TP_m` y `FP_exceso_m` sus alertas sin exceso en el objetivo.
+Cada salida identifica cohorte, horizonte, corte, territorio y digest de claves.
 
-### 10.1 Métricas decisorias
+### 10.1 Métricas de la regla adicional propuesta
 
 **Sensibilidad de inicio**
 
 ```text
-S = TP / I
+S_m = TP_m / I
 ```
 
 **Carga de falsas alertas de inicio**
 
 ```text
-B = 100 × FP_inicio / N
+carga_FA_inicio_100mm_m = 100 × FP_inicio_m / N
 ```
 
-La carga usa un denominador fijado por la cohorte, no por el candidato. Es la
-métrica de seguridad primaria.
+La carga usa un denominador fijado por la cohorte. Se propone como seguridad de
+la regla adicional del apartado 11; no es la condición B académica y no la
+reemplaza. El símbolo aislado `B` queda reservado a **B — superar persistencia**.
 
 ### 10.2 Métricas complementarias obligatorias
 
 - inicios detectados, omitidos y reales;
 - volumen y fracción de alertas;
-- FAR de inicio: `FP_inicio / A`;
-- falsas alertas de inicio por inicio detectado: `FP_inicio / TP`;
+- FAR de inicio: `FP_inicio_m / L_m`;
+- falsas alertas de inicio por inicio detectado: `FP_inicio_m / TP_m`;
 - AP, AUROC y Brier cuando sean aplicables;
 - cobertura, ausencias y soportes por año, departamento y horizonte;
-- FAR histórica de exceso: alertas sin exceso / alertas emitidas, solo para
-  reproducir y discutir el criterio académico original.
+- FAR histórica de exceso: `FAR_exceso_m = FP_exceso_m / L_m`, obligatoria para
+  evaluar la condición C del contrato académico original.
 
 AP y AUROC miden ordenamiento; Brier mide calidad probabilística. Ninguna de las
 tres sustituye la utilidad en el punto de operación.
@@ -300,7 +363,73 @@ Si el denominador es cero, la métrica se informa como no definida. Nunca se
 convierte automáticamente en cero. Las tasas agregadas se calculan desde la suma
 de numeradores y denominadores, no promediando tasas de subgrupos.
 
-## 11. Regla propuesta de éxito científico
+### 10.3 Evaluación histórica obligatoria A/B/C
+
+Procedencia: [contrato académico V2, versión propuesta 1.0, estado Aprobado](https://github.com/j-mauro-r/SAT-Dengue-V2/blob/447ef9fd85303de61848d2b01733d25c8ad8a935/docs/product/experiments/contrato.md),
+apartados 3–8. Se consultó el archivo de ese commit; SHA-256:
+`e966bdecac08b2b54e597391cb716a20195ea1a09abacf9ad737f8cd063d4607`.
+Ese estado histórico no aprueba esta propuesta V3.
+
+Por cada horizonte, sobre exactamente el mismo soporte para modelo, C0 y C1:
+
+| Condición histórica | Cálculo | Denominador y límite |
+|---|---|---|
+| **A — superar canal C0** | `TP_modelo > TP_canal_C0` | Conteos absolutos; comparar sensibilidades es equivalente solo con el mismo `I > 0`. Sin margen nuevo. |
+| **B — superar persistencia C1** | `TP_modelo > TP_persistencia_C1` | Mismo `I > 0`; una referencia incapaz de acertar no demuestra utilidad. |
+| **C — margen de FAR de exceso** | `FAR_exceso_modelo - FAR_exceso_canal_C0 <= 0,05` | Cada FAR divide por las alertas del propio método `L_m`, sobre soporte común. Son cinco puntos porcentuales, no 5 % relativo. |
+
+Las tres deben cumplirse simultáneamente para `ABC_HISTORICA_CUMPLE`.
+Si falla una condición definida, se informa `ABC_HISTORICA_NO_CUMPLE`; si falta
+un denominador necesario y no hay fallo definido, `ABC_HISTORICA_NO_EVALUABLE`.
+Cada condición conserva su estado y numeradores/denominadores, incluso cuando
+otra ya falla. Con `I = 0`, A y B quedan no evaluables, aunque los TP sean cero;
+con `L_m = 0` la FAR de ese método permanece no definida. Un soporte inválido
+invalida la evaluación común. Con `0 < I < 30` se reportan los cálculos
+descriptivos y soporte insuficiente, sin conclusión científica ni voto de
+consistencia, según el apartado 13.
+
+Se conservan los puntos de operación históricos al describir resultados previos.
+Una evaluación nueva predeclara los suyos; no retoca umbrales para hacer pasar
+A/B/C. Una reconstrucción sobre otra cohorte se identifica como nueva lectura,
+sin atribuirle los números originales. La lectura secundaria T+2 lleva otro
+identificador de soporte y no se combina con la principal para mejorar A o B.
+
+A/B/C mezcla sensibilidad de inicio con FAR de exceso: una continuación alertada
+puede reducir la FAR sin anticipar un inicio. Además `L_m` cambia por método.
+Estos límites se discuten, pero no autorizan borrar C ni reemplazar B por carga.
+El cumplimiento es descriptivo; no prueba significación, anticipación operativa,
+eficacia sanitaria ni aprobación de G5/champion. Los resultados ya consumidos,
+incluido 2025, permanecen históricos y fuera del desarrollo.
+
+### 10.4 Procedencia del cambio de carga de falsas alertas
+
+La carga por 100 municipio-mes procede de la
+[propuesta de política v2 del 4 de noviembre de 2026](../politica-de-decision-v2.md)
+y de sus campos `burden`, `utility.threshold_warning` y `evidence_status` en
+[el JSON asociado](../politica-de-decision-v2.json). Se propuso **después de
+conocer la tanda 5**, además de la evaluación congelada de octubre: persistencia
+253 alertas, 151 verdaderas de exceso y cero inicios; en 2018-12, canal 208
+alertas/27 falsas de exceso y candidato 69/27. La aplicación exploratoria ya
+mostraba G con 3/3 cortes T+1 favorables bajo v2 frente a 0/3 bajo v1, y T+2
+sin aprobación por precisión insuficiente. No fue una elección ciega.
+
+La bitácora había agregado también el 4 de noviembre, a partir de la tanda 2,
+**falsas por inicio detectado**. Esa razón usa `TP_m` como denominador y no es
+la carga poblacional, que usa `N`. Ambas se agregan al reporte; ninguna borra
+la FAR histórica. La propuesta V3 inicial del 8 de noviembre incorporó la
+carga; esta revisión explicita su procedencia y la separa de A/B/C.
+
+En términos de inicio, cuando `L_m > 0`:
+`carga_FA_inicio_100mm_m = 100 × (L_m/N) × FAR_inicio_m`.
+No es una transformación equivalente de `FAR_exceso_m`: cambian el evento y
+el denominador. Tampoco cinco puntos de FAR equivalen a cinco falsas por 100
+municipio-mes. La política v2 heredó el número **5,0**, sin calibrarlo para esa
+nueva unidad, y **10,0** para ganancia de sensibilidad. Se mantienen visibles
+como propuestas pendientes; no se reajustan aquí tras conocer resultados.
+Su justificación, adopción y eventual calibración con capacidad sanitaria
+requieren decisión del equipo antes de una evaluación futura independiente.
+
+## 11. Regla adicional de utilidad propuesta
 
 Los siguientes umbrales proceden de la política v2 propuesta y todavía requieren
 aprobación formal del equipo. Se mantienen visibles para que no puedan elegirse
@@ -313,7 +442,8 @@ después de observar una nueva evaluación:
 - intervalo: **95 %**, 2.000 réplicas y semilla 42, mediante remuestreo por
   bloques de mes objetivo que preserve el emparejamiento de todos los métodos.
 
-Para cada horizonte, un candidato obtiene `CUMPLE` solo si simultáneamente:
+Para cada horizonte, la salida separada `UTILIDAD_PROPUESTA` obtiene `CUMPLE`
+solo si simultáneamente:
 
 1. pasa todas las compuertas de datos, tiempo, soporte, identidad y evidencia;
 2. se compara con el canal condicionado sobre las mismas claves y el punto de
@@ -321,16 +451,17 @@ Para cada horizonte, un candidato obtiene `CUMPLE` solo si simultáneamente:
 3. supera a persistencia en inicios detectados;
 4. la estimación puntual de `S_modelo - S_canal` es al menos 10 puntos y la cota
    inferior de su intervalo también es al menos 10 puntos;
-5. la estimación puntual de `B_modelo - B_canal` no supera 5 y la cota superior
-   de su intervalo tampoco supera 5;
+5. la estimación puntual de `carga_FA_inicio_100mm_modelo - carga_FA_inicio_100mm_canal`
+   no supera 5 y la cota superior de su intervalo tampoco supera 5;
 6. ningún control negativo obtiene `CUMPLE`;
 7. el resultado no depende de ocultar un año, departamento o grupo con soporte
    suficiente; toda heterogeneidad material queda reportada.
 
-La FAR histórica con margen de cinco puntos porcentuales se reporta en paralelo
-para responder el contrato académico original, pero no invalida por sí sola un
-resultado que cumple la regla coherente de inicio y carga poblacional. Cualquier
-decisión distinta debe aprobarse como enmienda antes de ejecutar.
+Esta salida no modifica `ABC_HISTORICA`: un resultado puede cumplir una regla y
+fallar la otra, y debe decirlo. Se propone exigir ambas para una respuesta
+académica afirmativa, además de consistencia y evidencia confirmatoria; esa
+articulación también requiere aprobación del equipo. Ningún umbral, comparador
+o condición cambia a posteriori para resolver una discrepancia favorablemente.
 
 ## 12. Veredictos y respuesta final
 
@@ -342,11 +473,15 @@ decisión distinta debe aprobarse como enmienda antes de ejecutar.
 | `INVALIDO` | Existe fuga, cambio posterior, soporte incomparable, control negativo aprobado o evidencia inconsistente. |
 | `NO_EVALUABLE` | El evento, denominador o soporte no permite calcular la regla. |
 
-La conclusión del proyecto se redacta por horizonte:
+La tabla anterior se refiere solo a `UTILIDAD_PROPUESTA`. Se reportan además
+`ABC_HISTORICA`, consistencia, soporte y nivel de evidencia, sin un veredicto
+global que esconda desacuerdos. La conclusión propuesta del proyecto, pendiente
+de aprobación del equipo, se redacta por horizonte:
 
-- **Sí:** existe al menos un resultado confirmatorio `CUMPLE`.
+- **Sí:** existe un resultado confirmatorio con `ABC_HISTORICA_CUMPLE`,
+  `UTILIDAD_PROPUESTA: CUMPLE` y consistencia según el apartado 13.
 - **No con la evidencia evaluada:** una evaluación confirmatoria válida obtiene
-  `NO_CUMPLE_POR_EFECTO`.
+  incumplimiento definido de una regla exigida, con soporte suficiente.
 - **Inconcluso:** la evidencia es exploratoria, imprecisa, inválida o no
   evaluable.
 
@@ -355,6 +490,48 @@ modelo requiere revisión humana de estabilidad, cobertura, reproducibilidad,
 seguridad, costo, mantenibilidad y disponibilidad operativa.
 
 ## 13. Incertidumbre, estabilidad y reproducibilidad
+
+Las referencias **bitácora §4, reglas 3, 4 y 9** (abreviadas históricamente como
+**bitácora 4.3, 4.4 y 4.9**) son reglas de método. No son los apartados 4.3
+(elegibilidad) y 4.4 (población) de este contrato V3.
+
+**Consistencia — bitácora 4.3.** La regla original exige mejora en al menos
+3 de 4 cortes del mismo horizonte; la tanda 6 explicita 2 de 3 utilizables al
+excluir 2020-12 por soporte. Se reportan todos los cortes y configuraciones,
+incluidos empates, deterioros y resultados no evaluables. La mejora y su regla
+de decisión se predeclaran, no se elige el mejor corte o el agregado favorable.
+
+Para otro número de cortes se propone, sujeto a aprobación, **mayoría estricta
+de cortes utilizables**, `floor(K/2) + 1`, con al menos **K = 3**. Reproduce
+3/4 y 2/3; por ejemplo, exige 4/6 o 4/7. Esta generalización no estaba fijada
+para todo K en la bitácora. La especificación debe congelar calendario, K
+previsto, regla y qué constituye mejora antes de evaluar; informa después K
+utilizable, votos y exclusiones. No se traslada el voto entre horizontes o
+territorios ni se cuentan semillas como cortes. Con menos de tres utilizables,
+la consistencia queda insuficiente. Un cambio de K previsto requiere nuevo
+protocolo aprobado; no se agregan o eliminan cortes tras ver su rendimiento.
+No se interpreta como una conversión única del 75 % histórico ni se aplica
+retroactivamente a resultados conocidos; el equipo debe decidir esta extensión
+antes de una nueva evaluación y conservar separada la lectura histórica.
+
+**Soporte — bitácora 4.4.** Cada celda horizonte × corte (o año exterior) ×
+territorio declarado necesita **al menos 30 inicios reales evaluables `I`** para
+sustentar una conclusión, no 30 filas, alertas o TP. Las celdas menores se
+reportan con numeradores/denominadores y estado de soporte insuficiente, sin
+votar consistencia ni declarar superioridad o fracaso científico. La bitácora
+ejemplifica 14/13 inicios en 2020-12. La exclusión por soporte se predeclara y
+no permite descartar un corte suficiente que salió mal; una predicción ausente
+es un fallo del soporte común, no una excusa para quitar el corte. Una suma
+global puede describirse, pero no valida celdas pequeñas ni oculta heterogeneidad.
+
+**Semillas — corolario de bitácora 4.9.** Ninguna diferencia de **uno o dos
+inicios** se presenta como aporte sin la comprobación con **cinco semillas**
+predeclaradas para ambos procedimientos estocásticos, mismas particiones y
+soporte por par. Se informan las cinco diferencias, dispersión y cambios de
+signo; si no está hecha, la diferencia queda descriptiva, con estabilidad
+NOT_VERIFIED. La tanda 6 pasó de aparentes 42 frente a 44 a diferencia media
+0,00 ± 1,67. Cinco semillas no aumentan I, no sustituyen cortes ni equivalen a
+cinco cohortes independientes. Se aplica por celda aunque cambie K.
 
 Los intervalos se calculan sobre diferencias emparejadas entre candidato y
 comparador, nunca restando intervalos independientes. Deben conservarse juntos
@@ -419,21 +596,30 @@ autoriza a relajar la política después de observar resultados.
 
 | Componente | Estado actual | Consecuencia |
 |---|---|---|
-| Evento de inicio, elegibilidad y guard temporal | Implementado | Compatible. |
+| Evento T+1 → T+2 y elegibilidad sin exceso en T | Implementado en `domain/onset.py`; filtro de origen en `factory/engine.py` | Compatible con la cohorte principal propuesta; lectura secundaria no implementada. |
 | Cinco roles, calibración y umbral congelado | Implementado | Compatible. |
 | Soporte emparejado, AP/AUROC/Brier/sensibilidad/FAR | Implementado | Compatible, con FAR referida a inicio. |
 | Registro, hashes, evidencia, conclusiones y comparación | Implementado | Compatible. |
 | Canal endémico condicionado | No implementado en `experiment_run` | Bloquea una afirmación de superioridad académica. |
+| C0/C1 históricos, FAR de exceso y condiciones A/B/C | No integrados como evaluación académica automática | La persistencia cero actual no equivale a C1 en cohortes no restringidas. |
 | Carga de falsas alertas por 100 municipio-mes | No implementada como métrica decisoria | Bloquea aplicar la regla propuesta. |
 | Intervalo confirmatorio de 2.000 bloques por mes objetivo | No implementado; V3 usa bootstrap municipal descriptivo | Bloquea un veredicto confirmatorio. |
 | Controles negativos de la política | No implementados en la salida científica | Bloquea validar la compuerta. |
 | Cinco semillas y reproducción finalista | No automatizados por una sola receta | Deben organizarse como experimentos registrados. |
+| Consistencia de cortes y mínimo de 30 inicios por celda | No conectados como veredicto del contrato | Los mínimos técnicos de fixture no acreditan suficiencia científica. |
+| Recetas con/sin clima y resultados por horizonte/año/territorio | No conforman todavía el benchmark científico completo | Pendientes de la segunda etapa del mismo PR, con soporte común predeclarado entre variantes. |
 
 Por lo anterior, la fábrica está preparada para ejecutar y preservar
 experimentos, pero **ninguna corrida actual puede declarar que respondió
 afirmativamente la pregunta de grado**. Primero deben implementarse y aprobarse
 los comparadores y métricas decisorias anteriores, sin modificar la evidencia
-cerrada de T16, EXP001 o EXP002.
+cerrada de T16, EXP001 o EXP002. La evaluación automática de modelo/canal/
+persistencia, A/B/C, presupuesto, incertidumbre emparejada, desgloses y veredicto
+reproducible se reserva para la segunda etapa funcional del mismo PR. No está
+implementada ni aprobada por este documento. Las recetas con y sin clima deberán
+fijar predictores, población, ausencias y soporte comparable antes de ejecutarse;
+una cobertura adicional sin clima se reportará separadamente, sin atribuir su
+cambio de cohorte al efecto de retirar el clima.
 
 ## 17. Aprobación y cambios al contrato
 
@@ -441,10 +627,19 @@ Antes de convertir esta propuesta en norma, el equipo debe aprobar explícitamen
 
 1. la redacción de la pregunta central y que T+1 sea primario;
 2. Meta y Tolima como población primaria, aunque se entrene con datos nacionales;
-3. el canal condicionado como comparador decisivo;
-4. los umbrales de 10 puntos de sensibilidad y 5 falsas por 100 municipio-mes;
-5. el método de incertidumbre, las cinco semillas y la reproducción N=3;
-6. la cohorte futura que podrá considerarse confirmatoria.
+3. continuidad de la cohorte principal sin exceso en T, doble lectura T+2 y
+   compuertas simétricas, sin adoptar la regla futura que produjo 329 inicios;
+4. C0/C1 para A/B/C y canal condicionado para la regla adicional, con sus puntos
+   de operación, así como exigir ambas reglas para una respuesta afirmativa;
+5. adopción de la carga por 100 municipio-mes, su justificación frente a la FAR
+   histórica y umbrales propuestos de 10 puntos/5 falsas por 100, todavía sin
+   calibración de capacidad real; no se interpreta 5 como unidad equivalente;
+6. generalización de consistencia `floor(K/2)+1`, mínimo de tres cortes
+   utilizables y aplicación del mínimo histórico de 30 inicios por celda;
+7. método de incertidumbre, cinco semillas (incluida la comprobación histórica
+   para diferencias de uno o dos inicios) y reproducción N=3;
+8. cohorte futura confirmatoria y protocolo/recetas con y sin clima. Aprobar el
+   contrato no aprueba automáticamente ninguna receta o ejecución real.
 
 La aprobación debe registrar nombres o rol de los aprobadores, fecha y commit.
 Toda modificación posterior requiere Pull Request, justificación, análisis de
@@ -453,10 +648,13 @@ anteriores permanecen en Git; no se reescriben decisiones históricas.
 
 ---
 
-### Fuentes internas que sustentan esta propuesta
+### Fuentes revisadas que sustentan esta propuesta
 
-- `docs/bitacora-experimental.md`: pregunta, errores descubiertos y comparadores.
-- `docs/politica-de-decision-v2.md`: corrección propuesta de la política y sus
+- [Bitácora experimental](../bitacora-experimental.md): reglas de método §4,
+  tanda 6 (3/4, 2/3, soporte y semillas) y tanda 9, línea Q (209 frente a 329).
+- [Contrato académico V2](https://github.com/j-mauro-r/SAT-Dengue-V2/blob/447ef9fd85303de61848d2b01733d25c8ad8a935/docs/product/experiments/contrato.md):
+  cohorte, comparadores y A/B/C; antecedente versionado, no autoridad de ejecución V3.
+- [Política v2 propuesta](../politica-de-decision-v2.md): corrección de la política y sus
   umbrales aún no aprobados.
 - `docs/reviews/scientific-review.md`: límites verificados de la fábrica actual.
 - `pipeline/src/sat_dengue_pipeline/domain/onset.py`: evento y elegibilidad.

@@ -2,10 +2,13 @@
 
 **Plan interno:** `PLAN_pipeline_e2e_experimentos_sat_dengue`
 
-**Versión de diseño:** 7.2 — correcciones operativas previas al merge
+**Versión de diseño:** 7.3 — propuesta documental posterior a la integración del PR #1
 
-**Fase actual:** diseño aprobado en ejecución sobre `feature/pipeline-e2e`; `plan.md`
-es la única fuente de verdad sobre número, estado, dependencia y avance de las tareas
+**Fase actual:** corrección del contrato propuesto en una rama nueva desde
+`main@a324f3c`, que ya contiene la fábrica del PR #1. Un único PR nuevo reunirá
+esta etapa documental y una segunda etapa funcional posterior, pendiente de
+autorización, implementación y aprobación científica. `plan.md` es la única
+fuente de verdad sobre número, estado, dependencia y avance de las tareas.
 
 **Nivel de rigor:** deep
 **Razón:** combina migración entre repositorios, datos científicos versionados,
@@ -662,6 +665,26 @@ Los estados y el siguiente paso autorizado se consultan exclusivamente en `plan.
 
 ### D10. Protocolo común de evaluación de inicios
 
+La corrección documental posterior al PR #1 se rige por la
+[propuesta de contrato V3](docs/experiments/contrato.md), todavía
+`PROPUESTA_PARA_APROBACION`. La etiqueta T+2 conserva la transición retrospectiva
+T+1 → T+2; sus alertas solo usan información en T. Se propone mantener cohorte
+académica sin exceso en T y lectura secundaria T+2 sin esa restricción, con
+compuertas simétricas para modelo/canal e identidades de soporte separadas.
+Los 209 TP con compuerta observable y 329 con compuerta futura de la tanda 9
+no son equivalentes ni justifican un cambio de evento.
+
+A/B/C histórica (superar canal C0, superar persistencia C1 y margen de cinco
+puntos de FAR de exceso) se evalúa explícitamente, separada de la regla adicional
+de utilidad. `carga_FA_inicio_100mm` conserva su procedencia post-resultados del
+4 de noviembre de 2026 y no se llama B ni sustituye la condición B histórica.
+La bitácora 4.3/4.4/4.9 exige consistencia, mínimo de 30 inicios por celda y cinco
+semillas para diferencias de uno o dos inicios. La generalización a mayoría
+estricta de al menos tres cortes utilizables es una propuesta para aprobación,
+con calendario y regla fijados antes de evaluar. No son los apartados 4.3/4.4
+del contrato V3. Los detalles y decisiones pendientes viven en ese contrato;
+esta sección no constituye una aprobación científica.
+
 Todos los enfoques producirán una interfaz común de probabilidades por:
 
 ```text
@@ -1011,10 +1034,11 @@ El primer gate de integración será una línea base del despliegue actual: cons
 las imágenes, arrancar Compose desde un clon limpio, verificar `/api/salud` y una
 consulta válida del tablero. El E2E no podrá incorporarse si rompe esa línea base.
 
-## 7. Tareas de implementación propuestas
+## 7. Tareas de la primera implementación y ampliación posterior
 
 El estado ejecutable y los commits de estas tareas se controlan en `plan.md`. Este
-documento conserva la arquitectura y los criterios que deben guiar lo pendiente.
+documento conserva la arquitectura. El listado T1–T27 corresponde al alcance
+histórico del PR #1; la ampliación posterior se distingue al final de esta sección.
 
 Impacto de la decisión v7: las tareas 1–16 conservan su estado y evidencia. Se
 inserta una nueva tarea 17 para generalizar la fábrica y administrar experimentos;
@@ -1022,7 +1046,7 @@ las antiguas tareas 17–21 pasan a 18–22. `plan.md` registra DEC-024 y es la 
 autoridad sobre estados y avance. Este documento conserva las directrices y el
 detalle arquitectónico, sin mantener un estado operativo paralelo.
 
-Secuencia de integración obligatoria dentro del único PR:
+Secuencia histórica de integración dentro del PR #1:
 
 ```text
 gobernanza -> línea base de despliegue -> esqueleto pipeline -> adquisición cruda
@@ -1157,7 +1181,31 @@ Ampliación temporal, canal condicionado y EXP003 quedan fuera; trabajo científ
 posterior necesita otro alcance después del merge. El progreso inicial es 21/27;
 los estados y el control de avance viven exclusivamente en `plan.md`.
 
-## 8. Criterios de aceptación del producto E2E
+### Ampliación posterior al PR #1 en un único PR nuevo
+
+El PR #1 está fusionado; la base del alcance nuevo es
+`main@a324f3c7f141b0ec53582b461cf6586643c5b569`, con la fábrica integrada.
+La rama `feature/contrato-cientifico-fabrica-final` parte directamente de esa base.
+DEC-035 y la sección 10 de [plan.md](plan.md) registran la autorización actual,
+que sustituye la restricción histórica de trabajar solo en el PR #1.
+
+La **primera etapa es documental**: revisar el contrato contra V2, bitácora y
+código vigente, mantenerlo como propuesta y publicar sus decisiones pendientes.
+La **segunda etapa del mismo PR** queda para una ejecución posterior: incorporar
+evaluación automática de modelo, canal y persistencia en soporte común; A/B/C;
+presupuesto de alertas; incertidumbre emparejada; resultados por horizonte,
+año y territorio; veredicto reproducible; y recetas con y sin clima. Debe
+preservar las compuertas temporales y distinguir cambios de predictores de cambios
+de población, con soporte común predeclarado y cobertura adicional separada.
+
+Esta ampliación describe el alcance solicitado, **no una funcionalidad
+implementada ni una aprobación científica**. Antes de implementarla se requiere
+autorización posterior y resolver las decisiones del contrato con el equipo;
+cada receta real seguirá necesitando registro, hashes y aprobación propios.
+T16, EXP001/EXP002, N=3 y resultados publicados permanecen cerrados. Se mantiene
+este único plan maestro, con estados operativos solo en `plan.md`.
+
+## 8. Criterios de aceptación de la primera implementación E2E
 
 La implementación estará lista cuando las 27 tareas y sus dependencias estén
 completas según `plan.md`. La entrega local de fase 1 termina en T24, con T25–T27
