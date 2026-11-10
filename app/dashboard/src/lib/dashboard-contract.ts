@@ -1,5 +1,19 @@
 import { z } from "zod";
 
+// Preserve the published Zod 3 JSON acceptance rules while collections use
+// patched Zod 4. Its UUID, timestamp and safe-integer defaults are stricter.
+const contractUuid = z
+  .string()
+  .regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
+const calendarDate = z.iso.date();
+const contractTimestamp = z
+  .string()
+  .regex(
+    /^\d{4}-\d{2}-\d{2}T(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})$/,
+  )
+  .refine((value) => calendarDate.safeParse(value.slice(0, 10)).success);
+const nonnegativeInteger = z.number().nonnegative().refine(Number.isInteger);
+
 const month = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
 const probability = z.number().min(0).max(1);
 const nullableMeasure = z.number().nonnegative().nullable();
@@ -14,7 +28,7 @@ export const availabilityStatusSchema = z.enum([
 
 const resultSchema = z
   .object({
-    result_id: z.string().uuid().nullable(),
+    result_id: contractUuid.nullable(),
     horizon: z.enum(["T1", "T2"]),
     target_period: month,
     probability: probability.nullable(),
@@ -68,7 +82,7 @@ const resultSchema = z
 const endemicPointSchema = z
   .object({
     period: month,
-    cases: z.number().int().nonnegative().nullable(),
+    cases: nonnegativeInteger.nullable(),
     p25: nullableMeasure,
     median: nullableMeasure,
     p75: nullableMeasure,
@@ -89,7 +103,7 @@ const municipalitySchema = z
   .object({
     municipality_code: z.string().regex(/^\d{5}$/),
     municipality_name: z.string().min(1).max(150),
-    cases_t: z.number().int().nonnegative().nullable(),
+    cases_t: nonnegativeInteger.nullable(),
     endemic_zone_t: z.enum(["EXITO", "SEGURIDAD", "ALERTA", "EXCESO", "UNAVAILABLE"]),
     p25: nullableMeasure,
     median: nullableMeasure,
@@ -142,11 +156,11 @@ const evaluationRecordSchema = z
     auroc: probability.nullable(),
     average_precision: probability.nullable(),
     brier: probability.nullable(),
-    false_alerts: z.number().int().nonnegative().nullable(),
-    alerts_emitted: z.number().int().nonnegative().nullable(),
+    false_alerts: nonnegativeInteger.nullable(),
+    alerts_emitted: nonnegativeInteger.nullable(),
     false_alert_ratio: probability.nullable(),
-    onsets_detected: z.number().int().nonnegative().nullable(),
-    actual_onsets: z.number().int().nonnegative().nullable(),
+    onsets_detected: nonnegativeInteger.nullable(),
+    actual_onsets: nonnegativeInteger.nullable(),
     onset_sensitivity: probability.nullable(),
   })
   .strict();
@@ -158,10 +172,10 @@ const candidateComparisonSchema = z
     label: z.string().min(1).max(40),
     role: z.enum(["BASELINE", "PUBLISHED", "OTHER", "REFERENCE"]),
     source: z.enum(["evaluation_run", "computed_from_panel"]).default("evaluation_run"),
-    onsets_detected: z.number().int().nonnegative().nullable(),
-    actual_onsets: z.number().int().nonnegative().nullable(),
-    alerts_emitted: z.number().int().nonnegative().nullable(),
-    false_alerts: z.number().int().nonnegative().nullable(),
+    onsets_detected: nonnegativeInteger.nullable(),
+    actual_onsets: nonnegativeInteger.nullable(),
+    alerts_emitted: nonnegativeInteger.nullable(),
+    false_alerts: nonnegativeInteger.nullable(),
     false_alert_ratio: z.number().min(0).max(1).nullable(),
     onset_sensitivity: z.number().min(0).max(1).nullable(),
     auroc: z.number().min(0).max(1).nullable(),
@@ -183,13 +197,13 @@ const backtestRowSchema = z
     candidate: z.string().min(1).max(40),
     label: z.string().min(1).max(40),
     role: z.enum(["BASELINE", "PUBLISHED", "OTHER", "REFERENCE"]),
-    onsets_detected: z.number().int().nonnegative(),
-    actual_onsets: z.number().int().nonnegative(),
-    alerts_emitted: z.number().int().nonnegative(),
+    onsets_detected: nonnegativeInteger,
+    actual_onsets: nonnegativeInteger,
+    alerts_emitted: nonnegativeInteger,
     // `false_alerts` cuenta contra exceso y favorece al canal; la pantalla usa
     // `false_alerts_onset`, que cuenta contra lo que se quiere anticipar.
-    false_alerts: z.number().int().nonnegative(),
-    false_alerts_onset: z.number().int().nonnegative(),
+    false_alerts: nonnegativeInteger,
+    false_alerts_onset: nonnegativeInteger,
   })
   .strict()
   .refine((r) => r.onsets_detected <= r.actual_onsets, {
@@ -209,8 +223,8 @@ const backtestCurvePointSchema = z
   .object({
     horizon: z.enum(["T1", "T2"]),
     candidate: z.string().min(1).max(40),
-    alerts_emitted: z.number().int().nonnegative(),
-    onsets_detected: z.number().int().nonnegative(),
+    alerts_emitted: nonnegativeInteger,
+    onsets_detected: nonnegativeInteger,
   })
   .strict()
   .refine((p) => p.onsets_detected <= p.alerts_emitted, {
@@ -223,7 +237,7 @@ const developmentBacktestSchema = z
     period_start: month,
     period_end: month,
     provenance: z.enum(["experimental_harness", "evaluation_run"]),
-    seeds_checked: z.array(z.number().int().nonnegative()),
+    seeds_checked: z.array(nonnegativeInteger),
     rows: z.array(backtestRowSchema).min(1),
     curve: z.array(backtestCurvePointSchema).default([]),
   })
@@ -236,10 +250,10 @@ export const dashboardResponseSchema = z
   .object({
     metadata: z
       .object({
-        result_set_id: z.string().uuid(),
+        result_set_id: contractUuid,
         reference_period: month,
-        generated_at: z.string().datetime({ offset: true }),
-        data_updated_at: z.string().datetime({ offset: true }).nullable(),
+        generated_at: contractTimestamp,
+        data_updated_at: contractTimestamp.nullable(),
         data_version: z.string().min(1).max(128),
       })
       .strict(),

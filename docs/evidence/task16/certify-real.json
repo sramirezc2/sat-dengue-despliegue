@@ -1,0 +1,201 @@
+{
+  "phase": "certify",
+  "status": "PASSED",
+  "reconstruction_hashes": [
+    "8fc8355af11644412b1d32a41f00ab3c369bd4de980bb0acd963c3a8c64e652c",
+    "8fc8355af11644412b1d32a41f00ab3c369bd4de980bb0acd963c3a8c64e652c",
+    "8fc8355af11644412b1d32a41f00ab3c369bd4de980bb0acd963c3a8c64e652c"
+  ],
+  "semantic_digests": [
+    "a3326015581fd81b748820e1bce3ca2f4c5c88c2be96f08f7c822e37eb7dd722",
+    "a3326015581fd81b748820e1bce3ca2f4c5c88c2be96f08f7c822e37eb7dd722",
+    "a3326015581fd81b748820e1bce3ca2f4c5c88c2be96f08f7c822e37eb7dd722"
+  ],
+  "distinct_worker_processes": 3,
+  "reconstructions": [
+    {
+      "cpu_seconds": 247.19728700000002,
+      "peak_rss_bytes": 12184322048,
+      "stages_seconds": {
+        "daily_climate": 102.59035620799841,
+        "epidemiology": 8.429259999997157,
+        "geography": 0.004833040999074001,
+        "integrity_after": 1.2690044159971876,
+        "integrity_before": 1.18595862499933,
+        "monthly_climate": 90.10553987499588,
+        "panel": 24.280481916997815,
+        "projection": 7.853722166000807,
+        "quarantine": 2.3529347499934374,
+        "serialization": 5.485299040999962,
+        "validation": 3.4884047500017914
+      },
+      "wall_seconds": 248.24580604199582
+    },
+    {
+      "cpu_seconds": 247.185766,
+      "peak_rss_bytes": 12108873728,
+      "stages_seconds": {
+        "daily_climate": 101.71577804199478,
+        "epidemiology": 8.399207000002207,
+        "geography": 0.004599165993568022,
+        "integrity_after": 1.2601246659978642,
+        "integrity_before": 1.158466207998572,
+        "monthly_climate": 90.90630020899698,
+        "panel": 24.00583179199748,
+        "projection": 7.879543584000203,
+        "quarantine": 2.349210790998768,
+        "serialization": 5.340533041002345,
+        "validation": 3.48876412500249
+      },
+      "wall_seconds": 248.29971958299575
+    },
+    {
+      "cpu_seconds": 247.530168,
+      "peak_rss_bytes": 12270878720,
+      "stages_seconds": {
+        "daily_climate": 102.12740029199631,
+        "epidemiology": 8.388982500000566,
+        "geography": 0.004866041999775916,
+        "integrity_after": 1.2568426669968176,
+        "integrity_before": 1.1429424159941846,
+        "monthly_climate": 90.2445393750022,
+        "panel": 24.56218579200504,
+        "projection": 7.821015333000105,
+        "quarantine": 2.3270679589986685,
+        "serialization": 5.464033124997513,
+        "validation": 3.5563132500028587
+      },
+      "wall_seconds": 248.76236008299747
+    }
+  ],
+  "audit": {
+    "coverage": {
+      "end": "2024-12",
+      "municipalities": 1122,
+      "nulls": {
+        "climate_days_observed": 1046,
+        "dengue_grave_notifications_count": 0,
+        "dengue_grave_notifications_count_lag1": 1122,
+        "dengue_grave_notifications_count_lag12": 13464,
+        "dengue_grave_notifications_count_lag2": 2244,
+        "dengue_grave_notifications_count_lag3": 3366,
+        "dengue_notifications_count": 0,
+        "dengue_notifications_count_lag1": 1122,
+        "dengue_notifications_count_lag12": 13464,
+        "dengue_notifications_count_lag2": 2244,
+        "dengue_notifications_count_lag3": 3366,
+        "department_code": 0,
+        "dewpoint_mean_c_month_mean": 1370,
+        "dewpoint_mean_c_month_mean_valid_days": 1046,
+        "epi_count_status": 0,
+        "expected_days_in_month": 0,
+        "history_valid_years_h5_t1": 0,
+        "history_valid_years_h5_t2": 0,
+        "in_epi_coverage": 0,
+        "month_of_year": 0,
+        "municipality_code": 0,
+        "municipality_name": 0,
+        "p25_canal_t": 67320,
+        "p25_h5_t1": 66198,
+        "p25_h5_t2": 65076,
+        "p50_canal_t": 67320,
+        "p75_canal_t": 67320,
+        "p75_h5_t1": 66198,
+        "p75_h5_t2": 65076,
+        "rain_mm_month_sum": 1370,
+        "rain_mm_month_sum_valid_days": 1046,
+        "soil_water_l1_month_mean": 1370,
+        "soil_water_l1_month_mean_valid_days": 1046,
+        "solar_radiation_mj_m2_month_sum": 1370,
+        "solar_radiation_mj_m2_month_sum_valid_days": 1046,
+        "surface_runoff_mm_month_sum": 1370,
+        "surface_runoff_mm_month_sum_valid_days": 1046,
+        "temp_mean_c_month_mean": 1370,
+        "temp_mean_c_month_mean_valid_days": 1046,
+        "total_evaporation_mm_month_sum_ecmwf": 1370,
+        "total_evaporation_mm_month_sum_ecmwf_valid_days": 1046,
+        "total_notifications_count": 0,
+        "total_notifications_count_lag1": 1122,
+        "total_notifications_count_lag12": 13464,
+        "total_notifications_count_lag2": 2244,
+        "total_notifications_count_lag3": 3366,
+        "wind_u_ms_month_mean": 1370,
+        "wind_u_ms_month_mean_valid_days": 1046,
+        "wind_v_ms_month_mean": 1370,
+        "wind_v_ms_month_mean_valid_days": 1046,
+        "year_month": 0,
+        "zona_canal_t": 67320
+      },
+      "rows": 182886,
+      "start": "2011-06"
+    },
+    "quarantine": {
+      "daily_climate": {
+        "digest": "acb3dd655810ec54f869de4cf28656272de5e8419a6985a879c69c09a1ee0672",
+        "input": 7754254,
+        "invalid_date": 0,
+        "reserved": 409530,
+        "retained": 7344724
+      },
+      "dengue_notifications": {
+        "digest": "b42c6eed13c9edd76c7d9ff60f580f40d4296f1516c431bb5ab7020c4e59189f",
+        "input": 1705604,
+        "invalid_date": 133,
+        "reserved": 119138,
+        "retained": 1586333
+      },
+      "severe_dengue_notifications": {
+        "digest": "daff297445fe1f049aae838451a77acd7dcae0aed6d8d0dbc2f493df128a4134",
+        "input": 50101,
+        "invalid_date": 3,
+        "reserved": 1259,
+        "retained": 48839
+      }
+    },
+    "stages": {
+      "climate": {
+        "accepted": 5536060,
+        "input": 7344724,
+        "outside_period": 1808664
+      },
+      "epidemiology": {
+        "dengue_notifications": {
+          "accepted": 1308130,
+          "input": 1586333,
+          "rejected": {
+            "invalid_residence": 0,
+            "outside_period": 270901,
+            "unknown_municipality": 7302,
+            "wrong_event": 0
+          }
+        },
+        "severe_dengue_notifications": {
+          "accepted": 20022,
+          "input": 48839,
+          "rejected": {
+            "invalid_residence": 0,
+            "outside_period": 28334,
+            "unknown_municipality": 483,
+            "wrong_event": 0
+          }
+        }
+      },
+      "monthly_climate_rows": 181840
+    }
+  },
+  "tracking": {
+    "experiment_name": "satd-canonical",
+    "run_id": "061138f41e2d48608dc36f7f1e3987e8",
+    "parent_run_id": null,
+    "status": "FINISHED",
+    "tracking_enabled": true,
+    "artifact_digest": "eb63bec7ac2509b22e48c561124138b2db2fbff49a4b74e80af6ffef37d3ec8c"
+  },
+  "semantic_digest": "a3326015581fd81b748820e1bce3ca2f4c5c88c2be96f08f7c822e37eb7dd722",
+  "serialized_sha256": "8fc8355af11644412b1d32a41f00ab3c369bd4de980bb0acd963c3a8c64e652c",
+  "serialized_bytes": 66852080,
+  "peak_rss_bytes": 1273790464,
+  "wall_seconds": 757.5455255829947,
+  "cpu_seconds": 11.479417,
+  "stages_seconds": {}
+}

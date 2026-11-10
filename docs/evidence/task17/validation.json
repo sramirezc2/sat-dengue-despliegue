@@ -1,0 +1,75 @@
+{
+  "acceptance_execution_note": "CLI receipts preserve execution code 6910efa; subsequent frozen-byte guard validated by complete temporary E2E suite without rewriting receipts.",
+  "additional_frozen_bytes_guard_commit": "7c4004a",
+  "checks": {
+    "api": {
+      "passed": 28,
+      "warnings": 1
+    },
+    "comparison_horizon2_rows": 42,
+    "dashboard": {
+      "build": "PASSED",
+      "frozen_install": "PASSED",
+      "lint_errors": 0,
+      "lint_warnings": 6,
+      "tests_passed": 33
+    },
+    "diff_check_origin_main_HEAD": "PASSED",
+    "kedro_pipelines": [
+      "synthetic",
+      "canonical_build",
+      "canonical_reproducibility",
+      "deployment_publication",
+      "experiment_run EXP001",
+      "experiment_run EXP002"
+    ],
+    "large_files_review": "no_changed_file_over_512000_bytes",
+    "mlflow_local_parents_children": "PASSED",
+    "notebooks_changed": false,
+    "pipeline_full": {
+      "new_task17_tests": 45,
+      "passed": 536,
+      "warnings": 6
+    },
+    "previous_t16_receipts": 16,
+    "protected_sha256_files": 49,
+    "published_json": 22,
+    "pydantic_documents": 24,
+    "registry_conclusions_inventory": "PASSED",
+    "ruff": "PASSED",
+    "secrets_review": "local_pattern_scan_and_diff_review_no_hits",
+    "t16_synthetic_adapter_parity": "PASSED",
+    "uv_lock_check": "PASSED",
+    "uv_sync_locked": "PASSED",
+    "zod_documents": 24
+  },
+  "environment": {
+    "architecture": "arm64",
+    "os": "Darwin",
+    "python": "3.12.13"
+  },
+  "executions": [
+    {
+      "children_count": 2,
+      "evidence": "docs/evidence/experiments/EXP001/40800d46732940d1914f8fc2430bfb8e",
+      "execution_id": "40800d46732940d1914f8fc2430bfb8e",
+      "experiment_id": "EXP001",
+      "parent_run_id": "c8d165f18173417b93d1abd37dc02bd0",
+      "signature": "f2903caa3e1f2b6e503dc9ef5f0b26353496b568f4ecef95569067fb5b075e05"
+    },
+    {
+      "children_count": 0,
+      "evidence": "docs/evidence/experiments/EXP002/b27dd78427ca486984c67b2b9b64d97f",
+      "execution_id": "b27dd78427ca486984c67b2b9b64d97f",
+      "experiment_id": "EXP002",
+      "parent_run_id": "d9c6e3a0654b403d99c25bf1c2d7f3f0",
+      "signature": "d0e7112bd15a321f952fb87887d36ca5db5595d40ab4961eaea4c6cabab1bb12"
+    }
+  ],
+  "implementation_commit": "6910efad69f9a7f687d7e10e1a0f1f0be3e2354d",
+  "next_task_started": false,
+  "pipeline_test_log_sha256": "c9ef0caab73323dd01a671f09bfbcf141692116df7523425567a06045009d7bd",
+  "remote_ci": "NOT_RUN_NO_PUSH_AUTHORIZED",
+  "scope": "task17_only_synthetic_no_scientific_execution",
+  "status": "PASSED"
+}

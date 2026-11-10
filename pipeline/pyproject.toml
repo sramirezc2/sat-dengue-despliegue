@@ -1,0 +1,49 @@
+[project]
+name = "sat-dengue-pipeline"
+version = "0.1.0"
+description = "Smoke test sintético del futuro pipeline E2E SAT DENGUE"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "kedro==1.7.0",
+    "huggingface_hub==2.4.0",
+    "numpy==2.5.4",
+    "pandas==3.0.6",
+    "scikit-learn==1.7.2",
+    "scipy==1.18.1",
+    "jsonschema==4.23.0",
+    "xgboost==3.0.5",
+]
+
+[dependency-groups]
+dev = ["pytest==9.2.0", "ruff==0.17.4", {include-group = "tracking"}]
+tracking = [
+    "mlflow-skinny==3.17.2",
+    "sqlalchemy==2.0.57",
+    "alembic==1.20.1",
+    "sqlparse==0.6.1",
+]
+
+[build-system]
+requires = ["uv_build==0.11.19"]
+build-backend = "uv_build"
+
+[tool.kedro]
+package_name = "sat_dengue_pipeline"
+project_name = "SAT DENGUE synthetic smoke"
+kedro_init_version = "1.7.0"
+source_dir = "src"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

@@ -1,0 +1,126 @@
+{
+  "architecture": "x86_64",
+  "colab_kernel_module": "google.colab._shell",
+  "commit": "5cb8b98aa275437989fdf8924e702942877c0e2f",
+  "dirty_after": false,
+  "dirty_before": false,
+  "duration_seconds": 205.31,
+  "finished_utc": "2026-11-07T23:13:51.868602+00:00",
+  "gates": [
+    {
+      "exit_code": 0,
+      "name": "lock",
+      "seconds": 0.12
+    },
+    {
+      "exit_code": 0,
+      "name": "sync",
+      "seconds": 0.06
+    },
+    {
+      "exit_code": 0,
+      "name": "ruff",
+      "seconds": 0.12
+    },
+    {
+      "exit_code": 0,
+      "name": "pytest",
+      "seconds": 186.79
+    },
+    {
+      "exit_code": 0,
+      "name": "portability",
+      "seconds": 3.38
+    },
+    {
+      "exit_code": 0,
+      "name": "synthetic",
+      "seconds": 1.22
+    },
+    {
+      "exit_code": 0,
+      "name": "canonical_build",
+      "seconds": 2.63
+    },
+    {
+      "exit_code": 0,
+      "name": "canonical_reproducibility",
+      "seconds": 4.69
+    },
+    {
+      "exit_code": 0,
+      "name": "deployment_publication",
+      "seconds": 1.83
+    },
+    {
+      "exit_code": 0,
+      "name": "outputs",
+      "seconds": 4.45
+    }
+  ],
+  "host_python": "3.13.18",
+  "lock_sha256": "353cb1a567ce5038e4d41d9009e40a674603f6a87df198eb8a28116c6093b3cd",
+  "native_symlink": {
+    "available": true,
+    "test_logic_fallback": "controlled"
+  },
+  "os_version": "#1 SMP Thu Oct 22 03:07:54 UTC 2026",
+  "outputs": {
+    "canonical_n3_semantic_digest": [
+      "26cc689566b05ffaf46a42aaa8311cca0ffc3137e31af6f64cfb1e9834f6b957",
+      "26cc689566b05ffaf46a42aaa8311cca0ffc3137e31af6f64cfb1e9834f6b957",
+      "26cc689566b05ffaf46a42aaa8311cca0ffc3137e31af6f64cfb1e9834f6b957"
+    ],
+    "canonical_n3_sha256": [
+      "4ca14c3c07079130606a91274a516e083b513c6a1a7afe41d8df92be9b3bb046",
+      "4ca14c3c07079130606a91274a516e083b513c6a1a7afe41d8df92be9b3bb046",
+      "4ca14c3c07079130606a91274a516e083b513c6a1a7afe41d8df92be9b3bb046"
+    ],
+    "packages": {
+      "jsonschema": "4.23.0",
+      "kedro": "1.7.0",
+      "mlflow-skinny": "3.17.2",
+      "numpy": "2.5.4",
+      "pandas": "3.0.6",
+      "scikit-learn": "1.7.2",
+      "scipy": "1.18.1"
+    },
+    "publication_sha256": {
+      "resultado_50_2024-02.json": "13433f40bcf5aab4bcd0182afbb798c40db81f286799b40e3e43dc75a0407583",
+      "resultado_73_2024-02.json": "d8d1091f2078149fc720fbb63e148a9378181a1e092194df9fe283d88d2f2dd0"
+    },
+    "synthetic_metrics": {
+      "synthetic_check_rows": 1,
+      "synthetic_mae": 5.0,
+      "synthetic_mse": 25.0
+    },
+    "synthetic_metrics_sha256": "268c1c806877a1f0805da5e3f85061b47f2608f677183507802f402ecbccb19d"
+  },
+  "pipelines": [
+    "synthetic",
+    "canonical_build",
+    "canonical_reproducibility",
+    "deployment_publication"
+  ],
+  "portability_tests": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 12
+  },
+  "pytest_warnings": 4,
+  "python": "3.12.13",
+  "release": "6.6.159+",
+  "result": "PASSED",
+  "runtime": "google-colab",
+  "system": "Linux",
+  "tests": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 463
+  },
+  "timestamp_utc": "2026-11-07T23:10:26.556083+00:00",
+  "tree": "6500b20b1c5c0c6e872ecc239c5d6329ed4f237a",
+  "uv": "uv 0.11.19 (x86_64-unknown-linux-gnu)"
+}

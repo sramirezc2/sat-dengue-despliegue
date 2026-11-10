@@ -1,0 +1,16 @@
+{
+  "dengue.csv": {
+    "rows": 1705604,
+    "localized_midnight": 1705471,
+    "first_component_gt12": 1012890,
+    "second_component_gt12": 0,
+    "empty": 133
+  },
+  "dengue_grave.csv": {
+    "rows": 50101,
+    "localized_midnight": 50098,
+    "first_component_gt12": 29392,
+    "second_component_gt12": 0,
+    "empty": 3
+  }
+}

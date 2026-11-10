@@ -1,0 +1,20 @@
+{
+  "status": "INTERRUPTED_FOR_OPTIMIZATION",
+  "reason": "CPU sampling and interruption traceback identified repeated Index.isin conversion of full retained-row selector per CSV chunk",
+  "canonical_artifact_produced": false,
+  "physical_footprint_peak_sample_gib": 1.3,
+  "peak_scope": "macOS sample diagnostic, not completed-run RSS measurement",
+  "fix": "Binary-search slice of globally sorted retained indices for each chunk; scalar dictionaries consumed one row at a time; epidemiology reads four required columns",
+  "raw_climate_file_lines_including_header": 7754255,
+  "interrupted_pilots": 3,
+  "additional_findings": [
+    "Localized epidemiological midnight format required DEC-022; no incorrect output certified",
+    "Repeated strftime for temporal comparisons is expensive on this macOS runtime; use direct date comparison and ISO period extraction"
+  ],
+  "synthetic_date_benchmark": {
+    "rows": 10000,
+    "strftime_comparison_seconds": 0.6906828750070417,
+    "direct_date_comparison_seconds": 0.0025257499946746975,
+    "scope": "Synthetic microbenchmark; not an end-to-end speedup estimate"
+  }
+}

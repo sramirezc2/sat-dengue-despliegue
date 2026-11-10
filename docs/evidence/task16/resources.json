@@ -1,0 +1,9 @@
+{
+  "system": "Darwin",
+  "os_version": "26.6.2",
+  "architecture": "arm64",
+  "physical_ram_bytes": 34359738368,
+  "disk_free_bytes_at_check": 684661764096,
+  "rss_measurement": "resource.getrusage(RUSAGE_SELF).ru_maxrss; macOS bytes, Linux KiB converted to bytes; Windows null",
+  "scope": "Peak RSS per process; parent certification RSS reported separately from each worker; no claim of combined physical-memory footprint"
+}

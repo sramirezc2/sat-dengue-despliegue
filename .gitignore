@@ -29,3 +29,6 @@ modelos/*.joblib
 # Material de trabajo personal: no se versiona ni se publica.
 prompt_a_seguir.md
 experimentos/
+
+# Datos crudos locales
+/datos/datos-crudos/

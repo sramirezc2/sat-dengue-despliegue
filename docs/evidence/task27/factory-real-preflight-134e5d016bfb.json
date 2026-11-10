@@ -1,0 +1,100 @@
+{
+  "schema": "sat-dengue.factory-real-preflight/v1",
+  "status": "BLOCKED",
+  "gate": "private_release_preflight",
+  "at_utc": "2026-11-10T02:22:43.748800+00:00",
+  "base_code_commit": "24ac37d84b2343ea725318b09bd563b0268c88a7",
+  "temporary_commit": "a9b6eb356aa9ca7e328e8cc1cea4359d5a9ce733",
+  "source_sha256": "c4d8625498ad64affb71630d54a7fb3feaf77c45789449aab93a694528bcf336",
+  "source_unchanged_in_temporary_checkout": true,
+  "lock_sha256": "5bd75700f0b6a9785478cf808e58544ac3d7d98bc36409c0e6086e5531a60fb7",
+  "access": {
+    "HF_TOKEN_present": false,
+    "whoami": "NOT_EXECUTED",
+    "private_release": "NOT_VERIFIED",
+    "preflight_exit_code": 3
+  },
+  "release_id": "satd-raw-173d5856",
+  "revision": "173d5856874b89d8aeb0566accc65ce7f6759820",
+  "manifest_file_sha256": "846c72ecd2e641373d55b40e7a8e2b790ea02239b44cff08e412990bcdb404fe",
+  "manifest_digest": "1b2a28a4c90d3225272c2103b27d3cef1bfb69f3a6aeb9470e4177fd3798ed01",
+  "certificate": "docs/evidence/task27/canonical-full-93ac27fd-certification.json",
+  "certificate_file_sha256": "5c1d2adc0a7967be9ee5e3398b5541cf74963ed6f6b4ee94e6f4a4838a77a966",
+  "certificate_applicability": "PASSED",
+  "expected_canonical_identity": {
+    "rows": 242352,
+    "municipalities": 1122,
+    "months": 216,
+    "start": "2007-01",
+    "end": "2024-12",
+    "semantic_digest": "de49b11bad43c35983a098ead2faa149d4e744da4172432aecdaadd828c73158",
+    "serialized_sha256": "b4562ba50def7a98dceede0b7e95feed0e799b4652939d8037f1604bef37a23d"
+  },
+  "temporary_recipe": {
+    "experiment_id": "T27ACCEPTREAL01",
+    "configuration_sha256": "e856a09522f2f3a800591a9842119d39a5de6988424ec516514e798b1706ca69",
+    "protocol_sha256": "6d72b5af22d9deb1dc918b9d69183f13a949a918ead09f262ef8674d32c1287b",
+    "status": "APPROVED",
+    "approval_scope": "TEMPORARY_TECHNICAL_ACCEPTANCE_ONLY",
+    "scientific_approval": false,
+    "official_registry_modified": false,
+    "horizons": [
+      1,
+      2
+    ],
+    "model": "xgboost_onset/v1",
+    "rounds": 4,
+    "seed": 53
+  },
+  "preparation_events": [
+    {
+      "operation": "register",
+      "exit_code": 0
+    },
+    {
+      "operation": "transition_concurrent_with_register",
+      "exit_code": 1,
+      "reason": "orchestration_error_registry_lock_rejected_concurrent_writer"
+    },
+    {
+      "operation": "transition_after_registration_completed",
+      "exit_code": 0
+    },
+    {
+      "operation": "validate",
+      "exit_code": 0
+    }
+  ],
+  "planned_kedro_command": [
+    "uv",
+    "run",
+    "--locked",
+    "--directory",
+    "pipeline",
+    "kedro",
+    "run",
+    "--pipeline",
+    "experiment_run",
+    "--params",
+    "experiment_id=T27ACCEPTREAL01"
+  ],
+  "kedro_command_executed": false,
+  "stages": {
+    "real_acquisition": "NOT_EXECUTED",
+    "canonical_build": "NOT_EXECUTED",
+    "consumed_artifact_certification": "NOT_EXECUTED",
+    "preparation": "NOT_EXECUTED",
+    "training": "NOT_EXECUTED",
+    "prediction": "NOT_EXECUTED",
+    "evaluation": "NOT_EXECUTED",
+    "execution_evidence": "NOT_EXECUTED"
+  },
+  "runtime_observations": {
+    "wall_seconds": null,
+    "peak_rss_bytes": null,
+    "metrics": null
+  },
+  "new_n3_executed": false,
+  "implementation_defect_confirmed": false,
+  "preserved_temporary_checkout": true
+}

@@ -1,0 +1,12 @@
+synthetic_smoke:
+  years: [2020, 2021, 2022, 2023, 2024]
+canonical:
+  mode: synthetic
+  workspace: data/canonical-fixture
+  tracking: false
+publication:
+  mode: synthetic
+  workspace: data/deployment-publication
+  generated_at: '2024-07-01T12:00:00+00:00'
+  procedure: synthetic-publication-v1
+  data_version: synthetic-v1

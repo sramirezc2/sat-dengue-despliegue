@@ -1,0 +1,146 @@
+{
+  "phase": "build",
+  "status": "PASSED",
+  "audit": {
+    "quarantine": {
+      "dengue_notifications": {
+        "input": 1705604,
+        "retained": 1586333,
+        "reserved": 119138,
+        "invalid_date": 133,
+        "digest": "b42c6eed13c9edd76c7d9ff60f580f40d4296f1516c431bb5ab7020c4e59189f"
+      },
+      "severe_dengue_notifications": {
+        "input": 50101,
+        "retained": 48839,
+        "reserved": 1259,
+        "invalid_date": 3,
+        "digest": "daff297445fe1f049aae838451a77acd7dcae0aed6d8d0dbc2f493df128a4134"
+      },
+      "daily_climate": {
+        "input": 7754254,
+        "retained": 7344724,
+        "reserved": 409530,
+        "invalid_date": 0,
+        "digest": "acb3dd655810ec54f869de4cf28656272de5e8419a6985a879c69c09a1ee0672"
+      }
+    },
+    "coverage": {
+      "start": "2011-06",
+      "end": "2024-12",
+      "municipalities": 1122,
+      "rows": 182886,
+      "nulls": {
+        "municipality_code": 0,
+        "year_month": 0,
+        "department_code": 0,
+        "municipality_name": 0,
+        "dengue_notifications_count": 0,
+        "dengue_grave_notifications_count": 0,
+        "total_notifications_count": 0,
+        "in_epi_coverage": 0,
+        "epi_count_status": 0,
+        "expected_days_in_month": 0,
+        "climate_days_observed": 1046,
+        "rain_mm_month_sum": 1370,
+        "surface_runoff_mm_month_sum": 1370,
+        "total_evaporation_mm_month_sum_ecmwf": 1370,
+        "solar_radiation_mj_m2_month_sum": 1370,
+        "temp_mean_c_month_mean": 1370,
+        "dewpoint_mean_c_month_mean": 1370,
+        "soil_water_l1_month_mean": 1370,
+        "wind_u_ms_month_mean": 1370,
+        "wind_v_ms_month_mean": 1370,
+        "rain_mm_month_sum_valid_days": 1046,
+        "surface_runoff_mm_month_sum_valid_days": 1046,
+        "total_evaporation_mm_month_sum_ecmwf_valid_days": 1046,
+        "solar_radiation_mj_m2_month_sum_valid_days": 1046,
+        "temp_mean_c_month_mean_valid_days": 1046,
+        "dewpoint_mean_c_month_mean_valid_days": 1046,
+        "soil_water_l1_month_mean_valid_days": 1046,
+        "wind_u_ms_month_mean_valid_days": 1046,
+        "wind_v_ms_month_mean_valid_days": 1046,
+        "p25_canal_t": 67320,
+        "p50_canal_t": 67320,
+        "p75_canal_t": 67320,
+        "zona_canal_t": 67320,
+        "month_of_year": 0,
+        "dengue_notifications_count_lag1": 1122,
+        "dengue_notifications_count_lag2": 2244,
+        "dengue_notifications_count_lag3": 3366,
+        "dengue_notifications_count_lag12": 13464,
+        "dengue_grave_notifications_count_lag1": 1122,
+        "dengue_grave_notifications_count_lag2": 2244,
+        "dengue_grave_notifications_count_lag3": 3366,
+        "dengue_grave_notifications_count_lag12": 13464,
+        "total_notifications_count_lag1": 1122,
+        "total_notifications_count_lag2": 2244,
+        "total_notifications_count_lag3": 3366,
+        "total_notifications_count_lag12": 13464,
+        "history_valid_years_h5_t1": 0,
+        "p25_h5_t1": 66198,
+        "p75_h5_t1": 66198,
+        "history_valid_years_h5_t2": 0,
+        "p25_h5_t2": 65076,
+        "p75_h5_t2": 65076
+      }
+    },
+    "stages": {
+      "epidemiology": {
+        "dengue_notifications": {
+          "input": 1586333,
+          "accepted": 1308130,
+          "rejected": {
+            "invalid_residence": 0,
+            "outside_period": 270901,
+            "unknown_municipality": 7302,
+            "wrong_event": 0
+          }
+        },
+        "severe_dengue_notifications": {
+          "input": 48839,
+          "accepted": 20022,
+          "rejected": {
+            "invalid_residence": 0,
+            "outside_period": 28334,
+            "unknown_municipality": 483,
+            "wrong_event": 0
+          }
+        }
+      },
+      "climate": {
+        "input": 7344724,
+        "accepted": 5536060,
+        "outside_period": 1808664
+      },
+      "monthly_climate_rows": 181840
+    }
+  },
+  "tracking": {
+    "experiment_name": "satd-canonical",
+    "run_id": "23f9dab7bb744acbbbba355003ef209d",
+    "parent_run_id": null,
+    "status": "FINISHED",
+    "tracking_enabled": true,
+    "artifact_digest": "cc417d702f2ddf1e0e0d3bef6c54eff18bf8ad2bf5200484d52d55e2d6bb5fbd"
+  },
+  "semantic_digest": "a3326015581fd81b748820e1bce3ca2f4c5c88c2be96f08f7c822e37eb7dd722",
+  "serialized_sha256": "8fc8355af11644412b1d32a41f00ab3c369bd4de980bb0acd963c3a8c64e652c",
+  "serialized_bytes": 66852080,
+  "peak_rss_bytes": 10560405504,
+  "wall_seconds": 258.44549908399495,
+  "cpu_seconds": 257.598503,
+  "stages_seconds": {
+    "integrity_before": 1.192267250000441,
+    "projection": 7.9917863750015385,
+    "quarantine": 2.407106125006976,
+    "geography": 0.0048587920027785,
+    "epidemiology": 8.670016292002401,
+    "daily_climate": 105.23468325000431,
+    "monthly_climate": 95.2388516669962,
+    "panel": 24.803941416997986,
+    "validation": 3.550821333003114,
+    "integrity_after": 1.2622607079974841,
+    "serialization": 5.556724542002485
+  }
+}

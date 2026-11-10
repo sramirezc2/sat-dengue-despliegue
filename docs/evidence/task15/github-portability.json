@@ -1,0 +1,342 @@
+{
+  "checked_at_utc": "2026-11-07T23:24:00Z",
+  "branch_head": "61159d9b96c0bfd76cd1af7b5b6dc9e7cc4d4849",
+  "pr_test_merge": "21346107449ff9fdec5aa425dc2bb75128d16eb6",
+  "pr": {
+    "url": "https://github.com/sramirezc2/sat-dengue-despliegue/pull/1",
+    "state": "open",
+    "merged": false,
+    "mergeable": true,
+    "reviews_count": 0,
+    "ruleset": "not_verified"
+  },
+  "runs": [
+    {
+      "id": 42424636002,
+      "name": "Publication Contract",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636002",
+      "jobs": [
+        {
+          "id": 128560175294,
+          "name": "Publication contract",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Detect relevant paths",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install API dependencies",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate every published result with the API contract",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run oven-sh/setup-bun@v2",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install locked dashboard dependencies",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate every published result with the dashboard contract",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run astral-sh/setup-uv@v10.3.3",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install locked publication environment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build and promote synthetic package",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate generated and existing documents with both consumers",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 42424636020,
+      "name": "Dashboard CI",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636020",
+      "jobs": [
+        {
+          "id": 128560175705,
+          "name": "Dashboard quality",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Detect relevant paths",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run oven-sh/setup-bun@v2",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install locked dashboard dependencies",
+              "conclusion": "success"
+            },
+            {
+              "name": "Lint dashboard",
+              "conclusion": "success"
+            },
+            {
+              "name": "Test dashboard",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build dashboard",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 42424636017,
+      "name": "API CI",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636017",
+      "jobs": [
+        {
+          "id": 128560175331,
+          "name": "API tests",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Detect relevant paths",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install API dependencies",
+              "conclusion": "success"
+            },
+            {
+              "name": "Test API",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 42424636145,
+      "name": "Pipeline CI",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636145",
+      "jobs": [
+        {
+          "id": 128560175617,
+          "name": "Pipeline quality",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Detect relevant paths",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run astral-sh/setup-uv@v10.3.3",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check lockfile",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install locked pipeline dependencies",
+              "conclusion": "success"
+            },
+            {
+              "name": "Lint pipeline",
+              "conclusion": "success"
+            },
+            {
+              "name": "Test pipeline",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run synthetic Kedro pipeline",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build canonical synthetic fixture",
+              "conclusion": "success"
+            },
+            {
+              "name": "Certify canonical fixture N=3",
+              "conclusion": "success"
+            },
+            {
+              "name": "Publish synthetic deployment fixture",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128560175842,
+          "name": "Pipeline portability (Ubuntu)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run astral-sh/setup-uv@v10.3.3",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run locked portability gates",
+              "conclusion": "success"
+            },
+            {
+              "name": "Upload small environment receipt",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128560175981,
+          "name": "Pipeline portability (Windows)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run astral-sh/setup-uv@v10.3.3",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run locked portability gates",
+              "conclusion": "success"
+            },
+            {
+              "name": "Upload small environment receipt",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 128560176027,
+          "name": "Pipeline portability (macOS)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run astral-sh/setup-uv@v10.3.3",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run locked portability gates",
+              "conclusion": "success"
+            },
+            {
+              "name": "Upload small environment receipt",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 13595301387,
+      "name": "pipeline-portability-macOS",
+      "size_in_bytes": 1253,
+      "digest": "sha256:7a7a83235e6634b950378d4b0316be1509baf49b4f5444780a3c8f6da098ff5e",
+      "url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636145/artifacts/13595301387"
+    },
+    {
+      "id": 13594986854,
+      "name": "pipeline-portability-Windows",
+      "size_in_bytes": 1265,
+      "digest": "sha256:7840e8fc188dad16fb3a8f801ce010481f5510fe2fbd860bdd0769b8d9dee8cb",
+      "url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636145/artifacts/13594986854"
+    },
+    {
+      "id": 13594821952,
+      "name": "pipeline-portability-Ubuntu",
+      "size_in_bytes": 1300,
+      "digest": "sha256:d07ebadbd4a9863eba10a1599e9e34515f8b3ae2e4cff6bc1432881cc7b8beb0",
+      "url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42424636145/artifacts/13594821952"
+    }
+  ]
+}

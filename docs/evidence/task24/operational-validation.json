@@ -1,0 +1,158 @@
+{
+  "schema": "sat-dengue.operational-validation/v1",
+  "task": 24,
+  "date": "2026-11-09",
+  "tested_commit": "5768331b858fd887d423ad9237acae6f9dddcfae",
+  "initial_commit": "db442881d342606a067dc8e3515efbd0438225e4",
+  "status": "PASSED",
+  "scope": "Local operational phase 1 only; T25-T27 pending",
+  "baseline": {
+    "tree": "CLEAN",
+    "ruff": "PASSED",
+    "registry": "VALID",
+    "preservation": "PASSED",
+    "diff_check": "FAILED_PREEXISTING: docs/experiments/contrato.md EOF blank line; fixed without scientific text changes"
+  },
+  "regressions": {
+    "new_tests": 29,
+    "initial_red": {
+      "acquisition": 16,
+      "command": 5
+    },
+    "focused_t22": 162,
+    "focused_t23": 51,
+    "clean_checkout_new_tests": 29
+  },
+  "commands": [
+    {
+      "command": "uv lock --check --project pipeline",
+      "result": "PASSED"
+    },
+    {
+      "command": "uv sync --locked --project pipeline",
+      "result": "PASSED"
+    },
+    {
+      "command": "uv run --directory pipeline ruff check .",
+      "result": "PASSED"
+    },
+    {
+      "command": "uv run --directory pipeline pytest",
+      "result": "PASSED",
+      "tests": 578,
+      "warnings": 6,
+      "seconds": 64.47
+    },
+    {
+      "command": "uv run --directory pipeline python -m sat_dengue_pipeline.experiment_management validate",
+      "result": "VALID"
+    },
+    {
+      "command": "uv run --directory pipeline python tools/check_experiment_preservation.py",
+      "result": "PASSED"
+    },
+    {
+      "command": "(cd app/api && python -m pytest)",
+      "result": "PASSED",
+      "tests": 35,
+      "warnings": 1
+    },
+    {
+      "command": "(cd app/dashboard && bun install --frozen-lockfile)",
+      "result": "PASSED",
+      "lock_changed": false
+    },
+    {
+      "command": "(cd app/dashboard && bun run lint)",
+      "result": "PASSED",
+      "warnings": 6
+    },
+    {
+      "command": "(cd app/dashboard && bun run test)",
+      "result": "PASSED",
+      "tests": 55
+    },
+    {
+      "command": "(cd app/dashboard && NITRO_PRESET=node_server bun run build)",
+      "result": "PASSED"
+    },
+    {
+      "command": "validate_publication_consumers.py --directory ../datos/resultados --api-python <existing-api-interpreter>",
+      "result": "PASSED",
+      "pydantic": 22,
+      "zod": 22
+    },
+    {
+      "command": "skill-creator/scripts/quick_validate.py <each-of-four-existing-skills>",
+      "result": "PASSED",
+      "skills": 4
+    },
+    {
+      "command": "uv run --directory pipeline pytest tests/test_agent_skills.py tests/test_checkout_integrity.py",
+      "result": "PASSED",
+      "tests": 10
+    },
+    {
+      "command": "uv run --directory pipeline kedro run --pipelines synthetic",
+      "result": "PASSED",
+      "scientific_evidence": false
+    },
+    {
+      "command": "git diff --check origin/main...HEAD",
+      "result": "PASSED"
+    }
+  ],
+  "clean_checkout": {
+    "commit": "5768331b858fd887d423ad9237acae6f9dddcfae",
+    "path_with_spaces": true,
+    "initial_tree": "CLEAN",
+    "locked_install": "PASSED",
+    "ruff": "PASSED",
+    "new_tests": 29,
+    "orchestrator_help": "PASSED",
+    "absent_cache": "CONTROLLED_VALUE_ERROR_WITH_ACTION",
+    "final_tree": "CLEAN",
+    "private_data_used": false,
+    "temporary_resources": "REMOVED_AFTER_VALIDATION"
+  },
+  "preservation": {
+    "baseline_files": 395,
+    "unchanged_existing_files": 386,
+    "scientific_evidence_and_product_subset": 211,
+    "protected_files": 49,
+    "published_json": 22,
+    "previous_t16_receipts": 16,
+    "EXP001": "UNCHANGED",
+    "EXP002": "UNCHANGED",
+    "existing_evidence": "UNCHANGED",
+    "data_and_scientific_configuration": "UNCHANGED",
+    "api_dashboard_contracts": "UNCHANGED",
+    "contract_proposal": "EOF_ONLY",
+    "t16_n3_identity": "899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f"
+  },
+  "hygiene": {
+    "local_links": 85,
+    "anchors": 6,
+    "workflow_filters": {
+      "api-ci.yml": 1,
+      "dashboard-ci.yml": 1,
+      "pipeline-ci.yml": 1,
+      "publication-contract.yml": 1
+    },
+    "secret_candidates": 0,
+    "files_over_5MiB": 0,
+    "prohibited_imports": 0,
+    "contract_change": "EOF only"
+  },
+  "limitations": [
+    "Native Windows/Linux checks for these commits remain T26; clean checkout tested locally on macOS.",
+    "Existing OmegaConf, API deprecation, dashboard refresh and build advisory messages remain.",
+    "Secret scan is pattern-based; not a guarantee against obfuscated secrets.",
+    "No private acquisition, real canonical construction, real N=3, scientific training or experiment CLI was executed.",
+    "Full pytest uses isolated artificial fixtures, including model and experiment-management contract tests.",
+    "Remote CI, push, independent review, ruleset and merge audit belong to later authorized work."
+  ],
+  "push": false,
+  "merge": false,
+  "scientific_changes": false
+}

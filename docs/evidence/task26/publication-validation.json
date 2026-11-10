@@ -1,0 +1,237 @@
+{
+  "schema": "sat-dengue.remote-checks/v1",
+  "head_sha": "524c38ecd09c0879d96b301d38aa79c79b2da2cc",
+  "status": "PASSED",
+  "checks": [
+    {
+      "id": 129465554108,
+      "name": "API tests",
+      "head_sha": "524c38ecd09c0879d96b301d38aa79c79b2da2cc",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42706782946/job/129465554108",
+      "started_at": "2026-11-09T21:53:45Z",
+      "completed_at": "2026-11-09T21:53:58Z",
+      "duration_seconds": 13.0,
+      "integration_id": 15368,
+      "warnings_observed": [
+        "Existing Starlette TestClient/httpx deprecation"
+      ]
+    },
+    {
+      "id": 129465542755,
+      "name": "Dashboard quality",
+      "head_sha": "524c38ecd09c0879d96b301d38aa79c79b2da2cc",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42706780376/job/129465542755",
+      "started_at": "2026-11-09T21:53:43Z",
+      "completed_at": "2026-11-09T21:54:04Z",
+      "duration_seconds": 21.0,
+      "integration_id": 15368,
+      "warnings_observed": [
+        "Six existing react-refresh lint warnings",
+        "Existing Vite tsconfig-paths advisory"
+      ]
+    },
+    {
+      "id": 129465548660,
+      "name": "Pipeline portability (Ubuntu)",
+      "head_sha": "524c38ecd09c0879d96b301d38aa79c79b2da2cc",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42706780688/job/129465548660",
+      "started_at": "2026-11-09T21:53:43Z",
+      "completed_at": "2026-11-09T21:55:47Z",
+      "duration_seconds": 124.0,
+      "integration_id": 15368,
+      "warnings_observed": []
+    },
+    {
+      "id": 129465548361,
+      "name": "Pipeline portability (Windows)",
+      "head_sha": "524c38ecd09c0879d96b301d38aa79c79b2da2cc",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42706780688/job/129465548361",
+      "started_at": "2026-11-09T21:53:44Z",
+      "completed_at": "2026-11-09T21:59:31Z",
+      "duration_seconds": 347.0,
+      "integration_id": 15368,
+      "warnings_observed": []
+    },
+    {
+      "id": 129465548679,
+      "name": "Pipeline portability (macOS)",
+      "head_sha": "524c38ecd09c0879d96b301d38aa79c79b2da2cc",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42706780688/job/129465548679",
+      "started_at": "2026-11-09T21:53:45Z",
+      "completed_at": "2026-11-09T21:57:02Z",
+      "duration_seconds": 197.0,
+      "integration_id": 15368,
+      "warnings_observed": []
+    },
+    {
+      "id": 129465549026,
+      "name": "Pipeline quality",
+      "head_sha": "524c38ecd09c0879d96b301d38aa79c79b2da2cc",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42706780688/job/129465549026",
+      "started_at": "2026-11-09T21:53:45Z",
+      "completed_at": "2026-11-09T21:56:31Z",
+      "duration_seconds": 166.0,
+      "integration_id": 15368,
+      "warnings_observed": [
+        "Existing OmegaConf resolver deprecation"
+      ]
+    },
+    {
+      "id": 129465544094,
+      "name": "Publication contract",
+      "head_sha": "524c38ecd09c0879d96b301d38aa79c79b2da2cc",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/42706780272/job/129465544094",
+      "started_at": "2026-11-09T21:53:43Z",
+      "completed_at": "2026-11-09T21:54:22Z",
+      "duration_seconds": 39.0,
+      "integration_id": 15368,
+      "warnings_observed": [
+        "Existing OmegaConf resolver deprecation"
+      ]
+    }
+  ],
+  "portable_receipts": [
+    {
+      "artifact": "pipeline-portability-Windows",
+      "artifact_id": 13713913278,
+      "commit": "fba488cfcdc131b1cec01befe54b220f72500901",
+      "tree": "a5e033d5ba57aae9d0faa54ae0ca1cff5bebf0f6",
+      "system": "Windows",
+      "architecture": "AMD64",
+      "result": "PASSED",
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 578
+      },
+      "portability_tests": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 16
+      },
+      "pytest_warnings": 4,
+      "dirty_before": false,
+      "dirty_after": false
+    },
+    {
+      "artifact": "pipeline-portability-Ubuntu",
+      "artifact_id": 13713244659,
+      "commit": "fba488cfcdc131b1cec01befe54b220f72500901",
+      "tree": "a5e033d5ba57aae9d0faa54ae0ca1cff5bebf0f6",
+      "system": "Linux",
+      "architecture": "x86_64",
+      "result": "PASSED",
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 578
+      },
+      "portability_tests": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 16
+      },
+      "pytest_warnings": 6,
+      "dirty_before": false,
+      "dirty_after": false
+    },
+    {
+      "artifact": "pipeline-portability-macOS",
+      "artifact_id": 13712938981,
+      "commit": "fba488cfcdc131b1cec01befe54b220f72500901",
+      "tree": "a5e033d5ba57aae9d0faa54ae0ca1cff5bebf0f6",
+      "system": "Darwin",
+      "architecture": "arm64",
+      "result": "PASSED",
+      "tests": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 578
+      },
+      "portability_tests": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 16
+      },
+      "pytest_warnings": 6,
+      "dirty_before": false,
+      "dirty_after": false
+    }
+  ],
+  "checkout_identity_note": "Check API head_sha identifies the PR head; portability receipts identify its temporary merge checkout, whose tree was verified equal to that head.",
+  "local_gate": {
+    "pipeline_tests": 578,
+    "pipeline_warnings": 6,
+    "pipeline_seconds": 63.72,
+    "api_tests": 35,
+    "api_warnings": 1,
+    "dashboard_tests": 55,
+    "dashboard_lint_warnings": 6,
+    "lock_sync_ruff": "PASSED",
+    "dashboard_frozen_lint_test_build": "PASSED",
+    "contracts": {
+      "pydantic": 22,
+      "zod": 22
+    },
+    "registry": "VALID",
+    "official_skill_validators": 4,
+    "skills_checkout_tests": 10,
+    "preservation": {
+      "protected_files": 49,
+      "published_json": 22,
+      "previous_t16_receipts": 16,
+      "EXP001": "UNCHANGED",
+      "EXP002": "UNCHANGED",
+      "t16_n3_identity": "899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f"
+    },
+    "hygiene": {
+      "status": "PASSED",
+      "local_links": 174,
+      "anchors": 17,
+      "json_evidence": 53,
+      "skills_validators": 4,
+      "workflow_filters": {
+        "api-ci.yml": "PASSED",
+        "dashboard-ci.yml": "PASSED",
+        "pipeline-ci.yml": "PASSED",
+        "publication-contract.yml": "PASSED"
+      },
+      "secret_candidates": 0,
+      "large_files": 0,
+      "prohibited_imports": 0,
+      "modified_notebooks": 0,
+      "outgoing_large_blobs": 0
+    }
+  },
+  "publication": {
+    "branch": "feature/pipeline-e2e",
+    "pull_request": 1,
+    "previous_remote_sha": "db442881d342606a067dc8e3515efbd0438225e4",
+    "push": "NORMAL_EXPLICIT_BRANCH_ONLY",
+    "pr_body": "UPDATED_WITH_AUTHORIZATION",
+    "integration_write_limit": "GitHub connector 403; authenticated gh CLI update succeeded",
+    "merge": false,
+    "ruleset_modified": false
+  },
+  "closure_requirement": "The documentation commit containing this snapshot must also be published and all its checks must succeed before T26 is effectively complete; verify that final SHA externally."
+}

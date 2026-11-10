@@ -12,9 +12,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app/api/sat_api ./sat_api
 
-# Default para que la imagen arranque sin montajes; en produccion es un volumen.
+# Los archivos versionados siembran un volumen nuevo en el primer arranque.
 ENV SATD_DIRECTORIO_RESULTADOS=/datos/resultados
-RUN mkdir -p /datos/resultados
+COPY datos/resultados /datos/resultados
 
 # Usuario sin privilegios, dueno del directorio donde se sincroniza desde S3.
 RUN useradd --system --create-home --uid 10001 sat \

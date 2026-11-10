@@ -1,0 +1,246 @@
+{
+  "schema": "sat-dengue.operational-acceptance/v1",
+  "validation_id": "operational-acceptance-0a4c4512a5c64a538829d999cfb58c5d",
+  "at_utc": "2026-11-09T23:33:15.078255+00:00",
+  "status": "PASS",
+  "head_tested": "002f122f09a80743041e3a71c6fe0936c4cbc960",
+  "base_revision": "8202571e7ba3e0d674e76ec77b9f48c853ffeabf",
+  "scope": "DEC-029: additional immutable operational acquisition/integrity release; provisional canonical only",
+  "authentication": {
+    "env_present": true,
+    "whoami_user": "mauro114",
+    "organizations": [
+      "sat-dengue"
+    ],
+    "cached_credentials_used": false,
+    "secret_values_printed_or_written": false
+  },
+  "release": {
+    "repository": "sat-dengue/data_raw",
+    "revision": "173d5856874b89d8aeb0566accc65ce7f6759820",
+    "release_id": "satd-raw-173d5856",
+    "private_verified": true,
+    "manifest": "pipeline/conf/releases/operational-raw-173d5856.json",
+    "manifest_file_sha256": "ee36be0affe23b1bad99044853e48f6396c556f39851852c769002d029f8b550",
+    "manifest_content_digest": "dbe07f315010ac282f0dd0b0faee4b901dc478f723a8bd1ff3e18fe17e87aaac",
+    "historical_manifest_file_sha256": "667f4273add97d874ea70344fc698c454c499bea5e9d3e3c5e74c82d8eb70f0c",
+    "only_changed_input": "google_earth_engine.csv",
+    "local_file_integrity": "PASS",
+    "files": [
+      {
+        "name": "Divipola-municipios.md",
+        "size_bytes": 209867,
+        "sha256": "72eabcea0ff26370d23b9688e8d8f2246946cc815c040ccf1a6966b37a1de9f3"
+      },
+      {
+        "name": "divipola-provenance.json",
+        "size_bytes": 925,
+        "sha256": "92091306f0130910f27de999776b5cf4ed36b7dd7c89bd724d58caeb74f8c158"
+      },
+      {
+        "name": "dengue.csv",
+        "size_bytes": 875694283,
+        "sha256": "58d277cfef7a60c28d488eefe4e7a1a7bf0f7b0df3dd88245971cd7b3d32c84b"
+      },
+      {
+        "name": "dengue_grave.csv",
+        "size_bytes": 24537734,
+        "sha256": "3d60e96ccbedc35a19a8f5f54be8d786aa599813259c914f131522bf17dd1d70"
+      },
+      {
+        "name": "google_earth_engine.csv",
+        "size_bytes": 1721511337,
+        "sha256": "a92fd7c7e013136280ba3766b870a303c22ad6196b5411a3fefb81b46670ec8e"
+      }
+    ],
+    "excel_downloaded": false,
+    "mutable_revision_used_for_acquisition_or_reproduction": false
+  },
+  "january_2020": {
+    "status": "PASS",
+    "revision": "173d5856874b89d8aeb0566accc65ce7f6759820",
+    "observed": {
+      "municipalities": 1122,
+      "days": 31,
+      "municipality_day_keys": 34782,
+      "rows": 34782,
+      "unexpected_duplicates": 0,
+      "departments": 33,
+      "matches_divipola": true,
+      "complete_cartesian_grid": true,
+      "meta_tolima_only_excluded": true
+    },
+    "method": "Read only date/mpio_cdpmp in chunks; filter January 2020 before key normalization; compare exact DIVIPOLA x 31 ISO dates Cartesian set and multiplicities",
+    "microdata_rows_emitted": false
+  },
+  "clean_clone": {
+    "local_clone_no_hardlinks": true,
+    "head_matches": true,
+    "initial_tree_clean": true,
+    "final_tree_clean": true,
+    "locked_install_command": "uv sync --locked --project pipeline",
+    "locked_install_exit_code": 0,
+    "new_environment": true,
+    "initial_acquisition_command": "uv run --locked --directory pipeline python tools/acquire_private_raw.py --manifest conf/releases/operational-raw-173d5856.json",
+    "initial_acquisition_exit_code": 0,
+    "acquisition_receipts": [
+      {
+        "execution_id": "5feb568c57ce48e2853a34e7d8b7259b",
+        "at_utc": "2026-11-09T23:24:54.898307+00:00",
+        "status": "VERIFIED",
+        "release_id": "satd-raw-173d5856",
+        "revision": "173d5856874b89d8aeb0566accc65ce7f6759820",
+        "manifest_sha256": "dbe07f315010ac282f0dd0b0faee4b901dc478f723a8bd1ff3e18fe17e87aaac",
+        "files": [
+          {
+            "name": "Divipola-municipios.md",
+            "size_bytes": 209867,
+            "sha256": "72eabcea0ff26370d23b9688e8d8f2246946cc815c040ccf1a6966b37a1de9f3"
+          },
+          {
+            "name": "divipola-provenance.json",
+            "size_bytes": 925,
+            "sha256": "92091306f0130910f27de999776b5cf4ed36b7dd7c89bd724d58caeb74f8c158"
+          },
+          {
+            "name": "dengue.csv",
+            "size_bytes": 875694283,
+            "sha256": "58d277cfef7a60c28d488eefe4e7a1a7bf0f7b0df3dd88245971cd7b3d32c84b"
+          },
+          {
+            "name": "dengue_grave.csv",
+            "size_bytes": 24537734,
+            "sha256": "3d60e96ccbedc35a19a8f5f54be8d786aa599813259c914f131522bf17dd1d70"
+          },
+          {
+            "name": "google_earth_engine.csv",
+            "size_bytes": 1721511337,
+            "sha256": "a92fd7c7e013136280ba3766b870a303c22ad6196b5411a3fefb81b46670ec8e"
+          }
+        ],
+        "excel_downloaded": false,
+        "elapsed_seconds": 56.856101374998616
+      },
+      {
+        "execution_id": "c856655eaa9e45afb8c7cc7d8d73c15a",
+        "at_utc": "2026-11-09T23:28:05.344379+00:00",
+        "status": "VERIFIED",
+        "release_id": "satd-raw-173d5856",
+        "revision": "173d5856874b89d8aeb0566accc65ce7f6759820",
+        "manifest_sha256": "dbe07f315010ac282f0dd0b0faee4b901dc478f723a8bd1ff3e18fe17e87aaac",
+        "files": [
+          {
+            "name": "Divipola-municipios.md",
+            "size_bytes": 209867,
+            "sha256": "72eabcea0ff26370d23b9688e8d8f2246946cc815c040ccf1a6966b37a1de9f3"
+          },
+          {
+            "name": "divipola-provenance.json",
+            "size_bytes": 925,
+            "sha256": "92091306f0130910f27de999776b5cf4ed36b7dd7c89bd724d58caeb74f8c158"
+          },
+          {
+            "name": "dengue.csv",
+            "size_bytes": 875694283,
+            "sha256": "58d277cfef7a60c28d488eefe4e7a1a7bf0f7b0df3dd88245971cd7b3d32c84b"
+          },
+          {
+            "name": "dengue_grave.csv",
+            "size_bytes": 24537734,
+            "sha256": "3d60e96ccbedc35a19a8f5f54be8d786aa599813259c914f131522bf17dd1d70"
+          },
+          {
+            "name": "google_earth_engine.csv",
+            "size_bytes": 1721511337,
+            "sha256": "a92fd7c7e013136280ba3766b870a303c22ad6196b5411a3fefb81b46670ec8e"
+          }
+        ],
+        "excel_downloaded": false,
+        "elapsed_seconds": 2.684163833999264
+      }
+    ],
+    "requested_command": "uv run --locked --directory pipeline python tools/build_approved_canonical.py",
+    "command_exit_code": 0,
+    "command_execution_count": 1,
+    "raw_cache_reused_after_integrity_validation": true,
+    "derived_cache_reused": false,
+    "wall_seconds": 282.61,
+    "user_seconds": 250.01,
+    "system_seconds": 10.52,
+    "maximum_resident_set_size_bytes": 12160942080,
+    "memory_method": "macOS /usr/bin/time -l; maximum RSS, not total simultaneous process-tree memory"
+  },
+  "canonical_provisional": {
+    "status": "PASS",
+    "certified": false,
+    "trained": false,
+    "published": false,
+    "rows": 182886,
+    "unique_municipality_month_keys": 182886,
+    "municipalities": 1122,
+    "months": 163,
+    "start": "2011-06",
+    "end": "2024-12",
+    "columns": 52,
+    "features": 33,
+    "semantic_digest": "8ba33ecb1c1b942506d9d2b54faeb1592bd04c472ba23e35a871571b8e71183e",
+    "serialized_sha256": "c71e5c1f042daec3eebbab7919bdc29619340f5e1158527b4ca934dd95639711",
+    "size_bytes": 66962954,
+    "artifact_path_relative_to_clone": "pipeline/data/canonical-approved/e40a0c57ed284fcaa969c534e797d6f5/provisional/8ba33ecb1c1b942506d9d2b54faeb1592bd04c472ba23e35a871571b8e71183e/canonical.json"
+  },
+  "focused_validation": {
+    "status": "PASS",
+    "tests": 116,
+    "elapsed_seconds": 2.57,
+    "test_files": [
+      "test_operational_releases.py",
+      "test_operational_command.py",
+      "test_operational_acquisition.py",
+      "test_private_release.py",
+      "test_raw_canonical.py"
+    ],
+    "new_tests": 9,
+    "additional_historical_helper_cases": 4,
+    "initial_new_failures_before_implementation": 5,
+    "ruff_changed_python_files": "PASS",
+    "full_suites_repeated": false,
+    "historical_real_n3_rerun": false
+  },
+  "preservation": {
+    "status": "PASS",
+    "baseline_protected_files": 49,
+    "published_json": 22,
+    "previous_t16_receipts": 16,
+    "existing_closed_files_compared_to_base": 90,
+    "all_existing_closed_files_byte_identical": true,
+    "EXP001_EXP002_unchanged": true,
+    "t16_n3_identity": "899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f",
+    "registry": "VALID"
+  },
+  "warnings": [
+    "Inherited VIRTUAL_ENV differs; uv ignored it",
+    "OmegaConf register_new_resolver deprecation: 3 occurrences"
+  ],
+  "omissions": {
+    "full_suites": "Not repeated by user instruction",
+    "historical_release_real_execution": "Preserved closed evidence and focused coexistence tests; no rerun of T16",
+    "remote_governance": "Not queried or changed in this acceptance"
+  },
+  "task_status": {
+    "T27": "BLOQUEADA",
+    "progress": "26/27",
+    "operational_acceptance": "PASS",
+    "merge_audit": "NOT_READY",
+    "pending": [
+      "Remote checks on final published HEAD under future authorization",
+      "Required ruleset controls and independent final-HEAD approval"
+    ]
+  },
+  "publication": {
+    "push": false,
+    "merge": false,
+    "force_push": false,
+    "ruleset_changed": false
+  },
+  "temporary_artifacts": "Retained locally; private raw files, provisional canonical and logs remain outside Git"
+}

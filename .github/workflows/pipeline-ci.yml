@@ -1,0 +1,124 @@
+name: Pipeline CI
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Pipeline quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # Keep the required check reporting even when the component is unchanged.
+      - name: Detect relevant paths
+        id: paths
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif git diff --name-only "$BASE_SHA...$HEAD_SHA" > /tmp/changed-paths; then
+            if grep -E '^(pipeline/|scripts/construir_resultados\.py$|datos/resultados/|app/api/sat_api/contrato/|app/dashboard/src/lib/dashboard-contract\.ts$|\.github/workflows/pipeline-ci\.yml$)' /tmp/changed-paths; then
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "changed=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            exit 1
+          fi
+      - uses: actions/setup-python@v7
+        if: steps.paths.outputs.changed == 'true'
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v10.3.3
+        if: steps.paths.outputs.changed == 'true'
+        with:
+          version: '0.11.19'
+          enable-cache: false
+      - name: Check lockfile
+        if: steps.paths.outputs.changed == 'true'
+        run: uv lock --check --project pipeline
+      - name: Install locked pipeline dependencies
+        if: steps.paths.outputs.changed == 'true'
+        run: uv sync --locked --project pipeline
+      - name: Lint pipeline
+        if: steps.paths.outputs.changed == 'true'
+        run: uv run --directory pipeline ruff check .
+      - name: Test pipeline
+        if: steps.paths.outputs.changed == 'true'
+        run: uv run --directory pipeline pytest
+      - name: Run synthetic Kedro pipeline
+        if: steps.paths.outputs.changed == 'true'
+        run: uv run --directory pipeline kedro run --pipelines synthetic
+      - name: Build canonical synthetic fixture
+        if: steps.paths.outputs.changed == 'true'
+        run: uv run --directory pipeline kedro run --pipelines canonical_build
+      - name: Certify canonical fixture N=3
+        if: steps.paths.outputs.changed == 'true'
+        run: uv run --directory pipeline kedro run --pipelines canonical_reproducibility
+      - name: Publish synthetic deployment fixture
+        if: steps.paths.outputs.changed == 'true'
+        run: uv run --directory pipeline kedro run --pipelines deployment_publication
+
+  portability:
+    name: Pipeline portability (${{ matrix.platform }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: Ubuntu
+          - os: windows-latest
+            platform: Windows
+          - os: macos-latest
+            platform: macOS
+    env:
+      DO_NOT_TRACK: '1'
+      HF_HUB_OFFLINE: '1'
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      MLFLOW_DISABLE_TELEMETRY: 'true'
+      MLFLOW_DISABLE_AGENT_HINT: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: '0.11.19'
+          enable-cache: false
+      # A single Python coordinator calls the unchanged CLI on each native shell.
+      # No Bash, environment dump, provider credentials or scientific source data.
+      - name: Install macOS OpenMP runtime
+        if: runner.os == 'macOS'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: '1'
+        run: brew install libomp
+      - name: Run locked portability gates
+        run: python pipeline/tools/check_portability.py
+      - name: Upload small environment receipt
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pipeline-portability-${{ matrix.platform }}
+          path: pipeline/data/portability/receipt.json
+          if-no-files-found: error
+          retention-days: 14

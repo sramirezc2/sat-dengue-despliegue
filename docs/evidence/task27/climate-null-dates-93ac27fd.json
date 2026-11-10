@@ -1,0 +1,619 @@
+{
+  "schema": "sat-dengue.climate-missingness/v1",
+  "release_id": "satd-raw-173d5856",
+  "revision": "173d5856874b89d8aeb0566accc65ce7f6759820",
+  "scope_start": "2007-01-01",
+  "scope_end": "2024-12-31",
+  "raw_null_keys_all_dates": 0,
+  "complete_daily_keys_in_scope_for_affected_municipalities": 13150,
+  "municipalities": [
+    {
+      "municipality_code": "88001",
+      "municipality_name": "SAN ANDRÉS",
+      "variables": [
+        {
+          "variable": "rain_mm_day",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "surface_runoff_mm_day",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "total_evaporation_mm_day_ecmwf",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "solar_radiation_mj_m2_day",
+          "missing_values": 5943,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2007-03-04",
+              "days": 63
+            },
+            {
+              "start": "2007-03-22",
+              "end": "2007-09-22",
+              "days": 185
+            },
+            {
+              "start": "2007-10-11",
+              "end": "2008-03-03",
+              "days": 145
+            },
+            {
+              "start": "2008-03-21",
+              "end": "2008-09-21",
+              "days": 185
+            },
+            {
+              "start": "2008-10-10",
+              "end": "2009-03-03",
+              "days": 145
+            },
+            {
+              "start": "2009-03-22",
+              "end": "2009-09-22",
+              "days": 185
+            },
+            {
+              "start": "2009-10-10",
+              "end": "2010-03-03",
+              "days": 145
+            },
+            {
+              "start": "2010-03-22",
+              "end": "2010-09-22",
+              "days": 185
+            },
+            {
+              "start": "2010-10-11",
+              "end": "2011-03-04",
+              "days": 145
+            },
+            {
+              "start": "2011-03-22",
+              "end": "2011-09-22",
+              "days": 185
+            },
+            {
+              "start": "2011-10-11",
+              "end": "2012-03-03",
+              "days": 145
+            },
+            {
+              "start": "2012-03-21",
+              "end": "2012-09-21",
+              "days": 185
+            },
+            {
+              "start": "2012-10-10",
+              "end": "2013-03-03",
+              "days": 145
+            },
+            {
+              "start": "2013-03-22",
+              "end": "2013-09-22",
+              "days": 185
+            },
+            {
+              "start": "2013-10-10",
+              "end": "2014-03-03",
+              "days": 145
+            },
+            {
+              "start": "2014-03-22",
+              "end": "2014-09-22",
+              "days": 185
+            },
+            {
+              "start": "2014-10-11",
+              "end": "2015-03-04",
+              "days": 145
+            },
+            {
+              "start": "2015-03-22",
+              "end": "2015-09-22",
+              "days": 185
+            },
+            {
+              "start": "2015-10-11",
+              "end": "2016-03-03",
+              "days": 145
+            },
+            {
+              "start": "2016-03-21",
+              "end": "2016-09-21",
+              "days": 185
+            },
+            {
+              "start": "2016-10-10",
+              "end": "2017-03-03",
+              "days": 145
+            },
+            {
+              "start": "2017-03-22",
+              "end": "2017-09-22",
+              "days": 185
+            },
+            {
+              "start": "2017-10-10",
+              "end": "2018-03-03",
+              "days": 145
+            },
+            {
+              "start": "2018-03-22",
+              "end": "2018-09-22",
+              "days": 185
+            },
+            {
+              "start": "2018-10-10",
+              "end": "2019-03-04",
+              "days": 146
+            },
+            {
+              "start": "2019-03-22",
+              "end": "2019-09-22",
+              "days": 185
+            },
+            {
+              "start": "2019-10-11",
+              "end": "2020-03-03",
+              "days": 145
+            },
+            {
+              "start": "2020-03-21",
+              "end": "2020-09-21",
+              "days": 185
+            },
+            {
+              "start": "2020-10-10",
+              "end": "2021-03-03",
+              "days": 145
+            },
+            {
+              "start": "2021-03-22",
+              "end": "2021-09-22",
+              "days": 185
+            },
+            {
+              "start": "2021-10-10",
+              "end": "2022-03-03",
+              "days": 145
+            },
+            {
+              "start": "2022-03-22",
+              "end": "2022-09-22",
+              "days": 185
+            },
+            {
+              "start": "2022-10-10",
+              "end": "2023-03-04",
+              "days": 146
+            },
+            {
+              "start": "2023-03-22",
+              "end": "2023-09-22",
+              "days": 185
+            },
+            {
+              "start": "2023-10-11",
+              "end": "2024-03-03",
+              "days": 145
+            },
+            {
+              "start": "2024-03-21",
+              "end": "2024-09-21",
+              "days": 185
+            },
+            {
+              "start": "2024-10-10",
+              "end": "2024-12-31",
+              "days": 83
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "temp_mean_c",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "dewpoint_mean_c",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "soil_water_l1_mean",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "wind_u_mean_ms",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "wind_v_mean_ms",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        }
+      ]
+    },
+    {
+      "municipality_code": "88564",
+      "municipality_name": "PROVIDENCIA",
+      "variables": [
+        {
+          "variable": "rain_mm_day",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "surface_runoff_mm_day",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "total_evaporation_mm_day_ecmwf",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "solar_radiation_mj_m2_day",
+          "missing_values": 5943,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2007-03-04",
+              "days": 63
+            },
+            {
+              "start": "2007-03-22",
+              "end": "2007-09-22",
+              "days": 185
+            },
+            {
+              "start": "2007-10-11",
+              "end": "2008-03-03",
+              "days": 145
+            },
+            {
+              "start": "2008-03-21",
+              "end": "2008-09-21",
+              "days": 185
+            },
+            {
+              "start": "2008-10-10",
+              "end": "2009-03-03",
+              "days": 145
+            },
+            {
+              "start": "2009-03-22",
+              "end": "2009-09-22",
+              "days": 185
+            },
+            {
+              "start": "2009-10-10",
+              "end": "2010-03-03",
+              "days": 145
+            },
+            {
+              "start": "2010-03-22",
+              "end": "2010-09-22",
+              "days": 185
+            },
+            {
+              "start": "2010-10-11",
+              "end": "2011-03-04",
+              "days": 145
+            },
+            {
+              "start": "2011-03-22",
+              "end": "2011-09-22",
+              "days": 185
+            },
+            {
+              "start": "2011-10-11",
+              "end": "2012-03-03",
+              "days": 145
+            },
+            {
+              "start": "2012-03-21",
+              "end": "2012-09-21",
+              "days": 185
+            },
+            {
+              "start": "2012-10-10",
+              "end": "2013-03-03",
+              "days": 145
+            },
+            {
+              "start": "2013-03-22",
+              "end": "2013-09-22",
+              "days": 185
+            },
+            {
+              "start": "2013-10-10",
+              "end": "2014-03-03",
+              "days": 145
+            },
+            {
+              "start": "2014-03-22",
+              "end": "2014-09-22",
+              "days": 185
+            },
+            {
+              "start": "2014-10-11",
+              "end": "2015-03-04",
+              "days": 145
+            },
+            {
+              "start": "2015-03-22",
+              "end": "2015-09-22",
+              "days": 185
+            },
+            {
+              "start": "2015-10-11",
+              "end": "2016-03-03",
+              "days": 145
+            },
+            {
+              "start": "2016-03-21",
+              "end": "2016-09-21",
+              "days": 185
+            },
+            {
+              "start": "2016-10-10",
+              "end": "2017-03-03",
+              "days": 145
+            },
+            {
+              "start": "2017-03-22",
+              "end": "2017-09-22",
+              "days": 185
+            },
+            {
+              "start": "2017-10-10",
+              "end": "2018-03-03",
+              "days": 145
+            },
+            {
+              "start": "2018-03-22",
+              "end": "2018-09-22",
+              "days": 185
+            },
+            {
+              "start": "2018-10-10",
+              "end": "2019-03-04",
+              "days": 146
+            },
+            {
+              "start": "2019-03-22",
+              "end": "2019-09-22",
+              "days": 185
+            },
+            {
+              "start": "2019-10-11",
+              "end": "2020-03-03",
+              "days": 145
+            },
+            {
+              "start": "2020-03-21",
+              "end": "2020-09-21",
+              "days": 185
+            },
+            {
+              "start": "2020-10-10",
+              "end": "2021-03-03",
+              "days": 145
+            },
+            {
+              "start": "2021-03-22",
+              "end": "2021-09-22",
+              "days": 185
+            },
+            {
+              "start": "2021-10-10",
+              "end": "2022-03-03",
+              "days": 145
+            },
+            {
+              "start": "2022-03-22",
+              "end": "2022-09-22",
+              "days": 185
+            },
+            {
+              "start": "2022-10-10",
+              "end": "2023-03-04",
+              "days": 146
+            },
+            {
+              "start": "2023-03-22",
+              "end": "2023-09-22",
+              "days": 185
+            },
+            {
+              "start": "2023-10-11",
+              "end": "2024-03-03",
+              "days": 145
+            },
+            {
+              "start": "2024-03-21",
+              "end": "2024-09-21",
+              "days": 185
+            },
+            {
+              "start": "2024-10-10",
+              "end": "2024-12-31",
+              "days": 83
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "temp_mean_c",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "dewpoint_mean_c",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "soil_water_l1_mean",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "wind_u_mean_ms",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        },
+        {
+          "variable": "wind_v_mean_ms",
+          "missing_values": 6575,
+          "date_intervals_inclusive": [
+            {
+              "start": "2007-01-01",
+              "end": "2024-12-31",
+              "days": 6575
+            }
+          ],
+          "january_2020_missing_values": 31
+        }
+      ]
+    }
+  ],
+  "total_missing_daily_values": 117086,
+  "intervals_are_exact_inclusive_dates": true,
+  "imputed": false,
+  "converted_to_zero": false,
+  "january_2020_missing_daily_values": 558,
+  "canonical_effects": {
+    "canonical_rows_retained": 242352,
+    "rows_with_missing_climate": 432,
+    "rows_with_complete_climate": 241920,
+    "rows_with_all_predictors_complete": 174720,
+    "otherwise_complete_rows_missing_only_climate": 312,
+    "january_2020_rows_retained": 1122,
+    "january_2020_rows_with_complete_climate": 1120,
+    "all_columns_complete_rows": 174720,
+    "columns": 52,
+    "canonical_missing_cells": 3888,
+    "canonical_rows_removed": 0
+  },
+  "first_build_semantic_digest": "de49b11bad43c35983a098ead2faa149d4e744da4172432aecdaadd828c73158",
+  "source": "Verified operational raw bytes and validated first full build; missingness only, no climate values exported"
+}

@@ -1,0 +1,135 @@
+{
+  "schema": "sat-dengue.technical-acceptance-preflight/v1",
+  "validation_id": "acceptance-preflight-ecb0f761ba1c48e3a724549d4496362d",
+  "at_utc": "2026-11-09T22:44:10.911715+00:00",
+  "status": "BLOCKED",
+  "blocker": "HF_TOKEN_NOT_AVAILABLE_TO_EXECUTION_PROCESS",
+  "head_tested": "c729f1936f1e637f992c1a6167cb9ff15595cef2",
+  "branch": "feature/pipeline-e2e",
+  "initial_tracked_tree_clean": true,
+  "credential_checks": {
+    "initial_env_present": false,
+    "after_user_environment_update_env_present": false,
+    "secret_values_printed_or_written": false,
+    "cached_credentials_used": false,
+    "whoami": "NOT_EXECUTED_MISSING_EXPLICIT_ENV",
+    "authentication_result": "NOT_VERIFIED"
+  },
+  "configured_release": {
+    "manifest": "pipeline/conf/releases/approved-raw.json",
+    "manifest_sha256": "667f4273add97d874ea70344fc698c454c499bea5e9d3e3c5e74c82d8eb70f0c",
+    "repository": "sat-dengue/data_raw",
+    "revision": "a1a7f237a4baa6ffa848fabeef474f811f3b3f33",
+    "status": "LOCAL_CONFIGURATION_ONLY_NOT_REMOTE_VERIFIED"
+  },
+  "corrected_release": {
+    "resolved_revision": null,
+    "private_access_verified": false,
+    "five_files_name_size_sha256": "NOT_VERIFIED",
+    "manifest_changed": false
+  },
+  "january_2020": {
+    "status": "NOT_VERIFIED",
+    "expected": {
+      "municipalities": 1122,
+      "days": 31,
+      "municipality_day_keys": 34782,
+      "unexpected_duplicates": 0
+    },
+    "observed": null,
+    "national_coverage_confirmed": false,
+    "meta_tolima_only_excluded": false
+  },
+  "clean_clone_test": {
+    "clone_created": false,
+    "locked_install_executed": false,
+    "requested_command": "uv run --locked --directory pipeline python tools/build_approved_canonical.py",
+    "command_executed": false,
+    "exit_code": null,
+    "duration_seconds": null,
+    "peak_memory_bytes": null,
+    "input_hashes_verified": false,
+    "canonical_output_identity": null,
+    "operational_receipt_created": false,
+    "reason": "Private release verification prerequisite blocked before acquisition or construction"
+  },
+  "experiment_feasibility": {
+    "mode": "inspect_existing_recipes",
+    "registered_experiments": [
+      "EXP001",
+      "EXP002"
+    ],
+    "both_synthetic": true,
+    "registered_real_recipe": false,
+    "registry_types": [
+      "synthetic_fixture",
+      "scientific"
+    ],
+    "runner_rebuilds_canonical": true,
+    "accepts_existing_provisional_canonical_as_input": false,
+    "next_free_id": "EXP003",
+    "id_reserved": false,
+    "experiment_executed": false,
+    "real_recipe_review": "NOT_VERIFIED_NO_RECIPE_SUBMITTED",
+    "reason": "Existing fixtures cannot silently become raw-data experiments; no technical raw experiment type or existing-canonical input is exposed. T16 is closed and is not rerun. No recipe or scientific decision is invented."
+  },
+  "focused_validation": {
+    "status": "PASSED",
+    "exit_code": 0,
+    "elapsed_seconds": 21.293,
+    "test_files": [
+      "test_acquisition.py",
+      "test_private_release.py",
+      "test_operational_acquisition.py",
+      "test_operational_command.py",
+      "test_raw_canonical.py",
+      "test_canonical.py",
+      "test_onset.py",
+      "test_experiment_management.py",
+      "test_agent_skills.py"
+    ],
+    "full_suites_repeated": false,
+    "tests": 292,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "command": ".venv/bin/python -m pytest -q tests/test_acquisition.py tests/test_private_release.py tests/test_operational_acquisition.py tests/test_operational_command.py tests/test_raw_canonical.py tests/test_canonical.py tests/test_onset.py tests/test_experiment_management.py tests/test_agent_skills.py",
+    "cwd": "pipeline",
+    "evidence_kind": "ARTIFICIAL_FIXTURES_ONLY"
+  },
+  "registry_validation": "VALID",
+  "preservation": {
+    "status": "PASSED",
+    "protected_files": 49,
+    "published_json": 22,
+    "previous_t16_receipts": 16,
+    "t16_n3_identity": "899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f",
+    "EXP001_EXP002_unchanged": true,
+    "tracked_tree_clean_after_focused_tests": true
+  },
+  "omissions": {
+    "full_pipeline_api_dashboard_portability_suites": "NOT_REPEATED_BY_USER_INSTRUCTION",
+    "remote_release_climate_and_real_command": "BLOCKED_MISSING_ENV_CREDENTIAL",
+    "technical_training": "NOT_EXECUTED; no new scientific recipe or registry changes"
+  },
+  "recovery": {
+    "cause": "Missing explicit environment variable in execution process; not an invalid-token finding",
+    "minimal_action": "Make HF_TOKEN available to the process executing this task; check presence and authenticate with whoami without exposing the value, then resume release verification",
+    "new_experiment_id_required_for_preflight": false,
+    "failed_scientific_execution_exists": false,
+    "existing_receipts_caches_and_locks_preserved": true
+  },
+  "task_status": {
+    "progress": "26/27",
+    "T27": "BLOQUEADA",
+    "acceptance_verdict": "BLOCKED",
+    "merge_audit_verdict": "NOT_READY"
+  },
+  "publication": {
+    "push_performed": false,
+    "merge_performed": false,
+    "force_push_performed": false,
+    "ruleset_changed": false,
+    "final_documentation_commit": "LOCAL_ONLY; identify SHA in Git history, no CI claim for that descendant"
+  }
+}

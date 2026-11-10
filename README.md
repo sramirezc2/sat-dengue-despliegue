@@ -1,13 +1,63 @@
 # SAT Dengue, despliegue del tablero de alerta temprana
 
 Sistema de alerta temprana de brotes de dengue para los municipios de **Tolima
-y Meta**. Este repositorio contiene la aplicación desplegada: la API que sirve
-los resultados del modelo y el tablero que los presenta.
+y Meta**. Este repositorio contiene la aplicación desplegada y la fábrica
+científica V3 independiente: la API sirve resultados persistidos, el tablero los
+presenta y `pipeline/` los construye sin introducir Kedro en el producto.
 
 Universidad de los Andes, Maestría en Inteligencia Artificial.
 Proyecto: Despliegue de Soluciones. **Grupo 11**.
 
 ---
+
+## Construcción canónica desde la raíz
+
+Para una operación privada autorizada, instale Python 3.12 y uv 0.11.19 y sincronice:
+
+```sh
+uv sync --locked --project pipeline
+```
+
+Configure `HF_TOKEN` mediante lectura oculta de su terminal o un gestor de secretos;
+no copie su valor en argumentos, archivos, notebooks ni prompts. Los ejemplos para
+PowerShell, Bash y zsh están en [autenticación segura](docs/operations/pipeline-operations.md#autenticación-segura).
+En macOS instale también `libomp`; consulte los requisitos de sistema de esa guía.
+
+Comando recomendado, compatible con Windows, macOS y Linux:
+
+```sh
+uv run --locked --directory pipeline python tools/build_approved_canonical.py
+```
+
+Ejecuta adquisición y después Kedro; se detiene al primer fallo. Para diagnosticar
+cada etapa, los dos comandos internos siguen disponibles:
+
+```sh
+uv run --locked --directory pipeline python tools/acquire_private_raw.py
+uv run --locked --directory pipeline kedro run --pipelines canonical_build --params canonical.mode=approved,canonical.workspace=data/canonical-approved-manual,canonical.tracking=false
+```
+
+El comando único y estas dos etapas manuales seleccionan por defecto el mismo
+release corregido `satd-raw-173d5856` y el perfil `operational_full`,
+`2007-01`–`2024-12`. Una caché solo histórica no sustituye al release solicitado.
+Kedro conserva su modo sintético por defecto: para construir desde crudos se
+requiere `canonical.mode=approved`, como en el ejemplo.
+
+La reproducción histórica se selecciona explícitamente:
+
+```sh
+uv run --locked --directory pipeline python tools/build_approved_canonical.py --manifest conf/releases/approved-raw.json --profile approved
+```
+
+La salida es **provisional**, no certificada ni entrenable automáticamente. El
+helper no ejecuta N=3, entrenamiento, publicación ni cambios al registro. Cada
+adquisición conserva un recibo nuevo en `pipeline/data/acquisition/`, ignorado por
+Git. `VERIFIED` exige los cinco archivos exactos e íntegros. Los enlaces en la
+caché se rechazan antes de escribir crudos; los adicionales se informan y conservan.
+La adquisición puede recuperar archivos faltantes o corruptos. Para recursos
+medidos, límites de memoria y fallos, consulte
+[operación y recuperación](docs/operations/pipeline-operations.md#recursos-medidos).
+Estos comandos privados no son el smoke sintético ni autorización para ejecutarlos.
 
 ## 1. El problema y la solución
 
@@ -119,8 +169,18 @@ en `/api/docs`. Esa interfaz carga sus recursos desde un CDN público;
 | Repositorio del despliegue | https://github.com/sramirezc2/sat-dengue-despliegue |
 | Procedencia de los datos publicados | corrida `88e3ad9decce8bd4d`, evaluación congelada G5 |
 | Bitácora experimental | [`docs/bitacora-experimental.md`](docs/bitacora-experimental.md) |
+| Reporte ejecutivo de la fábrica | [Entregables, evidencia y límites](docs/reports/pipeline-e2e-executive-report.md) |
+| Estado y secuencia de implementación | [`plan.md`](plan.md) |
+| Diseño detallado del E2E | [`PLAN_pipeline_e2e_experimentos_sat_dengue.md`](PLAN_pipeline_e2e_experimentos_sat_dengue.md) |
+| Arquitectura objetivo V3 y transición del pipeline E2E | [`docs/architecture/pipeline-e2e.md`](docs/architecture/pipeline-e2e.md) |
+| Operación, recuperación y migraciones del pipeline | [Guía operativa](docs/operations/pipeline-operations.md) |
+| Registro y ejecución de experimentos | [Manual de la fábrica](docs/experiments/manual_pipeline.md) |
+| Contrato científico V3 | [Pregunta de grado y reglas de decisión](docs/experiments/contrato.md) |
+| Capacidades reutilizables para agentes | [Catálogo de skills](docs/agents/skills-catalog.md) |
+| Revisión científica y de seguridad | [Revisión científica](docs/reviews/scientific-review.md) · [Revisión de seguridad](docs/security/security-review.md) |
+| Subproyecto Kedro y smoke test sintético | [`pipeline/README.md`](pipeline/README.md) |
 | Propuesta de política de decisión v2 | [`docs/politica-de-decision-v2.md`](docs/politica-de-decision-v2.md) |
-| Repositorio científico (pipelines, notebooks, evidencia) | `SAT-Dengue-V2` |
+| Antecedente científico congelado | `SAT-Dengue-V2` (procedencia histórica, no fuente activa) |
 | Informe de avance | entregado el 25 de octubre de 2026 |
 
 ---
@@ -129,9 +189,9 @@ en `/api/docs`. Esa interfaz carga sus recursos desde un CDN público;
 
 ### API
 
-Python 3.12. Pines en `app/api/requirements.txt`, alineados con el
-`pyproject.toml` del repositorio científico para que el contrato se comporte
-igual en los dos lados.
+Python 3.12. Pines propios en `app/api/requirements.txt`; las dependencias
+científicas se mantienen separadas en `pipeline/pyproject.toml` y nunca entran
+en la imagen de la API.
 
 | Paquete | Versión |
 | --- | --- |
@@ -212,8 +272,8 @@ Para actualizar un despliegue ya montado basta volver a ejecutar el mismo
 script: detecta que el repositorio ya está clonado y hace `fetch` y `reset`.
 
 El laboratorio **no** se usa para entrenar. Los créditos están destinados al
-despliegue; el entrenamiento y la evaluación corren en el repositorio
-científico.
+despliegue; el entrenamiento y la evaluación se ejecutan en el subproyecto
+independiente `pipeline/`, fuera de los contenedores del producto.
 
 ---
 
@@ -233,11 +293,12 @@ convención de nombre `resultado_<departamento>_<AAAA-MM>.json`. Publicar un
 periodo nuevo es dejar un archivo; no hay que editar código ni volver a
 construir la imagen.
 
-Esos archivos se generan con `scripts/construir_resultados.py` a partir de las
-corridas de Kedro del repositorio científico:
+`scripts/construir_resultados.py` es la envoltura compatible del publicador de
+`pipeline/`, que recibe panel, predicciones y comparación locales ya calculados.
+Desde la raíz, con el entorno bloqueado:
 
 ```bash
-python scripts/construir_resultados.py \
+uv run --project pipeline python scripts/construir_resultados.py \
   --panel       <corrida>/stages/data/<id>/bundle/panel.csv \
   --predicciones <corrida>/predictions.csv \
   --comparacion  <corrida>/comparison.csv \
@@ -348,7 +409,7 @@ contra el esquema en cada petición. Para Tolima, el departamento más grande co
 No hay cola ni trabajo asíncrono.
 
 **Tiempos del modelo, que ocurren fuera de esta aplicación.** El entrenamiento
-y la evaluación corren en el repositorio científico sobre un panel mensual de
+y la evaluación histórica se ejecutaron sobre un panel mensual de
 2007 a 2025 para los 76 municipios de Tolima y Meta. Las familias evaluadas son
 gradient boosting sobre árboles (XGBoost y LightGBM), un modelo aditivo
 generalizado y una regresión logística con penalización L2, cada una en los
@@ -420,12 +481,19 @@ Aquí el disco local es una **caché**, no la fuente. El diseño tiene tres capa
    limpio ya arranca con datos;
 2. el volumen con nombre `resultados` sobrevive al reinicio del contenedor y al
    apagado de la instancia;
-3. si hay bucket declarado, al arrancar el servicio sincroniza desde S3 y
-   descarga solo lo que falta o cambió de tamaño.
+3. si hay bucket declarado, al arrancar el servicio sincroniza desde S3. Cada
+   objeto se descarga a un temporal, se valida con el contrato existente y
+   reemplaza atómicamente la copia local, incluso si conserva el mismo tamaño.
 
 Si la sincronización falla pero ya hay resultados locales, el servicio registra
 la advertencia y arranca con la última copia conocida. Servir el dato anterior
 es mejor que no responder.
+
+La sincronización comprueba el tamaño remoto y la validez semántica del JSON.
+El publicador local genera tamaños y SHA-256 en `.publication/manifest.json`
+desde la tarea 14. La verificación de ese manifiesto durante sincronización S3
+sigue pendiente; esta tarea no cambia el transporte remoto. Un ETag de S3 no se
+trata como MD5 universal.
 
 ---
 
@@ -451,10 +519,16 @@ es mejor que no responder.
 │           │   └── comparacion-modelo.tsx # modelo contra canal y línea base
 │           ├── lib/                       # contrato Zod y adaptador de vista
 │           └── test/                      # contrato, adaptador e integración
+├── pipeline/                     # Kedro, dominio, fábrica, pruebas y lock propios
+├── .agents/skills/               # cuatro skills canónicas de operación y revisión
 ├── datos/resultados/            # resultados publicados, un JSON por periodo
 ├── docker/                      # Dockerfiles, compose y nginx
 ├── docs/
 │   ├── bitacora-experimental.md    # registro de experimentos, métricas y decisiones
+│   ├── agents/                      # catálogo de capacidades reutilizables
+│   ├── experiments/                 # registro, manual, recetas y conclusiones
+│   ├── operations/                  # guía operativa central
+│   ├── reviews/ y security/         # revisiones científica y de seguridad
 │   ├── politica-de-decision-v2.md  # propuesta de revisión de la compuerta G5
 │   └── politica-de-decision-v2.json # la misma propuesta, legible por máquina
 ├── modelos/                     # artefactos de modelo
@@ -469,10 +543,10 @@ es mejor que no responder.
 Dos suites, una por lado. Ambas corren sin levantar la aplicación.
 
 ```bash
-# API: 22 pruebas sobre la capa de despliegue
+# API: suite de la capa de despliegue
 cd app/api && python -m pytest
 
-# Tablero: 25 pruebas de contrato, adaptador e integración
+# Tablero: suite de contrato, adaptador e integración
 cd app/dashboard && bun run test
 ```
 
@@ -545,7 +619,7 @@ entre "no hay brote" y "no se pudo calcular" es justamente la que importa.
 ## 14. Procedencia de los resultados publicados
 
 Los 22 archivos de `datos/resultados/` no son datos de ejemplo. Salen de la
-evaluación congelada que el repositorio científico identifica como la corrida
+evaluación histórica congelada identificada como la corrida
 `88e3ad9decce8bd4d`, y cubren **once meses de referencia**, de diciembre de
 2024 a octubre de 2025, para los 76 municipios de Tolima y Meta.
 

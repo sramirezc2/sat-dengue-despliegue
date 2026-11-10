@@ -1,0 +1,10 @@
+{
+  "checked_changed_files": 34,
+  "new_or_modified_files_over_1MB": [],
+  "environment_credential_value_found": false,
+  "credential_scan_available": true,
+  "raw_data_and_canonical_artifacts_git_ignored": true,
+  "source_snapshot_unchanged_during_real_runs": true,
+  "evidence_json_valid": true,
+  "provisional_certified_and_kedro_bytes_identical": true
+}

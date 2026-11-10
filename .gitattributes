@@ -1,2 +1,13 @@
 *.sh text eol=lf
 scripts/sat-dengue.service text eol=lf
+
+# Byte identities used by the independent pipeline and its contract receipt.
+pipeline/** text eol=lf
+scripts/construir_resultados.py text eol=lf
+app/api/sat_api/contrato/schemas.py text eol=lf
+
+# Frozen protocol/evidence/publication hashes must survive Windows checkout.
+docs/experiments/** text eol=lf
+docs/evidence/** text eol=lf
+docs/decisions/task16-*.md text eol=lf
+datos/resultados/*.json text eol=lf
