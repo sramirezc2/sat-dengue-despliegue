@@ -1,8 +1,8 @@
 # Hoja de ruta de implementación — Pipeline E2E SAT DENGUE
 
-**Versión:** 1.7
+**Versión:** 1.8
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado del alcance actual:** etapas documental y funcional COMPLETAS como implementación bajo contrato propuesto; resumen único entre semillas BLOQUEADO por regla no definida, sin aprobación científica
+**Estado del alcance actual:** etapas documental y funcional COMPLETAS como implementación bajo contrato propuesto; agregación entre semillas COMPLETA como implementación propuesta, sin aprobación científica
 **Último corte histórico T1–T27:** 26/27; T27 BLOQUEADA en su registro previo, sin reauditar sus gates en este alcance
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama del alcance actual:** `feature/contrato-cientifico-fabrica-final`, creada desde `origin/main@a324f3c7f141b0ec53582b461cf6586643c5b569`
@@ -552,6 +552,8 @@ Toda desviación debe registrarse antes de continuar.
 
 | DEC-036 | 2026-11-09 | Implementar la evaluación científica propuesta dentro del mismo experiment_run y PR #3. | Autorización posterior explícita del usuario para la etapa funcional y E2E sintético; base limpia 1ed9383. | Reutilizar lifecycle, registro, certificación, controles temporales y almacenamiento; grafo Kedro explícito, recetas V3 con brazos/cortes/semillas, A/B/C, cupo, intervalos y desgloses. Sin experimento científico real, campeón o merge. El contrato no define agregación de veredictos entre semillas: calcular sus salidas independientes y detener solo ese resumen como PENDING_SEED_AGGREGATION_RULE. | Implementación técnica autorizada; el contrato continúa PROPUESTA_PARA_APROBACION y no se concede aprobación científica. |
 
+| DEC-037 | 2026-11-10 | Proponer e implementar agregación entre semillas en la etapa final existente del PR #3. | Instrucción explícita del usuario: continuar en feature/contrato-cientifico-fabrica-final; sin ciencia real, uso de 2025 ni merge. | Conservar mayoría estricta entre cortes utilizables dentro de cada semilla; resumen afirmativo solo con las cinco semillas declaradas válidas y CUMPLE. Faltantes/soporte/políticas pendientes: NO_EVALUABLE; mezcla válida: INCONCLUSO_POR_INESTABILIDAD; corrida inválida: INVALIDO. Conservar cinco resultados sin seleccionar semilla ni sumar semillas como cortes. Actualizar contrato/guía/planes, pruebas artificiales, preservación, controles de fábrica, commit y checks del mismo PR. | Autorización de implementación y entrega técnica como propuesta; requiere aprobación científica del equipo antes de evaluar una receta nueva. No reclasifica T16, EXP001/EXP002, certificados o JSON publicados. |
+
 ## 8. Condición de finalización histórica del PR #1
 
 El trabajo solo puede considerarse terminado cuando:
@@ -626,8 +628,8 @@ requiere apilar o duplicar el historial del PR #1. Se conserva un único
 | Etapa del mismo PR | Estado | Alcance y condición de salida |
 |---|---|---|
 | Documental, ejecución actual | COMPLETA | [Contrato V3](docs/experiments/contrato.md) corregido, mantiene PROPUESTA_PARA_APROBACION; contrastado con V2/bitácora/código. Enlaces, coherencia, preservación y diff PASS; propuesta para revisión del equipo, sin aprobación científica. |
-| Funcional, autorización DEC-036 | COMPLETA | Evaluación integrada en el mismo grafo Kedro y evidencia: modelo/canal/persistencia, A/B/C, presupuesto, intervalos, cortes/semillas, horizonte/año/territorio y brazos con/sin clima. E2E técnico sintético y gate acumulado PASS; sin aprobación científica. El resumen científico único tiene el bloqueo independiente de la fila siguiente. |
-| Resumen científico único entre semillas | BLOQUEADA | El contrato exige cinco semillas, pero no define un operador de agregación de sus veredictos. Se conserva distribución y resultados por semilla; decidir ese operador corresponde al equipo antes de una evaluación nueva. No bloquea métricas, intervalos o evidencia por celda. |
+| Funcional, autorización DEC-036 | COMPLETA | Evaluación integrada en el mismo grafo Kedro y evidencia: modelo/canal/persistencia, A/B/C, presupuesto, intervalos, cortes/semillas, horizonte/año/territorio y brazos con/sin clima. E2E técnico sintético y gate acumulado PASS; sin aprobación científica. La agregación propuesta se detalla en la fila siguiente. |
+| Resumen científico único entre semillas, DEC-037 | COMPLETA | Unanimidad propuesta de las cinco consistencias predeclaradas implementada y probada; se conservan resultados individuales y estados NO_EVALUABLE/INCONCLUSO_POR_INESTABILIDAD/INVALIDO. Gate acumulado PASS; requiere aprobación científica del equipo, sin experimento real ni merge. |
 
 La propuesta mantiene el evento T+1 → T+2 y diferencia compuerta observable en T
 de información futura. Conserva la cohorte académica principal sin exceso en T,
@@ -681,9 +683,9 @@ La evaluación conserva A/B/C y carga por 100 municipio-mes como salidas distint
 2.000 réplicas emparejadas por mes con indefinidas visibles, controles negativos,
 soportes mínimos de 30 inicios, voto de cortes predeclarado, distribución de cinco
 semillas y resultados por año/territorio/horizonte. Todos los resultados llevan
-VEREDICTO_BAJO_CONTRATO_PROPUESTO. El resumen entre semillas queda pendiente de
-la decisión explícita anterior; también siguen pendientes aprobación del equipo,
-cohorte confirmatoria independiente y N=3 E2E de un eventual finalista. El N=3
+VEREDICTO_BAJO_CONTRATO_PROPUESTO. La regla propuesta entre semillas se implementa
+bajo DEC-037, pendiente de aprobación explícita del equipo; también siguen
+pendientes la cohorte confirmatoria independiente y N=3 E2E de un eventual finalista. El N=3
 canónico no reemplaza este último requisito.
 
 La aceptación sintética cubre cinco fuentes, N=3 canónico en tres procesos, tres
@@ -705,3 +707,34 @@ La versión final pasa la suite completa, incluidos todos los E2E, sin omisiones
 Persisten avisos previos de OmegaConf, Starlette/httpx, fast-refresh y Vite.
 El PR #3 conserva su estado de borrador; CI remota y revisión deben corresponder
 al nuevo HEAD. No se ejecutó un experimento científico real ni se hizo merge.
+
+
+### Agregación entre semillas propuesta — DEC-037
+
+Se conserva la mayoría estricta dentro de cada semilla y se agrega únicamente
+la consistencia de las cinco identidades predeclaradas. Solo 5/5 válidas con
+CUMPLE produce CUMPLE_BAJO_CONTRATO_PROPUESTO; una mezcla válida queda
+INCONCLUSO_POR_INESTABILIDAD, faltantes/soporte/políticas pendientes NO_EVALUABLE
+y una corrida inválida INVALIDO, sin excluirla para mejorar el voto. Se conservan
+los cinco resultados, las exclusiones por soporte y las distribuciones previas.
+No se mezclan horizontes, lecturas T+2, brazos, poblaciones o territorios; tampoco
+se suman semillas o vistas anuales como cortes adicionales. La función pequeña
+se invoca en la evaluación final existente, con el mismo comando E2E y evidencia.
+
+Contrato 0.2.2-propuesta y guía actualizados; **requiere aprobación del equipo**.
+La unanimidad comprueba sensibilidad algorítmica, sin crear independencia entre
+semillas ni un veredicto de efecto de una mezcla. La revisión técnica no aprueba
+recetas o conclusiones; faltan revisión científica independiente, cohorte
+confirmatoria y N=3 E2E de un eventual finalista. No se usa 2025 para elegir
+la regla ni se ejecuta ciencia real. T16, EXP001/EXP002, certificados y los 22
+JSON publicados conservan sus bytes.
+
+Gate acumulado PASS: **725 pruebas pipeline** sin fallos/omisiones (18 nuevas,
+47 enfocadas), **35 API**, **55 tablero**, frozen/lint/build, lock/sync/Ruff,
+CLI sintético, registro VALID, preservación normal/-O y Pydantic/Zod 22+22.
+Control extendido: 95 archivos históricos idénticos al HEAD previo 1427ac1.
+Persisten solo avisos previos de OmegaConf, Starlette/httpx, fast-refresh y Vite.
+[Recibo nuevo de validación](docs/evidence/pr3/seed-aggregation-validation.json),
+sin modificar el recibo anterior. Publicación en la misma rama y PR #3;
+los siete checks previos de 1427ac1 no validan el nuevo commit. Verificar CI por
+SHA tras el push, manteniendo borrador y aprobación del equipo pendiente. Sin merge.

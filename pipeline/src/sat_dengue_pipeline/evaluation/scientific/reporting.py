@@ -209,8 +209,41 @@ def evaluate_cell(
     }
 
 
+def aggregate_seed_consistency(seed_rows: list[dict], declared_seeds: list[int]) -> str:
+    """Aplicar unanimidad propuesta sin convertir semillas en cortes o evidencia independiente.
+
+    Args:
+        seed_rows: Resultados individuales, incluidos faltantes, de una misma vista.
+        declared_seeds: Las cinco identidades congeladas en la receta.
+
+    Returns:
+        Estado bajo propuesta; una invalidez tiene precedencia sobre falta de soporte.
+        Todo resultado válido que no sea unanimidad queda inconcluso, sin inferir efecto.
+    """
+    observed = [row["seed"] for row in seed_rows]
+    statuses = [row["consistency"] for row in seed_rows]
+    if (
+        "INVALIDO" in statuses
+        or len(observed) != len(set(observed))
+        or not set(observed).issubset(declared_seeds)
+    ):
+        return "INVALIDO"
+    if (
+        len(declared_seeds) != 5
+        or len(set(declared_seeds)) != 5
+        or set(observed) != set(declared_seeds)
+        or any(status not in {"CUMPLE", "NO_CUMPLE"} for status in statuses)
+    ):
+        return "NO_EVALUABLE"
+    return (
+        "CUMPLE_BAJO_CONTRATO_PROPUESTO"
+        if all(status == "CUMPLE" for status in statuses)
+        else "INCONCLUSO_POR_INESTABILIDAD"
+    )
+
+
 def summaries(records: list[dict], policy: dict) -> list[dict]:
-    """Informar consistencia por semilla y distribución sin inventar su agregación científica."""
+    """Conservar consistencia por semilla y agregar solo dentro de cada vista declarada."""
     by_seed: dict[tuple, list] = defaultdict(list)
     for record in records:
         if record["kind"] == "cell" and record["year"] == "all":
@@ -223,7 +256,12 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
     by_seeds: dict[tuple, list] = defaultdict(list)
     for key, group in sorted(by_seed.items()):
         usable = [r for r in group if r["support_status"] == "SUFFICIENT"]
-        invalid = any(r["UTILIDAD_PROPUESTA"] == "INVALIDO" for r in group)
+        cut_ids = [r["cut"] for r in group]
+        invalid = len(cut_ids) != len(set(cut_ids)) or any(
+            r["UTILIDAD_PROPUESTA"] == "INVALIDO"
+            or r["ABC_HISTORICA"]["status"] == "INVALIDO"
+            for r in group
+        )
         votes = sum(
             r["UTILIDAD_PROPUESTA"] == "CUMPLE"
             and r["ABC_HISTORICA"]["status"] == "ABC_HISTORICA_CUMPLE"
@@ -237,7 +275,14 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
             else "PENDING_CONSISTENCY_RULE"
             if policy["consistency_rule"] is None or policy["consistency_vote"] is None
             else "PENDING_RECIPE_POLICY"
-            if any(r.get("policy_status", "FROZEN") != "FROZEN" for r in group)
+            if any(r.get("policy_status") != "FROZEN" for r in group)
+            else "NO_EVALUABLE"
+            if set(cut_ids) != {cut["id"] for cut in policy["cuts"]}
+            or any(
+                r["UTILIDAD_PROPUESTA"] == "NO_EVALUABLE"
+                or r["ABC_HISTORICA"]["status"] == "ABC_HISTORICA_NO_EVALUABLE"
+                for r in usable
+            )
             else "INSUFFICIENT_CUTS"
             if k < 3
             else "CUMPLE"
@@ -264,9 +309,17 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
             {
                 "seed": key[-1],
                 "consistency": status,
+                "planned_cuts": len(policy["cuts"]),
+                "usable_cuts": k,
+                "votes": votes,
+                "required_votes": required,
                 "cuts": [
                     {
                         "cut": r["cut"],
+                        "support_status": r["support_status"],
+                        "policy_status": r.get("policy_status"),
+                        "UTILIDAD_PROPUESTA": r["UTILIDAD_PROPUESTA"],
+                        "ABC_HISTORICA": r["ABC_HISTORICA"],
                         "TP": r["methods"]["candidate"]["TP"],
                         "delta_TP_C0": r["methods"]["candidate"]["TP"]
                         - r["methods"]["channel_C0"]["TP"],
@@ -315,8 +368,17 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
                         "support_comparable": comparable,
                     }
                 )
-        # El contrato exige distribución de cinco semillas, pero no fija un operador
-        # para convertirla en un único CUMPLE; ese tramo se detiene explícitamente.
+        declared_seeds = policy["seeds"]
+        observed = {row["seed"] for row in seed_rows}
+        seed_rows += [
+            {"seed": seed, "consistency": "NO_EVALUABLE", "cuts": [], "missing_run": True}
+            for seed in declared_seeds
+            if seed not in observed
+        ]
+        seed_rows.sort(key=lambda row: row["seed"])
+        status = aggregate_seed_consistency(seed_rows, declared_seeds)
+        if any(not row["support_comparable"] for row in distributions):
+            status = "INVALIDO"
         result.append(
             {
                 "kind": "seed_stability",
@@ -326,8 +388,13 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
                 "label": PROPOSED,
                 "seeds": seed_rows,
                 "distributions": distributions,
-                "five_seeds_check": "REPORTED" if len(seed_rows) >= 5 else "NOT_VERIFIED",
-                "status": "PENDING_SEED_AGGREGATION_RULE",
+                "five_seeds_check": "REPORTED"
+                if len(declared_seeds) == 5 and observed == set(declared_seeds)
+                else "NOT_VERIFIED",
+                "aggregation_rule": "all_five_declared_seeds_cumple",
+                "contract_status": "PROPUESTA_PARA_APROBACION",
+                "team_approval_required": True,
+                "status": status,
                 "scientific_conclusion": "NOT_APPROVED",
             }
         )

@@ -145,6 +145,9 @@ def test_scientific_kedro_e2e_uses_its_certified_data_and_fitted_models(
     )
     assert any(r["kind"] == "paired_arm_difference" for r in records)
     assert any(r.get("five_seeds_check") == "REPORTED" for r in records)
+    stability = [r for r in records if r["kind"] == "seed_stability"]
+    assert stability and all(r["status"] == "NO_EVALUABLE" for r in stability)
+    assert all(len(r["seeds"]) == 5 and r["team_approval_required"] for r in stability)
     assert Registry(tmp_path).get(entry["experiment_id"])["status"] == "RUNNING"
     from sat_dengue_pipeline.experiment_management.compare import compare
 

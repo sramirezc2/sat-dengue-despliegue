@@ -1,8 +1,8 @@
 # Contrato científico de experimentación y decisión — SAT DENGUE V3
 
-- **Versión:** 0.2.1-propuesta
+- **Versión:** 0.2.2-propuesta
 - **Estado:** `PROPUESTA_PARA_APROBACION`
-- **Fecha de revisión:** 9 de noviembre de 2026 (propuesta inicial: 8 de noviembre)
+- **Fecha de revisión:** 10 de noviembre de 2026 (propuesta inicial: 8 de noviembre)
 - **Autoridad requerida:** equipo SAT DENGUE
 - **Alcance:** todo experimento científico futuro de V3, sin importar la familia
   de modelo, la arquitectura, los predictores o el volumen de datos.
@@ -542,11 +542,47 @@ con al menos cinco semillas predeclaradas. Se reportan distribución, dirección
 casos en que la conclusión cambia; no se escoge la mejor semilla. Un algoritmo
 determinista debe demostrarlo con ejecuciones aisladas.
 
-Esta versión **no define cómo agregar los veredictos de las semillas en un único
-veredicto científico**. Hasta que el equipo predeclare ese operador, la
-implementación conserva resultados por semilla y detiene solo ese resumen como
-`PENDING_SEED_AGGREGATION_RULE`. No se infiere unanimidad, mayoría de semillas
-o selección de la mejor a partir de la regla de consistencia entre cortes.
+**Agregación entre semillas — propuesta que requiere aprobación del equipo.**
+Para cada combinación de horizonte, lectura, brazo, población y territorio se
+conserva primero la mayoría estricta de cortes utilizables **dentro de cada
+semilla**, con mínimo de tres cortes y el voto predeclarado que exige A/B/C y
+utilidad. T+1, T+2 primario y T+2 secundario producen resúmenes separados; tampoco
+se mezclan poblaciones nativas/comunes, brazos con/sin clima o vistas territoriales.
+Las vistas anuales no se añaden como cortes extra a la consistencia de todos los años.
+
+El resumen exige **exactamente las cinco identidades predeclaradas** en la receta:
+
+| Estado del resumen bajo propuesta | Condición |
+|---|---|
+| `CUMPLE_BAJO_CONTRATO_PROPUESTO` | Las cinco semillas tienen soporte y políticas válidos y cada una obtiene `CUMPLE` en su consistencia entre cortes. |
+| `NO_EVALUABLE` | Falta una semilla/corrida/corte declarado, no hay cinco identidades predeclaradas, falta una política o denominador necesario, o alguna semilla no alcanza tres cortes utilizables. |
+| `INCONCLUSO_POR_INESTABILIDAD` | Los cinco resultados son válidos y evaluables, pero no todos obtienen `CUMPLE`; en particular, 4/5 no basta. |
+| `INVALIDO` | Hay una corrida inválida o evidencia inconsistente: duplicados, semilla ajena o soportes no emparejados entre semillas. Tiene precedencia sobre la falta de soporte y no se excluye para mejorar el voto. |
+
+Un corte pequeño predeclarado conserva su exclusión dentro de cada semilla:
+2/3 utilizables puede cumplir; no se exige soporte suficiente en todos los cortes
+previstos, pero sí el mínimo de tres en cada semilla. Se conservan los cinco
+resultados individuales, votos, cortes, exclusiones, diferencias y dispersión;
+una semilla ausente lleva un resultado explícito `NO_EVALUABLE`. La agregación
+no selecciona la mejor semilla, no suma sus observaciones para aumentar soporte
+y no cuenta semillas como cortes independientes. Una mezcla válida **nunca se
+convierte en `NO_CUMPLE_POR_EFECTO`**: ese estado pertenece a la regla de utilidad
+por celda. Incluso sin ninguna semilla que cumpla, este resumen conservador solo
+descarta estabilidad afirmativa; una conclusión de efecto requiere su evidencia
+y revisión propias. Los veredictos individuales no se reclasifican.
+
+La justificación es exigir estabilidad de la conclusión frente a la aleatoriedad
+del ajuste, evitando que una mayoría de semillas o una selección favorable oculte
+una inversión de resultado. La mayoría de cortes evalúa consistencia temporal;
+la unanimidad de semillas agrega una comprobación de sensibilidad algorítmica,
+sin crear cinco cohortes independientes ni una prueba inferencial adicional.
+Es una **decisión prospectiva propuesta**, no una regla histórica ya aprobada ni
+una regla elegida por rendimiento observado. Se implementa con resultados
+artificiales, sin usar 2025 ni ajustar umbrales a resultados reales. Sustituye
+el bloqueo técnico `PENDING_SEED_AGGREGATION_RULE`, pero **no aprueba el contrato**:
+el equipo debe aprobar y congelar esta regla antes de una evaluación científica
+nueva. Cada receta V3 fija el hash del contrato; su cambio requiere identidad y
+aprobación nuevas, sin reinterpretar evidencia previa.
 
 Un candidato finalista requiere además una reproducción E2E N=3 con datos,
 código, lock, configuración y protocolo fijados. Cuando la plataforma permite
@@ -611,7 +647,7 @@ autoriza a relajar la política después de observar resultados.
 | Carga por 100 municipio-mes | Implementada con nombre separado de condición B | Resultado bajo propuesta, sin reemplazar A/B/C. |
 | 2.000 bloques emparejados por mes objetivo | Implementados en recetas V3, con réplicas indefinidas visibles | No confiere carácter confirmatorio a datos consumidos. |
 | Controles negativos de la política | Implementados, con invalidación si un control cumple | La aprobación científica sigue pendiente. |
-| Cortes y cinco semillas | Ejecutables dentro de una receta V3 | Agregación de veredictos entre semillas no definida; resumen bloqueado. |
+| Cortes y cinco semillas | Ejecutables dentro de una receta V3 | Unanimidad de cinco consistencias implementada como propuesta; requiere aprobación del equipo y conserva resultados individuales. |
 | Reproducción E2E de eventual finalista | Pendiente | La certificación del canónico no equivale a N=3 de modelos. |
 | Consistencia y mínimo de 30 inicios por celda | Aplicados bajo las reglas propuestas y el voto predeclarado | Celdas pequeñas se reportan sin voto ni conclusión científica. |
 | Con/sin clima y horizonte/año/territorio | Implementados en V3, con poblaciones nativas y comunes | Población común en los cinco roles para comparar brazos; cobertura adicional separada. |
@@ -619,7 +655,7 @@ autoriza a relajar la política después de observar resultados.
 Por lo anterior, la fábrica está preparada para ejecutar y preservar
 experimentos, pero **ninguna corrida actual puede declarar que respondió
 afirmativamente la pregunta de grado**. La implementación se comprueba con fuentes
-artificiales; la aprobación del equipo, agregación entre semillas, cohorte
+artificiales; la aprobación del equipo (incluida la regla entre semillas), cohorte
 confirmatoria y reproducción finalista continúan pendientes. Las evidencias de
 T16, EXP001/EXP002 y recetas V1/V2 conservan sus bytes y significado. Las recetas
 V3 fijan predictores, población y ausencias antes de ejecutar; la cobertura nativa
@@ -641,8 +677,8 @@ Antes de convertir esta propuesta en norma, el equipo debe aprobar explícitamen
 6. generalización de consistencia `floor(K/2)+1`, mínimo de tres cortes
    utilizables y aplicación del mínimo histórico de 30 inicios por celda;
 7. método de incertidumbre, cinco semillas (incluida la comprobación histórica
-   para diferencias de uno o dos inicios), operador de agregación entre semillas
-   todavía no definido y reproducción N=3;
+   para diferencias de uno o dos inicios), unanimidad propuesta de las cinco
+   consistencias con estados y justificación del apartado 13, y reproducción N=3;
 8. cohorte futura confirmatoria y protocolo/recetas con y sin clima. Aprobar el
    contrato no aprueba automáticamente ninguna receta o ejecución real.
 

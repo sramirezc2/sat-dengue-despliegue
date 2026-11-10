@@ -146,10 +146,34 @@ semilla y territorio con la regla predeclarada; una celda inválida no se elimin
 para mejorar el voto. Las cinco diferencias por semilla, su dispersión y cambios
 de signo se reportan también para diferencias de uno o dos inicios.
 
-**Decisión indispensable todavía no definida por el contrato:** cómo agregar los
-veredictos de cinco semillas en un único veredicto. Se mantiene
-`PENDING_SEED_AGGREGATION_RULE` en ese resumen, con todos los resultados por
-semilla disponibles. No se inventa unanimidad, mayoría o selección de la mejor.
+**Agregación implementada como propuesta, pendiente de aprobación del equipo:**
+la función pequeña `aggregate_seed_consistency` en `evaluation/scientific/reporting.py`
+consume las consistencias por semilla que ya produce la etapa final
+`scientific_evaluation`. Para cada brazo × población × lectura × horizonte ×
+territorio conserva la mayoría estricta de cortes utilizables dentro de cada
+semilla (mínimo tres) y exige las cinco identidades predeclaradas con `CUMPLE`
+para emitir `CUMPLE_BAJO_CONTRATO_PROPUESTO`. No añade métricas, pipelines,
+comandos ni ejecuciones. Las vistas anuales no votan como cortes adicionales.
+
+Faltantes de corridas/cortes, políticas o soporte producen `NO_EVALUABLE`;
+la semilla ausente se conserva explícitamente con ese estado. Una corrida
+inválida produce `INVALIDO` y tiene precedencia; no se elimina por soporte
+pequeño. Cinco resultados válidos sin unanimidad (incluido 4/5) producen
+`INCONCLUSO_POR_INESTABILIDAD`, sin convertir la mezcla en fallo de efecto.
+El resumen no infiere un efecto negativo ni siquiera con 0/5: conserva los
+veredictos individuales para su revisión científica. Los cortes excluidos por
+soporte se mantienen visibles y 2/3 utilizables sigue siendo mayoría suficiente.
+
+Cada registro `seed_stability` conserva los cinco resultados en `seeds`, los
+votos y cortes observados, y las distribuciones existentes. Incluye
+`aggregation_rule: all_five_declared_seeds_cumple`,
+`contract_status: PROPUESTA_PARA_APROBACION`, `team_approval_required: true` y
+`scientific_conclusion: NOT_APPROVED`. T+1 y ambas lecturas de T+2, las
+poblaciones, brazos y territorios se agregan por separado. No se escoge la mejor
+semilla ni se cuentan semillas como cortes o cohortes independientes. La regla
+comprueba sensibilidad algorítmica y requiere aprobación prospectiva del equipo
+según el apartado 13 del contrato. Sustituye solo el bloqueo técnico anterior.
+
 Siguen pendientes aprobación del equipo, cohorte confirmatoria independiente y
 reproducción E2E N=3 de un eventual finalista. El N=3 canónico no satisface esa
 reproducción de modelos. La evidencia retrospectiva ya consumida, incluido 2025,
@@ -182,3 +206,8 @@ con MLflow SQLite real, y un fallo inyectado de identidad de predicción. Los da
 son cinco fuentes artificiales con centinelas 2025 y clima faltante; se cotejan
 certificado, modelos ajustados, selección de variables y poblaciones de ambos
 brazos, inventario y terminales. Es aceptación de software, no evidencia científica.
+
+La regla entre semillas se comprueba además con resultados artificiales, sin ajustar
+modelos, en `tests/test_seed_aggregation.py`: 5/5, 4/5, semilla ausente, soporte
+insuficiente y corrida inválida; se verifica también la separación de dimensiones,
+políticas pendientes, denominadores, identidades y exclusiones por soporte.

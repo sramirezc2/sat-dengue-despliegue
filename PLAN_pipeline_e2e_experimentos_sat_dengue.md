@@ -2,13 +2,13 @@
 
 **Plan interno:** `PLAN_pipeline_e2e_experimentos_sat_dengue`
 
-**Versión de diseño:** 7.4 — evaluación integrada bajo contrato propuesto en PR #3
+**Versión de diseño:** 7.5 — evaluación integrada bajo contrato propuesto en PR #3
 
 **Fase actual:** corrección del contrato propuesto en una rama nueva desde
 `main@a324f3c`, que ya contiene la fábrica del PR #1. Un único PR nuevo reunirá
 la etapa documental y su implementación funcional autorizada mediante DEC-036.
-La aprobación científica y la regla de agregación entre semillas siguen
-pendientes. `plan.md` es la única
+La agregación entre semillas se implementa como propuesta bajo DEC-037;
+la aprobación científica del equipo sigue pendiente. `plan.md` es la única
 fuente de verdad sobre número, estado, dependencia y avance de las tareas.
 
 **Nivel de rigor:** deep
@@ -1208,9 +1208,13 @@ usa exclusivamente fuentes artificiales, tres cortes, cinco semillas y modelos
 ajustados en la misma corrida. No existe un evaluador externo al flujo E2E.
 
 La implementación calcula veredictos **bajo contrato propuesto**, sin aprobación
-científica. El contrato no define cómo agregar veredictos de semillas: se detiene
-solo ese resumen como PENDING_SEED_AGGREGATION_RULE y se conservan las salidas
-por corte/semilla. Cada receta real sigue necesitando registro, hashes y aprobación
+científica. DEC-037 añade una propuesta explícita: mayoría estricta de cortes
+utilizables dentro de cada semilla y unanimidad de las cinco semillas predeclaradas
+para CUMPLE_BAJO_CONTRATO_PROPUESTO. Faltantes o soporte insuficiente se reportan
+NO_EVALUABLE, mezcla válida INCONCLUSO_POR_INESTABILIDAD e invalidez INVALIDO,
+conservando resultados individuales y separación de todas las vistas. Esta regla
+requiere aprobación del equipo; no cuenta semillas como cortes ni infiere fallo
+de efecto de una mezcla. Cada receta real sigue necesitando registro, hashes y aprobación
 propios; no se ejecuta una nueva corrida científica real en esta etapa.
 T16, EXP001/EXP002, N=3 y resultados publicados permanecen cerrados. Se mantiene
 este único plan maestro, con estados operativos solo en `plan.md`.

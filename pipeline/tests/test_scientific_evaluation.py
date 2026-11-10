@@ -255,6 +255,7 @@ def test_cut_consistency_excludes_only_predeclared_small_support(
                 "horizon": 1,
                 "territory": "primary_meta_tolima",
                 "seed": 53,
+                "policy_status": "FROZEN",
                 "support_status": "INSUFFICIENT_30_ONSETS" if cut >= k - small else "SUFFICIENT",
                 "UTILIDAD_PROPUESTA": "CUMPLE" if cut < votes else "NO_CUMPLE_POR_EFECTO",
                 "ABC_HISTORICA": {"status": "ABC_HISTORICA_CUMPLE"},
@@ -269,7 +270,8 @@ def test_cut_consistency_excludes_only_predeclared_small_support(
     result = summaries(
         records,
         {
-            "cuts": [{}] * k,
+            "seeds": [53],
+            "cuts": [{"id": str(cut)} for cut in range(k)],
             "consistency_rule": "strict_majority_min_three",
             "consistency_vote": "both_rules_cumple",
         },
@@ -277,14 +279,15 @@ def test_cut_consistency_excludes_only_predeclared_small_support(
     assert result[0]["status"] == status
     assert result[0]["usable_cuts"] == k - small
     assert result[1]["five_seeds_check"] == "NOT_VERIFIED"
-    assert result[1]["status"] == "PENDING_SEED_AGGREGATION_RULE"
+    assert result[1]["status"] == "NO_EVALUABLE"
     for r in records:
         r["UTILIDAD_PROPUESTA"] = "INVALIDO"
     assert (
         summaries(
             records,
             {
-                "cuts": [{}] * k,
+                "seeds": [53],
+                "cuts": [{"id": str(cut)} for cut in range(k)],
                 "consistency_rule": "strict_majority_min_three",
                 "consistency_vote": "both_rules_cumple",
             },
@@ -388,8 +391,8 @@ def test_scientific_fragment_hash_and_presence_are_required(tmp_path: Path) -> N
         verify_execution(tmp_path, reference)
 
 
-def test_small_differences_report_all_five_seeds_without_invented_combined_verdict() -> None:
-    """Cinco diferencias y sus signos se conservan aunque no exista operador de agregación."""
+def test_small_differences_report_all_five_seeds_without_sufficient_cuts() -> None:
+    """Conservar diferencias y signos sin inventar soporte a partir de cinco semillas."""
     rows = []
     for seed, delta in zip([7, 13, 31, 53, 101], [-2, -1, 0, 1, 2], strict=True):
         rows.append(
@@ -403,6 +406,7 @@ def test_small_differences_report_all_five_seeds_without_invented_combined_verdi
                 "horizon": 2,
                 "territory": "primary_meta_tolima",
                 "seed": seed,
+                "policy_status": "FROZEN",
                 "support_status": "SUFFICIENT",
                 "UTILIDAD_PROPUESTA": "PRECISION_INSUFICIENTE",
                 "ABC_HISTORICA": {"status": "ABC_HISTORICA_NO_CUMPLE"},
@@ -417,14 +421,15 @@ def test_small_differences_report_all_five_seeds_without_invented_combined_verdi
     result = summaries(
         rows,
         {
-            "cuts": [{}],
+            "seeds": [7, 13, 31, 53, 101],
+            "cuts": [{"id": "one"}],
             "consistency_rule": "strict_majority_min_three",
             "consistency_vote": "both_rules_cumple",
         },
     )
     stability = result[-1]
     assert stability["five_seeds_check"] == "REPORTED"
-    assert stability["status"] == "PENDING_SEED_AGGREGATION_RULE"
+    assert stability["status"] == "NO_EVALUABLE"
     distribution = stability["distributions"][0]
     assert distribution["mean"] == 0 and distribution["positive"] == distribution["negative"] == 2
     assert (
