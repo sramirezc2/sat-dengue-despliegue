@@ -1549,7 +1549,7 @@ después de publicar.
 
 ### Tanda 10 — Retroanálisis con datos reales y regresión logística
 
-Documentada en [tanda-10-retroanalisis.docx](bitacora/tanda-10-retroanalisis.docx).
+Documentada en [tanda-10-retroanalisis.md](bitacora/tanda-10-retroanalisis.md).
 
 ## 6. Estado de las líneas de trabajo
 
