@@ -185,6 +185,13 @@ Registre también esa transición en Git. El pipeline solo acepta experimentos c
 
 ## Ejecutar el entrenamiento
 
+Las recetas V3 integran la [evaluación bajo contrato propuesto](scientific-evaluation.md)
+en el mismo `experiment_run`: adquisición/certificado, preparación, entrenamiento,
+predicciones, evaluación e inventario, con un único comando y sin transferencias
+manuales. Esa guía describe brazos con/sin clima, cortes, semillas y decisiones
+pendientes. El contrato permanece `PROPUESTA_PARA_APROBACION`; aprobar software
+no aprueba una receta científica real ni su conclusión.
+
 ```sh
 uv run --directory pipeline kedro run --pipeline experiment_run --params experiment_id=EXP003
 ```

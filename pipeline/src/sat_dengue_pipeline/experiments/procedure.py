@@ -162,7 +162,7 @@ def fit_procedure(
     }
     train = batches["train"]
     y_train = labels["train"]
-    model = CheckedAdapter(registry.create(spec))
+    model = CheckedAdapter(registry.create(spec), predictors=train.predictors)
     model.fit(train.X, y_train)
     prevalence = float(y_train.mean())
     fit = batches["calibration_fit"]
@@ -226,6 +226,10 @@ def fit_procedure(
                 "y": [int(v) for v in y],
             }
         )
+    if train.allow_excess_at_origin:
+        trace["allow_excess_at_origin"] = True
+    if list(train.predictors) != list(batches["evaluation"].X):
+        raise ValueError("Esquema de evaluación distinto del entrenamiento")
     # Ni etiquetas ni valores X de evaluación intervienen en el artefacto.
     frozen = FrozenDecisions(
         spec.candidate,
@@ -263,7 +267,9 @@ def predict_frozen(
     dummy = pd.Series(pd.NA, index=evaluation.keys.index, dtype="Int64")
     trace = json.loads(frozen.trace_json)
     validate_data(
-        ExperimentData(evaluation.keys, evaluation.X, dummy, evaluation.controls),
+        ExperimentData(
+            evaluation.keys, evaluation.X, dummy, evaluation.controls, evaluation.predictors
+        ),
         frozen.horizon,
         trace["plan"]["reserved_start"],
     )
@@ -272,7 +278,11 @@ def predict_frozen(
         or stable_digest(evaluation.keys.to_dict("records"))
         != trace["support"]["evaluation"]["keys_digest"]
         or not evaluation.controls.eligible_at_t.all()
-        or evaluation.X.zona_canal_t.eq("EXCESO").any()
+        or (
+            not trace.get("allow_excess_at_origin", False)
+            and "zona_canal_t" in evaluation.X
+            and evaluation.X.zona_canal_t.eq("EXCESO").any()
+        )
         or add_months(frozen.available_period, trace["plan"]["embargo_months"])
         >= str(evaluation.keys.origin_period.min())
     ):

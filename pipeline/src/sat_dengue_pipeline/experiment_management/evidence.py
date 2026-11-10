@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -28,12 +29,19 @@ def exclusive_json(path: Path, value: Any) -> None:
 
 def publish(folder: Path, artifacts: dict[str, Any]) -> None:
     """Completar una ejecución reservada; inventario final actúa como marcador de cierre."""
-    if set(artifacts) != NAMES or artifacts["receipt.json"]["status"] not in TERMINAL:
+    additional = set(artifacts) - NAMES
+    if (
+        not NAMES <= set(artifacts)
+        or artifacts["receipt.json"]["status"] not in TERMINAL
+        or any(not re.fullmatch(r"scientific-[0-9]{4}\.json", name) for name in additional)
+        or set(artifacts["receipt.json"].get("scientific_evaluation", {}).get("records", []))
+        != additional
+    ):
         raise ValueError("Paquete o estado terminal inválido")
     for name in sorted(artifacts):
         exclusive_json(folder / name, artifacts[name])
     exclusive_json(
-        folder / "inventory.json", {name: sha256(folder / name) for name in sorted(NAMES)}
+        folder / "inventory.json", {name: sha256(folder / name) for name in sorted(artifacts)}
     )
 
 
@@ -41,10 +49,13 @@ def verify_execution(root: Path, reference: str) -> dict:
     """Verificar esquema de archivos, inventario y estado antes de comparar o concluir."""
     inventory_path = confined(root, reference, "docs/evidence/experiments")
     folder = inventory_path.parent
-    if {p.name for p in folder.iterdir()} != NAMES | {"inventory.json"}:
-        raise ValueError("Evidencia incompleta o desconocida")
     inventory = json.loads(inventory_path.read_bytes())
-    if set(inventory) != NAMES:
+    additional = set(inventory) - NAMES
+    if (
+        not NAMES <= set(inventory)
+        or any(not re.fullmatch(r"scientific-[0-9]{4}\.json", name) for name in additional)
+        or {p.name for p in folder.iterdir()} != set(inventory) | {"inventory.json"}
+    ):
         raise ValueError("Inventario incompleto")
     for name, digest in inventory.items():
         path = confined(
@@ -59,10 +70,38 @@ def verify_execution(root: Path, reference: str) -> dict:
         or (record["experiment_id"] != folder.parent.name)
     ):
         raise ValueError("Recibo de ejecución inconsistente")
+    if set(record.get("scientific_evaluation", {}).get("records", [])) != additional:
+        raise ValueError("Inventario científico distinto del recibo")
     lineage = json.loads((folder / "lineage.json").read_bytes())
+    if record.get("scientific_evaluation") and record["scientific_evaluation"][
+        "contract"
+    ] != lineage.get("scientific_contract"):
+        raise ValueError("Contrato científico distinto del linaje firmado")
     if stable_digest(lineage) != record["execution_signature"] or any(
         lineage[k] != record[k]
         for k in ("experiment_id", "protocol_sha256", "configuration_sha256")
     ):
         raise ValueError("Firma de ejecución inconsistente")
     return record
+
+
+def scientific_artifacts(records: list[dict]) -> dict[str, dict]:
+    """Dividir agregados grandes en JSON pequeños, exclusivos e inventariados.
+
+    Args:
+        records: Configuración/huellas/métricas agregadas; nunca filas de predicción.
+
+    Returns:
+        Archivos de menos de 300 kB que el publicador existente guarda atómicamente.
+    """
+    chunks: list[list[dict]] = [[]]
+    for record in records:
+        if len(canonical_bytes(record)) > 250_000:
+            raise ValueError("Registro científico agregado demasiado grande")
+        if len(canonical_bytes(chunks[-1] + [record])) > 290_000:
+            chunks.append([])
+        chunks[-1].append(record)
+    return {
+        f"scientific-{i:04d}.json": {"schema": "satd-scientific-proposed-v1", "records": chunk}
+        for i, chunk in enumerate(chunks)
+    }

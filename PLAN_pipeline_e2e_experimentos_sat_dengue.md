@@ -2,12 +2,13 @@
 
 **Plan interno:** `PLAN_pipeline_e2e_experimentos_sat_dengue`
 
-**Versión de diseño:** 7.3 — propuesta documental posterior a la integración del PR #1
+**Versión de diseño:** 7.4 — evaluación integrada bajo contrato propuesto en PR #3
 
 **Fase actual:** corrección del contrato propuesto en una rama nueva desde
 `main@a324f3c`, que ya contiene la fábrica del PR #1. Un único PR nuevo reunirá
-esta etapa documental y una segunda etapa funcional posterior, pendiente de
-autorización, implementación y aprobación científica. `plan.md` es la única
+la etapa documental y su implementación funcional autorizada mediante DEC-036.
+La aprobación científica y la regla de agregación entre semillas siguen
+pendientes. `plan.md` es la única
 fuente de verdad sobre número, estado, dependencia y avance de las tareas.
 
 **Nivel de rigor:** deep
@@ -1191,17 +1192,26 @@ que sustituye la restricción histórica de trabajar solo en el PR #1.
 
 La **primera etapa es documental**: revisar el contrato contra V2, bitácora y
 código vigente, mantenerlo como propuesta y publicar sus decisiones pendientes.
-La **segunda etapa del mismo PR** queda para una ejecución posterior: incorporar
+La **segunda etapa del mismo PR**, autorizada posteriormente por DEC-036, incorpora
 evaluación automática de modelo, canal y persistencia en soporte común; A/B/C;
 presupuesto de alertas; incertidumbre emparejada; resultados por horizonte,
 año y territorio; veredicto reproducible; y recetas con y sin clima. Debe
 preservar las compuertas temporales y distinguir cambios de predictores de cambios
 de población, con soporte común predeclarado y cobertura adicional separada.
 
-Esta ampliación describe el alcance solicitado, **no una funcionalidad
-implementada ni una aprobación científica**. Antes de implementarla se requiere
-autorización posterior y resolver las decisiones del contrato con el equipo;
-cada receta real seguirá necesitando registro, hashes y aprobación propios.
+La [guía de evaluación integrada](docs/experiments/scientific-evaluation.md)
+describe el grafo Kedro, receta V3 y evidencia: se comparte el lifecycle existente
+y la certificación precede al entrenamiento. Se proyectan solo variables
+declaradas y se fijan poblaciones comunes en los cinco roles para comparar clima;
+la cobertura nativa del brazo sin clima se reporta separadamente. La aceptación
+usa exclusivamente fuentes artificiales, tres cortes, cinco semillas y modelos
+ajustados en la misma corrida. No existe un evaluador externo al flujo E2E.
+
+La implementación calcula veredictos **bajo contrato propuesto**, sin aprobación
+científica. El contrato no define cómo agregar veredictos de semillas: se detiene
+solo ese resumen como PENDING_SEED_AGGREGATION_RULE y se conservan las salidas
+por corte/semilla. Cada receta real sigue necesitando registro, hashes y aprobación
+propios; no se ejecuta una nueva corrida científica real en esta etapa.
 T16, EXP001/EXP002, N=3 y resultados publicados permanecen cerrados. Se mantiene
 este único plan maestro, con estados operativos solo en `plan.md`.
 

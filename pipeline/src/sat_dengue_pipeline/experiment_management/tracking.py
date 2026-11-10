@@ -23,6 +23,9 @@ EXPERIMENT_TAGS = {
     "horizon",
     "evidence",
     "experiment_type",
+    "evaluation_label",
+    "contract_sha256",
+    "contract_status",
 }
 
 
@@ -70,6 +73,7 @@ class ExperimentTracker(LocalTracker):
         if run_id is None:
             return
         from mlflow.entities import Metric, RunStatus, RunTag
+        from mlflow.utils.validation import MAX_ENTITIES_PER_BATCH, MAX_METRICS_PER_BATCH
 
         numeric = []
         for reference, records in (metrics or {}).items():
@@ -84,13 +88,16 @@ class ExperimentTracker(LocalTracker):
                             0,
                         )
                     )
+        logged_tags = [RunTag(k, v) for k, v in {**tags, "status": status}.items()]
+        batch_size = min(MAX_METRICS_PER_BATCH, MAX_ENTITIES_PER_BATCH - len(logged_tags))
         try:
-            self.store.log_batch(
-                run_id,
-                metrics=numeric,
-                params=[],
-                tags=[RunTag(k, v) for k, v in {**tags, "status": status}.items()],
-            )
+            for start in range(0, max(len(numeric), 1), batch_size):
+                self.store.log_batch(
+                    run_id,
+                    metrics=numeric[start : start + batch_size],
+                    params=[],
+                    tags=logged_tags,
+                )
         except BaseException:
             self.store.update_run_info(run_id, RunStatus.FAILED, int(time.time() * 1000), None)
             raise

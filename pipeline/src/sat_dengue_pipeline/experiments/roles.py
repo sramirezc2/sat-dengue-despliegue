@@ -7,6 +7,7 @@ from typing import Any
 import pandas as pd
 
 from sat_dengue_pipeline.domain.calendar import add_months, validate_period
+from sat_dengue_pipeline.domain.canonical import PREDICTORS
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy
 from sat_dengue_pipeline.models.adapters import validate_features
 
@@ -94,6 +95,8 @@ class RoleBatch:
     X: pd.DataFrame
     controls: pd.DataFrame
     read_y: Callable[[], pd.Series]
+    predictors: tuple[str, ...] = tuple(PREDICTORS)
+    allow_excess_at_origin: bool = False
 
 
 def split_roles(data: ExperimentData, plan: TemporalPlan) -> dict[str, RoleBatch]:
@@ -149,7 +152,7 @@ def preflight_roles(batches: dict[str, RoleBatch], plan: TemporalPlan) -> dict[s
         batch = batches[name]
         dummy_y = pd.Series(pd.NA, index=batch.keys.index, dtype="Int64")
         validate_data(
-            ExperimentData(batch.keys, batch.X, dummy_y, batch.controls),
+            ExperimentData(batch.keys, batch.X, dummy_y, batch.controls, batch.predictors),
             plan.horizon,
             plan.reserved_start,
         )
@@ -182,8 +185,12 @@ def preflight_roles(batches: dict[str, RoleBatch], plan: TemporalPlan) -> dict[s
                 raise ValueError("Soporte de meses/municipios insuficiente antes de etiquetas")
         targets_seen |= months
         links_seen |= links
-        validate_features(batch.X)
-        if batch.X.zona_canal_t.eq("EXCESO").any():
+        validate_features(batch.X, predictors=batch.predictors)
+        if (
+            not batch.allow_excess_at_origin
+            and "zona_canal_t" in batch.X
+            and batch.X.zona_canal_t.eq("EXCESO").any()
+        ):
             raise ValueError("Elegibilidad contradice el estado observado al origen")
         available = str(keys.label_available_period.max())
         first_origin = str(keys.origin_period.min())
@@ -226,7 +233,7 @@ def role_labels(batch: RoleBatch, plan: TemporalPlan) -> pd.Series:
         raise ValueError("Evaluación no puede alimentar ajuste o selección")
     dummy = pd.Series(pd.NA, index=batch.keys.index, dtype="Int64")
     validate_data(
-        ExperimentData(batch.keys, batch.X, dummy, batch.controls),
+        ExperimentData(batch.keys, batch.X, dummy, batch.controls, batch.predictors),
         plan.horizon,
         plan.reserved_start,
     )

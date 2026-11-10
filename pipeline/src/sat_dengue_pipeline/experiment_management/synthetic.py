@@ -60,3 +60,33 @@ def acceptance_bundle(root: Path) -> tuple:
     bundle, inventory = fixture_inventory(root)
     bundle = replace(bundle, release_id="t17-acceptance-raw-v1", coverage_start="2011-06-01")
     return bundle, inventory, config
+
+
+def scientific_acceptance_bundle(root: Path) -> tuple:
+    """Extender el fixture efímero con clima ausente para probar ambos brazos del E2E.
+
+    Args:
+        root: Directorio exclusivo de crudos artificiales; nunca la caché privada.
+
+    Returns:
+        Cinco fuentes verificables con una ausencia climática anual predeclarada.
+    """
+    bundle, _, config = acceptance_bundle(root)
+    path = root / "google_earth_engine.csv"
+    with path.open(encoding="utf-8", newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    for row in rows:
+        if row["mpio_cdpmp"] == "50998" and row["date"].endswith("-02-01"):
+            row["rain_mm_day"] = ""
+    with path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=CLIMATE_HEADER)
+        writer.writeheader()
+        writer.writerows(rows)
+    bundle, inventory = fixture_inventory(root)
+    return (
+        replace(
+            bundle, release_id="scientific-acceptance-synthetic-v1", coverage_start="2011-06-01"
+        ),
+        inventory,
+        config,
+    )

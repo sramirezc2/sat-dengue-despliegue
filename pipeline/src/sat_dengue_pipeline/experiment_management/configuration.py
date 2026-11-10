@@ -101,6 +101,10 @@ def validate_configuration(config: dict) -> dict:
         "require_private": False,
     }:
         raise ValueError("Fixture no admite fuente externa")
+    if config["schema_version"] == 3:
+        from sat_dengue_pipeline.evaluation.scientific.configuration import validate_scientific
+
+        validate_scientific(config)
     return config
 
 
@@ -129,6 +133,13 @@ def load_configuration(root: Path, entry: dict) -> dict:
 
             canonical_build_config(data["canonical"]["profile"])
             confined(root, data["canonical"]["certificate"], "docs/evidence", exists=False)
+    if config["schema_version"] == 3:
+        contract = config["scientific_evaluation"]["contract"]
+        document = confined(root, contract["path"], "docs/experiments")
+        if sha256(document) != contract[
+            "sha256"
+        ] or "PROPUESTA_PARA_APROBACION" not in document.read_text(encoding="utf-8"):
+            raise ValueError("Contrato propuesto ausente o distinto del congelado")
     config["specification"] = entry["experiment_id"]
     config["governance"] = {
         "purpose": entry["experiment_type"],

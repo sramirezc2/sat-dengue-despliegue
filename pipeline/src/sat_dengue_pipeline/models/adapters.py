@@ -113,24 +113,36 @@ class ModelRegistry:
         return model
 
 
-def validate_features(X: pd.DataFrame, dtypes: tuple[str, ...] | None = None) -> None:
+def validate_features(
+    X: pd.DataFrame,
+    dtypes: tuple[str, ...] | None = None,
+    *,
+    predictors: tuple[str, ...] = tuple(PREDICTORS),
+) -> None:
     """Exigir esquema/orden canónico, sin columnas futuras ni valores ausentes.
 
     Args:
         X: Solo los predictores cerrados del productor canónico.
         dtypes: Tipos congelados en el ajuste, si se está infiriendo.
+        predictors: Subconjunto canónico explícito; por defecto el contrato histórico.
     """
-    if X.empty or list(X) != PREDICTORS or X.isna().any().any():
+    if (
+        not predictors
+        or list(predictors) != [p for p in PREDICTORS if p in predictors]
+        or X.empty
+        or list(X) != list(predictors)
+        or X.isna().any().any()
+    ):
         raise ValueError("Esquema de características inválido, futuro o incompleto")
     if dtypes is not None and tuple(str(t) for t in X.dtypes) != dtypes:
         raise ValueError("Tipos de características alterados")
-    names = [name for name in PREDICTORS if name != "zona_canal_t"]
-    if (
-        any(
-            not pd.api.types.is_numeric_dtype(X[name]) or pd.api.types.is_bool_dtype(X[name])
-            for name in names
-        )
-        or not X.zona_canal_t.isin(["EXITO", "SEGURIDAD", "ALERTA", "EXCESO"]).all()
+    names = [name for name in predictors if name != "zona_canal_t"]
+    if any(
+        not pd.api.types.is_numeric_dtype(X[name]) or pd.api.types.is_bool_dtype(X[name])
+        for name in names
+    ) or (
+        "zona_canal_t" in X
+        and not X.zona_canal_t.isin(["EXITO", "SEGURIDAD", "ALERTA", "EXCESO"]).all()
     ):
         raise ValueError("Tipos/estados de características inválidos")
     numeric = X[names]
@@ -160,15 +172,19 @@ def validate_probabilities(probability: pd.Series, index: pd.Index) -> None:
 class CheckedAdapter:
     """Frontera común que protege entradas y congela esquema y procedencia."""
 
-    def __init__(self, adapter: ModelAdapter) -> None:
+    def __init__(
+        self, adapter: ModelAdapter, *, predictors: tuple[str, ...] = tuple(PREDICTORS)
+    ) -> None:
         """Envolver una instancia nueva, sin copiar estado de otro fold.
 
         Args:
             adapter: Backend registrado sin ajustar.
+            predictors: Subconjunto canónico congelado de esta receta.
         """
         if adapter.fitted is not False:
             raise ValueError("Instancia previamente ajustada")
         self.adapter = adapter
+        self.predictors = predictors
         self.spec = adapter.spec
         self.dtypes: tuple[str, ...] | None = None
 
@@ -186,7 +202,7 @@ class CheckedAdapter:
         """
         if self.fitted:
             raise ValueError("No se permite reutilizar una instancia ajustada")
-        validate_features(X)
+        validate_features(X, predictors=self.predictors)
         if not X.index.equals(y.index) or y.isna().any() or set(y.unique()) != {0, 1}:
             raise ValueError("Entrenamiento requiere ambas clases completas y alineadas")
         copied_X, copied_y = X.copy(deep=True), y.copy(deep=True)
@@ -211,7 +227,7 @@ class CheckedAdapter:
         """
         if not self.fitted:
             raise ValueError("Inferencia antes de ajustar")
-        validate_features(X, self.dtypes)
+        validate_features(X, self.dtypes, predictors=self.predictors)
         copied = X.copy(deep=True)
         probability = self.adapter.predict_positive(copied)
         try:
@@ -233,7 +249,7 @@ class CheckedAdapter:
             **asdict(self.spec),
             "candidate": self.spec.candidate,
             "implementation": type(self.adapter).__module__ + "." + type(self.adapter).__qualname__,
-            "features": list(PREDICTORS),
+            "features": list(self.predictors),
             "dtypes": list(self.dtypes or ()),
             "fitted": self.fitted,
         }

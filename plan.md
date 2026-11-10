@@ -1,8 +1,8 @@
 # Hoja de ruta de implementación — Pipeline E2E SAT DENGUE
 
-**Versión:** 1.6
+**Versión:** 1.7
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado del alcance actual:** etapa documental COMPLETA como propuesta para revisión; segunda etapa funcional PENDIENTE, sin aprobación científica ni autorización de ejecución
+**Estado del alcance actual:** etapas documental y funcional COMPLETAS como implementación bajo contrato propuesto; resumen único entre semillas BLOQUEADO por regla no definida, sin aprobación científica
 **Último corte histórico T1–T27:** 26/27; T27 BLOQUEADA en su registro previo, sin reauditar sus gates en este alcance
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama del alcance actual:** `feature/contrato-cientifico-fabrica-final`, creada desde `origin/main@a324f3c7f141b0ec53582b461cf6586643c5b569`
@@ -550,6 +550,8 @@ Toda desviación debe registrarse antes de continuar.
 
 | DEC-035 | 2026-11-09 | Abrir alcance posterior al PR #1: corrección del contrato y posterior mejora final de fábrica en un único PR nuevo. | PR #1 fusionado en a324f3c, confirmado por GitHub y fetch local; árbol inicial limpio. Usuario solicita rama desde main actualizado y publicación de un PR nuevo. | Esta ejecución solo modifica contrato y los dos planes: T+2, A/B/C, procedencia de métricas y reglas de método. Segunda etapa funcional PENDIENTE, sin implementación ni aprobación. Se autoriza publicar esta propuesta en su rama/PR nuevo; no modificar PR #1, fusionar, entrenar ni alterar evidencia cerrada. | Instrucción explícita del usuario, que sustituye para este alcance la restricción histórica de rama/PR único de AGENTS.md. Aprobación científica reservada al equipo. |
 
+| DEC-036 | 2026-11-09 | Implementar la evaluación científica propuesta dentro del mismo experiment_run y PR #3. | Autorización posterior explícita del usuario para la etapa funcional y E2E sintético; base limpia 1ed9383. | Reutilizar lifecycle, registro, certificación, controles temporales y almacenamiento; grafo Kedro explícito, recetas V3 con brazos/cortes/semillas, A/B/C, cupo, intervalos y desgloses. Sin experimento científico real, campeón o merge. El contrato no define agregación de veredictos entre semillas: calcular sus salidas independientes y detener solo ese resumen como PENDING_SEED_AGGREGATION_RULE. | Implementación técnica autorizada; el contrato continúa PROPUESTA_PARA_APROBACION y no se concede aprobación científica. |
+
 ## 8. Condición de finalización histórica del PR #1
 
 El trabajo solo puede considerarse terminado cuando:
@@ -624,7 +626,8 @@ requiere apilar o duplicar el historial del PR #1. Se conserva un único
 | Etapa del mismo PR | Estado | Alcance y condición de salida |
 |---|---|---|
 | Documental, ejecución actual | COMPLETA | [Contrato V3](docs/experiments/contrato.md) corregido, mantiene PROPUESTA_PARA_APROBACION; contrastado con V2/bitácora/código. Enlaces, coherencia, preservación y diff PASS; propuesta para revisión del equipo, sin aprobación científica. |
-| Funcional, ejecución posterior | PENDIENTE | Evaluación automática modelo/canal/persistencia sobre soporte común; A/B/C, presupuesto de alertas, incertidumbre emparejada, resultados por horizonte/año/territorio, veredicto reproducible y recetas con/sin clima. Requiere autorización posterior de implementación y decisiones científicas explícitas; no está implementada ni aprobada. |
+| Funcional, autorización DEC-036 | COMPLETA | Evaluación integrada en el mismo grafo Kedro y evidencia: modelo/canal/persistencia, A/B/C, presupuesto, intervalos, cortes/semillas, horizonte/año/territorio y brazos con/sin clima. E2E técnico sintético y gate acumulado PASS; sin aprobación científica. El resumen científico único tiene el bloqueo independiente de la fila siguiente. |
+| Resumen científico único entre semillas | BLOQUEADA | El contrato exige cinco semillas, pero no define un operador de agregación de sus veredictos. Se conserva distribución y resultados por semilla; decidir ese operador corresponde al equipo antes de una evaluación nueva. No bloquea métricas, intervalos o evidencia por celda. |
 
 La propuesta mantiene el evento T+1 → T+2 y diferencia compuerta observable en T
 de información futura. Conserva la cohorte académica principal sin exceso en T,
@@ -642,10 +645,11 @@ Las recetas con y sin clima compararán sobre soporte común predeclarado y
 reportarán aparte cualquier cobertura adicional. No se crearán recetas aprobadas
 ni experimentos reales por el mero hecho de aprobar documentación o código.
 
-Se preservan T16, EXP001/EXP002, certificados N=3, bitácora, política v2 y los
-22 JSON publicados. Esta ejecución no cambia código, configuración ejecutable,
-notebooks, datos ni resultados; no hace entrenamientos ni merge. Los gates de
-la etapa funcional y la CI/revisión final deberán corresponder a su futuro HEAD.
+La etapa documental preservó T16, EXP001/EXP002, certificados N=3, bitácora,
+política v2 y los 22 JSON publicados. Su ejecución no cambió código, recetas
+ejecutables ni datos. La etapa funcional posterior solo entrena con fuentes
+artificiales en pruebas aisladas y mantiene esos mismos límites de preservación;
+no ejecuta ciencia real, selecciona campeón ni hace merge.
 
 Validación documental PASS: 45 enlaces locales, fuente V2 remota fijada por
 commit y SHA-256, 104 JSON leídos sin cambios, coherencia de los tres documentos,
@@ -653,4 +657,51 @@ registro oficial VALID y preservación normal/-O (49 archivos, 22 JSON, 16 recib
 históricos e identidad N=3 T16). Solo cambian contrato y estos dos planes; el
 resto del contenido versionado permanece idéntico a la base. `git diff --check`
 local, staged y contra `origin/main` PASS. No se ejecutan suites de producto,
-entrenamientos o reconstrucciones: el alcance es exclusivamente documental.
+entrenamientos o reconstrucciones: ese alcance fue exclusivamente documental.
+
+### Implementación funcional bajo contrato propuesto
+
+La [guía integrada](docs/experiments/scientific-evaluation.md) documenta el único
+comando `experiment_run`, receta V3 y límites. Los nodos comparten `runner.STAGES`,
+el mismo contexto y finalizador. La adquisición/certificación precede al primer
+ajuste; la evaluación consume predicciones de esos modelos y conserva sus huellas
+y el certificado en la evidencia habitual. Se mantienen legibles las recetas y
+los seis archivos históricos de evidencia V1/V2; V3 añade fragmentos científicos
+pequeños, inventariados y solo agregados.
+
+Las recetas enumeran todos los cortes, semillas y brazos. El brazo epidemiológico
+nativo conserva observaciones con clima ausente; la comparación entre brazos
+ajusta y evalúa sobre la misma población en los cinco roles, con X limitado a las
+variables declaradas de cada brazo. Se separan lectura primaria/secundaria T+2,
+C0/C1 histórica y canal condicionado; el canal utiliza el mismo conteo de dengue
+que P75 H5. El cupo se compromete en la receta y se aplica por mes y departamento
+antes de leer desenlaces. No se eligen umbrales, fracciones o presupuesto con y_eval.
+
+La evaluación conserva A/B/C y carga por 100 municipio-mes como salidas distintas,
+2.000 réplicas emparejadas por mes con indefinidas visibles, controles negativos,
+soportes mínimos de 30 inicios, voto de cortes predeclarado, distribución de cinco
+semillas y resultados por año/territorio/horizonte. Todos los resultados llevan
+VEREDICTO_BAJO_CONTRATO_PROPUESTO. El resumen entre semillas queda pendiente de
+la decisión explícita anterior; también siguen pendientes aprobación del equipo,
+cohorte confirmatoria independiente y N=3 E2E de un eventual finalista. El N=3
+canónico no reemplaza este último requisito.
+
+La aceptación sintética cubre cinco fuentes, N=3 canónico en tres procesos, tres
+cortes, cinco semillas, dos brazos, poblaciones nativa/común y las dos lecturas:
+180 ajustes XGBoost auténticos cuyas huellas se cotejan con las de la evaluación.
+Una prueba CLI completa adicional verifica MLflow SQLite real; una identidad
+ajena de predicción produce terminal BLOCKED preservado. La muestra artificial
+tiene menos de 30 inicios por celda y no se usa para afirmar éxito científico.
+
+Cierre técnico PASS: **707 pruebas pipeline** (265,20 s), **35 API**, **55 tablero**,
+frozen install/lint/build, lock/sync/Ruff, CLI sintético previo, registro y
+preservación normal/-O. Se verifican 95 archivos históricos en el control extendido contra
+la base, enlaces, JSON, tamaños, ausencia de candidatos a secretos y diff.
+[Recibo de validación](docs/evidence/pr3/scientific-evaluation-validation.json).
+La prueba ampliada detectó y corrigió preparación Git del fixture y particionado
+de tracking: MLflow limita el total combinado de métricas y etiquetas. Los
+recibos fallidos se conservaron localmente y una regresión de 1.200 valores pasa.
+La versión final pasa la suite completa, incluidos todos los E2E, sin omisiones.
+Persisten avisos previos de OmegaConf, Starlette/httpx, fast-refresh y Vite.
+El PR #3 conserva su estado de borrador; CI remota y revisión deben corresponder
+al nuevo HEAD. No se ejecutó un experimento científico real ni se hizo merge.

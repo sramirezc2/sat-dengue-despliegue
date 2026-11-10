@@ -1462,7 +1462,8 @@
     "schema_version": {
       "enum": [
         1,
-        2
+        2,
+        3
       ]
     },
     "data": {
@@ -1526,6 +1527,9 @@
         "require_private"
       ],
       "additionalProperties": false
+    },
+    "scientific_evaluation": {
+      "type": "object"
     }
   },
   "required": [
@@ -1552,7 +1556,10 @@
       "if": {
         "properties": {
           "schema_version": {
-            "const": 2
+            "enum": [
+              2,
+              3
+            ]
           },
           "data": {
             "properties": {
@@ -1571,6 +1578,27 @@
               "canonical"
             ]
           }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "const": 3
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "scientific_evaluation"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "scientific_evaluation"
+          ]
         }
       }
     }

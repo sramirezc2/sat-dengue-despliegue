@@ -1,0 +1,132 @@
+{
+  "schema": "sat-dengue.proposed-scientific-evaluation-validation/v1",
+  "status": "PASS",
+  "scope": "Implementation and synthetic acceptance only; not scientific approval",
+  "branch": "feature/contrato-cientifico-fabrica-final",
+  "pull_request": 3,
+  "base_commit": "1ed9383ed5cd28a81135b8bb2483ff46c767cdec",
+  "tested_source_sha256": "75d87b1aa9b173f8bfb9b83d88d61ebdcbfe4b83c260801b0d82f1af47ba7a79",
+  "lock_sha256": "5bd75700f0b6a9785478cf808e58544ac3d7d98bc36409c0e6086e5531a60fb7",
+  "versions": {
+    "numpy": "2.5.4",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.7.2",
+    "scipy": "1.18.1",
+    "xgboost": "3.0.5",
+    "kedro": "1.7.0"
+  },
+  "contract": {
+    "path": "docs/experiments/contrato.md",
+    "sha256": "ac4d6a071c04d7def661308b57205fba72357b78de8c120f41cf3304a0479fa0",
+    "status": "PROPUESTA_PARA_APROBACION"
+  },
+  "scientific_approval": false,
+  "scientific_conclusion": "NOT_APPROVED",
+  "pending_summary": "PENDING_SEED_AGGREGATION_RULE",
+  "required_team_decision": "Define prospectively how per-seed verdicts combine; no unanimity, majority or best-seed rule was inferred.",
+  "other_pending_scientific_limits": [
+    "team contract and recipe approval",
+    "independent confirmatory cohort",
+    "eventual finalist E2E N=3; canonical N=3 is separate"
+  ],
+  "tests": {
+    "pipeline": {
+      "command": "uv run --locked --directory pipeline pytest -q --junitxml=data/pr3-validation/final-pipeline-pytest.xml --tb=short",
+      "passed": 707,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 265.204,
+      "local_report": "pipeline/data/pr3-validation/final-pipeline-pytest.xml",
+      "report_sha256": "5b6b6701839fc8975e064333f9fbca3993bf03de36c9c3a11411a0e598112ab9"
+    },
+    "api": {
+      "command": "(cd app/api && python -m pytest)",
+      "passed": 35,
+      "exit_code": 0
+    },
+    "dashboard": {
+      "commands": [
+        "bun install --frozen-lockfile",
+        "bun run lint",
+        "bun run test",
+        "NITRO_PRESET=node_server bun run build"
+      ],
+      "passed": 55,
+      "all_exit_codes": 0
+    }
+  },
+  "synthetic_e2e": {
+    "source_files": 5,
+    "certification_processes": 3,
+    "cuts": 3,
+    "seeds": 5,
+    "arms": 2,
+    "populations": [
+      "native",
+      "common"
+    ],
+    "readings": [
+      "primary",
+      "secondary_t2"
+    ],
+    "actual_xgboost_fits": 180,
+    "model_and_consumed_canonical_hashes_matched": true,
+    "variable_projection_and_climate_missingness_checked": true,
+    "common_population_in_all_five_roles_checked": true,
+    "actual_kedro_cli_and_sqlite_tracking_checked": true,
+    "more_than_1000_metrics_with_tags_checked": true,
+    "wrong_prediction_identity_blocked_with_terminal_preserved": true,
+    "observations_are_artificial_only": true,
+    "insufficient_onset_support_never_becomes_scientific_success": true
+  },
+  "gates": {
+    "ruff": "PASS",
+    "lock_check": "PASS",
+    "locked_sync": "PASS",
+    "legacy_synthetic_cli": "PASS",
+    "official_registry": "VALID",
+    "normal_and_optimized_preservation": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "preservation": {
+    "official_protected_files": 49,
+    "published_json": 22,
+    "historical_t16_receipts": 16,
+    "t16_n3_identity": "899ba8b2c48b69dbf2e9094a6efedfa838cbfe4c800bed25fa1823503d06d52f",
+    "EXP001_EXP002_unchanged": true,
+    "full_canonical_certificate_unchanged": true,
+    "extended_closed_files_equal_base": 95
+  },
+  "structural": {
+    "status": "PASS",
+    "modified_markdown_local_links": 83,
+    "strict_json_files": 106,
+    "protected_tracked_files_equal_base": 95,
+    "secret_pattern_candidates": 0,
+    "all_changed_files_below_512kb": true,
+    "source_and_documentation_only": true
+  },
+  "technical_recovery": {
+    "initial_fixture_failure": "Git repository and .gitignore missing in an isolated tracking fixture; initialization correctly BLOCKED before acquisition/fit. Fixture setup corrected.",
+    "tracking_batch_failure": "Combined MLflow metrics plus tags limit exceeded; batching now uses both SDK limits. Dedicated 1200-value regression and full E2E pass.",
+    "retained_local_evidence": [
+      "pipeline/data/pr3-validation/fixture-initialization-failure",
+      "pipeline/data/pr3-validation/fixture-tracking-batch-failure",
+      "pipeline/data/pr3-validation/fixture-tracking-batch-failure-pytest.xml"
+    ],
+    "scientific_history_rewritten": false
+  },
+  "warnings": [
+    "Existing OmegaConf resolver deprecations",
+    "Existing Starlette/httpx deprecation in API",
+    "Six existing React fast-refresh lint warnings",
+    "Existing Vite tsconfig-paths advisory"
+  ],
+  "not_executed": [
+    "new real scientific experiment",
+    "champion selection",
+    "merge",
+    "new remote CI verification before publication"
+  ]
+}

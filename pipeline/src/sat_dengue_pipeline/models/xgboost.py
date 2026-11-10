@@ -110,7 +110,11 @@ class XGBoostOnsetAdapter:
 
     def matrix(self, X: pd.DataFrame) -> np.ndarray:
         """Validar 33 entradas y proyectar predictores declarados a float32 sin aprender."""
-        validate_features(X, self._dtypes)
+        validate_features(
+            X,
+            self._dtypes,
+            predictors=tuple(PREDICTORS if list(X) == PREDICTORS else self.settings["predictors"]),
+        )
         parts = []
         for name in self.settings["predictors"]:
             if name == "zona_canal_t":
