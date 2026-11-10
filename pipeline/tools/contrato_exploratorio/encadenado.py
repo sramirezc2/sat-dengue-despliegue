@@ -10,6 +10,7 @@ Uso: python encadenado.py <carpeta_runs> <prefijo_receta>
 import glob
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -20,14 +21,15 @@ import pandas as pd
 from sat_dengue_pipeline.raw.serialization import CanonicalArtifact, load_canonical
 
 carpeta, receta = Path(sys.argv[1]), sys.argv[2]
-p = Path(sorted(glob.glob("data/retro-real/provisional/*/canonical.json"))[-1])
+panel = os.environ.get("PANEL_DIR", "data/retro-real")
+p = Path(sorted(glob.glob(panel + "/**/canonical.json", recursive=True))[-1])
 table, _ = load_canonical(
     CanonicalArtifact(p, p.parent.name, hashlib.sha256(p.read_bytes()).hexdigest())
 )
 table = table[table.department_code.isin(["50", "73"])].reset_index(drop=True)
 P = ct.PARAMETROS_DEFECTO
 filas = {k: [] for k in ("solo T+2", "solo puntaje T+1", "promedio de rangos", "maximo de rangos")}
-for s in range(4):
+for s in range(int(os.environ.get("COHORTES", "7"))):
     f = carpeta / f"{receta}_s{s}.json"
     if not f.exists():
         continue

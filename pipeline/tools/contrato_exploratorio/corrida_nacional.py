@@ -12,6 +12,7 @@ import copy
 import glob
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -40,13 +41,15 @@ for h, roles in cfg["roles_by_horizon"].items():
         )
     # Variables completas (canal de 5 años) desde objetivos 2016-08: se recorta train y se declara su soporte real.  # noqa: E501
     tr = roles["train"]
-    if tr["start"] < "2016-08":
-        tr["start"] = "2016-08"
-        n = (int(tr["end"][:4]) - 2016) * 12 + int(tr["end"][5:]) - 8 + 1
+    piso = os.environ.get("PISO_TRAIN", "2016-08")
+    if tr["start"] < piso:
+        tr["start"] = piso
+        n = (int(tr["end"][:4]) - int(piso[:4])) * 12 + int(tr["end"][5:]) - int(piso[5:]) + 1
         if n < 12:
             raise SystemExit(f"Cohorte no factible: train de {n} meses")
         tr["support"]["months"] = n
-p = Path(sorted(glob.glob("data/retro-real/provisional/*/canonical.json"))[-1])
+panel = os.environ.get("PANEL_DIR", "data/retro-real")
+p = Path(sorted(glob.glob(panel + "/**/canonical.json", recursive=True))[-1])
 art = CanonicalArtifact(p, p.parent.name, hashlib.sha256(p.read_bytes()).hexdigest())
 table, schema = load_canonical(art)
 # Entrenamiento nacional (contrato §4.4): el panel completo entra al motor; el contrato se evalúa solo en 50/73.  # noqa: E501
