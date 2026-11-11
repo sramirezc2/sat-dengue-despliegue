@@ -1998,6 +1998,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | BC. En qué meses del año gana el modelo | **Leída** en la tanda 47: en T+2 gana en todos los trimestres, más en el primer semestre; en T+1 empata en enero-marzo |
 | BD. El clima de los meses anteriores | Preinscrita para la tanda 48 |
 | BE. El punto de rocío distinto en Meta | Preinscrita para la tanda 49 |
+| BF. Combinar lo que sumó | Preinscrita para la tanda 50, con la regla de selección escrita antes de ver las tandas que la alimentan |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
