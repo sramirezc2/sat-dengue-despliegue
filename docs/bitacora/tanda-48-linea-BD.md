@@ -126,3 +126,13 @@ Mismas filas que la referencia en todas las recetas.
   clima (+1 y +3).
 - Lectura: el clima de uno y dos meses antes y el del mes de origen llevan la misma
   información para el modelo; el efecto del clima no está en el rezago.
+
+## Nota del 11 de noviembre: el rezago se calculaba por fila, no por mes calendario
+
+En el PR #7 se corrigió el cálculo de los rezagos de clima: se tomaba la fila
+anterior del municipio en lugar del mes calendario anterior, lo que da un valor
+equivocado si el panel tiene huecos. Se comprobó que **el panel de Tolima y Meta no
+tiene ningún hueco de calendario** (16 416 filas, cero saltos entre meses
+consecutivos), así que en esta tanda la fila anterior era siempre el mes anterior y
+**los resultados de arriba no cambian**. El arreglo sí importa para paneles con
+huecos o para el entrenamiento nacional.
