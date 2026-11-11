@@ -1897,6 +1897,46 @@ el piso se quedaba en 2018, la velocidad restaba contra la fila anterior. Nada
 de eso produce un error; produce un número. Y un número que nadie puede
 distinguir de uno bueno es peor que una excepción, porque viaja.
 
+### Tanda 13, línea U — El bloque G sustituía las columnas de umbral
+
+Documentada en detalle en [tanda-13-linea-U.md](bitacora/tanda-13-linea-U.md).
+
+**Origen.** La tanda 12 dejó 127 inicios de distancia sin explicar entre el
+banco de la línea O y el retroanálisis, con tres diferencias juntas: insumos,
+cadencia de reentrenamiento y reparto de alertas. Esta tanda las separa.
+
+**Corrida 1, la cadencia: no explica nada.** Con reentrenamiento anual en vez de
+mensual el brazo sin bloque pasa de 515 a 520 inicios en T+1 a 1 866 alertas. El
+criterio preinscrito pedía 452 o menos, y subir era la condición de fracaso
+declarada. Siete reentrenamientos al año producen prácticamente el mismo modelo
+que ochenta y dos.
+
+**Corrida 2, los insumos: explican el gap y además explican G.** El
+`features.csv` del replay que el banco consume no trae **ninguna** de las siete
+columnas de umbral del canon: ve `zona_canal_t`, que es la decisión ya tomada,
+pero nunca el número. Quitárselas al modelo del pipeline lo lleva de 515 a
+**411** inicios, y volver a ponerle el bloque G lo sube a **527**. Con los
+umbrales presentes, el bloque suma +4.
+
+| T+1, 641 inicios, 1 866 alertas | Inicios |
+| --- | --- |
+| Con umbrales, sin bloque | 515 |
+| Con umbrales, con bloque | 519 |
+| Sin umbrales, sin bloque | **411** |
+| Sin umbrales, con bloque | **527** |
+
+**El bloque G no es una mejora: es el sustituto de una columna faltante.**
+Recupera casi exactamente lo que quitar los umbrales destruye —283 → 388 al
+presupuesto del canal ajustado, contra los 385 del modelo que sí los tiene—, no
+agrega información nueva. Las tandas 5 y 7 midieron bien sobre un modelo ciego
+al umbral; lo que no era válido era extrapolar ese aporte a un modelo que los
+ve, y el contrato canónico los tiene.
+
+Las dos predicciones de la corrida 2 quedaron declaradas antes de medir, y el
+razonamiento sobre el reparto de alertas quedó corregido en el mismo archivo
+tras leer `top_cupo`: el banco concentra más que el pipeline, no menos, así que
+el reparto predecía el signo contrario y no podía explicar nada.
+
 ## 6. Estado de las líneas de trabajo
 
 | Línea | Estado |
@@ -1907,7 +1947,7 @@ distinguir de uno bueno es peor que una excepción, porque viaja.
 | B. Entrenar sin las variables del canal | **Cerrada**: rechazada en la tanda 4; esas variables son necesarias |
 | C. Modelo en dos etapas | **Cerrada**: rechazada en la tanda 3; el modelo ya estratifica solo |
 | D. Costo asimétrico en el entrenamiento | **Cerrada**: rechazada en la tanda 4 |
-| G. Margen continuo al umbral del canal | **Confirmada en la tanda 5 sobre XGBoost y no reproducida en la tanda 11 sobre la logística**: sobre la base común no mueve las detecciones, porque un modelo log-lineal ya forma el margen con lo que tiene. Pendiente medirla sobre XGBoost en la base común |
+| G. Margen continuo al umbral del canal | **Cerrada con explicación en la tanda 13**: no es una mejora, es el sustituto de las siete columnas de umbral que el modelo del banco no tenía. Sobre el contrato canónico, que sí las tiene, suma +4 inicios de 641. Las tandas 5 y 7 midieron bien sobre un modelo ciego al umbral; extrapolarlo a uno que lo ve no era válido |
 | H. Presión epidémica regional | **Cerrada**: rechazada en la tanda 5 con esta forma de medirla |
 | I. Memoria y agotamiento de susceptibles | **Cerrada**: rechazada en la tanda 5 |
 | J. Regresión sobre el margen | **Cerrada**: no aporta sobre la clasificación |
@@ -1922,7 +1962,8 @@ distinguir de uno bueno es peor que una excepción, porque viaja.
 | Q. Canal condicionado a no estar en exceso | **Confirmada** en la tanda 9 a T+1 y **rechazada a T+2 por fuga**; pasa a ser la línea base principal y reduce la ventaja publicada del modelo a +22 % en el punto de operación |
 | R. Retroanálisis con datos reales y logística | Confirmada en la tanda 10 como exploratoria; su receta versionada no enciende G (ver tanda 11) |
 | S. Base común del retroanálisis | **Confirmada** en la tanda 11: el banco queda reproducido (647 inicios, año por año) y las recetas corren sobre el mismo panel, los mismos folds y las mismas filas |
-| T. Reproducir G sobre la base común | Preinscrita para la tanda 12: la misma comparación con XGBoost, que es donde G ganó su confirmación |
+| T. Reproducir G sobre la base común | **Resuelta en la tanda 12 y con resultado negativo**: ni G ni el banco reproducen. La logística sin bloque le gana a XGBoost con bloque en todos los presupuestos |
+| U. Diferencia de instrumento con el banco | **Cerrada en la tanda 13**: la cadencia no explica nada; las siete columnas de umbral ausentes explican el nivel (515 → 411) y el aporte de G (+116 al quitarlas, +4 al tenerlas) |
 | V. Ensamble de rangos logística + XGBoost del banco | **Cerrada** en la tanda 14: el ensamble no supera a la logística; XGBoost pierde con las cinco semillas y la 53 era la más favorable |
 | W. Clima sobre la base común | **Sin efecto** en la tanda 15 (+12 en T+1, IC −4 a 28), pero a favor en seis de siete años; sigue en la tanda 22 |
 | X. Regularización y escala log1p de la logística | **Cerrada** en la tanda 16: C ≥ 1 no cambia nada; sin log1p pierde 43 inicios en T+1 y G recupera la mayor parte, lo que confirma el mecanismo de la tanda 11 |
