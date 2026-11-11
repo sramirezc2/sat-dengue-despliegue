@@ -1978,7 +1978,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AG. Lectura por departamento | **Leída** en la tanda 25: en T+1 la ventaja de la logística es de Tolima (+22) y empata en Meta (+2); con clima gana en Meta (+16) |
 | AH. Un modelo por departamento, con y sin clima | **Cerrada** en la tanda 26: empeora; con clima pierde 18 inicios en T+2 (IC −31 a −5) y Meta pierde la ganancia del clima |
 | AI. Un solo modelo con indicador de departamento | **Cerrada** en la tanda 27: sin efecto (±4 inicios) |
-| AJ. Excluir 2020 del entrenamiento | Preinscrita para la tanda 28 |
+| AJ. Excluir 2020 del entrenamiento | **Cerrada** en la tanda 28: sin efecto sin clima; con clima resta 8 inicios en T+1 (IC −15 a −2) |
 | AM. XGBoost de profundidad 2 con cinco semillas | Preinscrita para la tanda 31 |
 | AN. El clima con otro remuestreo | **Cerrada** en la tanda 32: con bloques de mes el clima en T+1 excluye el cero (+15, IC 1 a 30 sobre la mínima), unos 2 puntos, lejos de la barra |
 | AO. Veredicto de la sección 0 para las mejores recetas | **Cerrada** en la tanda 33 (corregida): al 10 %, en T+2 las cuatro recetas pasan la barra (+5,9 a +7,2 pp); en T+1 ninguna, y con clima se cumple A (+3,1 pp) |
