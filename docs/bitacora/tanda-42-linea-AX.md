@@ -53,3 +53,11 @@ Brier queda del lado conservador.
 Para el informe: el puntaje del modelo se puede presentar como probabilidad de
 inicio en los dos horizontes, con un municipio en el decil alto teniendo entre un
 tercio y la mitad de probabilidad de iniciar brote.
+
+## Corrección del 11 de noviembre (tanda 63)
+
+En la reserva 2023-2024 el modelo **subestima** el riesgo: predice 0,23 donde se
+observa 0,27 en T+1 y 0,13 donde se observa 0,18 en T+2. La buena calibración de
+arriba es un promedio de siete años que mezcla años de baja y alta frecuencia. El
+orden sí se sostiene, pero el nivel de la probabilidad no; para el informe, el
+puntaje se presenta como orden de riesgo y no como probabilidad calibrada.
