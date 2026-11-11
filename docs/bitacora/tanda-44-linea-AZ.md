@@ -69,8 +69,8 @@ recetas; todas cumplen C):
 | xgb_eta01 | -0.9 | -3.9 a 2.0 | NO | +2.4 | -1.7 a 6.8 | NO |
 | log_sin_log1p | -3.6 | -6.1 a -1.4 | NO | +0.2 | -2.8 a 3.3 | NO |
 
-- **T+2: 25 de 36 recetas pasan la barra.** Pasan **todas las
-  logísticas con log1p y C ≥ 0,1**, con o sin clima, mínimas o completas, con o sin
+- **T+2: 25 de 36 recetas pasan la barra.** Pasan **todas las logísticas de un solo modelo
+  para los dos departamentos con log1p y C ≥ 0,1**, con o sin clima, mínimas o completas, con o sin
   G, con mes numérico o cíclico. No pasan: cuatro de las cinco semillas del XGBoost
   del banco, XGBoost con profundidad 6 o eta alto, la logística sin log1p, la de
   C = 0,01 y el modelo por departamento sin clima. El resultado de T+2 no depende
