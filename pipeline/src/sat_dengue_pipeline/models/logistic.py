@@ -15,7 +15,12 @@ import sklearn
 from sklearn.linear_model import LogisticRegression
 
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
-from sat_dengue_pipeline.domain.margin import DEPTO_COLUMNS, MARGIN_COLUMNS, MES_COLUMNS
+from sat_dengue_pipeline.domain.margin import (
+    CLIMA_LAG_COLUMNS,
+    DEPTO_COLUMNS,
+    MARGIN_COLUMNS,
+    MES_COLUMNS,
+)
 from sat_dengue_pipeline.models.adapters import (
     AdapterSpec,
     validate_features,
@@ -76,6 +81,7 @@ class LogisticOnsetAdapter:
             tuple(MARGIN_COLUMNS) if self.preparation.get("variables_g") else ()
         ) + (tuple(MES_COLUMNS) if self.preparation.get("variables_mes") else ())
         self.derived += tuple(DEPTO_COLUMNS) if self.preparation.get("variable_depto") else ()
+        self.derived += tuple(CLIMA_LAG_COLUMNS) if self.preparation.get("clima_rezagos") else ()
         predictors = self.settings["predictors"]
         if (
             not predictors
@@ -113,6 +119,7 @@ class LogisticOnsetAdapter:
             tuple(MES_COLUMNS) if self.preparation.get("variables_mes") else ()
         )
         esperadas += tuple(DEPTO_COLUMNS) if self.preparation.get("variable_depto") else ()
+        esperadas += tuple(CLIMA_LAG_COLUMNS) if self.preparation.get("clima_rezagos") else ()
         if self.derived != esperadas:
             raise ValueError("Columnas derivadas alteradas o sin declarar")
         if self.preparation["matrix_columns"] != [*expected, *self.derived]:

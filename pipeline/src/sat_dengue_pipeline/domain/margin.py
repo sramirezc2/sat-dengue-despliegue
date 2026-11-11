@@ -183,3 +183,14 @@ MES_COLUMNS = ["mes_sin", "mes_cos"]
 
 # Indicador de departamento (tanda 27): un solo modelo, con nivel base propio de Tolima.
 DEPTO_COLUMNS = ["depto_73"]
+
+# Clima de los meses anteriores al origen (tanda 48): uno y dos meses antes, sin fuga.
+CLIMA_LAG_FUENTES = {
+    "rocio": "dewpoint_mean_c_month_mean",
+    "lluvia": "rain_mm_month_sum",
+    "temp": "temp_mean_c_month_mean",
+}
+CLIMA_LAG_COLUMNS = [f"{n}_lag{k}" for n in CLIMA_LAG_FUENTES for k in (1, 2)]
+
+# Orden fijo de todas las derivadas de preparación, al final de la matriz.
+DERIVADAS_ORDEN = [*MARGIN_COLUMNS, *MES_COLUMNS, *DEPTO_COLUMNS, *CLIMA_LAG_COLUMNS]

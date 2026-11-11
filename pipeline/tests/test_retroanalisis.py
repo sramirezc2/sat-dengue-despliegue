@@ -280,3 +280,25 @@ def test_entrenar_departamentos_no_cambia_las_filas(tmp_path, monkeypatch) -> No
     retroanalisis(object(), params_artificiales(horizontes=[1], entrenar_departamentos=[codigo]))
     claves = ["municipality_code", "origin_period", "target_period"]
     assert pd.read_csv(salida)[claves].equals(base[claves])
+
+
+def test_clima_rezagos_no_cambia_las_filas(tmp_path, monkeypatch) -> None:
+    """Los rezagos de clima agregan seis columnas al final sin cambiar las filas."""
+    raiz = Path(__file__).resolve().parents[1]
+    fuente = raiz / "conf/retroanalisis/logistica_sin_clima.yml"
+    receta = yaml.safe_load(fuente.read_text("utf-8"))
+    receta["preparation"]["clima_rezagos"] = True
+    receta["preparation"]["matrix_columns"] += [
+        f"{n}_lag{k}" for n in ("rocio", "lluvia", "temp") for k in (1, 2)
+    ]
+    ruta = tmp_path / "logistica_rezagos.yml"
+    ruta.write_text(yaml.safe_dump(receta), encoding="utf-8")
+    table, schema = build_table(make_panel())
+    monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
+    monkeypatch.chdir(tmp_path)
+    params = params_artificiales(horizontes=[1], configuraciones=[str(fuente), str(ruta)])
+    retroanalisis(object(), params)
+    preds = pd.read_csv(tmp_path / "data/prueba-retroanalisis/predicciones.csv")
+    claves = ["municipality_code", "origin_period"]
+    a, b = (preds[preds.receta == r][claves].reset_index(drop=True) for r in preds.receta.unique())
+    assert len(preds.receta.unique()) == 2 and a.equals(b)

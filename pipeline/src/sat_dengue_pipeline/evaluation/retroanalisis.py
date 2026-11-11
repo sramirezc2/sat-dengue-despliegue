@@ -25,6 +25,8 @@ import pandas as pd
 
 from sat_dengue_pipeline.domain.calendar import add_months
 from sat_dengue_pipeline.domain.margin import (
+    CLIMA_LAG_COLUMNS,
+    CLIMA_LAG_FUENTES,
     DEPTO_COLUMNS,
     MARGIN_COLUMNS,
     MARGIN_SOURCES,
@@ -99,6 +101,15 @@ def conjunto_comun(
     if preparacion.get("variable_depto"):
         X["depto_73"] = keys.municipality_code.str[:2].eq("73").astype(float).to_numpy()
         derivadas += tuple(DEPTO_COLUMNS)
+    if preparacion.get("clima_rezagos"):
+        orden = table.sort_values(KEYS)
+        idx = pd.MultiIndex.from_frame(keys.loc[:, KEYS])
+        for nombre, fuente in CLIMA_LAG_FUENTES.items():
+            serie = orden.set_index(KEYS)[fuente]
+            for k in (1, 2):
+                rezago = serie.groupby(level=0).shift(k)
+                X[f"{nombre}_lag{k}"] = rezago.reindex(idx).to_numpy(dtype=float)
+        derivadas += tuple(CLIMA_LAG_COLUMNS)
     return PreparedSet(keys, X, y), derivadas, cobertura
 
 
