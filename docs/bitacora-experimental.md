@@ -1986,7 +1986,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AQ. Qué inicios gana el modelo al 10 % | **Leída** en la tanda 35: el modelo gana donde el canal no ve (pocos casos frente al umbral, municipios poco endémicos) y pierde 13 a 24 inicios donde el canal está seguro |
 | AR. Repartir el presupuesto entre el canal y el modelo | **Cerrada** en la tanda 36: ninguna regla supera al modelo solo; dejar al canal las alertas seguras empeora en T+2 (−5 a −6 pp) |
 | AS. Anticipación con los dos horizontes juntos | **Leída** en la tanda 37: con las dos listas al 10 %, la logística con clima avisa 353 de 641 inicios frente a 327 del canal |
-| AT. El canal como ranking, con cupo fijo por mes | Preinscrita para la tanda 38 |
+| AT. El canal como ranking, con cupo fijo por mes | **Cerrada** en la tanda 38: es una línea base más débil que el condicionado; contra ella el modelo pasa la barra en T+2 y, con clima, en T+1 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
