@@ -112,6 +112,7 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
         "curva": [],
         "omit": [],
         "conjunto": [],
+        "predicciones": [],
     }
     for ruta in recetas:
         receta = Path(ruta).stem
@@ -142,6 +143,7 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
                     f"El diagnóstico quedó en {destino / 'omitidos.csv'}."
                 )
             candidato = str(preds.candidate.iloc[0])
+            salidas["predicciones"].append(preds.assign(receta=receta))
             resumen, anio, curva = validar_candidato(
                 table, preds, {"candidato": candidato, "horizonte": int(h)}
             )
@@ -152,9 +154,10 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
         pd.concat(v, ignore_index=True) if v else pd.DataFrame() for v in salidas.values()
     )
     destino.mkdir(parents=True, exist_ok=True)
-    nombres = ("resumen", "por_anio", "curva", "omitidos", "conjunto")
+    nombres = ("resumen", "por_anio", "curva", "omitidos", "conjunto", "predicciones")
     for nombre, tabla in zip(nombres, tablas):
         tabla.to_csv(destino / f"{nombre}.csv", index=False)
-    # El quinto CSV es auditoría del conjunto común; el nodo entrega los cuatro
+    # El quinto CSV es auditoría del conjunto común y el sexto guarda el puntaje de
+    # cada fila (para ensambles y lecturas posteriores); el nodo entrega los cuatro
     # que el pipeline declara.
     return tablas[:4]

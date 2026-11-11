@@ -135,6 +135,12 @@ def test_el_panel_declarado_si_se_mide(tmp_path, monkeypatch) -> None:
     conjunto = pd.read_csv(tmp_path / "data/prueba-retroanalisis/conjunto.csv")
     assert conjunto.filas_comunes.gt(0).all()
     assert conjunto.filas_preparadas.ge(conjunto.filas_comunes).all()
+    # El sexto guarda el puntaje de cada fila evaluada, por receta.
+    preds = pd.read_csv(tmp_path / "data/prueba-retroanalisis/predicciones.csv")
+    assert {"receta", "raw_probability", "origin_period", "municipality_code"} <= set(
+        preds.columns
+    )
+    assert 0 < len(preds) <= int(conjunto.filas_comunes.sum())
 
 
 def test_respeta_demora_de_etiqueta() -> None:
