@@ -1988,6 +1988,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AS. Anticipación con los dos horizontes juntos | **Leída** en la tanda 37: con las dos listas al 10 %, la logística con clima avisa 353 de 641 inicios frente a 327 del canal |
 | AT. El canal como ranking, con cupo fijo por mes | **Cerrada** en la tanda 38: es una línea base más débil que el condicionado; contra ella el modelo pasa la barra en T+2 y, con clima, en T+1 |
 | AU. Qué aprende la logística con clima | **Leída** en la tanda 39: el modelo es el margen en escala log; del clima pesa el punto de rocío (+0,42 en T+1), con signo positivo |
+| AV. El punto de rocío como único clima | Preinscrita para la tanda 40 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
