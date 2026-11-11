@@ -1,6 +1,6 @@
 # Resumen de la exploración nocturna del 10 al 11 de noviembre de 2026
 
-> Tandas 14 a 33, líneas V a AO. Cada tanda tiene su archivo con la preinscripción
+> Tandas 14 a 47, líneas V a BC. Cada tanda tiene su archivo con la preinscripción
 > escrita antes de correr y su resultado. Este resumen se actualiza durante la noche.
 
 ## Cómo se midió
@@ -52,7 +52,17 @@
    meses 353 de 641 inicios, frente a 327 del canal (tanda 37).
 6. **Qué aprende** (tanda 39): es sobre todo el margen contra el umbral en escala
    log; del clima pesa el punto de rocío, con signo positivo.
-7. **El mecanismo de la tanda 11 se confirma**: sin log1p la logística pierde 43
+7. **Robustez del resultado de T+2** (tandas 44, 45 y 25): al 10 % pasan la barra
+   25 de las 36 recetas de la noche, todas las logísticas de un solo modelo con
+   log1p; la ventaja aparece desde el 10 % y crece hasta unos 10 puntos al 30 %, y
+   gana en los dos departamentos. En T+1 hace falta el 20 % (unas 15 alertas por
+   mes) para pasar la barra, y solo con clima.
+8. **Límites** (tanda 46): la mitad de los inicios no los anticipa nadie, y la mitad
+   de esos arranca con cero casos en el mes de origen. Lo que el modelo gana y el
+   canal no son, en buena parte, inicios desde cero casos.
+9. **Probabilidades** (tanda 42): bien calibradas en los dos horizontes; se pueden
+   presentar como riesgo.
+10. **El mecanismo de la tanda 11 se confirma**: sin log1p la logística pierde 43
    inicios en T+1, y el bloque G recupera la mayor parte (tanda 16).
 
 ## Lo que no funcionó (sin efecto o peor)
@@ -83,6 +93,10 @@
 
 ## En curso o pendiente
 
+- Lecturas sin modelo nuevo: estacionalidad (tanda 47, sin época que concentre la
+  ventaja).
+- **EXP003 no se preparó**: la skill del experimento exige detenerse si el contrato
+  sigue en propuesta, y el de main es la versión 0.2.2-propuesta.
 - Tanda 18 (entrenamiento nacional, en curso), 27 (indicador de departamento),
   28 (sin 2020), 31 (XGBoost de profundidad 2 con cinco semillas) y 40 (punto de
   rocío como único clima), en cola en serie.
