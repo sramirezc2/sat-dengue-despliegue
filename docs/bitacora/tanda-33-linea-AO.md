@@ -112,3 +112,20 @@ En T+1 XGBoost queda en cero (media -0.1 pp); en T+2 en
 semillas pasa la barra**. Las cuatro logísticas la pasan en T+2 (+5,9 a +7,2) sin
 depender de semillas, porque son deterministas. Al presupuesto de referencia la
 logística es la familia que cumple.
+
+## Agregado: costo operativo al 10 %
+
+Con el mismo número de alertas, cuántas son aciertos (inicios detectados) y cuántas
+falsas:
+
+| Receta | Horizonte | Alertas | Canal: aciertos / falsas / falsas por acierto | Modelo: aciertos / falsas / falsas por acierto |
+| --- | --- | --- | --- | --- |
+| logistica_sin_clima | T+1 | 621 | 279 / 342 / 1.23 | 286 / 335 / 1.17 |
+| logistica_sin_clima | T+2 | 632 | 152 / 480 / 3.16 | 179 / 453 / 2.53 |
+| log_conclima | T+1 | 621 | 279 / 342 / 1.23 | 299 / 322 / 1.08 |
+| log_conclima | T+2 | 632 | 152 / 480 / 3.16 | 185 / 447 / 2.42 |
+
+En T+2 el canal emite **3,2 falsas alertas por cada inicio anticipado**; la
+logística con clima **2,4**. En T+1 la diferencia es menor (1,23 frente a 1,08).
+Para una secretaría con 8 visitas al mes, eso es una visita útil de cada 4,2 con
+el canal a dos meses y una de cada 3,4 con el modelo.
