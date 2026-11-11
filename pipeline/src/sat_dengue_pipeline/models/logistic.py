@@ -15,13 +15,7 @@ import sklearn
 from sklearn.linear_model import LogisticRegression
 
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
-from sat_dengue_pipeline.domain.margin import (
-    CLIMA_LAG_COLUMNS,
-    DEPTO_COLUMNS,
-    MARGIN_COLUMNS,
-    MES_COLUMNS,
-    ROCIO_META_COLUMNS,
-)
+from sat_dengue_pipeline.domain.derived import declared_derived
 from sat_dengue_pipeline.models.adapters import (
     AdapterSpec,
     validate_features,
@@ -78,12 +72,7 @@ class LogisticOnsetAdapter:
         self.preparation = self.settings["preparation"]
         # Derivadas de preparación: vacías salvo que la receta declare el bloque
         # de margen. Nunca son canónicas y siempre van al final de la matriz.
-        self.derived: tuple[str, ...] = (
-            tuple(MARGIN_COLUMNS) if self.preparation.get("variables_g") else ()
-        ) + (tuple(MES_COLUMNS) if self.preparation.get("variables_mes") else ())
-        self.derived += tuple(DEPTO_COLUMNS) if self.preparation.get("variable_depto") else ()
-        self.derived += tuple(CLIMA_LAG_COLUMNS) if self.preparation.get("clima_rezagos") else ()
-        self.derived += tuple(ROCIO_META_COLUMNS) if self.preparation.get("rocio_meta") else ()
+        self.derived: tuple[str, ...] = declared_derived(self.preparation)
         predictors = self.settings["predictors"]
         if (
             not predictors
@@ -115,16 +104,10 @@ class LogisticOnsetAdapter:
             for name in predictors
             for column in (self.preparation["zone_columns"] if name == "zona_canal_t" else [name])
         ]
-        # El bloque de margen va al final y solo si la receta lo declara; sin él
-        # la matriz es idéntica a la histórica.
-        esperadas = (tuple(MARGIN_COLUMNS) if self.preparation["variables_g"] else ()) + (
-            tuple(MES_COLUMNS) if self.preparation.get("variables_mes") else ()
-        )
-        esperadas += tuple(DEPTO_COLUMNS) if self.preparation.get("variable_depto") else ()
-        esperadas += tuple(CLIMA_LAG_COLUMNS) if self.preparation.get("clima_rezagos") else ()
-        esperadas += tuple(ROCIO_META_COLUMNS) if self.preparation.get("rocio_meta") else ()
-        if self.derived != esperadas:
-            raise ValueError("Columnas derivadas alteradas o sin declarar")
+        # Los bloques derivados van al final y solo si la receta los declara; sin
+        # ellos la matriz es idéntica a la histórica. La comprobación que vale es
+        # la de `matrix_columns`: compara lo que la receta escribió contra lo que
+        # los interruptores resuelven, que son dos cosas distintas.
         if self.preparation["matrix_columns"] != [*expected, *self.derived]:
             raise ValueError("Orden o cardinalidad de matriz interna alterados")
         if not set(self.preparation["log1p_columns"]) <= set(predictors) - {"zona_canal_t"}:

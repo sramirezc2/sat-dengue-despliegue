@@ -107,6 +107,7 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
         codigos = [str(c) for c in departamentos]
         table = table[table.department_code.isin(codigos)].reset_index(drop=True)
     piso = str(params.get("primer_entrenamiento", TRAIN_FLOOR))
+    cadencia = str(params.get("cadencia", "mensual"))
     verificar_panel(table, params, piso)
     recetas = params.get("configuraciones") or params["configuracion"]
     recetas = [recetas] if isinstance(recetas, str) else list(recetas)
@@ -133,8 +134,14 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
                 params.get("ventana_anios"),
                 params.get("excluir_entrenamiento"),
                 params.get("entrenar_departamentos"),
+                cadencia,
             )
-            etiquetas = {"horizonte": h, "receta": receta}
+            etiquetas = {"horizonte": h, "receta": receta, "cadencia": cadencia}
+            # Con entrenamiento nacional la cobertura se midió sobre el país
+            # entero, no sobre los departamentos evaluados: se marca, porque
+            # conjunto.csv es justamente el archivo con el que se verifica que
+            # dos recetas corrieron sobre las mismas filas.
+            cobertura = {**cobertura, "panel": "nacional" if nacional is not None else "declarado"}
             if nacional is not None:
                 evaluados = set(table.municipality_code)
                 preds = preds[preds.municipality_code.isin(evaluados)].reset_index(drop=True)

@@ -24,17 +24,19 @@ import numpy as np
 import pandas as pd
 
 from sat_dengue_pipeline.domain.calendar import add_months
+from sat_dengue_pipeline.domain.derived import DERIVED_COLUMNS, declared_derived
 from sat_dengue_pipeline.domain.margin import (
-    CLIMA_LAG_COLUMNS,
     CLIMA_LAG_FUENTES,
-    DEPTO_COLUMNS,
-    MARGIN_COLUMNS,
     MARGIN_SOURCES,
-    MES_COLUMNS,
-    ROCIO_META_COLUMNS,
     margin_features,
 )
-from sat_dengue_pipeline.experiments.rolling import TRAIN_FLOOR, ExperimentSpec, from_prepared
+from sat_dengue_pipeline.domain.regional import regional_features
+from sat_dengue_pipeline.experiments.rolling import (
+    TRAIN_FLOOR,
+    ExperimentData,
+    ExperimentSpec,
+    from_prepared,
+)
 from sat_dengue_pipeline.factory.configuration import adapter_spec
 from sat_dengue_pipeline.models.adapters import ModelRegistry, run_candidate
 from sat_dengue_pipeline.models.familias import ADAPTERS
@@ -43,29 +45,100 @@ from sat_dengue_pipeline.preparation import PreparedSet, prepare_horizon
 KEYS = ["municipality_code", "year_month"]
 
 
+def _rezago_mensual(table: pd.DataFrame, fuente: str, k: int, claves: pd.MultiIndex):
+    """Valor de `fuente` k meses antes, buscado por mes calendario del municipio.
+
+    No se usa `groupby.shift(k)`: eso toma la fila k posiciones atrás, que con un
+    hueco de calendario no es el mes que se pide y produce una resta contra el mes
+    equivocado sin avisar. Es el mismo arreglo que ya tiene `margin.py`.
+    """
+    serie = table.set_index(KEYS)[fuente]
+    anterior = [
+        str(pd.Period(mes, freq="M") - k) for mes in claves.get_level_values("year_month")
+    ]
+    buscado = pd.MultiIndex.from_arrays([claves.get_level_values("municipality_code"), anterior])
+    return serie.reindex(buscado).to_numpy(dtype=float)
+
+
+def bloques_derivados(
+    keys: pd.DataFrame, table: pd.DataFrame, horizonte: int, preparacion: dict[str, Any]
+) -> pd.DataFrame:
+    """Construir **todas** las derivadas conocidas, alineadas con las filas preparadas.
+
+    Se construyen todas, declare la receta las que declare, porque el conjunto de
+    filas evaluables tiene que ser el mismo para cualquier receta: si un bloque
+    se pudiera completar solo a veces y el filtro mirara únicamente los bloques
+    encendidos, dos recetas entrenarían sobre filas distintas sin que
+    `conjunto.csv` lo mostrara, y la diferencia entre ellas dejaría de ser
+    atribuible a sus columnas.
+
+    Args:
+        keys: Claves de las filas preparadas.
+        table: Panel canónico completo, ya filtrado por departamentos.
+        horizonte: 1 o 2.
+        preparacion: Bloque `preparation` de la receta; de aquí sale la fuente
+            de casos del margen, que es una decisión declarada.
+
+    Returns:
+        Un DataFrame con las columnas de `DERIVED_COLUMNS` que el panel admite,
+        en ese orden y con el índice de `keys`.
+    """
+    claves = pd.MultiIndex.from_frame(keys.loc[:, KEYS])
+    columnas: dict[str, Any] = {}
+
+    margen = margin_features(
+        table, horizonte, preparacion.get("margin_source", MARGIN_SOURCES[0])
+    ).reindex(claves)
+    for columna in margen.columns:
+        columnas[columna] = margen[columna].to_numpy()
+
+    mes = keys.year_month.str[5:7].astype(int).to_numpy()
+    columnas["mes_sin"] = np.sin(2 * np.pi * mes / 12)
+    columnas["mes_cos"] = np.cos(2 * np.pi * mes / 12)
+    columnas["depto_73"] = keys.municipality_code.str[:2].eq("73").astype(float).to_numpy()
+
+    for nombre, fuente in CLIMA_LAG_FUENTES.items():
+        for k in (1, 2):
+            columnas[f"{nombre}_lag{k}"] = _rezago_mensual(table, fuente, k, claves)
+
+    rocio = table.set_index(KEYS)["dewpoint_mean_c_month_mean"].reindex(claves)
+    meta = keys.municipality_code.str[:2].eq("50").to_numpy(dtype=float)
+    columnas["rocio_x_meta"] = rocio.to_numpy(dtype=float) * meta
+
+    regional = regional_features(table).reindex(claves)
+    for columna in regional.columns:
+        columnas[columna] = regional[columna].to_numpy()
+
+    return pd.DataFrame(
+        {columna: columnas[columna] for columna in DERIVED_COLUMNS}, index=keys.index
+    )
+
+
 def conjunto_comun(
     prepared: PreparedSet, table: pd.DataFrame, horizonte: int, preparacion: dict[str, Any]
 ) -> tuple[PreparedSet, tuple[str, ...], dict[str, int]]:
-    """Fijar el conjunto de filas común a todas las recetas y adjuntar G si se declara.
+    """Fijar el conjunto de filas común a todas las recetas y adjuntar lo declarado.
 
-    Por qué el filtro se aplica siempre, aun sin G
-    ----------------------------------------------
+    Por qué el filtro se aplica siempre y sobre todos los bloques
+    -------------------------------------------------------------
 
-    El bloque de margen no se puede completar en todas las filas del panel: la
-    velocidad y la aceleración necesitan el mes anterior, y `p75_canal_t` no
+    Los bloques derivados no se pueden completar en todas las filas del panel:
+    sus velocidades y rezagos necesitan meses anteriores, y `p75_canal_t` no
     existe antes de 2012 porque el canal se come los cinco años previos. En el
-    release operacional eso son 152 filas —los meses 2012-01 y 2012-02 de los
-    76 municipios—, todas de entrenamiento y ninguna evaluada.
+    release operacional eso son 152 filas —los meses 2012-01 y 2012-02 de los 76
+    municipios—, todas de entrenamiento y ninguna evaluada.
 
-    Si esas filas se descartaran solo cuando G está encendida, la corrida con G
-    y la corrida sin G entrenarían sobre conjuntos distintos y la diferencia
-    entre ellas ya no sería atribuible al bloque. Por eso el filtro se aplica
-    **siempre**: el retroanálisis fija un conjunto evaluable común, y lo único
-    que cambia entre recetas son las columnas que cada una declara.
+    Si esas filas se descartaran solo cuando el bloque está encendido, la corrida
+    con bloque y la corrida sin él entrenarían sobre conjuntos distintos y la
+    diferencia entre ellas ya no sería atribuible al bloque. Por eso el filtro
+    mira **todos** los bloques conocidos, no solo los que la receta declara: el
+    retroanálisis fija un conjunto evaluable común y lo único que cambia entre
+    recetas son las columnas que cada una pide.
 
-    El bloque se calcula sobre la historia completa del municipio, no sobre las
-    filas seleccionadas, porque las velocidades necesitan el mes inmediatamente
-    anterior aunque ese mes no sea un origen evaluable.
+    Un bloque enteramente ausente no es información y no puede vaciar la corrida:
+    pasa cuando el panel no lo admite, como el regional sobre un panel con un
+    solo municipio por departamento. Se excluye del filtro y se deja anotado; si
+    una receta lo declara, eso sí es un error y se dice con su nombre.
 
     Args:
         prepared: Conjunto utilizable con las columnas canónicas.
@@ -74,50 +147,77 @@ def conjunto_comun(
         preparacion: Bloque `preparation` de la receta.
 
     Returns:
-        El conjunto restringido a las filas con bloque completo —con las seis
-        columnas al final si la receta las declara—, los nombres declarados y
-        el conteo de filas antes y después del filtro.
+        El conjunto restringido a las filas con los bloques completos —con las
+        columnas declaradas al final—, sus nombres y el conteo de filas.
+
+    Raises:
+        ValueError: Si la receta declara un bloque que el panel no admite.
     """
-    bloque = margin_features(table, horizonte, preparacion.get("margin_source", MARGIN_SOURCES[0]))
-    alineado = bloque.reindex(pd.MultiIndex.from_frame(prepared.keys.loc[:, KEYS]))
-    completo = alineado.notna().all(axis=1).to_numpy()
+    bloques = bloques_derivados(prepared.keys, table, horizonte, preparacion)
+    derivadas = declared_derived(preparacion)
+    aplicables = [columna for columna in bloques.columns if bloques[columna].notna().any()]
+    ausentes = [columna for columna in derivadas if columna not in aplicables]
+    if ausentes:
+        raise ValueError(
+            "La receta declara derivadas que el panel no admite: " + ", ".join(ausentes)
+        )
+    completo = bloques.loc[:, aplicables].notna().all(axis=1).to_numpy()
     cobertura = {
         "filas_preparadas": int(len(completo)),
         "filas_sin_bloque": int((~completo).sum()),
         "filas_comunes": int(completo.sum()),
+        "bloques_del_filtro": len(aplicables),
+        "municipios": int(prepared.keys.municipality_code.nunique()),
     }
     keys = prepared.keys.loc[completo].reset_index(drop=True)
     X = prepared.X.loc[completo].reset_index(drop=True)
     y = prepared.y.loc[completo].reset_index(drop=True)
-    derivadas: tuple[str, ...] = ()
-    if preparacion.get("variables_g"):
-        for column in MARGIN_COLUMNS:
-            X[column] = alineado.loc[completo, column].to_numpy()
-        derivadas += tuple(MARGIN_COLUMNS)
-    if preparacion.get("variables_mes"):
-        mes = keys.year_month.str[5:7].astype(int).to_numpy()
-        X["mes_sin"] = np.sin(2 * np.pi * mes / 12)
-        X["mes_cos"] = np.cos(2 * np.pi * mes / 12)
-        derivadas += tuple(MES_COLUMNS)
-    if preparacion.get("variable_depto"):
-        X["depto_73"] = keys.municipality_code.str[:2].eq("73").astype(float).to_numpy()
-        derivadas += tuple(DEPTO_COLUMNS)
-    if preparacion.get("clima_rezagos"):
-        orden = table.sort_values(KEYS)
-        idx = pd.MultiIndex.from_frame(keys.loc[:, KEYS])
-        for nombre, fuente in CLIMA_LAG_FUENTES.items():
-            serie = orden.set_index(KEYS)[fuente]
-            for k in (1, 2):
-                rezago = serie.groupby(level=0).shift(k)
-                X[f"{nombre}_lag{k}"] = rezago.reindex(idx).to_numpy(dtype=float)
-        derivadas += tuple(CLIMA_LAG_COLUMNS)
-    if preparacion.get("rocio_meta"):
-        rocio = table.set_index(KEYS)["dewpoint_mean_c_month_mean"]
-        idx = pd.MultiIndex.from_frame(keys.loc[:, KEYS])
-        meta = keys.municipality_code.str[:2].eq("50").to_numpy(dtype=float)
-        X["rocio_x_meta"] = rocio.reindex(idx).to_numpy(dtype=float) * meta
-        derivadas += tuple(ROCIO_META_COLUMNS)
+    for columna in derivadas:
+        X[columna] = bloques.loc[completo, columna].to_numpy()
     return PreparedSet(keys, X, y), derivadas, cobertura
+
+
+CADENCIAS = ("mensual", "anual")
+
+
+def recortar_a_la_cadencia(data: ExperimentData, origen: str, corte: str) -> ExperimentData:
+    """Dejar solo el entrenamiento hasta un corte y el mes de origen que se evalúa.
+
+    Por qué el recorte va aquí y no en el arnés
+    -------------------------------------------
+
+    El banco de la línea O reentrena una vez al año; el retroanálisis lo hace en
+    cada mes de origen. Para medir esa diferencia hay que poder fijar el fin del
+    entrenamiento, y el arnés lo deriva del origen de cada fold.
+
+    Cambiarlo allá significaría agregar un campo a `ExperimentSpec`, que entra al
+    digest del protocolo y por lo tanto cambia el `fold_id` de **todos** los
+    experimentos existentes, incluida la certificación. Recortar las filas
+    consigue exactamente lo mismo sin tocar nada: la máscara del fold sigue
+    pidiendo «objetivos entre el piso y el mes anterior al origen», pero entre el
+    corte y ese mes ya no queda ninguna fila. El arnés queda byte a byte igual.
+
+    El recorte solo puede quitar filas de entrenamiento, nunca agregarlas, así
+    que no abre ninguna vía de fuga que el arnés no tuviera ya cerrada.
+
+    Args:
+        data: Entradas completas del arnés.
+        origen: Mes de origen que se va a evaluar; sus filas se conservan.
+        corte: Último mes objetivo admitido para entrenar.
+
+    Returns:
+        Una copia con las claves, X, y y controles alineados y reindexados.
+    """
+    keys = data.keys
+    conservar = (keys.target_period.le(corte) | keys.origin_period.eq(origen)).to_numpy()
+    return ExperimentData(
+        keys.loc[conservar].reset_index(drop=True),
+        data.X.loc[conservar].reset_index(drop=True),
+        data.y.loc[conservar].reset_index(drop=True),
+        data.controls.loc[conservar].reset_index(drop=True),
+        predictors=data.predictors,
+        derived=data.derived,
+    )
 
 
 def predicciones_rolling(
@@ -131,6 +231,7 @@ def predicciones_rolling(
     ventana_anios: int | None = None,
     excluir_anios: list | None = None,
     entrenar_departamentos: list | None = None,
+    cadencia: str = "mensual",
 ) -> tuple[pd.DataFrame, list[dict[str, str]], dict[str, int]]:
     """Producir predicciones fuera de muestra reentrenando en cada mes de origen.
 
@@ -150,6 +251,9 @@ def predicciones_rolling(
             evaluándose).
         entrenar_departamentos: Si se declara, solo esos departamentos entran al
             entrenamiento; los demás se predicen sin haber entrenado con ellos.
+        cadencia: `mensual`, el reentrenamiento del arnés, o `anual`, el del
+            banco de la línea O: un solo ajuste por año, con el entrenamiento
+            cerrado en diciembre del año anterior.
 
     Returns:
         Predicciones del arnés, la lista de meses omitidos con su motivo y el
@@ -180,6 +284,8 @@ def predicciones_rolling(
     if (spec.family, spec.version) not in ADAPTERS:
         raise ValueError(f"Familia no soportada: {spec.family} {spec.version}")
     registry.register(spec.family, spec.version, ADAPTERS[(spec.family, spec.version)])
+    if cadencia not in CADENCIAS:
+        raise ValueError(f"Cadencia no declarada: {cadencia}")
     partes, omitidos = [], []
     origen = primer_origen
     while add_months(origen, horizonte + demora) <= ultimo_objetivo:
@@ -195,8 +301,13 @@ def predicciones_rolling(
             last_target=add_months(origen, horizonte),
             label_delay_months=demora,
         )
+        # Con cadencia anual el entrenamiento se cierra en diciembre del año
+        # anterior y no se mueve dentro del año, como hace el banco.
+        entradas = data
+        if cadencia == "anual":
+            entradas = recortar_a_la_cadencia(data, origen, f"{int(origen[:4]) - 1}-12")
         try:
-            frame, _ = run_candidate(data, experimento, spec, registry)
+            frame, _ = run_candidate(entradas, experimento, spec, registry)
             partes.append(frame)
         except ValueError as error:
             omitidos.append({"origin_period": origen, "motivo": str(error)})
