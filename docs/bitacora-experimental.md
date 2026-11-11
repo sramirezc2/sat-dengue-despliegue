@@ -1927,6 +1927,8 @@ distinguir de uno bueno es peor que una excepción, porque viaja.
 | W. Clima sobre la base común | Preinscrita para la tanda 15 |
 | X. Regularización y escala log1p de la logística | Preinscrita para la tanda 16 |
 | Y. Versiones reducidas de la logística | Preinscrita para la tanda 17 |
+| Z. Entrenar con todo el país, evaluar en Tolima y Meta | Preinscrita para la tanda 18 |
+| AA. Lectura por nivel de transmisión del año | Preinscrita para la tanda 19 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
