@@ -1923,7 +1923,7 @@ distinguir de uno bueno es peor que una excepción, porque viaja.
 | R. Retroanálisis con datos reales y logística | Confirmada en la tanda 10 como exploratoria; su receta versionada no enciende G (ver tanda 11) |
 | S. Base común del retroanálisis | **Confirmada** en la tanda 11: el banco queda reproducido (647 inicios, año por año) y las recetas corren sobre el mismo panel, los mismos folds y las mismas filas |
 | T. Reproducir G sobre la base común | Preinscrita para la tanda 12: la misma comparación con XGBoost, que es donde G ganó su confirmación |
-| V. Ensamble de rangos logística + XGBoost del banco | Preinscrita para la tanda 14 |
+| V. Ensamble de rangos logística + XGBoost del banco | **Cerrada** en la tanda 14: el ensamble no supera a la logística; XGBoost pierde con las cinco semillas y la 53 era la más favorable |
 | W. Clima sobre la base común | **Sin efecto** en la tanda 15 (+12 en T+1, IC −4 a 28), pero a favor en seis de siete años; sigue en la tanda 22 |
 | X. Regularización y escala log1p de la logística | **Cerrada** en la tanda 16: C ≥ 1 no cambia nada; sin log1p pierde 43 inicios en T+1 y G recupera la mayor parte, lo que confirma el mecanismo de la tanda 11 |
 | Y. Versiones reducidas de la logística | **Aceptada** en la tanda 17: la mínima de cinco variables no pierde más de 5 puntos en ningún horizonte (−8 y −3 inicios) |
