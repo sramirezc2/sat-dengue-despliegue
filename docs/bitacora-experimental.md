@@ -1924,13 +1924,13 @@ distinguir de uno bueno es peor que una excepción, porque viaja.
 | S. Base común del retroanálisis | **Confirmada** en la tanda 11: el banco queda reproducido (647 inicios, año por año) y las recetas corren sobre el mismo panel, los mismos folds y las mismas filas |
 | T. Reproducir G sobre la base común | Preinscrita para la tanda 12: la misma comparación con XGBoost, que es donde G ganó su confirmación |
 | V. Ensamble de rangos logística + XGBoost del banco | Preinscrita para la tanda 14 |
-| W. Clima sobre la base común | Preinscrita para la tanda 15 |
-| X. Regularización y escala log1p de la logística | Preinscrita para la tanda 16 |
-| Y. Versiones reducidas de la logística | Preinscrita para la tanda 17 |
+| W. Clima sobre la base común | **Sin efecto** en la tanda 15 (+12 en T+1, IC −4 a 28), pero a favor en seis de siete años; sigue en la tanda 22 |
+| X. Regularización y escala log1p de la logística | **Cerrada** en la tanda 16: C ≥ 1 no cambia nada; sin log1p pierde 43 inicios en T+1 y G recupera la mayor parte, lo que confirma el mecanismo de la tanda 11 |
+| Y. Versiones reducidas de la logística | **Aceptada** en la tanda 17: la mínima de cinco variables no pierde más de 5 puntos en ningún horizonte (−8 y −3 inicios) |
 | Z. Entrenar con todo el país, evaluar en Tolima y Meta | Preinscrita para la tanda 18 |
 | AA. Lectura por nivel de transmisión del año | Preinscrita para la tanda 19 |
 | AB. Ajustes de XGBoost sobre la base común | Preinscrita para la tanda 20 |
-| AC. Ventana de entrenamiento móvil | Preinscrita para la tanda 21 |
+| AC. Ventana de entrenamiento móvil | **Cerrada** en la tanda 21: ninguna ventana supera a la expansiva; la de 3 años empeora |
 | AD. Qué parte del clima aporta | Preinscrita para la tanda 22 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la

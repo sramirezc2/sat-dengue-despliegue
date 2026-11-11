@@ -4,7 +4,7 @@
 > resumen y el enlace quedan en [la bitácora principal](../bitacora-experimental.md),
 > sección 5, cuando la tanda cierre.
 >
-> Estado: **preinscrita, sin correr.** Se corre sobre la base común del
+> Estado: **cerrada** el 10 de noviembre de 2026. Se corre sobre la base común del
 > retroanálisis: `canonical.mode=approved`, calendario y departamentos de
 > `parameters_retroanalisis.yml` sin tocar, `conjunto.csv` reportado.
 
@@ -47,3 +47,36 @@ inicios por año; ningún año con menos de 30 inicios decide nada (regla 4).
 No decide sobre la meta del contrato ni registra nada en la fábrica. Es
 exploración sobre la base común; lo que sobreviva se propone como experimento
 registrado.
+
+## Resultado: Sin efecto por la regla preinscrita, pero consistente
+
+El clima suma **+12 inicios en T+1** (IC −4 a 28, +1,9 puntos) y **+5 en T+2**
+(IC −9 a 17), y baja un poco la carga. No llega a la barra de mejora (32 y 23
+inicios), así que el veredicto preinscrito es **sin efecto**. Pero en T+1 queda a
+favor en **seis de los siete años y en contra en ninguno** (2021 empata), que es
+la señal más consistente de la noche. Por eso se abre la tanda 22 para ver qué
+parte del clima aporta, declarando que se escribe después de ver esto.
+
+| T+1, 641 inicios | Presupuesto | Alertas | Referencia | Receta | Diferencia (IC 95 %) | pp | Carga ref → receta | Años a favor |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| log_conclima | condicionado | 817 | 347 | 359 | +12 (-4 a 28) | +1.9 | 11.51 → 11.22 | 6+ / 0− |
+| log_conclima | 5 % | 209 | 109 | 112 | +3 (-12 a 16) | +0.5 | 2.45 → 2.38 |  |
+| log_conclima | 10 % | 406 | 189 | 194 | +5 (-8 a 18) | +0.8 | 5.32 → 5.19 |  |
+| log_conclima | 20 % | 817 | 304 | 317 | +13 (-4 a 30) | +2.0 | 12.57 → 12.25 |  |
+
+| T+2, 459 inicios | Presupuesto | Alertas | Referencia | Receta | Diferencia (IC 95 %) | pp | Carga ref → receta | Años a favor |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| log_conclima | condicionado | 1158 | 248 | 253 | +5 (-9 a 17) | +1.1 | 22.51 → 22.39 | 3+ / 2− |
+| log_conclima | 5 % | 207 | 67 | 65 | -2 (-12 a 9) | -0.4 | 3.46 → 3.51 |  |
+| log_conclima | 10 % | 402 | 123 | 127 | +4 (-9 a 17) | +0.9 | 6.90 → 6.80 |  |
+| log_conclima | 20 % | 809 | 204 | 211 | +7 (-6 a 21) | +1.5 | 14.97 → 14.79 |  |
+
+Corrida del 10 de noviembre de 2026, sobre el panel certificado `de49b11b…` del
+release `satd-raw-173d5856`, con el nodo del retroanálisis de main más la opción
+`predicciones.csv` (PR #6). Filas comunes 7 612 en T+1 y 7 572 en T+2 en todas
+las recetas; la referencia reproduce la tanda 11 (347 y 248 inicios al
+presupuesto del canal condicionado). Comparación emparejada receta contra
+referencia: mismas alertas por mes de origen, IC 95 % por bootstrap de
+municipios (1 000 réplicas, semilla 42), como en `validar_candidato`.
+«Años a favor» cuenta los años con más y con menos inicios que la referencia al
+presupuesto del canal condicionado. Herramientas en `pipeline/tools/noche/`.
