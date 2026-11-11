@@ -16,6 +16,15 @@ cómo arranca un brote, sin cambiar las filas que se evalúan. En la exploració
 de la tanda 10, con otro instrumento, esta variante fue la mejor en T+2, pero
 eso no se cita aquí como evidencia: esta tanda lo decide sobre la base común.
 
+## Enmienda antes de correr (10 de noviembre, 23:00)
+
+La corrida original se detuvo por falta de memoria antes de producir resultados.
+Al relanzarla se cambia la segunda receta: en lugar de la mínima, **la logística
+con clima**, porque las tandas 25 y 26 mostraron que el clima aporta en Meta solo
+cuando se entrena juntando municipios, y entrenar con todo el país es la forma
+más fuerte de juntarlos. Se declara después de ver esas tandas y antes de ver
+cualquier resultado de esta.
+
 ## Qué se corre
 
 La logística sin clima con `entrenamiento_nacional: true`: entrena en cada mes

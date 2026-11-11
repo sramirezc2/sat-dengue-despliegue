@@ -64,6 +64,13 @@ presupuesto del canal condicionado queda en el borde (+12, IC 0 a 26). En T+2
 cruza el cero en todas las celdas.
 
 Lectura, según lo preinscrito: **la conclusión sobre el clima en T+1 depende del
-remuestreo**, y con el del contrato, que es el que manda, el clima aporta en T+1
-con un efecto real pero chico, de unos 2 puntos, lejos de la barra de 5. En T+2
-no aporta.
+remuestreo**. Con el del contrato es una **señal consistente en T+1, de unos 2
+puntos, que excluye el cero en 3 de las 8 celdas** de esta tabla; lejos de la barra
+de 5. En T+2 no aporta. Esta tanda se eligió después de ver las cifras del clima y
+la noche suma unas cuarenta comparaciones, así que no alcanza para llamarlo un
+efecto confirmado: es candidato para un experimento registrado.
+
+Nota: en esta tabla, como en las tandas 14 a 26, «5 %, 10 % y 20 %» son fracciones
+de las filas elegibles de cada mes (unas 49 por mes), no del presupuesto de la
+sección 0.1, que se mide sobre los 76 municipios. Son comparaciones entre recetas
+al mismo volumen; el veredicto de la sección 0 está en la tanda 33.
