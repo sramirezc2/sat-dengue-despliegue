@@ -2067,7 +2067,7 @@ veredicto es el que ya tiene redactado la sección 0.4.
 | BQ. Cómo se reparten las alertas entre municipios y meses | **Leída** en la tanda 61: el modelo reparte las alertas igual que el canal; las falsas no se concentran y las rachas son cortas |
 | BR. Qué tan grandes son los brotes que solo ve el modelo | **Leída** en la tanda 62: los brotes que solo ve el modelo son chicos (mediana 4 a 5 casos); el canal se queda con algunos grandes |
 | BS. Dónde gana el modelo, en la reserva | **Leída** en la tanda 63: en la reserva se mantiene dónde gana el modelo; la calibración no (subestima en años de alta frecuencia) |
-| BT. Recalibrar con la frecuencia del año anterior | Preinscrita para la tanda 64 |
+| BT. Recalibrar con la frecuencia del año anterior | **Cerrada** en la tanda 64: no sirve (mejora el Brier en 2 y 3 de 6 años); la frecuencia de un año no anticipa la del siguiente |
 | BU. XGBoost simple con clima y aprendizaje lento | Preinscrita para la tanda 65 |
 | CY a EK. Búsqueda declarada en seis familias | **23 de 39 corridas** el 11 de noviembre: ni el reparto del presupuesto ni la estratificación mejoran el modelo único; DG y DH pasan la búsqueda y **no confirman**; **DJ —los dos horizontes en una sola lista— sí confirma en la reserva, +7,5 pp (IC 1,2 a 14,3)**. El techo (tanda 131) dice que al 10 % hay +41,9 pp disponibles en T+1 y +55,2 en T+2. Ver [el resultado](bitacora/tandas-94-a-132-busqueda.md) |
 
