@@ -2,7 +2,7 @@
 
 Para cada receta contra la de referencia y cada horizonte, ambas emiten en cada mes de origen
 el mismo número de alertas: el del canal condicionado y presupuestos fijos del 5, 10 y 20 % de
-las filas del mes (sección 0.1). Diferencia de inicios detectados con IC 95 % por bootstrap de
+los 76 municipios del mes (sección 0.1; antes de las 23:00 eran filas elegibles). Diferencia de inicios detectados con IC 95 % por bootstrap de
 municipios (el mismo de validar_candidato), carga por 100 municipio-mes y detalle por año.
 Uso: python tools/noche/comparar.py <carpeta> <referencia> [receta ...]  (sin recetas: todas)
 Lee también resumen_ensambles/predicciones_ensambles.csv si existen.
@@ -39,9 +39,9 @@ def tabla(receta, h):
 
 def topk(d, frac):
     """Alertar en cada mes de origen la fracción declarada de filas, por score."""
-    n = d.groupby("origen").score.transform("size")
+    # Sección 0.1: fracción de los 76 municipios del mes, no de las filas elegibles.
     r = d.score.groupby(d.origen).rank(ascending=False, method="first")
-    return (r <= np.round(frac * n)).astype(int).values
+    return (r <= np.round(frac * 76)).astype(int).values
 
 
 filas, anual = [], []
@@ -68,6 +68,9 @@ for h in (1, 2):
                     a_x[i] = topk(mx.loc[i], presupuesto)
             mr, mmx = va.metricas(a_r, m), va.metricas(a_x, m)
             dif, lo, hi = va.bootstrap_dif(m, a_x, a_r, 1000)
+            por_mes = pd.Series((a_x - a_r) * (m.inicio.values == 1)).groupby(m.origen.values).sum()
+            bm = np.random.default_rng(42).choice(por_mes.values, size=(2000, len(por_mes)))
+            lo_mes, hi_mes = np.percentile(bm.sum(axis=1), [2.5, 97.5])
             filas.append(
                 {
                     "horizonte": h,
@@ -80,6 +83,8 @@ for h in (1, 2):
                     "diferencia": dif,
                     "ic95_lo": lo,
                     "ic95_hi": hi,
+                    "ic95_mes_lo": float(lo_mes),
+                    "ic95_mes_hi": float(hi_mes),
                     "dif_pp": round(100 * dif / mr["inicios"], 1),
                     "ref_carga_100mm": round(mr["carga_100mm"], 2),
                     "receta_carga_100mm": round(mmx["carga_100mm"], 2),

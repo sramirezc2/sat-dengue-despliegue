@@ -1,0 +1,22 @@
+retroanalisis:
+  configuraciones:
+  - conf/retroanalisis/logistica_sin_clima.yml
+  - conf/retroanalisis/noche/xgb_banco_s53.yml
+  - conf/retroanalisis/noche/xgb_d2.yml
+  - conf/retroanalisis/noche/xgb_d6.yml
+  - conf/retroanalisis/noche/xgb_eta01.yml
+  - conf/retroanalisis/noche/xgb_eta002_r600.yml
+  - conf/retroanalisis/noche/xgb_d3_r150.yml
+  - conf/retroanalisis/noche/xgb_sinclima.yml
+  horizontes:
+  - 1
+  - 2
+  primer_entrenamiento: 2012-01
+  primer_origen: 2018-01
+  ultimo_objetivo: 2024-12
+  cobertura_desde: 2007-01
+  municipios_minimos: 76
+  salida: data/noche/xgb2
+  departamentos:
+  - '50'
+  - '73'
