@@ -80,3 +80,13 @@ recetas; todas cumplen C):
 - La receta con el valor más alto en T+2 (mes cíclico con clima, +8,3) no se
   propone por eso: con treinta y seis recetas, el máximo es optimista. Las del
   bloque de arriba están todas dentro de 1 o 2 puntos entre sí.
+
+## Nota del 11 de noviembre: intervalos recalculados con la semilla por celda (PR #10)
+
+El PR #10 corrigió `veredicto.py`: el generador del remuestreo se compartía entre
+llamadas, así que el intervalo de una combinación dependía de cuántas se pasaban
+antes. Se recalcularon los veredictos de las tandas 33, 34, 44, 45 y 52 a 57 con la
+versión corregida (282 celdas). **Ningún punto estimado cambia**, y solo cambia una
+conclusión: el XGBoost del banco con semilla 29, en T+2 al 10 %, pasa de cumplir A
+(IC 0,2 a 9,4) a no cumplirlo (IC −0,2 a 8,9). No pasaba la barra antes ni ahora.
+Ninguna de las conclusiones de estas tandas cambia.

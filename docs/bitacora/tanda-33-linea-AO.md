@@ -129,3 +129,13 @@ En T+2 el canal emite **3,2 falsas alertas por cada inicio anticipado**; la
 logística con clima **2,4**. En T+1 la diferencia es menor (1,23 frente a 1,08).
 Para una secretaría con 8 visitas al mes, eso es una visita útil de cada 4,2 con
 el canal a dos meses y una de cada 3,4 con el modelo.
+
+## Nota del 11 de noviembre: intervalos recalculados con la semilla por celda (PR #10)
+
+El PR #10 corrigió `veredicto.py`: el generador del remuestreo se compartía entre
+llamadas, así que el intervalo de una combinación dependía de cuántas se pasaban
+antes. Se recalcularon los veredictos de las tandas 33, 34, 44, 45 y 52 a 57 con la
+versión corregida (282 celdas). **Ningún punto estimado cambia**, y solo cambia una
+conclusión: el XGBoost del banco con semilla 29, en T+2 al 10 %, pasa de cumplir A
+(IC 0,2 a 9,4) a no cumplirlo (IC −0,2 a 8,9). No pasaba la barra antes ni ahora.
+Ninguna de las conclusiones de estas tandas cambia.
