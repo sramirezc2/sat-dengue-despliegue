@@ -64,3 +64,23 @@ Lo que esto abre, declarado como hipótesis y no como resultado: el clima aporta
 donde el canal endémico se queda corto, que en T+1 es Meta. Un modelo por
 departamento ya se descartó antes con otro instrumento; lo que no se ha probado es
 el clima solo en Meta.
+
+## Agregado: la misma lectura al 10 % de la sección 0
+
+Con el presupuesto de referencia de la tanda 33 (unas 8 alertas por mes):
+
+| Receta | Horizonte | Meta (canal → receta) | Tolima (canal → receta) |
+| --- | --- | --- | --- |
+| logistica_sin_clima | T+1 | 134 → 136 (+2) | 145 → 150 (+5) |
+| log_conclima | T+1 | 134 → 147 (+13) | 145 → 152 (+7) |
+| log_minima | T+1 | 134 → 131 (-3) | 145 → 155 (+10) |
+| logc_minima | T+1 | 134 → 143 (+9) | 145 → 156 (+11) |
+| logistica_sin_clima | T+2 | 65 → 76 (+11) | 87 → 103 (+16) |
+| log_conclima | T+2 | 65 → 78 (+13) | 87 → 107 (+20) |
+| log_minima | T+2 | 65 → 76 (+11) | 87 → 106 (+19) |
+| logc_minima | T+2 | 65 → 74 (+9) | 87 → 111 (+24) |
+
+- **T+2 gana en los dos departamentos** con las cuatro recetas: Meta +9 a +13,
+  Tolima +16 a +24. La ventaja de T+2 de la tanda 33 no depende de un departamento.
+- **En T+1 se repite el patrón del clima en Meta**: sin clima +2, con clima +13; en
+  Tolima el clima casi no cambia (+5 a +7). La mínima sin clima pierde en Meta (−3).
