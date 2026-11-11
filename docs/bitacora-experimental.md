@@ -1970,7 +1970,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | Y. Versiones reducidas de la logística | **Aceptada** en la tanda 17: la mínima de cinco variables no pierde más de 5 puntos en ningún horizonte (−8 y −3 inicios) |
 | Z. Entrenar con todo el país, evaluar en Tolima y Meta | Preinscrita para la tanda 18 |
 | AA. Lectura por nivel de transmisión del año | **Leída** en la tanda 19: la ventaja de la logística en T+1 es igual en años altos y bajos; la de la mínima y la de XGBoost está en los años altos; en T+2 la ventaja es mayor en años bajos |
-| AB. Ajustes de XGBoost sobre la base común | Preinscrita para la tanda 20 |
+| AB. Ajustes de XGBoost sobre la base común | **Cerrada** en la tanda 20: ninguna variante supera a la logística; profundidad 6 empeora (−25 en T+1); profundidad 2 queda cerca (+4) y pasa a cinco semillas |
 | AC. Ventana de entrenamiento móvil | **Cerrada** en la tanda 21: ninguna ventana supera a la expansiva; la de 3 años empeora |
 | AD. Qué parte del clima aporta | **Cerrada** en la tanda 22: ninguna forma del clima cambia más de 4 inicios; sobre la mínima el clima suma +15 en T+1, seis años a favor |
 | AE. Ensambles entre logísticas | **Cerrada** en la tanda 23: el ensamble queda entre sus componentes, sin superar a la logística con clima |
@@ -1979,6 +1979,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AH. Un modelo por departamento, con y sin clima | **Cerrada** en la tanda 26: empeora; con clima pierde 18 inicios en T+2 (IC −31 a −5) y Meta pierde la ganancia del clima |
 | AI. Un solo modelo con indicador de departamento | Preinscrita para la tanda 27 |
 | AJ. Excluir 2020 del entrenamiento | Preinscrita para la tanda 28 |
+| AM. XGBoost de profundidad 2 con cinco semillas | Preinscrita para la tanda 31 |
 | AN. El clima con otro remuestreo | **Cerrada** en la tanda 32: con bloques de mes el clima en T+1 excluye el cero (+15, IC 1 a 30 sobre la mínima), unos 2 puntos, lejos de la barra |
 | AO. Veredicto de la sección 0 para las mejores recetas | **Cerrada** en la tanda 33 (corregida): al 10 %, en T+2 las cuatro recetas pasan la barra (+5,9 a +7,2 pp); en T+1 ninguna, y con clima se cumple A (+3,1 pp) |
 
