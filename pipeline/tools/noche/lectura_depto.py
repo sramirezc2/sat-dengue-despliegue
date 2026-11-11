@@ -5,6 +5,7 @@ Uso: python tools/noche/lectura_depto.py <carpeta> [receta ...]
 """
 
 import hashlib
+import os
 import sys
 from pathlib import Path
 
@@ -33,8 +34,17 @@ for h in (1, 2):
         anios = tuple(sorted(int(a) for a in df.anio_objetivo.unique() if a < 2025))
         big = va.lineas_base_por_anio(va.validar_entrada(df, anios), anios, historia)
         a_m = np.zeros(len(big), int)
-        for _, g in big.groupby("anio_objetivo"):
-            a_m[g.index.values] = va.emparejar(g, g["canal_fuera_exceso"].values)
+        if os.environ.get("PRESUPUESTO"):
+            # Presupuesto de la sección 0: fracción de 76 municipios por mes, f fija.
+            total = float(os.environ["PRESUPUESTO"]) * 76 * big.origen.nunique()
+            big["canal_fuera_exceso"] = min(
+                (va.canal(big, f, fuera_exceso=True) for f in va.GRILLA_F),
+                key=lambda a: abs(int(a.sum()) - total),
+            )
+            a_m = va.emparejar(big, big["canal_fuera_exceso"].values)
+        else:
+            for _, g in big.groupby("anio_objetivo"):
+                a_m[g.index.values] = va.emparejar(g, g["canal_fuera_exceso"].values)
         ini = big.inicio.values == 1
         dep = big.municipio.astype(str).str[:2]
         for d in ("50", "73"):
@@ -51,5 +61,5 @@ for h in (1, 2):
             )
 out = pd.DataFrame(filas)
 out["diferencia"] = out.receta_det - out.canal
-out.to_csv(carpeta / "lectura_departamento.csv", index=False)
+out.to_csv(carpeta / f"lectura_departamento{os.environ.get('PRESUPUESTO', '')}.csv", index=False)
 print(out.to_string())

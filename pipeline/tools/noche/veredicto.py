@@ -1,6 +1,7 @@
 """Veredicto de la sección 0: canal condicionado contra el modelo, a presupuesto fijo.
 
-Para cada horizonte y presupuesto (5, 10 y 20 % de los 76 municipios por mes, sección 0.1) se toma la fracción f
+Para cada horizonte y presupuesto (5, 10 y 20 % de los 76 municipios por mes, sección 0.1) se
+toma la fracción f
 del canal condicionado cuyo número de alertas queda más cerca del presupuesto, y el modelo emite
 las mismas alertas por mes de origen. Se reporta la diferencia de inicios en puntos, con dos IC
 95 %: bootstrap por municipio (el de validar_candidato) y por bloques de mes de origen (el del
@@ -11,6 +12,7 @@ Uso: python tools/noche/veredicto.py <carpeta> <receta> [...]
 """
 
 import hashlib
+import os
 import sys
 from pathlib import Path
 
@@ -39,7 +41,7 @@ def boot(d, x, grupo, n=2000):
     return float(np.percentile(b, 2.5)), float(np.percentile(b, 97.5))
 
 
-filas = []
+filas, anual = [], []
 for receta in sys.argv[2:]:
     for h in (1, 2):
         q = preds[(preds.receta == receta) & (preds.horizon == h)].drop(columns="receta")
@@ -53,7 +55,7 @@ for receta in sys.argv[2:]:
         meses = d.origen.nunique()
         total = 76 * meses
         curva = [(f, va.canal(d, f, fuera_exceso=True)) for f in va.GRILLA_F]
-        for frac in (0.05, 0.10, 0.20):
+        for frac in tuple(float(x) for x in os.environ.get("FRACS", "0.05,0.10,0.20").split(",")):
             f, a_c = min(curva, key=lambda t: abs(int(t[1].sum()) - frac * total))
             a_m = va.emparejar(d, a_c)
             mc, mm = va.metricas(a_c, d), va.metricas(a_m, d)
@@ -89,6 +91,20 @@ for receta in sys.argv[2:]:
                     "C": "CUMPLE" if dcarga <= 5 and hi_c <= 5 else "NO",
                 }
             )
+            if frac == 0.10:
+                for anio, g in d.groupby("anio_objetivo"):
+                    i = g.index.values
+                    anual.append(
+                        {
+                            "receta": receta,
+                            "horizonte": h,
+                            "anio": anio,
+                            "inicios": int(ini[i].sum()),
+                            "canal": int((a_c[i] * ini[i]).sum()),
+                            "modelo": int((a_m[i] * ini[i]).sum()),
+                        }
+                    )
+pd.DataFrame(anual).to_csv(carpeta / "veredicto_anual.csv", index=False)
 out = pd.DataFrame(filas)
-out.to_csv(carpeta / "veredicto.csv", index=False)
+out.to_csv(carpeta / os.environ.get("SALIDA", "veredicto.csv"), index=False)
 print(out.to_string())
