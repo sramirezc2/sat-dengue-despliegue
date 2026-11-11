@@ -1975,6 +1975,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AD. Qué parte del clima aporta | Preinscrita para la tanda 22 |
 | AE. Ensambles entre logísticas | **Cerrada** en la tanda 23: el ensamble queda entre sus componentes, sin superar a la logística con clima |
 | AF. El mes como ciclo en la logística | Preinscrita para la tanda 24 |
+| AG. Lectura por departamento | Preinscrita para la tanda 25 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
