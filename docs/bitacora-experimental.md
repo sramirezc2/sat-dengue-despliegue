@@ -2064,6 +2064,9 @@ veredicto es el que ya tiene redactado la sección 0.4.
 | BN. Las combinaciones, confirmadas en la reserva 2023-2024 | **Cerrada** en la tanda 58: en T+2 confirman la logística con clima (+8,8 pp), el mes cíclico con clima (+10,2) y un XGBoost simple; en T+1 ninguna |
 | BO. Vecinos en un árbol simple | **Cerrada** en la tanda 59: sin efecto (−2 a −8 en T+1 en las cinco semillas); tampoco sube los inicios desde cero casos |
 | BP. La logística con clima en la reserva, por presupuesto y por departamento | **Leída** en la tanda 60: en la reserva, T+2 pasa la barra del 10 % al 30 % y en los dos departamentos; T+1 la pasa desde el 20 % |
+| BQ. Cómo se reparten las alertas entre municipios y meses | Preinscrita para la tanda 61 |
+| BR. Qué tan grandes son los brotes que solo ve el modelo | Preinscrita para la tanda 62 |
+| BS. Dónde gana el modelo, en la reserva | Preinscrita para la tanda 63 |
 | CY a EK. Búsqueda declarada en seis familias | **23 de 39 corridas** el 11 de noviembre: ni el reparto del presupuesto ni la estratificación mejoran el modelo único; DG y DH pasan la búsqueda y **no confirman**; **DJ —los dos horizontes en una sola lista— sí confirma en la reserva, +7,5 pp (IC 1,2 a 14,3)**. El techo (tanda 131) dice que al 10 % hay +41,9 pp disponibles en T+1 y +55,2 en T+2. Ver [el resultado](bitacora/tandas-94-a-132-busqueda.md) |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
