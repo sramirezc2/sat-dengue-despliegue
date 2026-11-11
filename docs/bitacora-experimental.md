@@ -1985,6 +1985,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AP. El veredicto de T+2 año por año | **Cerrada** en la tanda 34: consistente; cada logística gana en cinco o seis de siete años en T+2 y ningún año pierde más de un inicio |
 | AQ. Qué inicios gana el modelo al 10 % | **Leída** en la tanda 35: el modelo gana donde el canal no ve (pocos casos frente al umbral, municipios poco endémicos) y pierde 13 a 24 inicios donde el canal está seguro |
 | AR. Repartir el presupuesto entre el canal y el modelo | **Cerrada** en la tanda 36: ninguna regla supera al modelo solo; dejar al canal las alertas seguras empeora en T+2 (−5 a −6 pp) |
+| AS. Anticipación con los dos horizontes juntos | Preinscrita para la tanda 37 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
