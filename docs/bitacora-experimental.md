@@ -1980,7 +1980,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AI. Un solo modelo con indicador de departamento | Preinscrita para la tanda 27 |
 | AJ. Excluir 2020 del entrenamiento | Preinscrita para la tanda 28 |
 | AN. El clima con otro remuestreo | **Cerrada** en la tanda 32: con bloques de mes el clima en T+1 excluye el cero (+15, IC 1 a 30 sobre la mínima), unos 2 puntos, lejos de la barra |
-| AO. Veredicto de la sección 0 para las mejores recetas | **Cerrada** en la tanda 33: al 10 % ninguna pasa la barra; en T+2 la sin clima y la mínima cumplen A (+3,9 y +4,4 pp); aplica la sección 0.4 |
+| AO. Veredicto de la sección 0 para las mejores recetas | **Cerrada** en la tanda 33 (corregida): al 10 %, en T+2 las cuatro recetas pasan la barra (+5,9 a +7,2 pp); en T+1 ninguna, y con clima se cumple A (+3,1 pp) |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
