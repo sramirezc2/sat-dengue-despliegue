@@ -2055,8 +2055,8 @@ veredicto es el que ya tiene redactado la sección 0.4.
 | BI. El clima con regularización más fuerte | **Cerrada** en la tanda 53: sin efecto (−3 y −4); C = 1 sigue siendo la mejor |
 | BJ. XGBoost de profundidad 2 sin clima, con cinco semillas | **Cerrada** en la tanda 54: empata con la logística sin clima con las cinco semillas (−3 a +2) y pasa la barra en T+2 al 10 % |
 | BK. Ensamble de dos modelos buenos y distintos | **Cerrada** en la tanda 55: queda por debajo de la logística con clima en las cinco semillas (−3 a −6 en T+1, −4 a −10 en T+2) |
-| BL. Otros síndromes febriles | Preinscrita para la tanda 56 |
-| BM. Los cinco vecinos más cercanos | Preinscrita para la tanda 57 |
+| BL. Otros síndromes febriles | **Cerrada** en la tanda 56: sin efecto (−1 y −1) |
+| BM. Los cinco vecinos más cercanos | **Cerrada** en la tanda 57: sin efecto en el total (−5 y −3), aunque en T+1 anticipa 8 inicios más desde cero casos |
 | BK a CW. Búsqueda declarada en seis familias | Preinscritas para las tandas 55 a 93; reparto del presupuesto, reglas desplegables, estratificación, vecindad, robustez y controles negativos |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la

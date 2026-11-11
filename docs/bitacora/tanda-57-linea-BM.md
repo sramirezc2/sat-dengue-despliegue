@@ -4,7 +4,7 @@
 > resumen y el enlace quedan en [la bitácora principal](../bitacora-experimental.md),
 > sección 5, cuando la tanda cierre.
 >
-> Estado: **preinscrita, sin correr.** Se corre sobre la base común del
+> Estado: **cerrada** el 11 de noviembre de 2026. Se corre sobre la base común del
 > retroanálisis: `canonical.mode=approved`, calendario y departamentos de
 > `parameters_retroanalisis.yml` sin tocar, `conjunto.csv` reportado.
 
@@ -13,7 +13,7 @@
 La tanda 46 midió que la mitad de los inicios que no anticipa nadie arranca con
 cero casos. La tanda 51 (línea BG, de Stevan) midió la presión del departamento
 entero y no aportó. Esta tanda mide una escala más fina: los cinco municipios más
-cercanos por centroide DIVIPOLA. Se avisó a Stevan porque es vecina de su línea.
+cercanos por centroide DIVIPOLA. Se le pide revisión a Stevan en el PR porque es vecina de su línea.
 
 ## Hipótesis
 
@@ -56,3 +56,30 @@ inicios por año; ningún año con menos de 30 inicios decide nada (regla 4).
 No decide sobre la meta del contrato ni registra nada en la fábrica. Es
 exploración sobre la base común; lo que sobreviva se propone como experimento
 registrado.
+
+## Resultado: anticipa más inicios desde cero casos, pero pierde más en el resto
+
+Las comparaciones están en la tabla de la tanda 56 (misma corrida). Contra la
+logística con clima, el bloque de vecinos queda en −5 en T+1 y −3 en T+2 al
+presupuesto del canal condicionado, y en −9 y 0 al 10 %. Al 10 % pierde A en T+1
+(+2,7 pp, IC −0,2 a 5,5).
+
+La lectura preinscrita sobre los inicios desde cero casos en el mes de origen, al
+10 %:
+
+| Horizonte | Inicios desde cero casos | Logística con clima | Con vecinos |
+| --- | --- | --- | --- |
+| T+1 | 185 | 29 | 37 |
+| T+2 | 153 | 45 | 46 |
+
+- **El mecanismo funciona en parte**: en T+1 los vecinos le permiten anticipar 8
+  inicios más de los que arrancan sin casos (de 29 a 37), que es justo donde la
+  tanda 46 ubicó el límite.
+- **Pero el saldo es negativo**: para alertar ahí el modelo gasta presupuesto que
+  antes iba a filas donde acertaba, y pierde más de lo que gana. Veredicto: **sin
+  efecto, tirando a peor**.
+- Lo que esto sugiere, como hipótesis: la señal de los vecinos sirve para los
+  municipios en cero, no para el resto; un modelo que la use solo en esas filas
+  (o un reparto del presupuesto) podría conservar la ganancia sin la pérdida.
+
+Corrida del 11 de noviembre sobre la rama del PR #9 (`a3280a9`). Mismas filas que siempre (7 612 y 7 572 comunes, 76 municipios); la referencia sin los bloques da predicciones idénticas a las de la tanda 15 (diferencia máxima 0).
