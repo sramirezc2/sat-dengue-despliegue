@@ -1979,6 +1979,8 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AH. Un modelo por departamento, con y sin clima | **Cerrada** en la tanda 26: empeora; con clima pierde 18 inicios en T+2 (IC −31 a −5) y Meta pierde la ganancia del clima |
 | AI. Un solo modelo con indicador de departamento | Preinscrita para la tanda 27 |
 | AJ. Excluir 2020 del entrenamiento | Preinscrita para la tanda 28 |
+| AN. El clima con otro remuestreo | Preinscrita para la tanda 32 |
+| AO. Veredicto de la sección 0 para las mejores recetas | Preinscrita para la tanda 33 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
