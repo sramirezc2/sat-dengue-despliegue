@@ -39,7 +39,20 @@
    en T+1), y la semilla 53 de la tanda 12 era la más favorable a XGBoost (tanda
    14). Ningún ajuste de XGBoost alcanza a la logística; cuanto más simple el
    árbol, más se le acerca (tanda 20).
-4. **El mecanismo de la tanda 11 se confirma**: sin log1p la logística pierde 43
+4. **La ventaja de T+2 es consistente y desplegable.** Cada logística gana en cinco
+   o seis de los siete años al 10 % (tanda 34). Con umbrales fijados con el año
+   anterior, como los podría fijar una secretaría en enero, la logística con clima
+   anticipa 169 inicios a dos meses con 557 alertas, frente a 141 con 601 del canal
+   (tanda 41). En T+2 el canal emite 3,2 falsas alertas por acierto y el modelo 2,4
+   (tanda 33).
+5. **Dónde gana el modelo** (tanda 35): donde el canal no puede ver, municipios
+   poco endémicos y filas con pocos casos frente al umbral; pierde 13 a 24 inicios
+   donde el canal está seguro. Repartir el presupuesto entre los dos no ayuda
+   (tanda 36). Con las dos listas juntas, la logística con clima avisa a uno o dos
+   meses 353 de 641 inicios, frente a 327 del canal (tanda 37).
+6. **Qué aprende** (tanda 39): es sobre todo el margen contra el umbral en escala
+   log; del clima pesa el punto de rocío, con signo positivo.
+7. **El mecanismo de la tanda 11 se confirma**: sin log1p la logística pierde 43
    inicios en T+1, y el bloque G recupera la mayor parte (tanda 16).
 
 ## Lo que no funcionó (sin efecto o peor)
@@ -50,10 +63,15 @@
 - Formas del clima: recortes, log1p de la lluvia, C = 10 (tanda 22).
 - Mes cíclico, con y sin clima (tanda 24).
 - Un modelo por departamento: empeora (tanda 26).
+- Repartir el presupuesto entre el canal y el modelo (tanda 36, línea N sigue cerrada).
+- Árboles más profundos o con más eta (tanda 20).
 
 ## Lo que se acepta
 
 - La logística mínima de cinco variables no pierde más de 5 puntos (tanda 17).
+- Contra el canal como ranking con cupo fijo, una línea base más débil que el
+  condicionado, el modelo pasa la barra también en T+1 con clima (tanda 38); el
+  veredicto que manda es el de la tanda 33.
 
 ## Correcciones durante la noche
 
@@ -65,5 +83,6 @@
 
 ## En curso o pendiente
 
-- Tanda 18 (entrenamiento nacional), 27 (indicador de departamento), 28 (sin
-  2020) y 31 (XGBoost de profundidad 2 con cinco semillas).
+- Tanda 18 (entrenamiento nacional, en curso), 27 (indicador de departamento),
+  28 (sin 2020), 31 (XGBoost de profundidad 2 con cinco semillas) y 40 (punto de
+  rocío como único clima), en cola en serie.
