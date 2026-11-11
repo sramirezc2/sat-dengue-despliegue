@@ -135,6 +135,12 @@ def test_el_panel_declarado_si_se_mide(tmp_path, monkeypatch) -> None:
     conjunto = pd.read_csv(tmp_path / "data/prueba-retroanalisis/conjunto.csv")
     assert conjunto.filas_comunes.gt(0).all()
     assert conjunto.filas_preparadas.ge(conjunto.filas_comunes).all()
+    # El sexto guarda el puntaje de cada fila evaluada, por receta.
+    preds = pd.read_csv(tmp_path / "data/prueba-retroanalisis/predicciones.csv")
+    assert {"receta", "raw_probability", "origin_period", "municipality_code"} <= set(
+        preds.columns
+    )
+    assert 0 < len(preds) <= int(conjunto.filas_comunes.sum())
 
 
 def test_respeta_demora_de_etiqueta() -> None:
@@ -194,3 +200,105 @@ def test_el_arnes_acepta_las_derivadas_solo_declaradas() -> None:
     assert list(data.X)[-6:] == MARGIN_COLUMNS
     with pytest.raises(ValueError):
         from_prepared(con_g, 1, label_delay_months=g["label_delay_months"])
+
+
+def test_entrenamiento_nacional_evalua_solo_los_departamentos(tmp_path, monkeypatch) -> None:
+    """Con entrenamiento nacional el modelo ve todo el país, pero solo se evalúa lo declarado."""
+    table, schema = build_table(make_panel())
+    codigo = str(table.department_code.iloc[0])
+    monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
+    monkeypatch.chdir(tmp_path)
+    params = params_artificiales(
+        horizontes=[1], departamentos=[codigo], municipios_minimos=1, entrenamiento_nacional=True
+    )
+    retroanalisis(object(), params)
+    preds = pd.read_csv(
+        tmp_path / "data/prueba-retroanalisis/predicciones.csv", dtype={"municipality_code": str}
+    )
+    esperados = set(table[table.department_code == codigo].municipality_code.astype(str))
+    assert not preds.empty and set(preds.municipality_code) <= esperados
+
+
+def test_ventana_movil_corre_y_no_cambia_las_filas(tmp_path, monkeypatch) -> None:
+    """La ventana móvil cambia con qué se entrena, no qué filas se evalúan."""
+    table, schema = build_table(make_panel())
+    monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
+    monkeypatch.chdir(tmp_path)
+    salida = tmp_path / "data/prueba-retroanalisis/predicciones.csv"
+    retroanalisis(object(), params_artificiales(horizontes=[1]))
+    expansiva = pd.read_csv(salida)
+    retroanalisis(object(), params_artificiales(horizontes=[1], ventana_anios=2))
+    movil = pd.read_csv(salida)
+    claves = ["municipality_code", "origin_period", "target_period"]
+    assert movil[claves].equals(expansiva[claves])
+
+
+
+def test_mes_ciclico_solo_si_se_declara(tmp_path, monkeypatch) -> None:
+    """La codificación cíclica del mes corre y deja las mismas filas que sin ella."""
+    raiz = Path(__file__).resolve().parents[1]
+    fuente = raiz / "conf/retroanalisis/logistica_sin_clima.yml"
+    receta = yaml.safe_load(fuente.read_text("utf-8"))
+    receta["preparation"]["variables_mes"] = True
+    receta["preparation"]["matrix_columns"] += ["mes_sin", "mes_cos"]
+    ruta = tmp_path / "logistica_mes.yml"
+    ruta.write_text(yaml.safe_dump(receta), encoding="utf-8")
+    table, schema = build_table(make_panel())
+    monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
+    monkeypatch.chdir(tmp_path)
+    base = str(raiz / "conf/retroanalisis/logistica_sin_clima.yml")
+    retroanalisis(object(), params_artificiales(horizontes=[1], configuraciones=[base, str(ruta)]))
+    preds = pd.read_csv(tmp_path / "data/prueba-retroanalisis/predicciones.csv")
+    claves = ["municipality_code", "origin_period"]
+    a, b = (preds[preds.receta == r][claves].reset_index(drop=True) for r in preds.receta.unique())
+    assert len(preds.receta.unique()) == 2 and a.equals(b)
+
+
+def test_excluir_anios_no_cambia_las_filas(tmp_path, monkeypatch) -> None:
+    """Excluir un año del entrenamiento no lo saca de la evaluación."""
+    table, schema = build_table(make_panel())
+    monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
+    monkeypatch.chdir(tmp_path)
+    salida = tmp_path / "data/prueba-retroanalisis/predicciones.csv"
+    retroanalisis(object(), params_artificiales(horizontes=[1]))
+    base = pd.read_csv(salida)
+    retroanalisis(object(), params_artificiales(horizontes=[1], excluir_entrenamiento=[2022]))
+    sin = pd.read_csv(salida)
+    claves = ["municipality_code", "origin_period", "target_period"]
+    assert sin[claves].equals(base[claves])
+
+
+def test_entrenar_departamentos_no_cambia_las_filas(tmp_path, monkeypatch) -> None:
+    """Entrenar solo con un departamento no cambia qué filas se predicen."""
+    table, schema = build_table(make_panel())
+    codigo = str(table.department_code.iloc[0])
+    monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
+    monkeypatch.chdir(tmp_path)
+    salida = tmp_path / "data/prueba-retroanalisis/predicciones.csv"
+    retroanalisis(object(), params_artificiales(horizontes=[1]))
+    base = pd.read_csv(salida)
+    retroanalisis(object(), params_artificiales(horizontes=[1], entrenar_departamentos=[codigo]))
+    claves = ["municipality_code", "origin_period", "target_period"]
+    assert pd.read_csv(salida)[claves].equals(base[claves])
+
+
+def test_clima_rezagos_no_cambia_las_filas(tmp_path, monkeypatch) -> None:
+    """Los rezagos de clima agregan seis columnas al final sin cambiar las filas."""
+    raiz = Path(__file__).resolve().parents[1]
+    fuente = raiz / "conf/retroanalisis/logistica_sin_clima.yml"
+    receta = yaml.safe_load(fuente.read_text("utf-8"))
+    receta["preparation"]["clima_rezagos"] = True
+    receta["preparation"]["matrix_columns"] += [
+        f"{n}_lag{k}" for n in ("rocio", "lluvia", "temp") for k in (1, 2)
+    ]
+    ruta = tmp_path / "logistica_rezagos.yml"
+    ruta.write_text(yaml.safe_dump(receta), encoding="utf-8")
+    table, schema = build_table(make_panel())
+    monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
+    monkeypatch.chdir(tmp_path)
+    params = params_artificiales(horizontes=[1], configuraciones=[str(fuente), str(ruta)])
+    retroanalisis(object(), params)
+    preds = pd.read_csv(tmp_path / "data/prueba-retroanalisis/predicciones.csv")
+    claves = ["municipality_code", "origin_period"]
+    a, b = (preds[preds.receta == r][claves].reset_index(drop=True) for r in preds.receta.unique())
+    assert len(preds.receta.unique()) == 2 and a.equals(b)

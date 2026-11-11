@@ -98,6 +98,10 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
     if destino.parts[:1] != ("data",):
         raise ValueError("La salida del retroanálisis debe quedar bajo data/")
     table, schema = load_canonical(artifact)
+    # Con `entrenamiento_nacional` el modelo entrena con todo el país y se evalúa
+    # solo en los departamentos declarados: las predicciones y las líneas base se
+    # restringen a ellos, así que las filas evaluadas son las mismas.
+    nacional = table if params.get("entrenamiento_nacional") else None
     departamentos = params.get("departamentos")
     if departamentos:
         codigos = [str(c) for c in departamentos]
@@ -112,21 +116,28 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
         "curva": [],
         "omit": [],
         "conjunto": [],
+        "predicciones": [],
     }
     for ruta in recetas:
         receta = Path(ruta).stem
         config = yaml.safe_load(Path(ruta).read_text(encoding="utf-8"))
         for h in params["horizontes"]:
             preds, omitidos, cobertura = predicciones_rolling(
-                table,
+                table if nacional is None else nacional,
                 schema,
                 config,
                 int(h),
                 params["primer_origen"],
                 params["ultimo_objetivo"],
                 piso,
+                params.get("ventana_anios"),
+                params.get("excluir_entrenamiento"),
+                params.get("entrenar_departamentos"),
             )
             etiquetas = {"horizonte": h, "receta": receta}
+            if nacional is not None:
+                evaluados = set(table.municipality_code)
+                preds = preds[preds.municipality_code.isin(evaluados)].reset_index(drop=True)
             salidas["omit"].append(pd.DataFrame(omitidos).assign(**etiquetas))
             salidas["conjunto"].append(pd.DataFrame([{**cobertura, **etiquetas}]))
             if preds.empty or preds.fold_id.nunique() < 2:
@@ -142,6 +153,7 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
                     f"El diagnóstico quedó en {destino / 'omitidos.csv'}."
                 )
             candidato = str(preds.candidate.iloc[0])
+            salidas["predicciones"].append(preds.assign(receta=receta))
             resumen, anio, curva = validar_candidato(
                 table, preds, {"candidato": candidato, "horizonte": int(h)}
             )
@@ -152,9 +164,10 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
         pd.concat(v, ignore_index=True) if v else pd.DataFrame() for v in salidas.values()
     )
     destino.mkdir(parents=True, exist_ok=True)
-    nombres = ("resumen", "por_anio", "curva", "omitidos", "conjunto")
+    nombres = ("resumen", "por_anio", "curva", "omitidos", "conjunto", "predicciones")
     for nombre, tabla in zip(nombres, tablas):
         tabla.to_csv(destino / f"{nombre}.csv", index=False)
-    # El quinto CSV es auditoría del conjunto común; el nodo entrega los cuatro
+    # El quinto CSV es auditoría del conjunto común y el sexto guarda el puntaje de
+    # cada fila (para ensambles y lecturas posteriores); el nodo entrega los cuatro
     # que el pipeline declara.
     return tablas[:4]

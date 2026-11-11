@@ -17,12 +17,23 @@ mes es un único fold, así que una calibración monótona no cambia ese orden.
 
 from __future__ import annotations
 
+import dataclasses
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from sat_dengue_pipeline.domain.calendar import add_months
-from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS, MARGIN_SOURCES, margin_features
+from sat_dengue_pipeline.domain.margin import (
+    CLIMA_LAG_COLUMNS,
+    CLIMA_LAG_FUENTES,
+    DEPTO_COLUMNS,
+    MARGIN_COLUMNS,
+    MARGIN_SOURCES,
+    MES_COLUMNS,
+    ROCIO_META_COLUMNS,
+    margin_features,
+)
 from sat_dengue_pipeline.experiments.rolling import TRAIN_FLOOR, ExperimentSpec, from_prepared
 from sat_dengue_pipeline.factory.configuration import adapter_spec
 from sat_dengue_pipeline.models.adapters import ModelRegistry, run_candidate
@@ -78,11 +89,35 @@ def conjunto_comun(
     keys = prepared.keys.loc[completo].reset_index(drop=True)
     X = prepared.X.loc[completo].reset_index(drop=True)
     y = prepared.y.loc[completo].reset_index(drop=True)
-    if not preparacion.get("variables_g"):
-        return PreparedSet(keys, X, y), (), cobertura
-    for column in MARGIN_COLUMNS:
-        X[column] = alineado.loc[completo, column].to_numpy()
-    return PreparedSet(keys, X, y), tuple(MARGIN_COLUMNS), cobertura
+    derivadas: tuple[str, ...] = ()
+    if preparacion.get("variables_g"):
+        for column in MARGIN_COLUMNS:
+            X[column] = alineado.loc[completo, column].to_numpy()
+        derivadas += tuple(MARGIN_COLUMNS)
+    if preparacion.get("variables_mes"):
+        mes = keys.year_month.str[5:7].astype(int).to_numpy()
+        X["mes_sin"] = np.sin(2 * np.pi * mes / 12)
+        X["mes_cos"] = np.cos(2 * np.pi * mes / 12)
+        derivadas += tuple(MES_COLUMNS)
+    if preparacion.get("variable_depto"):
+        X["depto_73"] = keys.municipality_code.str[:2].eq("73").astype(float).to_numpy()
+        derivadas += tuple(DEPTO_COLUMNS)
+    if preparacion.get("clima_rezagos"):
+        orden = table.sort_values(KEYS)
+        idx = pd.MultiIndex.from_frame(keys.loc[:, KEYS])
+        for nombre, fuente in CLIMA_LAG_FUENTES.items():
+            serie = orden.set_index(KEYS)[fuente]
+            for k in (1, 2):
+                rezago = serie.groupby(level=0).shift(k)
+                X[f"{nombre}_lag{k}"] = rezago.reindex(idx).to_numpy(dtype=float)
+        derivadas += tuple(CLIMA_LAG_COLUMNS)
+    if preparacion.get("rocio_meta"):
+        rocio = table.set_index(KEYS)["dewpoint_mean_c_month_mean"]
+        idx = pd.MultiIndex.from_frame(keys.loc[:, KEYS])
+        meta = keys.municipality_code.str[:2].eq("50").to_numpy(dtype=float)
+        X["rocio_x_meta"] = rocio.reindex(idx).to_numpy(dtype=float) * meta
+        derivadas += tuple(ROCIO_META_COLUMNS)
+    return PreparedSet(keys, X, y), derivadas, cobertura
 
 
 def predicciones_rolling(
@@ -93,6 +128,9 @@ def predicciones_rolling(
     primer_origen: str = "2019-01",
     ultimo_objetivo: str = "2024-12",
     primer_entrenamiento: str = TRAIN_FLOOR,
+    ventana_anios: int | None = None,
+    excluir_anios: list | None = None,
+    entrenar_departamentos: list | None = None,
 ) -> tuple[pd.DataFrame, list[dict[str, str]], dict[str, int]]:
     """Producir predicciones fuera de muestra reentrenando en cada mes de origen.
 
@@ -106,6 +144,12 @@ def predicciones_rolling(
             estaba quemado en 2018-01, heredado del release histórico; con el
             release operacional la historia llega a 2007 y el piso es 2012-01.
         ultimo_objetivo: Último mes objetivo; no puede alcanzar 2025.
+        ventana_anios: Si se declara, cada origen entrena solo con los últimos años
+            indicados (sin bajar del piso); si no, la ventana es expansiva.
+        excluir_anios: Años objetivo que no entran al entrenamiento (siguen
+            evaluándose).
+        entrenar_departamentos: Si se declara, solo esos departamentos entran al
+            entrenamiento; los demás se predicen sin haber entrenado con ellos.
 
     Returns:
         Predicciones del arnés, la lista de meses omitidos con su motivo y el
@@ -122,6 +166,15 @@ def predicciones_rolling(
         prepared, table, horizonte, config["preparation"]
     )
     data = from_prepared(prepared, horizonte, label_delay_months=demora, derived=derivadas)
+    if excluir_anios:
+        # Sin etiqueta no hay entrenamiento: esas filas siguen evaluándose, porque la
+        # evaluación toma las etiquetas del panel y no de data.y.
+        anio = data.keys.target_period.str[:4]
+        y = data.y.astype("Int64").mask(anio.isin([str(a) for a in excluir_anios]))
+        data = dataclasses.replace(data, y=y)
+    if entrenar_departamentos:
+        fuera = ~data.keys.municipality_code.str[:2].isin([str(d) for d in entrenar_departamentos])
+        data = dataclasses.replace(data, y=data.y.astype("Int64").mask(fuera.to_numpy()))
     spec = adapter_spec(config)
     registry = ModelRegistry()
     if (spec.family, spec.version) not in ADAPTERS:
@@ -130,10 +183,14 @@ def predicciones_rolling(
     partes, omitidos = [], []
     origen = primer_origen
     while add_months(origen, horizonte + demora) <= ultimo_objetivo:
+        inicio = primer_entrenamiento
+        if ventana_anios:
+            # Ventana móvil: solo los últimos `ventana_anios` años antes del origen.
+            inicio = max(primer_entrenamiento, add_months(origen, -12 * int(ventana_anios)))
         experimento = ExperimentSpec(
             horizon=horizonte,
             seed=config["seed"],
-            train_target_start=primer_entrenamiento,
+            train_target_start=inicio,
             first_origin=origen,
             last_target=add_months(origen, horizonte),
             label_delay_months=demora,

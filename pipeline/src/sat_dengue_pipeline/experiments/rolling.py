@@ -11,7 +11,7 @@ import pandas as pd
 
 from sat_dengue_pipeline.domain.calendar import add_months, validate_period
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
-from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS
+from sat_dengue_pipeline.domain.margin import DERIVADAS_ORDEN
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy, validate_keys
 from sat_dengue_pipeline.preparation import PreparedSet
 
@@ -186,7 +186,11 @@ def validate_data(data: ExperimentData, horizon: int, reserved_start: str = "202
         or list(data.X) != [*data.predictors, *data.derived]
         or data.X.columns.duplicated().any()
         or set(data.derived) & set(PREDICTORS)
-        or (data.derived and list(data.derived) != [c for c in MARGIN_COLUMNS if c in data.derived])
+        or (
+            data.derived
+            and list(data.derived)
+            != [c for c in DERIVADAS_ORDEN if c in data.derived]
+        )
     ):
         raise ValueError("Predictores fuera del esquema canónico cerrado")
     if any(not obj.index.equals(keys.index) for obj in (data.X, data.y, data.controls)):

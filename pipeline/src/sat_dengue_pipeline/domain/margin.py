@@ -175,3 +175,30 @@ def margin_features(
     frame["margen_curso_acel"] = _monthly_difference(frame, "margen_curso_vel")
 
     return frame.set_index(KEYS).loc[:, MARGIN_COLUMNS]
+
+
+# Codificación cíclica del mes (exploración nocturna, tanda 24): diciembre y enero quedan
+# vecinos, cosa que el `month_of_year` numérico no permite a un modelo lineal.
+MES_COLUMNS = ["mes_sin", "mes_cos"]
+
+# Indicador de departamento (tanda 27): un solo modelo, con nivel base propio de Tolima.
+DEPTO_COLUMNS = ["depto_73"]
+
+# Clima de los meses anteriores al origen (tanda 48): uno y dos meses antes, sin fuga.
+CLIMA_LAG_FUENTES = {
+    "rocio": "dewpoint_mean_c_month_mean",
+    "lluvia": "rain_mm_month_sum",
+    "temp": "temp_mean_c_month_mean",
+}
+CLIMA_LAG_COLUMNS = [f"{n}_lag{k}" for n in CLIMA_LAG_FUENTES for k in (1, 2)]
+
+# Orden fijo de todas las derivadas de preparación, al final de la matriz.
+# Interacción del punto de rocío con Meta (tanda 49).
+ROCIO_META_COLUMNS = ["rocio_x_meta"]
+DERIVADAS_ORDEN = [
+    *MARGIN_COLUMNS,
+    *MES_COLUMNS,
+    *DEPTO_COLUMNS,
+    *CLIMA_LAG_COLUMNS,
+    *ROCIO_META_COLUMNS,
+]
