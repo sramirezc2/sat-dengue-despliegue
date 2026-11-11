@@ -98,6 +98,10 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
     if destino.parts[:1] != ("data",):
         raise ValueError("La salida del retroanálisis debe quedar bajo data/")
     table, schema = load_canonical(artifact)
+    # Con `entrenamiento_nacional` el modelo entrena con todo el país y se evalúa
+    # solo en los departamentos declarados: las predicciones y las líneas base se
+    # restringen a ellos, así que las filas evaluadas son las mismas.
+    nacional = table if params.get("entrenamiento_nacional") else None
     departamentos = params.get("departamentos")
     if departamentos:
         codigos = [str(c) for c in departamentos]
@@ -119,7 +123,7 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
         config = yaml.safe_load(Path(ruta).read_text(encoding="utf-8"))
         for h in params["horizontes"]:
             preds, omitidos, cobertura = predicciones_rolling(
-                table,
+                table if nacional is None else nacional,
                 schema,
                 config,
                 int(h),
@@ -128,6 +132,9 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
                 piso,
             )
             etiquetas = {"horizonte": h, "receta": receta}
+            if nacional is not None:
+                evaluados = set(table.municipality_code)
+                preds = preds[preds.municipality_code.isin(evaluados)].reset_index(drop=True)
             salidas["omit"].append(pd.DataFrame(omitidos).assign(**etiquetas))
             salidas["conjunto"].append(pd.DataFrame([{**cobertura, **etiquetas}]))
             if preds.empty or preds.fold_id.nunique() < 2:

@@ -200,3 +200,20 @@ def test_el_arnes_acepta_las_derivadas_solo_declaradas() -> None:
     assert list(data.X)[-6:] == MARGIN_COLUMNS
     with pytest.raises(ValueError):
         from_prepared(con_g, 1, label_delay_months=g["label_delay_months"])
+
+
+def test_entrenamiento_nacional_evalua_solo_los_departamentos(tmp_path, monkeypatch) -> None:
+    """Con entrenamiento nacional el modelo ve todo el país, pero solo se evalúa lo declarado."""
+    table, schema = build_table(make_panel())
+    codigo = str(table.department_code.iloc[0])
+    monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
+    monkeypatch.chdir(tmp_path)
+    params = params_artificiales(
+        horizontes=[1], departamentos=[codigo], municipios_minimos=1, entrenamiento_nacional=True
+    )
+    retroanalisis(object(), params)
+    preds = pd.read_csv(
+        tmp_path / "data/prueba-retroanalisis/predicciones.csv", dtype={"municipality_code": str}
+    )
+    esperados = set(table[table.department_code == codigo].municipality_code.astype(str))
+    assert not preds.empty and set(preds.municipality_code) <= esperados
