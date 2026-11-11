@@ -88,8 +88,11 @@
 - **Tanda 33**: la primera versión calculó el presupuesto sobre las filas
   elegibles y concluyó que nada pasaba la barra. Se retiró y se recalculó sobre
   los 76 municipios por mes, que cambia la conclusión para T+2.
-- Cuatro corridas se detuvieron por falta de memoria en el equipo y se relanzaron
-  de a una.
+- Cuatro corridas se detuvieron por falta de memoria en el equipo a las 22:30 y se
+  relanzaron de a una. A las 23:49 se detuvo de nuevo toda la cola en serie (y la
+  suite completa de pruebas del PR #6, que se había lanzado en paralelo); solo
+  sobrevivió la nacional con clima. Las tandas 27, 28, 31, 40, 43, 48 y 49 quedan
+  preinscritas y sin correr hasta relanzarlas.
 
 ## En curso o pendiente
 
