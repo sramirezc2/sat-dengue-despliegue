@@ -10,7 +10,7 @@ import pandas as pd
 import xgboost as xgb
 
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
-from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS
+from sat_dengue_pipeline.domain.derived import declared_derived
 from sat_dengue_pipeline.models.adapters import (
     AdapterSpec,
     validate_features,
@@ -55,9 +55,7 @@ class XGBoostOnsetAdapter:
         self.preparation = self.settings["preparation"]
         # Derivadas de preparación: vacías salvo que la receta declare el bloque
         # de margen. Nunca son canónicas y siempre van al final de la matriz.
-        self.derived: tuple[str, ...] = (
-            tuple(MARGIN_COLUMNS) if self.preparation.get("variables_g") else ()
-        )
+        self.derived: tuple[str, ...] = declared_derived(self.preparation)
         if (
             not self.settings["predictors"]
             or self.settings["predictors"]
@@ -111,26 +109,33 @@ class XGBoostOnsetAdapter:
             for name in self.settings["predictors"]
             for column in (self.preparation["zone_columns"] if name == "zona_canal_t" else [name])
         ]
-        # El bloque de margen va al final y solo si la receta lo declara; sin él
-        # la matriz es byte a byte la histórica.
-        if self.preparation["variables_g"] and self.derived != tuple(MARGIN_COLUMNS):
-            raise ValueError("Bloque de margen declarado con columnas alteradas")
-        if not self.preparation["variables_g"] and self.derived:
-            raise ValueError("Columnas derivadas sin declarar variables_g")
+        # Los bloques derivados van al final y solo si la receta los declara; sin
+        # ellos la matriz es byte a byte la histórica.
         if self.preparation["matrix_columns"] != [*expected, *self.derived]:
             raise ValueError("Orden o cardinalidad de matriz interna alterados")
 
     def matrix(self, X: pd.DataFrame) -> np.ndarray:
-        """Validar 33 entradas y proyectar predictores declarados a float32 sin aprender."""
-        canonical = list(X) == PREDICTORS
+        """Validar las entradas y proyectar los predictores declarados a float32.
+
+        X puede llegar de dos formas y las dos son válidas: con el contrato
+        canónico completo más las derivadas que la receta declare, que es como
+        lo entrega el retroanálisis, o ya recortada al subconjunto declarado más
+        esas derivadas, que es como lo entrega la fábrica. La proyección es la
+        misma en los dos casos; lo único que cambia es contra qué se valida.
+
+        Sin esta distinción, una receta que quite columnas canónicas y encienda
+        un bloque derivado rechaza todos sus orígenes con «esquema inválido»,
+        que es lo que pasó al medir la línea U.
+        """
+        entrada_canonica = list(X) == [*PREDICTORS, *self.derived]
         validate_features(
             X,
             self._dtypes,
-            predictors=tuple(PREDICTORS if canonical else self.settings["predictors"]),
-            derived=() if canonical else self.derived,
+            predictors=tuple(PREDICTORS if entrada_canonica else self.settings["predictors"]),
+            derived=self.derived,
         )
         parts = []
-        for name in [*self.settings["predictors"], *(() if canonical else self.derived)]:
+        for name in [*self.settings["predictors"], *self.derived]:
             if name == "zona_canal_t":
                 codes = X[name].map(self.preparation["zone_mapping"]).to_numpy(dtype=int)
                 parts.append(np.eye(len(self.preparation["zone_mapping"]), dtype=np.float32)[codes])

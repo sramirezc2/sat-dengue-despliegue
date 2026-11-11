@@ -12,6 +12,10 @@ retroanalisis:
     - conf/retroanalisis/logistica_sin_clima.yml
     - conf/retroanalisis/logistica_g.yml
   horizontes: [1, 2]
+  # Cadencia de reentrenamiento. `mensual` es la del arnés: un ajuste por mes de
+  # origen. `anual` reproduce la del banco de la línea O: un solo ajuste por año,
+  # con el entrenamiento cerrado en diciembre del año anterior (tanda 13).
+  cadencia: mensual
   # Primer mes objetivo utilizable para entrenar. Con el release operacional
   # (2007-2024) el piso es 2012-01: el P75 se come los cinco años anteriores.
   primer_entrenamiento: "2012-01"

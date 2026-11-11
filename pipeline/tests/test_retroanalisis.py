@@ -8,6 +8,7 @@ import yaml
 from fixtures.canonical_fixture import make_panel
 
 import sat_dengue_pipeline.pipelines.retroanalisis.nodes as nodos
+from sat_dengue_pipeline.domain.calendar import add_months
 from sat_dengue_pipeline.domain.canonical import build_table
 from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS
 from sat_dengue_pipeline.evaluation import validacion_anual as va
@@ -302,3 +303,98 @@ def test_clima_rezagos_no_cambia_las_filas(tmp_path, monkeypatch) -> None:
     claves = ["municipality_code", "origin_period"]
     a, b = (preds[preds.receta == r][claves].reset_index(drop=True) for r in preds.receta.unique())
     assert len(preds.receta.unique()) == 2 and a.equals(b)
+
+
+def test_el_recorte_anual_deja_solo_el_entrenamiento_del_ano_anterior() -> None:
+    """La cadencia anual se consigue recortando filas, no cambiando el arnés.
+
+    Lo que se exige: después del recorte no queda ninguna fila cuyo objetivo
+    caiga entre el corte y el origen, salvo las del propio origen; y las cuatro
+    piezas del arnés siguen alineadas.
+    """
+    from fixtures.experiment_fixture import make_experiment
+
+    from sat_dengue_pipeline.evaluation.retroanalisis import recortar_a_la_cadencia
+
+    data = make_experiment(1)
+    recortada = recortar_a_la_cadencia(data, "2021-06", "2020-12")
+    claves = recortada.keys
+    entre = claves.target_period.gt("2020-12") & claves.origin_period.ne("2021-06")
+    assert not entre.any()
+    assert claves.origin_period.eq("2021-06").any(), "el origen evaluado no puede desaparecer"
+    assert len(claves) < len(data.keys)
+    for pieza in (recortada.X, recortada.y, recortada.controls):
+        assert len(pieza) == len(claves)
+        assert pieza.index.equals(claves.index)
+    assert recortada.derived == data.derived
+
+
+def test_bajo_cadencia_anual_los_meses_de_un_ano_entrenan_con_lo_mismo() -> None:
+    """Dos orígenes del mismo año ven el mismo entrenamiento; con cadencia mensual, no.
+
+    Es la propiedad que define la cadencia anual, y la prueba la mide por los
+    dos lados para que no pase una implementación que recorte siempre igual.
+    """
+    from fixtures.experiment_fixture import make_experiment
+
+    from sat_dengue_pipeline.evaluation.retroanalisis import recortar_a_la_cadencia
+    from sat_dengue_pipeline.experiments.rolling import ExperimentSpec, build_folds, fold_inputs
+
+    data = make_experiment(1)
+
+    def entrenamiento(origen: str, anual: bool):
+        """Claves de entrenamiento del fold de ese origen."""
+        entradas = recortar_a_la_cadencia(data, origen, "2020-12") if anual else data
+        spec = ExperimentSpec(
+            horizon=1,
+            train_target_start="2018-02",
+            first_origin=origen,
+            last_target=add_months(origen, 1),
+        )
+        train, _ = fold_inputs(entradas, spec, build_folds(spec)[0])
+        return train.keys.target_period.max(), len(train.keys)
+
+    enero, junio = entrenamiento("2021-01", True), entrenamiento("2021-06", True)
+    assert enero == junio, "con cadencia anual el año entero entrena con lo mismo"
+    assert enero[0] <= "2020-12"
+    mensual_enero, mensual_junio = entrenamiento("2021-01", False), entrenamiento("2021-06", False)
+    assert mensual_enero != mensual_junio, "con cadencia mensual la ventana se mueve"
+    assert mensual_junio[1] > junio[1], "el recorte anual quita filas de entrenamiento"
+
+
+def test_una_cadencia_no_declarada_se_rechaza() -> None:
+    """Nada de cadencias inventadas en la receta."""
+    table, schema = build_table(make_panel())
+    config = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
+    with pytest.raises(ValueError, match="Cadencia"):
+        predicciones_rolling(
+            table, schema, config, 1, "2023-06", "2024-12", "2018-01", cadencia="semanal"
+        )
+
+
+def test_el_rezago_de_clima_busca_el_mes_y_no_la_fila_anterior() -> None:
+    """Con un hueco de calendario el rezago es ausente, nunca el mes equivocado.
+
+    `groupby.shift(k)` toma la fila k posiciones atrás, que con un hueco no es el
+    mes que se pide: devolvería el valor de dos meses antes como si fuera el de
+    uno. El panel canónico es una rejilla completa, así que esto no cambia
+    ninguna cifra medida, pero la definición decía una cosa y el código hacía
+    otra. Esta prueba fija cuál de las dos manda.
+    """
+    from sat_dengue_pipeline.evaluation.retroanalisis import _rezago_mensual
+
+    tabla = pd.DataFrame(
+        {
+            "municipality_code": ["73001"] * 3,
+            "year_month": ["2020-01", "2020-02", "2020-04"],
+            "rain_mm_month_sum": [10.0, 20.0, 40.0],
+        }
+    )
+    claves = pd.MultiIndex.from_arrays(
+        [["73001", "73001"], ["2020-04", "2020-02"]], names=KEYS
+    )
+    rezago = _rezago_mensual(tabla, "rain_mm_month_sum", 1, claves)
+    # 2020-04 no tiene marzo: ausente. Con shift por posición daría 20.0.
+    assert pd.isna(rezago[0])
+    # 2020-02 sí tiene enero.
+    assert rezago[1] == pytest.approx(10.0)

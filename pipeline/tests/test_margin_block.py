@@ -292,3 +292,41 @@ def test_receta_y_preparacion_tienen_que_declarar_lo_mismo() -> None:
         registry_limpio,
     )
     assert not frame.empty
+
+
+def test_una_receta_con_subconjunto_y_bloque_acepta_la_entrada_canonica() -> None:
+    """XGBoost con menos predictores que el canon, más el bloque, sobre X completa.
+
+    El retroanálisis entrega siempre el contrato canónico completo más las
+    derivadas; la fábrica entrega el subconjunto declarado más las derivadas.
+    Las dos formas tienen que proyectar la misma matriz. Sin esto, una receta
+    que quite columnas y encienda G rechaza sus 82 orígenes con «Esquema de
+    características inválido», que es lo que pasó al medir la línea U.
+    """
+    import numpy as np
+    import yaml
+
+    from sat_dengue_pipeline.domain.canonical import PREDICTORS
+    from sat_dengue_pipeline.factory.configuration import adapter_spec
+    from sat_dengue_pipeline.models.xgboost import XGBoostOnsetAdapter
+
+    ruta = (
+        Path(__file__).resolve().parents[1] / "conf/retroanalisis/xgboost_banco_sin_umbrales_g.yml"
+    )
+    config = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    declarados = config["predictors"]
+    assert len(declarados) < len(PREDICTORS), "la receta tiene que ser un subconjunto"
+    adaptador = XGBoostOnsetAdapter(adapter_spec(config))
+
+    def entrada(columnas):
+        """Matriz mínima con las columnas pedidas, en ese orden."""
+        X = pd.DataFrame({c: np.linspace(1.0, 4.0, 4) for c in columnas})
+        if "zona_canal_t" in columnas:
+            X["zona_canal_t"] = ["EXITO", "ALERTA", "EXITO", "SEGURIDAD"]
+        return X[list(columnas)]
+
+    canonica = adaptador.matrix(entrada([*PREDICTORS, *MARGIN_COLUMNS]))
+    recortada = adaptador.matrix(entrada([*declarados, *MARGIN_COLUMNS]))
+    assert canonica.shape == recortada.shape
+    assert np.array_equal(canonica, recortada), "las dos formas proyectan la misma matriz"
+    assert canonica.shape[1] == len(config["preparation"]["matrix_columns"])
