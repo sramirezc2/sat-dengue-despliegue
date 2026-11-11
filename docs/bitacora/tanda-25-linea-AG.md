@@ -4,7 +4,7 @@
 > resumen y el enlace quedan en [la bitácora principal](../bitacora-experimental.md),
 > sección 5, cuando la tanda cierre.
 >
-> Estado: **preinscrita, sin correr.** Se corre sobre la base común del
+> Estado: **cerrada** el 10 de noviembre de 2026. Se corre sobre la base común del
 > retroanálisis: `canonical.mode=approved`, calendario y departamentos de
 > `parameters_retroanalisis.yml` sin tocar, `conjunto.csv` reportado.
 
@@ -24,3 +24,43 @@ y por cada receta, con el mismo presupuesto por mes que en la comparación total
 
 Es una lectura. No cambia veredictos; se reporta si la ventaja tiene el mismo
 signo en los dos departamentos.
+
+## Resultado: en T+1 la ventaja es de Tolima, y el clima es lo que gana en Meta
+
+Inicios detectados al presupuesto del canal condicionado, por departamento (los
+totales cuadran con la tanda 11: 323 y 207 del canal).
+
+| T+1 | Meta: canal 152 de 264 | Tolima: canal 171 de 377 |
+| --- | --- | --- |
+| logistica_sin_clima | 154 (+2) | 193 (+22) |
+| log_conclima | 168 (+16) | 191 (+20) |
+| log_minima | 149 (-3) | 190 (+19) |
+| xgb_banco_s53 | 149 (-3) | 193 (+22) |
+| xgb_banco_s7 | 143 (-9) | 185 (+14) |
+| xgb_banco_s13 | 142 (-10) | 189 (+18) |
+| xgb_banco_s29 | 148 (-4) | 191 (+20) |
+| xgb_banco_s42 | 139 (-13) | 186 (+15) |
+
+| T+2 | Meta: canal 92 de 182 | Tolima: canal 115 de 277 |
+| --- | --- | --- |
+| logistica_sin_clima | 102 (+10) | 146 (+31) |
+| log_conclima | 106 (+14) | 147 (+32) |
+| log_minima | 100 (+8) | 145 (+30) |
+| xgb_banco_s53 | 100 (+8) | 147 (+32) |
+| xgb_banco_s7 | 101 (+9) | 142 (+27) |
+| xgb_banco_s13 | 102 (+10) | 138 (+23) |
+| xgb_banco_s29 | 98 (+6) | 144 (+29) |
+| xgb_banco_s42 | 89 (-3) | 145 (+30) |
+
+- **T+1.** La logística sin clima gana en Tolima (+22) y **empata en Meta** (+2).
+  La mínima y XGBoost, con las cinco semillas, **pierden en Meta** (−3 a −13).
+- **El clima es lo que cambia Meta**: con clima la logística pasa de +2 a **+16**
+  en Meta, y en Tolima casi no cambia (+22 a +20). Los +12 inicios que el clima
+  sumó en la tanda 15 salen casi todos de Meta.
+- **T+2.** Todas las recetas ganan en los dos departamentos, más en Tolima (+23 a
+  +32) que en Meta (−3 a +14).
+
+Lo que esto abre, declarado como hipótesis y no como resultado: el clima aporta
+donde el canal endémico se queda corto, que en T+1 es Meta. Un modelo por
+departamento ya se descartó antes con otro instrumento; lo que no se ha probado es
+el clima solo en Meta.
