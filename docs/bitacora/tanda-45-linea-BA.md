@@ -26,6 +26,10 @@ El veredicto sigue siendo el del 10 % (tanda 33).
 
 ## Resultado
 
+![Inicios anticipados según alertas por mes, canal condicionado y logística con clima](figuras/tanda-45-curva.png)
+
+La línea punteada marca el presupuesto de referencia del 10 %. La tabla de abajo trae los mismos valores.
+
 | Receta | Horizonte | Presupuesto | Alertas por mes (real) | Canal | Modelo | Diferencia (pp) | IC por bloques de mes | Barra |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | logistica_sin_clima | T+1 | 2.5 % | 2.2 | 113 | 107 | -0.9 | -2.8 a 0.8 | NO |
