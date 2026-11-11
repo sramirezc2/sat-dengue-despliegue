@@ -4,7 +4,7 @@
 > resumen y el enlace quedan en [la bitácora principal](../bitacora-experimental.md),
 > sección 5, cuando la tanda cierre.
 >
-> Estado: **parcial**: la corrida se interrumpió por falta de memoria. Se corre sobre la base común del
+> Estado: **cerrada** el 10 de noviembre de 2026. Se corre sobre la base común del
 > retroanálisis: `canonical.mode=approved`, calendario y departamentos de
 > `parameters_retroanalisis.yml` sin tocar, `conjunto.csv` reportado.
 
@@ -69,3 +69,32 @@ clima, al presupuesto del canal condicionado:
 
 **Sin efecto** sobre la logística sin clima: la forma del mes no cambia casi nada,
 probablemente porque el canal ya trae la estacionalidad del municipio.
+
+## Resultado completo: tampoco con clima
+
+Las dos variantes con clima se corrieron después, de a una. Contra la logística
+con clima (359 y 253): mes cíclico agregado +1 y −1; mes cíclico en lugar del
+numérico −1 y −1. **Sin efecto** en las cuatro variantes. La forma del mes no
+importa para la logística: la estacionalidad ya la trae el canal.
+
+| T+1, 641 inicios | Presupuesto | Alertas | Referencia | Receta | Diferencia (IC 95 %) | pp | Carga ref → receta | Años a favor |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| logc_mes | condicionado | 817 | 359 | 360 | +1 (-7 a 9) | +0.2 | 11.22 → 11.20 | 2+ / 2− |
+| logc_mes | 5 % | 209 | 112 | 112 | +0 (-4 a 4) | +0.0 | 2.38 → 2.38 |  |
+| logc_mes | 10 % | 406 | 194 | 194 | +0 (-9 a 9) | +0.0 | 5.19 → 5.19 |  |
+| logc_mes | 20 % | 817 | 317 | 316 | -1 (-7 a 5) | -0.2 | 12.25 → 12.27 |  |
+| logc_mes_solo | condicionado | 817 | 359 | 358 | -1 (-7 a 4) | -0.2 | 11.22 → 11.24 | 1+ / 2− |
+| logc_mes_solo | 5 % | 209 | 112 | 113 | +1 (0 a 3) | +0.2 | 2.38 → 2.35 |  |
+| logc_mes_solo | 10 % | 406 | 194 | 196 | +2 (-4 a 8) | +0.3 | 5.19 → 5.14 |  |
+| logc_mes_solo | 20 % | 817 | 317 | 315 | -2 (-7 a 3) | -0.3 | 12.25 → 12.30 |  |
+
+| T+2, 459 inicios | Presupuesto | Alertas | Referencia | Receta | Diferencia (IC 95 %) | pp | Carga ref → receta | Años a favor |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| logc_mes | condicionado | 1158 | 253 | 252 | -1 (-9 a 7) | -0.2 | 22.39 → 22.41 | 2+ / 3− |
+| logc_mes | 5 % | 207 | 65 | 64 | -1 (-8 a 5) | -0.2 | 3.51 → 3.54 |  |
+| logc_mes | 10 % | 402 | 127 | 127 | +0 (-7 a 7) | +0.0 | 6.80 → 6.80 |  |
+| logc_mes | 20 % | 809 | 211 | 215 | +4 (-3 a 11) | +0.9 | 14.79 → 14.70 |  |
+| logc_mes_solo | condicionado | 1158 | 253 | 252 | -1 (-7 a 5) | -0.2 | 22.39 → 22.41 | 2+ / 3− |
+| logc_mes_solo | 5 % | 207 | 65 | 68 | +3 (-1 a 7) | +0.7 | 3.51 → 3.44 |  |
+| logc_mes_solo | 10 % | 402 | 127 | 129 | +2 (-4 a 8) | +0.4 | 6.80 → 6.75 |  |
+| logc_mes_solo | 20 % | 809 | 211 | 219 | +8 (1 a 15) | +1.7 | 14.79 → 14.60 |  |
