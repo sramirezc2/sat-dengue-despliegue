@@ -4,7 +4,7 @@
 > resumen y el enlace quedan en [la bitácora principal](../bitacora-experimental.md),
 > sección 5, cuando la tanda cierre.
 >
-> Estado: **preinscrita, sin correr.** Se corre sobre la base común del
+> Estado: **parcial**: la corrida se interrumpió por falta de memoria. Se corre sobre la base común del
 > retroanálisis: `canonical.mode=approved`, calendario y departamentos de
 > `parameters_retroanalisis.yml` sin tocar, `conjunto.csv` reportado.
 
@@ -55,3 +55,17 @@ inicios por año; ningún año con menos de 30 inicios decide nada (regla 4).
 No decide sobre la meta del contrato ni registra nada en la fábrica. Es
 exploración sobre la base común; lo que sobreviva se propone como experimento
 registrado.
+
+## Resultado parcial (la corrida se interrumpió)
+
+La corrida se detuvo por falta de memoria en el equipo después de las dos primeras
+recetas; las dos variantes con clima quedan sin correr. Sobre la logística sin
+clima, al presupuesto del canal condicionado:
+
+| | T+1 (347 de referencia) | T+2 (248 de referencia) |
+| --- | --- | --- |
+| Mes cíclico agregado | 350, +3 (IC −3 a 8) | 245, −3 (IC −9 a 3) |
+| Mes cíclico en lugar del numérico | 351, +4 (IC −1 a 8) | 244, −4 (IC −10 a 1) |
+
+**Sin efecto** sobre la logística sin clima: la forma del mes no cambia casi nada,
+probablemente porque el canal ya trae la estacionalidad del municipio.

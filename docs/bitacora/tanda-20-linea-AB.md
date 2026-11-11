@@ -4,7 +4,7 @@
 > resumen y el enlace quedan en [la bitácora principal](../bitacora-experimental.md),
 > sección 5, cuando la tanda cierre.
 >
-> Estado: **preinscrita, sin correr.** Se corre sobre la base común del
+> Estado: **parcial**: la corrida se interrumpió por falta de memoria. Se corre sobre la base común del
 > retroanálisis: `canonical.mode=approved`, calendario y departamentos de
 > `parameters_retroanalisis.yml` sin tocar, `conjunto.csv` reportado.
 
@@ -62,3 +62,19 @@ inicios por año; ningún año con menos de 30 inicios decide nada (regla 4).
 No decide sobre la meta del contrato ni registra nada en la fábrica. Es
 exploración sobre la base común; lo que sobreviva se propone como experimento
 registrado.
+
+## Resultado parcial (la corrida se interrumpió)
+
+La corrida se detuvo por falta de memoria después de tres recetas; profundidad 6,
+eta 0,1, eta 0,02 y profundidad 3 quedan sin correr. Contra la logística sin
+clima, al presupuesto del canal condicionado, semilla 53:
+
+| | T+1 (347) | T+2 (248) |
+| --- | --- | --- |
+| XGBoost del banco | 342, −5 (IC −29 a 16) | 247, −1 (IC −21 a 18) |
+| XGBoost sin clima | 343, −4 (IC −23 a 14) | 245, −3 (IC −20 a 13) |
+| XGBoost profundidad 2 | 351, +4 (IC −17 a 24) | 242, −6 (IC −25 a 13) |
+
+Quitarle el clima a XGBoost no cambia nada, así que la comparación de la tanda 12
+no estaba sesgada por el clima. Ninguna variante supera a la logística; con una
+sola semilla, por la regla 9, ninguna diferencia de esta tabla es concluyente.
