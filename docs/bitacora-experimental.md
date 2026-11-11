@@ -2051,9 +2051,9 @@ veredicto es el que ya tiene redactado la sección 0.4.
 | BD. El clima de los meses anteriores | **Cerrada** en la tanda 48: sin clima, los rezagos suman +14 en T+1 (como el clima del mes); sobre el clima no agregan nada |
 | BE. El punto de rocío distinto en Meta | **Cerrada** en la tanda 49: sin efecto (−4 y −1) |
 | BF. Combinar lo que sumó | **Cerrada** en la tanda 50: solo pasaron los rezagos de clima, y sobre el clima no suman; la configuración que queda es la logística con clima |
-| BH. El clima sobre las variantes de la mínima | Preinscrita para la tanda 52 |
-| BI. El clima con regularización más fuerte | Preinscrita para la tanda 53 |
-| BJ. XGBoost de profundidad 2 sin clima, con cinco semillas | Preinscrita para la tanda 54 |
+| BH. El clima sobre las variantes de la mínima | **Cerrada** en la tanda 52: el clima suma sobre cada variante (+17 y +11 en T+1), pero ninguna supera a la mínima con clima |
+| BI. El clima con regularización más fuerte | **Cerrada** en la tanda 53: sin efecto (−3 y −4); C = 1 sigue siendo la mejor |
+| BJ. XGBoost de profundidad 2 sin clima, con cinco semillas | **Cerrada** en la tanda 54: empata con la logística sin clima con las cinco semillas (−3 a +2) y pasa la barra en T+2 al 10 % |
 | BK a CW. Búsqueda declarada en seis familias | Preinscritas para las tandas 55 a 93; reparto del presupuesto, reglas desplegables, estratificación, vecindad, robustez y controles negativos |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
