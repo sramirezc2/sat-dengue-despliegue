@@ -100,3 +100,20 @@
 - Tanda 18 (entrenamiento nacional, en curso), 27 (indicador de departamento),
   28 (sin 2020), 31 (XGBoost de profundidad 2 con cinco semillas) y 40 (punto de
   rocío como único clima), en cola en serie.
+
+## Cómo reproducir
+
+- Código: el PR #6 (`retroanalisis/opciones-exploracion`) trae las opciones del
+  retroanálisis; las herramientas y recetas están en la rama
+  `exploracion/herramientas-noche` (`pipeline/tools/noche/` y
+  `pipeline/conf/retroanalisis/noche/`).
+- Panel: el canónico del release `satd-raw-173d5856` con digest semántico
+  `de49b11b…`, el mismo del certificado de la tarea 27. `correr.py` lo lee de
+  `data/noche_panel/<digest>/canonical.json`.
+- Una receta: desde `pipeline/`,
+  `python tools/noche/correr.py <parametros.yml> "configuraciones=[<receta.yml>]" "salida=data/noche/<lote>"`,
+  con los parámetros de `conf/base/parameters_retroanalisis.yml` (calendario y
+  departamentos sin tocar).
+- Comparar dos recetas: `python tools/noche/comparar.py <carpeta> <referencia> [recetas]`
+  y `tabla_md.py` para la tabla.
+- Veredicto de la sección 0: `python tools/noche/veredicto.py <carpeta> <recetas>`.
