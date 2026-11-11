@@ -11,7 +11,7 @@ import pandas as pd
 
 from sat_dengue_pipeline.domain.calendar import add_months, validate_period
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
-from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS, MES_COLUMNS
+from sat_dengue_pipeline.domain.margin import DEPTO_COLUMNS, MARGIN_COLUMNS, MES_COLUMNS
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy
 from sat_dengue_pipeline.experiments.rolling import (
     LINK,
@@ -133,7 +133,8 @@ def validate_features(
             el contrato histórico intacto.
     """
     if derived and (
-        list(derived) != [c for c in (*MARGIN_COLUMNS, *MES_COLUMNS) if c in derived]
+        list(derived)
+        != [c for c in (*MARGIN_COLUMNS, *MES_COLUMNS, *DEPTO_COLUMNS) if c in derived]
         or set(derived) & set(PREDICTORS)
     ):
         raise ValueError("Derivadas de preparación no declaradas, repetidas o canónicas")

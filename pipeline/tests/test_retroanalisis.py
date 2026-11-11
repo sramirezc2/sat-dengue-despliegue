@@ -252,3 +252,17 @@ def test_mes_ciclico_solo_si_se_declara(tmp_path, monkeypatch) -> None:
     claves = ["municipality_code", "origin_period"]
     a, b = (preds[preds.receta == r][claves].reset_index(drop=True) for r in preds.receta.unique())
     assert len(preds.receta.unique()) == 2 and a.equals(b)
+
+
+def test_excluir_anios_no_cambia_las_filas(tmp_path, monkeypatch) -> None:
+    """Excluir un año del entrenamiento no lo saca de la evaluación."""
+    table, schema = build_table(make_panel())
+    monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
+    monkeypatch.chdir(tmp_path)
+    salida = tmp_path / "data/prueba-retroanalisis/predicciones.csv"
+    retroanalisis(object(), params_artificiales(horizontes=[1]))
+    base = pd.read_csv(salida)
+    retroanalisis(object(), params_artificiales(horizontes=[1], excluir_entrenamiento=[2022]))
+    sin = pd.read_csv(salida)
+    claves = ["municipality_code", "origin_period", "target_period"]
+    assert sin[claves].equals(base[claves])

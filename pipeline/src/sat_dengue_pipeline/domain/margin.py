@@ -180,3 +180,6 @@ def margin_features(
 # Codificación cíclica del mes (exploración nocturna, tanda 24): diciembre y enero quedan
 # vecinos, cosa que el `month_of_year` numérico no permite a un modelo lineal.
 MES_COLUMNS = ["mes_sin", "mes_cos"]
+
+# Indicador de departamento (tanda 27): un solo modelo, con nivel base propio de Tolima.
+DEPTO_COLUMNS = ["depto_73"]

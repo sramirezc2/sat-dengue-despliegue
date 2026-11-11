@@ -17,6 +17,7 @@ mes es un único fold, así que una calibración monótona no cambia ese orden.
 
 from __future__ import annotations
 
+import dataclasses
 from typing import Any
 
 import numpy as np
@@ -24,6 +25,7 @@ import pandas as pd
 
 from sat_dengue_pipeline.domain.calendar import add_months
 from sat_dengue_pipeline.domain.margin import (
+    DEPTO_COLUMNS,
     MARGIN_COLUMNS,
     MARGIN_SOURCES,
     MES_COLUMNS,
@@ -94,6 +96,9 @@ def conjunto_comun(
         X["mes_sin"] = np.sin(2 * np.pi * mes / 12)
         X["mes_cos"] = np.cos(2 * np.pi * mes / 12)
         derivadas += tuple(MES_COLUMNS)
+    if preparacion.get("variable_depto"):
+        X["depto_73"] = keys.municipality_code.str[:2].eq("73").astype(float).to_numpy()
+        derivadas += tuple(DEPTO_COLUMNS)
     return PreparedSet(keys, X, y), derivadas, cobertura
 
 
@@ -106,6 +111,7 @@ def predicciones_rolling(
     ultimo_objetivo: str = "2024-12",
     primer_entrenamiento: str = TRAIN_FLOOR,
     ventana_anios: int | None = None,
+    excluir_anios: list | None = None,
 ) -> tuple[pd.DataFrame, list[dict[str, str]], dict[str, int]]:
     """Producir predicciones fuera de muestra reentrenando en cada mes de origen.
 
@@ -121,6 +127,8 @@ def predicciones_rolling(
         ultimo_objetivo: Último mes objetivo; no puede alcanzar 2025.
         ventana_anios: Si se declara, cada origen entrena solo con los últimos años
             indicados (sin bajar del piso); si no, la ventana es expansiva.
+        excluir_anios: Años objetivo que no entran al entrenamiento (siguen
+            evaluándose).
 
     Returns:
         Predicciones del arnés, la lista de meses omitidos con su motivo y el
@@ -137,6 +145,12 @@ def predicciones_rolling(
         prepared, table, horizonte, config["preparation"]
     )
     data = from_prepared(prepared, horizonte, label_delay_months=demora, derived=derivadas)
+    if excluir_anios:
+        # Sin etiqueta no hay entrenamiento: esas filas siguen evaluándose, porque la
+        # evaluación toma las etiquetas del panel y no de data.y.
+        anio = data.keys.target_period.str[:4]
+        y = data.y.astype("Int64").mask(anio.isin([str(a) for a in excluir_anios]))
+        data = dataclasses.replace(data, y=y)
     spec = adapter_spec(config)
     registry = ModelRegistry()
     if (spec.family, spec.version) not in ADAPTERS:
