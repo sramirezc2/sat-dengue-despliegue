@@ -19,10 +19,16 @@ from __future__ import annotations
 
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from sat_dengue_pipeline.domain.calendar import add_months
-from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS, MARGIN_SOURCES, margin_features
+from sat_dengue_pipeline.domain.margin import (
+    MARGIN_COLUMNS,
+    MARGIN_SOURCES,
+    MES_COLUMNS,
+    margin_features,
+)
 from sat_dengue_pipeline.experiments.rolling import TRAIN_FLOOR, ExperimentSpec, from_prepared
 from sat_dengue_pipeline.factory.configuration import adapter_spec
 from sat_dengue_pipeline.models.adapters import ModelRegistry, run_candidate
@@ -78,11 +84,17 @@ def conjunto_comun(
     keys = prepared.keys.loc[completo].reset_index(drop=True)
     X = prepared.X.loc[completo].reset_index(drop=True)
     y = prepared.y.loc[completo].reset_index(drop=True)
-    if not preparacion.get("variables_g"):
-        return PreparedSet(keys, X, y), (), cobertura
-    for column in MARGIN_COLUMNS:
-        X[column] = alineado.loc[completo, column].to_numpy()
-    return PreparedSet(keys, X, y), tuple(MARGIN_COLUMNS), cobertura
+    derivadas: tuple[str, ...] = ()
+    if preparacion.get("variables_g"):
+        for column in MARGIN_COLUMNS:
+            X[column] = alineado.loc[completo, column].to_numpy()
+        derivadas += tuple(MARGIN_COLUMNS)
+    if preparacion.get("variables_mes"):
+        mes = keys.year_month.str[5:7].astype(int).to_numpy()
+        X["mes_sin"] = np.sin(2 * np.pi * mes / 12)
+        X["mes_cos"] = np.cos(2 * np.pi * mes / 12)
+        derivadas += tuple(MES_COLUMNS)
+    return PreparedSet(keys, X, y), derivadas, cobertura
 
 
 def predicciones_rolling(

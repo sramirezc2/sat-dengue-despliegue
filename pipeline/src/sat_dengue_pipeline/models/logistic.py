@@ -15,7 +15,7 @@ import sklearn
 from sklearn.linear_model import LogisticRegression
 
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
-from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS
+from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS, MES_COLUMNS
 from sat_dengue_pipeline.models.adapters import (
     AdapterSpec,
     validate_features,
@@ -74,7 +74,7 @@ class LogisticOnsetAdapter:
         # de margen. Nunca son canónicas y siempre van al final de la matriz.
         self.derived: tuple[str, ...] = (
             tuple(MARGIN_COLUMNS) if self.preparation.get("variables_g") else ()
-        )
+        ) + (tuple(MES_COLUMNS) if self.preparation.get("variables_mes") else ())
         predictors = self.settings["predictors"]
         if (
             not predictors
@@ -108,10 +108,11 @@ class LogisticOnsetAdapter:
         ]
         # El bloque de margen va al final y solo si la receta lo declara; sin él
         # la matriz es idéntica a la histórica.
-        if self.preparation["variables_g"] and self.derived != tuple(MARGIN_COLUMNS):
-            raise ValueError("Bloque de margen declarado con columnas alteradas")
-        if not self.preparation["variables_g"] and self.derived:
-            raise ValueError("Columnas derivadas sin declarar variables_g")
+        esperadas = (tuple(MARGIN_COLUMNS) if self.preparation["variables_g"] else ()) + (
+            tuple(MES_COLUMNS) if self.preparation.get("variables_mes") else ()
+        )
+        if self.derived != esperadas:
+            raise ValueError("Columnas derivadas alteradas o sin declarar")
         if self.preparation["matrix_columns"] != [*expected, *self.derived]:
             raise ValueError("Orden o cardinalidad de matriz interna alterados")
         if not set(self.preparation["log1p_columns"]) <= set(predictors) - {"zona_canal_t"}:

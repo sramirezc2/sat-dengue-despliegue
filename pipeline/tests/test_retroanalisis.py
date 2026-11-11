@@ -231,3 +231,24 @@ def test_ventana_movil_corre_y_no_cambia_las_filas(tmp_path, monkeypatch) -> Non
     movil = pd.read_csv(salida)
     claves = ["municipality_code", "origin_period", "target_period"]
     assert movil[claves].equals(expansiva[claves])
+
+
+
+def test_mes_ciclico_solo_si_se_declara(tmp_path, monkeypatch) -> None:
+    """La codificación cíclica del mes corre y deja las mismas filas que sin ella."""
+    raiz = Path(__file__).resolve().parents[1]
+    fuente = raiz / "conf/retroanalisis/logistica_sin_clima.yml"
+    receta = yaml.safe_load(fuente.read_text("utf-8"))
+    receta["preparation"]["variables_mes"] = True
+    receta["preparation"]["matrix_columns"] += ["mes_sin", "mes_cos"]
+    ruta = tmp_path / "logistica_mes.yml"
+    ruta.write_text(yaml.safe_dump(receta), encoding="utf-8")
+    table, schema = build_table(make_panel())
+    monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
+    monkeypatch.chdir(tmp_path)
+    base = str(raiz / "conf/retroanalisis/logistica_sin_clima.yml")
+    retroanalisis(object(), params_artificiales(horizontes=[1], configuraciones=[base, str(ruta)]))
+    preds = pd.read_csv(tmp_path / "data/prueba-retroanalisis/predicciones.csv")
+    claves = ["municipality_code", "origin_period"]
+    a, b = (preds[preds.receta == r][claves].reset_index(drop=True) for r in preds.receta.unique())
+    assert len(preds.receta.unique()) == 2 and a.equals(b)

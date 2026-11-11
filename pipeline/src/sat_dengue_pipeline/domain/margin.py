@@ -175,3 +175,8 @@ def margin_features(
     frame["margen_curso_acel"] = _monthly_difference(frame, "margen_curso_vel")
 
     return frame.set_index(KEYS).loc[:, MARGIN_COLUMNS]
+
+
+# Codificación cíclica del mes (exploración nocturna, tanda 24): diciembre y enero quedan
+# vecinos, cosa que el `month_of_year` numérico no permite a un modelo lineal.
+MES_COLUMNS = ["mes_sin", "mes_cos"]
