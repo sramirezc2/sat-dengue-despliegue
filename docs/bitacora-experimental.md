@@ -11,6 +11,114 @@ una entrada de aquí, esa cifra no está sustentada.
 
 ---
 
+## 0. Criterio de decisión A/B/C — preinscrito el 10 de noviembre de 2026
+
+> **Esto se fija antes de correr los experimentos de las próximas tres semanas,
+> y no se toca después de ver un resultado.** Está arriba del todo porque es lo
+> que convierte una corrida en evidencia: sin un criterio escrito antes, cada
+> cifra es una anécdota y la discusión se vuelve sobre quién mide mejor.
+
+### Declaración de honestidad, primero
+
+**No elegimos estos umbrales a ciegas, y fingir lo contrario sería peor que no
+preinscribir nada.** Cuando se escriben, el proyecto ya conoce los resultados
+exploratorios de la tanda 9 sobre el banco propio. La regla 4.8 se cumple aquí
+**declarando** esa falta de ceguera, publicando las cifras que ya vimos, y
+eligiendo los umbrales por un argumento de utilidad y no por lo que nos da.
+
+Lo que ya sabíamos al escribir esto, T+1 y T+2, banco propio 2018-2024,
+647 inicios sobre 6.384 filas evaluables, modelo y canal condicionado al
+**mismo presupuesto**:
+
+| Presupuesto | Alertas | T+1 canal | T+1 modelo | T+1 ganancia | T+2 canal | T+2 modelo | T+2 ganancia |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 5 % | 319 | 27,9 % | 26,2 % | **−1,6 pp** | 13,1 % | 16,8 % | **+3,8 pp** |
+| 10 % | 638 | 44,2 % | 44,4 % | **+0,2 pp** | 23,3 % | 28,2 % | **+4,8 pp** |
+| 15 % | 958 | 56,6 % | 59,5 % | **+2,8 pp** | 31,3 % | 37,8 % | **+6,5 pp** |
+| 20 % | 1 277 | 63,1 % | 72,0 % | **+8,9 pp** | 37,2 % | 44,6 % | **+7,4 pp** |
+| 25 % | 1 596 | 67,3 % | 79,6 % | **+12,3 pp** | 42,4 % | 49,6 % | **+7,2 pp** |
+| 30 % | 1 915 | 69,8 % | 85,3 % | **+15,5 pp** | 45,8 % | 54,8 % | **+9,0 pp** |
+
+**La lectura incómoda y la razón de que este criterio exista:** la ventaja del
+modelo depende casi por completo de cuántas alertas se esté dispuesto a emitir.
+A presupuestos bajos —los que una secretaría puede atender de verdad— el canal
+condicionado va igual o mejor a T+1. Si el umbral se fija después de mirar esta
+tabla, lo que se elige no es un criterio: es un resultado.
+
+### 0.1 El presupuesto se fija primero, y por criterio operativo
+
+Todo lo demás cuelga de aquí, así que no se decide por desempeño.
+
+**Presupuesto de referencia: 10 % de los municipios-mes evaluables**, que en
+Tolima y Meta son unas **8 alertas al mes sobre 76 municipios**. Es la cifra
+que se sostiene frente a quien tiene que responderlas: un equipo
+departamental puede visitar, verificar y actuar sobre ocho municipios al mes de
+forma sostenida; sobre diecinueve —el 25 %— no, y menos todos los meses del
+año.
+
+El veredicto se emite **a ese presupuesto**. La curva completa a 5 %, 10 % y
+20 % se publica siempre como evidencia, porque un punto de operación no es una
+comparación (tanda 8), pero el que decide es el declarado.
+
+Cambiar el presupuesto de referencia exige una entrada nueva en esta bitácora,
+con fecha, motivo y la declaración de si el cambio nació antes o después de ver
+un resultado.
+
+### 0.2 Las tres condiciones
+
+Todas se evalúan **sobre las mismas filas** y al mismo presupuesto, por
+horizonte y por separado (regla 4.7).
+
+**A — Supera al canal condicionado.** El modelo anticipa más inicios que el
+canal condicionado, y el intervalo emparejado de la diferencia **excluye el
+cero**. No basta con ganar: hay que ganar fuera del ruido.
+
+**B — Supera a la persistencia.** Solo donde la comparación es informativa. En
+la cohorte primaria la persistencia no puede alertar por construcción, así que
+B queda **NO_EVALUABLE** y se declara como tal; no cuenta como victoria ni
+bloquea el veredicto. En la lectura secundaria de T+2, donde sí puede actuar,
+B es obligatoria.
+
+**C — No empeora la carga.** La carga de falsas alertas por 100 municipio-mes
+no supera en más de **5** a la del canal condicionado, y el límite superior del
+intervalo tampoco. Es una restricción de seguridad, no un objetivo: protege a
+quien recibe las alertas, no al modelo.
+
+### 0.3 El umbral de utilidad, y de dónde sale
+
+Un modelo se adopta si **anticipa al menos 5 puntos porcentuales más de inicios
+que el canal condicionado, al presupuesto de referencia**, con el límite
+inferior del intervalo por encima de cero.
+
+**Por qué 5 y no otro número.** La pregunta correcta no es cuánto alcanzamos a
+sacar, sino cuánto hay que ganar para que valga la pena montar, mantener y
+gobernar un modelo en vez de usar una regla que no cuesta nada. Cinco puntos
+sobre 647 inicios en siete años son unos **32 brotes anticipados que de otro
+modo no se habrían anticipado**, repartidos en dos departamentos: entre cuatro
+y cinco por año. Por debajo de eso, el costo de operar un modelo —datos,
+reentrenamiento, gobernanza, el riesgo de que se degrade sin que nadie lo
+note— no se justifica frente a ajustar un umbral y condicionarlo al estado del
+municipio, que es gratis y lo puede hacer cualquier secretaría mañana.
+
+**Este umbral no está puesto para que lo pasemos.** Con las cifras de la tabla,
+al 10 % de presupuesto **ninguna configuración que hemos medido lo pasa a T+1**
+(+0,2 pp) y T+2 queda al borde (+4,8 pp). Se escribe así a propósito: un umbral
+calibrado para que el resultado propio pase no mide nada.
+
+### 0.4 Qué pasa si nada lo pasa
+
+**«Ningún modelo supera al canal condicionado al presupuesto que la secretaría
+puede atender» es un resultado del proyecto, no un fracaso.** Es, de hecho, el
+hallazgo más accionable que podríamos entregar: significa que el camino corto
+para mejorar la vigilancia del dengue en Tolima y Meta es **ajustar el umbral
+del canal y condicionarlo a que el municipio no esté en exceso**, no desplegar
+un modelo. Eso se puede hacer sin datos nuevos, sin tubería y sin gobernanza.
+
+Si eso resulta, se escribe así, con esa claridad, y el trabajo de modelo se
+reporta como lo que fue: la evidencia que permitió saberlo.
+
+---
+
 ## 1. El problema
 
 En Colombia el dengue se vigila con el **canal endémico**: se comparan los
@@ -304,6 +412,15 @@ Sin estas reglas los resultados se ven bien y no valen nada.
     valor del extremo. `np.interp` y sus equivalentes hacen lo segundo sin
     avisar, y eso ya produjo una tabla donde tres volúmenes de alerta
     distintos imprimían la misma cifra presentada como tres mediciones.
+
+12. **Una corrida que no midió nada no puede terminar en verde.** Añadida tras
+    la tanda 11. El retroanálisis descartó sus 163 orígenes uno por uno, escribió
+    tres archivos de resultados vacíos y reportó éxito en 6,3 segundos. La regla
+    tiene dos mitades. La primera: todo paso que puede quedarse sin datos declara
+    cuántos esperaba y falla si no los tuvo. La segunda, menos obvia: el default
+    de una herramienta de medición no puede ser un juguete. Un modo sintético que
+    sirve para probar que el código corre no sirve para medir, y si comparten
+    comando, alguien va a publicar el juguete.
 
 ---
 
@@ -1574,6 +1691,212 @@ T+1 con el T+2 no ayuda. Son cifras exploratorias, calculadas con una
 evaluación local fuera del registro; la cifra oficial saldrá de EXP003 con la
 evaluación científica del contrato.
 
+### Tanda 11, línea S — El retroanálisis sobre la base común, y G que no reproduce
+
+**Origen.** Antes de que el equipo empiece a correr experimentos comparables,
+el retroanálisis del pipeline tenía que reproducir el banco de la línea O sobre
+el panel que produce el contrato. No lo hacía, y las tres razones por las que no
+lo hacía son más instructivas que el resultado.
+
+#### Defecto 1: la corrida reportaba éxito sin medir nada
+
+`kedro run --pipelines retroanalisis` terminaba con
+«Pipeline execution completed successfully in 6.3 sec» y escribía
+`resumen.csv`, `por_anio.csv` y `curva.csv` **vacíos**. Los 163 orígenes
+—82 en T+1 y 81 en T+2— quedaban registrados uno por uno en `omitidos.csv`
+con el motivo «Fold sin soporte de entrenamiento o predicción», y el nodo
+seguía adelante.
+
+La causa: `conf/base/parameters.yml` declara `canonical.mode: synthetic`, así
+que el pipeline reconstruía el panel **artificial** —dos municipios ficticios y
+84 meses desde 2018-01— en vez del panel real. Con ese panel ningún fold tiene
+soporte, porque los percentiles del canal se comen los cinco años anteriores.
+
+Lo grave no es el modo por defecto, que es razonable para una prueba de humo:
+es que una medición que no midió nada terminara en verde y dejara tres archivos
+que alguien podía leer como resultado. Ahora el nodo verifica el panel antes de
+empezar —la receta declara `cobertura_desde` y `municipios_minimos`, y el
+mensaje de error nombra `canonical.mode`— y aborta si un horizonte se queda sin
+folds, dejando el `omitidos.csv` para el diagnóstico.
+
+#### Defecto 2: el piso de entrenamiento estaba quemado en 2018-01
+
+`ExperimentSpec.train_target_start` tenía `"2018-01"` como valor y como piso
+duro. Venía del release histórico, que empezaba en 2011-06. Con el release
+operacional, que cubre desde 2007-01, ese piso **dejaba fuera seis años de
+entrenamiento disponibles** y hacía imposible reproducir el banco, que entrena
+desde 2011-05. También explica el reporte de 541 inicios desde 2019 que trajo un
+integrante: su primer fold entrenaba con un año de historia.
+
+El piso nuevo es `TRAIN_FLOOR = "2012-01"`, y no es arbitrario: el P75 del canal
+se construye con el mismo mes calendario de los cinco años anteriores, así que
+2012 es el primer año completamente evaluable con datos desde 2007. Además dejó
+de estar quemado: es el parámetro `retroanalisis.primer_entrenamiento`.
+
+#### Defecto 3: la línea G no se podía correr por esta ruta
+
+El bloque de margen estaba cableado solo en la fábrica (`factory/engine.py` y el
+adaptador XGBoost). El retroanálisis no pasa por ahí: arma su matriz con
+`prepare_horizon` y la entrega al arnés, que exigía que X fuera exactamente el
+contrato canónico. Y el adaptador logístico —el que usa la receta del
+retroanálisis— rechazaba `variables_g` de plano.
+
+Es decir: **la única mejora confirmada del proyecto no se podía ejecutar por la
+ruta que el equipo iba a usar para comparar.** Quedó cableada en los tres
+puntos: el arnés acepta derivadas declaradas, el adaptador logístico las
+proyecta crudas —son márgenes con signo, log1p no está definido en los
+negativos— y el bloque se adjunta en el retroanálisis igual que en la fábrica.
+
+De paso apareció un cuarto: la rama de G en el adaptador XGBoost usaba
+`MARGIN_COLUMNS` sin importarlo. Ninguna receta versionada enciende
+`variables_g`, así que la rama no se ejecutaba nunca y la primera corrida con G
+habría fallado con `NameError`. Lo encontró el linter, no las pruebas; ahora hay
+una prueba que construye el adaptador con el bloque declarado.
+
+Y un quinto, que solo apareció en la **primera corrida real** con G: los 82
+orígenes de T+1 se omitieron con «Esquema de características inválido». El
+envoltorio `CheckedAdapter` valida la matriz por su cuenta, aparte del
+adaptador, y no recibía las derivadas: el bloque estaba bien construido, bien
+declarado y bien proyectado, y lo rechazaba la frontera. Ninguna de las pruebas
+nuevas lo vio porque todas paraban antes del arnés. La que faltaba —y que ahora
+existe— entra por `run_candidate` con el adaptador real de la receta G y
+reproduce exactamente ese error cuando se desactiva el arreglo.
+
+La lección, otra vez de método: **una prueba que se detiene antes de la frontera
+no prueba la frontera.** Cuatro pruebas del bloque pasaban en verde mientras la
+corrida real fallaba en todos sus folds.
+
+#### El banco queda reproducido
+
+Contando inicios sobre el panel real (release `satd-raw-173d5856`, Tolima y
+Meta, 76 municipios, 2007-01 a 2024-12) con la definición de la línea O:
+
+| Año objetivo | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | Total |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Banco (línea O) | 91 | 118 | 69 | 52 | 89 | 125 | 103 | **647** |
+| Panel del contrato | 91 | 118 | 69 | 52 | 89 | 125 | 103 | **647** |
+
+Año por año, idéntico. El retroanálisis evalúa 641 de esos 647, y los 6 que
+faltan están contados: son el objetivo 2018-01, que necesitaría un origen
+anterior al primero evaluado (2 inicios), y el objetivo 2024-12, cuya etiqueta
+solo estaría disponible en 2025-01, dentro del periodo reservado (4 inicios).
+No es una discrepancia: es el calendario del protocolo.
+
+#### Una decisión de diseño: el conjunto de filas es común, con G o sin G
+
+El bloque de margen no se puede completar en todas las filas. La velocidad y la
+aceleración necesitan el mes anterior, y `p75_canal_t` no existe antes de 2012.
+En el release operacional eso son **152 filas** —los meses 2012-01 y 2012-02 de
+los 76 municipios—, todas de entrenamiento y ninguna evaluada.
+
+Descartarlas solo cuando G está encendida habría hecho que la corrida con G y la
+corrida sin G entrenaran sobre conjuntos distintos, y entonces la diferencia
+entre las dos ya no sería atribuible al bloque. Por eso el filtro **se aplica
+siempre**, también sin G: el retroanálisis fija un conjunto evaluable común y lo
+único que cambia entre recetas son las columnas que cada una declara. El conteo
+queda auditado en `conjunto.csv`.
+
+Es la regla 7 —«las líneas base van sobre las mismas filas»— aplicada a la
+comparación entre recetas, que es donde no la teníamos escrita.
+
+#### Un error silencioso en el propio bloque
+
+Las velocidades se calculaban con `shift(1)` sobre la historia ordenada, es
+decir contra la **fila** anterior. Con un hueco de calendario eso resta contra
+un mes que no es el anterior, sin avisar. El panel canónico es una rejilla
+completa y por eso nunca se notó, pero la definición decía una cosa y el código
+hacía otra. Ahora el mes anterior se busca por su nombre y un hueco produce una
+ausencia, que es la respuesta correcta.
+
+#### La medición comparativa: sin clima contra G, sobre todo lo mismo
+
+Dos recetas en la misma corrida, mismo panel, mismos folds y **las mismas filas**
+—7 612 en T+1 y 7 572 en T+2, idénticas para las dos, verificado en
+`conjunto.csv`—, cero orígenes omitidos. T+1, 641 inicios evaluados:
+
+| Línea base | Alertas | Canal | Sin clima | Con bloque G |
+| --- | --- | --- | --- | --- |
+| Canal P75 | 315 | 177 | 176 (−1; −17 a 17) | 176 (−1; −17 a 16) |
+| Canal ajustado | 1 128 | 360 | 391 (+31; 0 a 66) | **396 (+36; 7 a 70)** |
+| Canal condicionado | 817 | 323 | 347 (+24; 1 a 50) | **349 (+26; 2 a 53)** |
+
+T+2, 459 inicios evaluados:
+
+| Línea base | Alertas | Canal | Sin clima | Con bloque G |
+| --- | --- | --- | --- | --- |
+| Canal P75 | 378 | 99 | 117 (+18; −0 a 37) | **120 (+21; 3 a 40)** |
+| Canal ajustado | 1 147 | 206 | 246 (+40; 14 a 68) | 247 (+41; 17 a 68) |
+| Canal condicionado | 1 158 | 207 | 248 (+41; 14 a 70) | 250 (+43; 17 a 70) |
+
+El modelo le gana a las dos líneas base fuertes en los dos horizontes, con los
+intervalos excluyendo el cero. Contra el canal P75 al mismo presupuesto no
+aporta en T+1 y sí en T+2.
+
+**Y el bloque G no cambia nada.** La diferencia entre las dos recetas es de 0,
++5 y +2 inicios en T+1 y de +3, +1 y +2 en T+2, sobre 641 y 459. La regla 9
+dice expresamente que ninguna diferencia de uno o dos inicios se reporta sin
+cinco semillas detrás, y estas están en ese orden de magnitud. **No es una
+mejora.**
+
+#### Por qué G no aporta aquí, cuando en la tanda 5 fue la única mejora confirmada
+
+No es que el bloque esté mal construido ni mal cableado: es que **este modelo ya
+lo tenía**. La receta aplica `log1p` a los conteos y a los umbrales, y después
+estandariza. Una logística sobre esas columnas puede formar el margen como una
+resta de logaritmos con coeficientes de signo opuesto, que es exactamente lo que
+hace: sus dos coeficientes más grandes son `p75_h5_t1` en −2,83 y
+`total_notifications_count` en +1,29.
+
+La medición que lo cierra: la correlación de rangos entre `margen_objetivo` y
+`log1p(casos) − log1p(p75_objetivo)` —una resta que el modelo puede construir
+con lo que ya tiene— es de **0,999**. Como la comparación ordena dentro de cada
+mes de origen, un orden idéntico es información idéntica. El bloque recibe peso
+(1,48 de 12,53 en suma de coeficientes absolutos, casi todo en `pos_banda`),
+pero no mueve las detecciones.
+
+En la tanda 5 el bloque se midió sobre **XGBoost**, y ahí sí aportaba. La
+diferencia no es el dato: es la familia. Un árbol tiene que aproximar un
+cociente con cortes sucesivos en dos variables, y eso es caro; un modelo
+log-lineal lo obtiene con dos coeficientes. **G no es una mejora del proyecto:
+es una mejora de los árboles.**
+
+Esto es la regla 9 —«separar no es aportar»— un paso más allá. Su procedimiento
+pregunta si las variables vigentes **predicen** la feature nueva. Aquí la
+pregunta que hacía falta es más barata y más directa: si el modelo puede
+**construirla** con lo que ya tiene y la métrica solo mira el orden, no agrega,
+y da igual cuánto separe. La respuesta depende de la familia del modelo, así que
+una línea confirmada sobre una familia no está confirmada sobre otra.
+
+#### Lo que queda preinscrito para la tanda siguiente
+
+Correr esta misma comparación con **XGBoost**, que es donde G ganó su
+confirmación, sobre esta base común y estas mismas filas. Es la receta `EXP001`
+con `variables_g: true` y las seis columnas al final de la matriz. Decide lo
+mismo que decidió la tanda 5: inicios detectados al mismo presupuesto. Si G no
+aporta tampoco ahí, la línea G pasa de «confirmada» a «confirmada solo en los
+tres cortes de la tanda 5, no reproducida sobre el banco», que es un resultado
+publicable y bastante más honesto que el que veníamos cargando.
+
+#### Una discrepancia pendiente con la tanda 10
+
+La entrada de la tanda 10 describe su logística como «construida sobre el bloque
+de margen de G». La receta versionada que el pipeline ejecuta,
+`conf/retroanalisis/logistica_sin_clima.yml`, declara `variables_g: false` y sus
+predictores son los canónicos: los umbrales crudos, no los márgenes. Las dos
+descripciones no pueden ser del mismo artefacto. Como la tanda 10 dice
+explícitamente que sus cifras salieron de «una evaluación local fuera del
+registro», lo más probable es que ese script sí construyera los márgenes y la
+receta del repositorio sea otra cosa. Queda anotado para resolverlo con quien
+corrió la tanda, antes de comparar sus cifras con las de aquí.
+
+#### Lección de método
+
+Tres de los cuatro defectos tienen la misma forma: **el código hacía algo
+razonable y silencioso en vez de fallar.** El pipeline medía sobre el fixture,
+el piso se quedaba en 2018, la velocidad restaba contra la fila anterior. Nada
+de eso produce un error; produce un número. Y un número que nadie puede
+distinguir de uno bueno es peor que una excepción, porque viaja.
+
 ## 6. Estado de las líneas de trabajo
 
 | Línea | Estado |
@@ -1584,7 +1907,7 @@ evaluación científica del contrato.
 | B. Entrenar sin las variables del canal | **Cerrada**: rechazada en la tanda 4; esas variables son necesarias |
 | C. Modelo en dos etapas | **Cerrada**: rechazada en la tanda 3; el modelo ya estratifica solo |
 | D. Costo asimétrico en el entrenamiento | **Cerrada**: rechazada en la tanda 4 |
-| G. Margen continuo al umbral del canal | **Confirmada** en la tanda 5; pasa a ser el vigente |
+| G. Margen continuo al umbral del canal | **Confirmada en la tanda 5 sobre XGBoost y no reproducida en la tanda 11 sobre la logística**: sobre la base común no mueve las detecciones, porque un modelo log-lineal ya forma el margen con lo que tiene. Pendiente medirla sobre XGBoost en la base común |
 | H. Presión epidémica regional | **Cerrada**: rechazada en la tanda 5 con esta forma de medirla |
 | I. Memoria y agotamiento de susceptibles | **Cerrada**: rechazada en la tanda 5 |
 | J. Regresión sobre el margen | **Cerrada**: no aporta sobre la clasificación |
@@ -1597,6 +1920,9 @@ evaluación científica del contrato.
 | O. Banco de evaluación de origen móvil | **Confirmada** en la tanda 7; sostiene G sobre 647 inicios en siete años |
 | P. Canal con umbral ajustado como línea base | **Confirmada** en la tanda 8; lleva al canal de 181 a 365 inicios y pasa a ser línea base publicada |
 | Q. Canal condicionado a no estar en exceso | **Confirmada** en la tanda 9 a T+1 y **rechazada a T+2 por fuga**; pasa a ser la línea base principal y reduce la ventaja publicada del modelo a +22 % en el punto de operación |
+| R. Retroanálisis con datos reales y logística | Confirmada en la tanda 10 como exploratoria; su receta versionada no enciende G (ver tanda 11) |
+| S. Base común del retroanálisis | **Confirmada** en la tanda 11: el banco queda reproducido (647 inicios, año por año) y las recetas corren sobre el mismo panel, los mismos folds y las mismas filas |
+| T. Reproducir G sobre la base común | Preinscrita para la tanda 12: la misma comparación con XGBoost, que es donde G ganó su confirmación |
 | R. Regresión logística sobre el margen, con datos reales | **Exploratoria** en la tanda 10: supera al canal condicionado y a XGBoost, sin llegar a la meta de 10 puntos; pendiente de confirmar en EXP003 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la

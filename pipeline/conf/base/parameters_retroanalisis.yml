@@ -2,10 +2,27 @@
 # (tanda 10). También acepta configuraciones de experimento XGBoost. La receta se toma de
 # una configuración de experimento existente; 2025 no se usa.
 retroanalisis:
-  configuracion: conf/retroanalisis/logistica_sin_clima.yml
+  # Las recetas corren en la misma corrida, sobre el mismo panel, los mismos
+  # folds y las mismas filas, para que sus resultados sean comparables entre sí.
+  # logistica_g es la misma receta más el bloque de margen (línea G); la
+  # diferencia entre las dos filas del resumen es atribuible al bloque y a nada
+  # más. Sobre esta receta el bloque no mueve las detecciones (tanda 11): se
+  # conserva para poder medirlo, no porque mejore.
+  configuraciones:
+    - conf/retroanalisis/logistica_sin_clima.yml
+    - conf/retroanalisis/logistica_g.yml
   horizontes: [1, 2]
-  primer_origen: "2019-01"
+  # Primer mes objetivo utilizable para entrenar. Con el release operacional
+  # (2007-2024) el piso es 2012-01: el P75 se come los cinco años anteriores.
+  primer_entrenamiento: "2012-01"
+  primer_origen: "2018-01"
   ultimo_objetivo: "2024-12"
+  # Exigencias sobre el panel que llega. El artefacto canónico no declara su
+  # modo, así que la receta declara qué espera y el nodo lo verifica: con el
+  # fixture sintético (dos municipios desde 2018-01) los 163 folds se omiten y
+  # el resumen sale vacío sin que nada falle. Tolima (47) y Meta (29) son 76.
+  cobertura_desde: "2007-01"
+  municipios_minimos: 76
   salida: data/retroanalisis
   # El panel canónico es nacional; por defecto Tolima (73) y Meta (50), como la propuesta.
   departamentos: ["50", "73"]

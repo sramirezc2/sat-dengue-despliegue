@@ -385,6 +385,56 @@ Definiciones, denominadores, procedencia y límites en
 El bootstrap histórico de cuatro ventanas queda `NOT_REPRODUCED`; la muestra
 artificial adicional solo prueba ingeniería, sin intervalos científicamente calibrados.
 
+## Retroanálisis de ventana expansiva
+
+El pipeline `retroanalisis` reentrena en cada mes de origen sobre el panel
+canónico y compara el modelo contra las líneas base del canal. Reutiliza el
+arnés y los adaptadores de la fábrica; no certifica, no publica y no elige
+campeón.
+
+**El modo canónico por defecto es sintético, y el sintético no sirve para
+medir.** `conf/base/parameters.yml` declara `canonical.mode: synthetic`, que
+construye dos municipios ficticios y 84 meses: útil para probar que el código
+corre, inútil para medir. Una corrida con ese panel descarta todos sus folds. El
+nodo lo verifica antes de empezar, contra `cobertura_desde` y
+`municipios_minimos` de la receta, y falla nombrando el modo. Para medir, con la
+caché de crudos del release ya adquirida:
+
+```sh
+uv run --locked --directory pipeline kedro run --pipelines retroanalisis --params canonical.mode=approved,canonical.workspace=data/canonical-approved-manual,canonical.tracking=false
+```
+
+`conf/base/parameters_retroanalisis.yml` declara las recetas, el calendario y
+las exigencias sobre el panel:
+
+- `configuraciones`: lista de recetas bajo `conf/retroanalisis/`. Todas corren
+  en la misma corrida, sobre el mismo panel, los mismos folds y **las mismas
+  filas**, así que sus filas del resumen son comparables entre sí; la columna
+  `receta` dice de cuál viene cada una. También se acepta `configuracion` con
+  una sola ruta.
+- `logistica_sin_clima.yml` y `logistica_g.yml` se diferencian en una sola cosa:
+  `variables_g`. La segunda agrega al final de la matriz las seis columnas del
+  bloque de margen, que se construyen en preparación y **no entran a la tabla
+  canónica**, para no cambiar el digest del artefacto ni la certificación N=3.
+- `primer_entrenamiento`: primer mes objetivo utilizable para entrenar. El piso
+  es `2012-01` porque el P75 del canal consume los cinco años anteriores y el
+  release operacional arranca en 2007.
+- `primer_origen`, `ultimo_objetivo`, `departamentos`, `salida`.
+
+La salida queda bajo `data/` (ignorada por Git): `resumen.csv`, `por_anio.csv`,
+`curva.csv`, `omitidos.csv` y `conjunto.csv`. Este último audita el conjunto de
+filas: las preparadas, las descartadas por no poder completar el bloque de
+margen y las comunes. **El descarte se aplica siempre, encienda o no la receta
+el bloque**, para que dos recetas de la misma corrida entrenen sobre las mismas
+filas; con el release operacional son 152 filas de 2012, todas de entrenamiento.
+
+Un horizonte sin folds evaluables aborta la corrida y deja `omitidos.csv` con el
+motivo de cada origen. No se escriben resúmenes vacíos.
+
+```sh
+uv run --directory pipeline pytest tests/test_retroanalisis.py tests/test_logistic_adapter.py tests/test_margin_block.py
+```
+
 ## Tracking local optativo
 
 El grupo `tracking` instala mlflow-skinny 3.17.2 y el soporte SQLite mínimo fijado:

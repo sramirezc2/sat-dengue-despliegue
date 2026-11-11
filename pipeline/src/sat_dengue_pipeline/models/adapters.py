@@ -11,6 +11,7 @@ import pandas as pd
 
 from sat_dengue_pipeline.domain.calendar import add_months, validate_period
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
+from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy
 from sat_dengue_pipeline.experiments.rolling import (
     LINK,
@@ -118,25 +119,35 @@ def validate_features(
     dtypes: tuple[str, ...] | None = None,
     *,
     predictors: tuple[str, ...] = tuple(PREDICTORS),
+    derived: tuple[str, ...] = (),
 ) -> None:
     """Exigir esquema/orden canónico, sin columnas futuras ni valores ausentes.
 
     Args:
-        X: Solo los predictores cerrados del productor canónico.
+        X: Los predictores cerrados del productor canónico y, al final y solo
+            si la receta las declara, las derivadas de preparación.
         dtypes: Tipos congelados en el ajuste, si se está infiriendo.
         predictors: Subconjunto canónico explícito; por defecto el contrato histórico.
+        derived: Columnas construidas en preparación, nunca canónicas. Van
+            después de los predictores y en su orden fijo; la lista vacía deja
+            el contrato histórico intacto.
     """
+    if derived and (
+        list(derived) != [c for c in MARGIN_COLUMNS if c in derived]
+        or set(derived) & set(PREDICTORS)
+    ):
+        raise ValueError("Derivadas de preparación no declaradas, repetidas o canónicas")
     if (
         not predictors
         or list(predictors) != [p for p in PREDICTORS if p in predictors]
         or X.empty
-        or list(X) != list(predictors)
+        or list(X) != [*predictors, *derived]
         or X.isna().any().any()
     ):
         raise ValueError("Esquema de características inválido, futuro o incompleto")
     if dtypes is not None and tuple(str(t) for t in X.dtypes) != dtypes:
         raise ValueError("Tipos de características alterados")
-    names = [name for name in predictors if name != "zona_canal_t"]
+    names = [name for name in (*predictors, *derived) if name != "zona_canal_t"]
     if any(
         not pd.api.types.is_numeric_dtype(X[name]) or pd.api.types.is_bool_dtype(X[name])
         for name in names
@@ -173,18 +184,26 @@ class CheckedAdapter:
     """Frontera común que protege entradas y congela esquema y procedencia."""
 
     def __init__(
-        self, adapter: ModelAdapter, *, predictors: tuple[str, ...] = tuple(PREDICTORS)
+        self,
+        adapter: ModelAdapter,
+        *,
+        predictors: tuple[str, ...] = tuple(PREDICTORS),
+        derived: tuple[str, ...] = (),
     ) -> None:
         """Envolver una instancia nueva, sin copiar estado de otro fold.
 
         Args:
             adapter: Backend registrado sin ajustar.
             predictors: Subconjunto canónico congelado de esta receta.
+            derived: Columnas de preparación que la receta declaró y que X trae
+                al final. El envoltorio valida la matriz por su cuenta, así que
+                sin esto rechazaría el bloque que el propio adaptador espera.
         """
         if adapter.fitted is not False:
             raise ValueError("Instancia previamente ajustada")
         self.adapter = adapter
         self.predictors = predictors
+        self.derived = derived
         self.spec = adapter.spec
         self.dtypes: tuple[str, ...] | None = None
 
@@ -202,7 +221,7 @@ class CheckedAdapter:
         """
         if self.fitted:
             raise ValueError("No se permite reutilizar una instancia ajustada")
-        validate_features(X, predictors=self.predictors)
+        validate_features(X, predictors=self.predictors, derived=self.derived)
         if not X.index.equals(y.index) or y.isna().any() or set(y.unique()) != {0, 1}:
             raise ValueError("Entrenamiento requiere ambas clases completas y alineadas")
         copied_X, copied_y = X.copy(deep=True), y.copy(deep=True)
@@ -227,7 +246,7 @@ class CheckedAdapter:
         """
         if not self.fitted:
             raise ValueError("Inferencia antes de ajustar")
-        validate_features(X, self.dtypes, predictors=self.predictors)
+        validate_features(X, self.dtypes, predictors=self.predictors, derived=self.derived)
         copied = X.copy(deep=True)
         probability = self.adapter.predict_positive(copied)
         try:
@@ -249,7 +268,7 @@ class CheckedAdapter:
             **asdict(self.spec),
             "candidate": self.spec.candidate,
             "implementation": type(self.adapter).__module__ + "." + type(self.adapter).__qualname__,
-            "features": list(self.predictors),
+            "features": [*self.predictors, *self.derived],
             "dtypes": list(self.dtypes or ()),
             "fitted": self.fitted,
         }
@@ -312,7 +331,15 @@ def run_candidate(
         if any(adapter is previous for previous in adapters):
             raise ValueError("Fábrica reutilizó una instancia entre folds")
         adapters.append(adapter)
-        wrapper = CheckedAdapter(adapter)
+        # La receta declara el bloque derivado y la preparación lo adjunta: si
+        # los dos no dicen lo mismo, la matriz que entrena no es la declarada.
+        declarado = getattr(adapter, "derived", None)
+        if declarado is not None and tuple(declarado) != tuple(data.derived):
+            raise ValueError(
+                "La receta declara derivadas "
+                f"{tuple(declarado)} y la preparación entrega {tuple(data.derived)}"
+            )
+        wrapper = CheckedAdapter(adapter, derived=tuple(data.derived))
         wrappers.append(wrapper)
         return wrapper
 
