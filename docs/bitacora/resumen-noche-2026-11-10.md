@@ -1,7 +1,7 @@
 # Resumen de la exploración nocturna del 10 al 11 de noviembre de 2026
 
-> Tandas 14 a 47, líneas V a BC. Cada tanda tiene su archivo con la preinscripción
-> escrita antes de correr y su resultado. Este resumen se actualiza durante la noche.
+> Tandas 14 a 50, líneas V a BF. Cada tanda tiene su archivo con la preinscripción
+> escrita antes de correr y su resultado. Cerrado el 11 de noviembre a las 06:45.
 
 ## Cómo se midió
 
@@ -75,8 +75,24 @@
 - Un modelo por departamento: empeora (tanda 26).
 - Entrenar con todo el país: sin efecto sin clima, peor con clima en T+1 (tanda 18).
 - Indicador de departamento en el modelo único (tanda 27).
+- Excluir 2020 del entrenamiento: sin efecto; con clima resta 8 en T+1 (tanda 28).
+- XGBoost de profundidad 2: su ventaja sobre la logística era de una semilla
+  (tanda 31), aunque frente al canal al 10 % pasa la barra en T+2 con las cinco.
+- Punto de rocío como único clima: equivalente por la regla, pero pierde parte del
+  aporte del clima en T+1 (tanda 40).
+- Rezagos de clima: sin clima suman lo mismo que el clima del mes (+14); sobre el
+  clima no agregan (tanda 48). Punto de rocío × Meta: sin efecto (tanda 49).
+- Combinar lo que sumó: las ganancias del clima y de sus rezagos no se suman
+  (tanda 50).
 - Repartir el presupuesto entre el canal y el modelo (tanda 36, línea N sigue cerrada).
 - Árboles más profundos o con más eta (tanda 20).
+
+## Transferencia a otros departamentos (tanda 43)
+
+La logística **sin clima** entrenada en un departamento sirve en el otro (a menos de
+2 puntos del modelo propio). **Con clima no**: entrenada solo con Meta pierde 33
+inicios en T+1 en Tolima. Para llevar el sistema a otra región, la versión con clima
+hay que entrenarla con datos de esa región.
 
 ## Lo que se acepta
 
@@ -96,15 +112,17 @@
   sobrevivió la nacional con clima. Las tandas 27, 28, 31, 40, 43, 48 y 49 quedan
   preinscritas y sin correr hasta relanzarlas.
 
-## En curso o pendiente
+## Pendiente
 
-- Lecturas sin modelo nuevo: estacionalidad (tanda 47, sin época que concentre la
-  ventaja).
 - **EXP003 no se preparó**: la skill del experimento exige detenerse si el contrato
-  sigue en propuesta, y el de main es la versión 0.2.2-propuesta.
-- Tanda 18 (entrenamiento nacional, en curso), 27 (indicador de departamento),
-  28 (sin 2020), 31 (XGBoost de profundidad 2 con cinco semillas) y 40 (punto de
-  rocío como único clima), en cola en serie.
+  sigue en propuesta, y el de main es la versión 0.2.2-propuesta. Con lo de esta
+  noche, la candidata natural es la logística con clima (tanda 33), y la pregunta que
+  la fábrica tendría que confirmar es T+2 al 10 %.
+- PR #6 en borrador, sin merge; su suite completa se corre al cierre de esta noche.
+- Hubo dos paradas por memoria (22:30 y 23:49). Las colas que se dieron por detenidas
+  a las 23:49 siguieron como procesos huérfanos y terminaron; sus resultados se
+  repitieron a las 06:20 con predicciones idénticas (diferencia máxima 0), así que
+  son válidos.
 
 ## Cómo reproducir
 
