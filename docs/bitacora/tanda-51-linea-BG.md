@@ -4,7 +4,7 @@
 > resumen y el enlace quedan en [la bitácora principal](../bitacora-experimental.md),
 > sección 5, cuando la tanda cierre.
 >
-> Línea reclamada por Stevan. Estado: **preinscrita, sin correr.**
+> Línea reclamada por Stevan. Estado: **cerrada**; ver Resultados.
 
 ## Por qué se reabre una línea cerrada
 
@@ -124,4 +124,80 @@ dos— antes de mirar el resumen.
 
 ## Resultados
 
-Pendiente.
+> Estado: **cerrada**. Los dos criterios fallan.
+
+### El brazo de control reproduce la noche, a la unidad
+
+Antes de leer nada del bloque: `log_conclima` sin tocar, sobre esta base, da en
+T+1 al presupuesto del 10 % (f = 0,85, 621 alertas) **279 del canal contra 299
+del modelo**, y en T+2 (f = 0,95, 632 alertas) **152 contra 185**. Son
+exactamente las cifras de la tanda 33, medidas por otra persona con otro script.
+
+Es la primera reproducción cruzada del proyecto y vale por sí sola: la base
+común no depende de quién la corra.
+
+Las filas comunes siguen siendo **7 612 en T+1 y 7 572 en T+2**, idénticas a
+todas las corridas anteriores, ahora con nueve columnas derivadas en el filtro
+en vez de seis. El bloque nuevo no movió el conjunto evaluable, así que la
+comparación con todo lo medido antes sigue en pie.
+
+### La regla 9 se pasó antes de mirar ningún inicio
+
+R² fuera de muestra al predecir cada columna nueva con las variables vigentes,
+entrenando 2012-2017 y evaluando 2018-2024:
+
+| Columna | Lineal | Árbol | Spearman |
+| --- | --- | --- | --- |
+| `presion_exceso_t` | 0,32 | 0,14 | 0,57 |
+| `presion_exceso_vel` | −0,01 | −0,26 | **0,09** |
+| `presion_casos_t` | 0,25 | 0,16 | 0,51 |
+
+Las variables vigentes explican entre un cuarto y un tercio del nivel —lógico,
+un municipio correlaciona con su departamento porque comparten estación y onda—
+y **nada de la velocidad**. El contraste con el bloque G es el punto: allá la
+correlación de rangos con lo que el modelo ya podía construir era 0,999, una
+reformulación; acá el máximo es 0,57. La información es nueva.
+
+### Criterio 1: no pasa
+
+| T+1, 10 % (621 alertas) | Canal | Modelo |
+| --- | --- | --- |
+| `log_conclima` | 279 | 299 |
+| `log_conclima` + H | 279 | **296** |
+
+El criterio pedía **311**. El bloque queda en 296, tres por debajo del control y
+quince por debajo de la barra. En T+2 los dos brazos dan 185.
+
+### Criterio 2: tampoco, y por mucho
+
+El bloque **no es inerte**: gana 21 inicios y pierde 24. De los 21 que gana, 13
+no los anticipaba nadie. Pero de esos, **solo 4 arrancan con cero casos en el
+mes de origen**, contra los 15 que exigía el criterio.
+
+De paso queda confirmada la tanda 46 por una vía independiente: de los 299
+inicios que no anticipa nadie, **156 arrancan desde cero casos**, el 52 %.
+
+### Veredicto: la línea H se cierra, ahora sobre el instrumento bueno
+
+El bloque mueve detecciones de sitio en vez de agregarlas. Y donde tenía que
+servir —los 156 inicios sin señal propia— convierte cuatro.
+
+La lectura que deja, y que es la rama que esta preinscripción había declarado
+para este caso: **la presión regional a escala de departamento es demasiado
+gruesa.** Un departamento son 47 o 29 municipios; saber que el 34 % de ellos
+está en exceso dice poco sobre un municipio concreto que hoy tiene cero casos.
+Lo que seguiría es **vecindad real** —municipios contiguos o a cierta
+distancia—, y eso es otra línea, con sus propios datos de adyacencia, que hoy no
+están en el contrato canónico.
+
+**Y una lección sobre la regla 9.** El bloque la pasó holgadamente: su
+información era nueva, no una reformulación de lo que el modelo ya tenía. Y aun
+así no aportó. La regla 9 es necesaria y no suficiente, y esta tanda es el
+contraejemplo que lo demuestra: sirve para descartar barato —como habría
+descartado a G— pero no para prometer nada.
+
+### Lo que queda sin tocar
+
+Los 156 inicios que arrancan desde cero casos y que nadie anticipa siguen
+siendo la mitad del techo, y ninguna de las 51 tandas los ha movido. Quien
+quiera atacarlos necesita información que hoy no está en el panel.
