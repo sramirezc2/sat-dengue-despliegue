@@ -31,11 +31,31 @@ preds = pd.concat(
     [pd.read_csv(f, dtype={"municipality_code": str}) for f in carpeta.glob("predicciones*.csv")],
     ignore_index=True,
 ).drop_duplicates(["receta", "municipality_code", "origin_period", "horizon"])
-rng = np.random.default_rng(42)
 
 
-def boot(d, x, grupo, n=2000):
-    """IC 95 % de la suma de x remuestreando bloques del grupo."""
+def boot(d, x, grupo, clave, n=2000):
+    """IC 95 % de la suma de x remuestreando bloques del grupo.
+
+    El generador se siembra con la clave de la celda y no se comparte entre
+    llamadas. Antes era uno solo a nivel de modulo, y como cada llamada avanza
+    su estado, el intervalo de una receta dependia de cuantas recetas se
+    hubieran pasado antes en la linea de comandos: `veredicto.py carpeta A B` y
+    `veredicto.py carpeta B` daban intervalos distintos para B. Para una
+    herramienta que produce el veredicto eso no sirve, porque el numero que se
+    cita en el informe tiene que salir igual corra con las recetas que corra.
+
+    Args:
+        d: Filas evaluadas.
+        x: Vector a sumar, alineado con d.
+        grupo: Columna de d que define los bloques del remuestreo.
+        clave: Identificador de la celda; fija la semilla.
+        n: Replicas.
+
+    Returns:
+        Los percentiles 2,5 y 97,5 de la suma remuestreada.
+    """
+    semilla = int.from_bytes(hashlib.sha256(str(clave).encode()).digest()[:8], "big")
+    rng = np.random.default_rng(semilla)
     s = pd.Series(x, index=d.index).groupby(d[grupo]).sum().values
     b = rng.choice(s, size=(n, len(s)), replace=True).sum(axis=1)
     return float(np.percentile(b, 2.5)), float(np.percentile(b, 97.5))
@@ -61,9 +81,9 @@ for receta in sys.argv[2:]:
             mc, mm = va.metricas(a_c, d), va.metricas(a_m, d)
             dif = (a_m - a_c) * ini
             fa = (a_m - a_c) * (~ini) * 100 / n
-            lo_m, hi_m = boot(d, dif, "municipio")
-            lo_o, hi_o = boot(d, dif, "origen")
-            lo_c, hi_c = boot(d, fa, "origen")
+            lo_m, hi_m = boot(d, dif, "municipio", (receta, h, frac, "dif_municipio"))
+            lo_o, hi_o = boot(d, dif, "origen", (receta, h, frac, "dif_origen"))
+            lo_c, hi_c = boot(d, fa, "origen", (receta, h, frac, "carga_origen"))
             n_inicios = mc["inicios"]
             dpp, lopp = 100 * dif.sum() / n_inicios, 100 * lo_o / n_inicios
             dcarga = mm["carga_100mm"] - mc["carga_100mm"]
