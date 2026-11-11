@@ -93,6 +93,7 @@ def predicciones_rolling(
     primer_origen: str = "2019-01",
     ultimo_objetivo: str = "2024-12",
     primer_entrenamiento: str = TRAIN_FLOOR,
+    ventana_anios: int | None = None,
 ) -> tuple[pd.DataFrame, list[dict[str, str]], dict[str, int]]:
     """Producir predicciones fuera de muestra reentrenando en cada mes de origen.
 
@@ -106,6 +107,8 @@ def predicciones_rolling(
             estaba quemado en 2018-01, heredado del release histórico; con el
             release operacional la historia llega a 2007 y el piso es 2012-01.
         ultimo_objetivo: Último mes objetivo; no puede alcanzar 2025.
+        ventana_anios: Si se declara, cada origen entrena solo con los últimos años
+            indicados (sin bajar del piso); si no, la ventana es expansiva.
 
     Returns:
         Predicciones del arnés, la lista de meses omitidos con su motivo y el
@@ -130,10 +133,14 @@ def predicciones_rolling(
     partes, omitidos = [], []
     origen = primer_origen
     while add_months(origen, horizonte + demora) <= ultimo_objetivo:
+        inicio = primer_entrenamiento
+        if ventana_anios:
+            # Ventana móvil: solo los últimos `ventana_anios` años antes del origen.
+            inicio = max(primer_entrenamiento, add_months(origen, -12 * int(ventana_anios)))
         experimento = ExperimentSpec(
             horizon=horizonte,
             seed=config["seed"],
-            train_target_start=primer_entrenamiento,
+            train_target_start=inicio,
             first_origin=origen,
             last_target=add_months(origen, horizonte),
             label_delay_months=demora,

@@ -217,3 +217,17 @@ def test_entrenamiento_nacional_evalua_solo_los_departamentos(tmp_path, monkeypa
     )
     esperados = set(table[table.department_code == codigo].municipality_code.astype(str))
     assert not preds.empty and set(preds.municipality_code) <= esperados
+
+
+def test_ventana_movil_corre_y_no_cambia_las_filas(tmp_path, monkeypatch) -> None:
+    """La ventana móvil cambia con qué se entrena, no qué filas se evalúan."""
+    table, schema = build_table(make_panel())
+    monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
+    monkeypatch.chdir(tmp_path)
+    salida = tmp_path / "data/prueba-retroanalisis/predicciones.csv"
+    retroanalisis(object(), params_artificiales(horizontes=[1]))
+    expansiva = pd.read_csv(salida)
+    retroanalisis(object(), params_artificiales(horizontes=[1], ventana_anios=2))
+    movil = pd.read_csv(salida)
+    claves = ["municipality_code", "origin_period", "target_period"]
+    assert movil[claves].equals(expansiva[claves])
