@@ -49,8 +49,11 @@ tabla, lo que se elige no es un criterio: es un resultado.
 
 Todo lo demás cuelga de aquí, así que no se decide por desempeño.
 
-**Presupuesto de referencia: 10 % de los municipios-mes evaluables**, que en
-Tolima y Meta son unas **8 alertas al mes sobre 76 municipios**. Es la cifra
+**Presupuesto de referencia: 10 % de los municipios del panel, por mes de
+origen**, que en Tolima y Meta son **76 × 10 % ≈ 8 alertas al mes**, o
+`0,10 × 76 × meses de origen` en el acumulado. No es el 10 % de las filas
+elegibles de cada mes, que son menos y dan un presupuesto distinto; ver la nota
+de desambiguación al final de esta sección. Es la cifra
 que se sostiene frente a quien tiene que responderlas: un equipo
 departamental puede visitar, verificar y actuar sobre ocho municipios al mes de
 forma sostenida; sobre diecinueve —el 25 %— no, y menos todos los meses del
@@ -63,6 +66,33 @@ comparación (tanda 8), pero el que decide es el declarado.
 Cambiar el presupuesto de referencia exige una entrada nueva en esta bitácora,
 con fecha, motivo y la declaración de si el cambio nació antes o después de ver
 un resultado.
+
+#### Nota de desambiguación del presupuesto, 11 de noviembre de 2026
+
+La redacción original decía «10 % de los municipios-mes **evaluables**» y a
+renglón seguido «unas 8 alertas al mes sobre 76 municipios». Las dos mitades no
+dicen lo mismo: las filas elegibles de un mes son menos que los 76 municipios,
+así que el «10 %» de la primera mitad es aproximadamente el 5 % de la segunda.
+
+**Y eso ya costó un resultado.** La primera versión de la tanda 33 calculó los
+presupuestos sobre las filas elegibles; su «10 %» fueron 315 alertas en T+1
+—3,8 por mes, que es el 5 % declarado— y concluyó que ninguna receta pasaba la
+barra. Quien la corrió detectó el error, retiró esa conclusión por escrito y
+recalculó. Con el presupuesto correcto, T+2 sí la pasa.
+
+**Esto no es un cambio de presupuesto, es una desambiguación**, y la prueba
+está en el texto original: las «8 alertas al mes sobre 76 municipios» y su
+justificación operativa —lo que un equipo departamental puede visitar y
+verificar al mes— estaban escritas desde el principio, y no dependen de cuántas
+filas resulten elegibles. El número que decide no cambia: sigue siendo 8 al mes.
+
+**Y se declara lo incómodo, porque la regla de arriba lo exige:** la
+desambiguación se escribió **después** de ver que una de las dos lecturas daba
+un resultado negativo y la otra uno positivo. Por eso se dejan las dos lecturas
+con sus veredictos, en vez de reescribir el criterio y seguir como si nada: al
+10 % de los 76 municipios, T+2 pasa la barra de 5 puntos; al 10 % de las filas
+elegibles —que es el 5 % declarado—, no la pasa ningún horizonte. Las dos
+cifras se publican.
 
 ### 0.2 Las tres condiciones
 
