@@ -93,3 +93,22 @@ exploración con unas cuarenta comparaciones en la noche; son evidencia para
 preinscribir un experimento registrado, no un veredicto de la fábrica.
 
 Herramienta: `pipeline/tools/noche/veredicto.py` (corregida).
+
+## Agregado: XGBoost del banco con cinco semillas, al 10 %
+
+Para tener la comparación completa, el mismo veredicto al 10 % para el XGBoost del
+banco con las cinco semillas de la tanda 14:
+
+| Semilla | T+1: canal → modelo (pp, IC mes) | T+2: canal → modelo (pp, IC mes) | Barra en T+2 |
+| --- | --- | --- | --- |
+| 53 | 279 → 287 (+1.2, -1.4 a 3.9) | 152 → 174 (+4.8, 0.0 a 9.4) | NO |
+| 7 | 279 → 275 (-0.6, -3.6 a 2.5) | 152 → 181 (+6.3, 2.0 a 10.9) | CUMPLE |
+| 13 | 279 → 280 (+0.2, -2.7 a 3.1) | 152 → 173 (+4.6, 0.0 a 8.9) | NO |
+| 29 | 279 → 277 (-0.3, -3.0 a 2.3) | 152 → 173 (+4.6, 0.4 a 9.4) | NO |
+| 42 | 279 → 274 (-0.8, -3.3 a 1.9) | 152 → 167 (+3.3, -1.1 a 7.8) | NO |
+
+En T+1 XGBoost queda en cero (media -0.1 pp); en T+2 en
+**+4.7 pp de media (+3,3 a +6,3)**, y **solo una de las cinco
+semillas pasa la barra**. Las cuatro logísticas la pasan en T+2 (+5,9 a +7,2) sin
+depender de semillas, porque son deterministas. Al presupuesto de referencia la
+logística es la familia que cumple.
