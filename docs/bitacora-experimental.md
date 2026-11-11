@@ -2029,6 +2029,9 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | BD. El clima de los meses anteriores | **Cerrada** en la tanda 48: sin clima, los rezagos suman +14 en T+1 (como el clima del mes); sobre el clima no agregan nada |
 | BE. El punto de rocío distinto en Meta | **Cerrada** en la tanda 49: sin efecto (−4 y −1) |
 | BF. Combinar lo que sumó | **Cerrada** en la tanda 50: solo pasaron los rezagos de clima, y sobre el clima no suman; la configuración que queda es la logística con clima |
+| BH. El clima sobre las variantes de la mínima | Preinscrita para la tanda 52 |
+| BI. El clima con regularización más fuerte | Preinscrita para la tanda 53 |
+| BJ. XGBoost de profundidad 2 sin clima, con cinco semillas | Preinscrita para la tanda 54 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
