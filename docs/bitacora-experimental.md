@@ -1983,7 +1983,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AN. El clima con otro remuestreo | **Cerrada** en la tanda 32: con bloques de mes el clima en T+1 excluye el cero (+15, IC 1 a 30 sobre la mínima), unos 2 puntos, lejos de la barra |
 | AO. Veredicto de la sección 0 para las mejores recetas | **Cerrada** en la tanda 33 (corregida): al 10 %, en T+2 las cuatro recetas pasan la barra (+5,9 a +7,2 pp); en T+1 ninguna, y con clima se cumple A (+3,1 pp) |
 | AP. El veredicto de T+2 año por año | **Cerrada** en la tanda 34: consistente; cada logística gana en cinco o seis de siete años en T+2 y ningún año pierde más de un inicio |
-| AQ. Qué inicios gana el modelo al 10 % | Preinscrita para la tanda 35 |
+| AQ. Qué inicios gana el modelo al 10 % | **Leída** en la tanda 35: el modelo gana donde el canal no ve (pocos casos frente al umbral, municipios poco endémicos) y pierde 13 a 24 inicios donde el canal está seguro |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
