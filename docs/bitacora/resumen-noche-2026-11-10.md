@@ -73,6 +73,8 @@
 - Formas del clima: recortes, log1p de la lluvia, C = 10 (tanda 22).
 - Mes cíclico, con y sin clima (tanda 24).
 - Un modelo por departamento: empeora (tanda 26).
+- Entrenar con todo el país: sin efecto sin clima, peor con clima en T+1 (tanda 18).
+- Indicador de departamento en el modelo único (tanda 27).
 - Repartir el presupuesto entre el canal y el modelo (tanda 36, línea N sigue cerrada).
 - Árboles más profundos o con más eta (tanda 20).
 
