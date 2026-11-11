@@ -215,7 +215,7 @@
           "type": "string"
         },
         "variables_g": {
-          "const": false
+          "type": "boolean"
         },
         "channel_budget": {
           "const": false
@@ -226,6 +226,13 @@
             "type": "string"
           },
           "uniqueItems": true
+        },
+        "margin_source": {
+          "type": "string",
+          "enum": [
+            "total_notifications_count",
+            "dengue_notifications_count"
+          ]
         }
       },
       "required": [

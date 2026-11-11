@@ -11,6 +11,7 @@ import pandas as pd
 
 from sat_dengue_pipeline.domain.calendar import add_months, validate_period
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
+from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy
 from sat_dengue_pipeline.experiments.rolling import (
     LINK,
@@ -118,25 +119,35 @@ def validate_features(
     dtypes: tuple[str, ...] | None = None,
     *,
     predictors: tuple[str, ...] = tuple(PREDICTORS),
+    derived: tuple[str, ...] = (),
 ) -> None:
     """Exigir esquema/orden canónico, sin columnas futuras ni valores ausentes.
 
     Args:
-        X: Solo los predictores cerrados del productor canónico.
+        X: Los predictores cerrados del productor canónico y, al final y solo
+            si la receta las declara, las derivadas de preparación.
         dtypes: Tipos congelados en el ajuste, si se está infiriendo.
         predictors: Subconjunto canónico explícito; por defecto el contrato histórico.
+        derived: Columnas construidas en preparación, nunca canónicas. Van
+            después de los predictores y en su orden fijo; la lista vacía deja
+            el contrato histórico intacto.
     """
+    if derived and (
+        list(derived) != [c for c in MARGIN_COLUMNS if c in derived]
+        or set(derived) & set(PREDICTORS)
+    ):
+        raise ValueError("Derivadas de preparación no declaradas, repetidas o canónicas")
     if (
         not predictors
         or list(predictors) != [p for p in PREDICTORS if p in predictors]
         or X.empty
-        or list(X) != list(predictors)
+        or list(X) != [*predictors, *derived]
         or X.isna().any().any()
     ):
         raise ValueError("Esquema de características inválido, futuro o incompleto")
     if dtypes is not None and tuple(str(t) for t in X.dtypes) != dtypes:
         raise ValueError("Tipos de características alterados")
-    names = [name for name in predictors if name != "zona_canal_t"]
+    names = [name for name in (*predictors, *derived) if name != "zona_canal_t"]
     if any(
         not pd.api.types.is_numeric_dtype(X[name]) or pd.api.types.is_bool_dtype(X[name])
         for name in names

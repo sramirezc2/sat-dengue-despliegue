@@ -15,6 +15,7 @@ import sklearn
 from sklearn.linear_model import LogisticRegression
 
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
+from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS
 from sat_dengue_pipeline.models.adapters import (
     AdapterSpec,
     validate_features,
@@ -69,6 +70,11 @@ class LogisticOnsetAdapter:
             raise ValueError("Configuración de adaptador incompleta o adicional")
         self.candidate = self.settings["candidate"]
         self.preparation = self.settings["preparation"]
+        # Derivadas de preparación: vacías salvo que la receta declare el bloque
+        # de margen. Nunca son canónicas y siempre van al final de la matriz.
+        self.derived: tuple[str, ...] = (
+            tuple(MARGIN_COLUMNS) if self.preparation.get("variables_g") else ()
+        )
         predictors = self.settings["predictors"]
         if (
             not predictors
@@ -91,7 +97,7 @@ class LogisticOnsetAdapter:
             or self.preparation["scaling"] != "standard_train"
             or self.preparation["imputation"] != "none"
             or self.preparation["matrix_dtype"] != "float64"
-            or self.preparation["variables_g"] is not False
+            or type(self.preparation["variables_g"]) is not bool
             or self.preparation["channel_budget"] is not False
         ):
             raise ValueError("Preparación diferente de la autorizada")
@@ -100,7 +106,13 @@ class LogisticOnsetAdapter:
             for name in predictors
             for column in (self.preparation["zone_columns"] if name == "zona_canal_t" else [name])
         ]
-        if self.preparation["matrix_columns"] != expected:
+        # El bloque de margen va al final y solo si la receta lo declara; sin él
+        # la matriz es idéntica a la histórica.
+        if self.preparation["variables_g"] and self.derived != tuple(MARGIN_COLUMNS):
+            raise ValueError("Bloque de margen declarado con columnas alteradas")
+        if not self.preparation["variables_g"] and self.derived:
+            raise ValueError("Columnas derivadas sin declarar variables_g")
+        if self.preparation["matrix_columns"] != [*expected, *self.derived]:
             raise ValueError("Orden o cardinalidad de matriz interna alterados")
         if not set(self.preparation["log1p_columns"]) <= set(predictors) - {"zona_canal_t"}:
             raise ValueError("log1p declarado sobre columnas inexistentes")
@@ -109,15 +121,18 @@ class LogisticOnsetAdapter:
         """Proyectar predictores declarados, con zona one-hot y log1p, sin aprender.
 
         Args:
-            X: Las 33 entradas canónicas.
+            X: Las 33 entradas canónicas y, si la receta declara el bloque de
+                margen, sus seis columnas al final.
 
         Returns:
             Matriz float64 en el orden de ``matrix_columns``.
         """
-        validate_features(X, self._dtypes)
+        validate_features(X, self._dtypes, derived=self.derived)
         log1p = set(self.preparation["log1p_columns"])
         parts = []
-        for name in self.settings["predictors"]:
+        # Las derivadas entran crudas: son márgenes con signo y log1p no está
+        # definido en los negativos. La estandarización del fold las escala.
+        for name in [*self.settings["predictors"], *self.derived]:
             if name == "zona_canal_t":
                 codes = X[name].map(ZONES).to_numpy(dtype=int)
                 parts.append(np.eye(len(ZONES))[codes])

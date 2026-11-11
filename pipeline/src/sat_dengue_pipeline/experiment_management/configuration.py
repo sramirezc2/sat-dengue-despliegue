@@ -7,6 +7,7 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
+from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS, MARGIN_SOURCES
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy
 from sat_dengue_pipeline.experiments.decisions import ThresholdPolicy
 from sat_dengue_pipeline.factory.configuration import adapter_spec, temporal_plan
@@ -63,6 +64,16 @@ def validate_configuration(config: dict) -> dict:
             tuple(config["threshold"]["grid"]),
             config["threshold"]["max_false_alarm_ratio_by_horizon"][str(h)],
         )
+    prep = config["preparation"]
+    # El bloque de margen se declara en preparación y nunca en el canónico: si
+    # está apagado, la receta tiene que quedar byte a byte como la histórica.
+    if prep["variables_g"]:
+        if prep.get("margin_source", MARGIN_SOURCES[0]) not in MARGIN_SOURCES:
+            raise ValueError("Fuente de casos del bloque de margen no declarada")
+        if prep["matrix_columns"][-len(MARGIN_COLUMNS) :] != MARGIN_COLUMNS:
+            raise ValueError("El bloque de margen debe cerrar la matriz, en su orden fijo")
+    elif any(column in prep["matrix_columns"] for column in MARGIN_COLUMNS):
+        raise ValueError("Columnas de margen en la matriz sin declarar variables_g")
     rolling = config.get("protocol", "fixed_roles") == "rolling_origin"
     if config["metrics"] != METRICS or config["baselines"] != (
         BASELINES_ROLLING if rolling else BASELINES

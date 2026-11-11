@@ -12,6 +12,7 @@ import pandas as pd
 from sat_dengue_pipeline.acquisition.contracts import ResolvedBundle, ResolvedFile
 from sat_dengue_pipeline.domain.calendar import add_months
 from sat_dengue_pipeline.domain.canonical import KEYS, predictor_matrix
+from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS, MARGIN_SOURCES, margin_features
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy, guard_development
 from sat_dengue_pipeline.evaluation.metrics import DEFINITIONS_DIGEST, metric_records
 from sat_dengue_pipeline.experiments.decisions import ThresholdPolicy, apply_sigmoid
@@ -128,6 +129,20 @@ def _deferred_batch(
         if scientific and run.config["scientific_dimensions"]["population"] == "common"
         else features
     )
+    # Bloque de margen: derivadas de preparación, construidas sobre la historia
+    # ordenada del municipio porque las velocidades necesitan el mes anterior
+    # aunque ese mes no sea un origen evaluable. Nunca entran al canónico.
+    derived: list[str] = []
+    if run.config["preparation"].get("variables_g"):
+        block = margin_features(
+            history, h, run.config["preparation"].get("margin_source", MARGIN_SOURCES[0])
+        )
+        claves = pd.MultiIndex.from_frame(selected[KEYS])
+        for column in MARGIN_COLUMNS:
+            X[column] = block[column].reindex(claves).to_numpy()
+        derived = list(MARGIN_COLUMNS)
+    features = [*features, *derived]
+    complete_features = [*complete_features, *derived]
     usable = selected.zona_canal_t.notna() & selected.zona_canal_t.ne("EXCESO")
     if secondary:
         usable = selected.zona_canal_t.notna()

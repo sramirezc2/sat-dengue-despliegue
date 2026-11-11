@@ -11,6 +11,7 @@ import pandas as pd
 
 from sat_dengue_pipeline.domain.calendar import add_months, validate_period
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
+from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy, validate_keys
 from sat_dengue_pipeline.preparation import PreparedSet
 
@@ -33,11 +34,21 @@ def stable_digest(value: Any) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 
+# Piso del primer objetivo entrenable; ver ExperimentSpec.train_target_start.
+TRAIN_FLOOR = "2012-01"
+
+
 @dataclass(frozen=True)
 class ExperimentSpec:
     """Protocolo mensual con calentamiento inicial y madurez explícita."""
 
     horizon: int
+    # El primer objetivo entrenable. El piso es 2012-01 y no es arbitrario: el
+    # P75 del canal se construye con el mismo mes de los cinco años anteriores,
+    # así que con el release operacional, que cubre desde 2007, 2012 es el
+    # primer año completamente evaluable. El valor anterior, 2018-01, venía del
+    # release histórico de 2011-06 y dejaba fuera seis años de entrenamiento
+    # disponibles.
     train_target_start: str = "2018-01"
     first_origin: str = "2019-01"
     last_target: str = "2024-12"
@@ -57,7 +68,7 @@ class ExperimentSpec:
             or self.label_delay_months < 0
             or type(self.seed) is not int
             or self.seed < 0
-            or self.train_target_start < "2018-01"
+            or self.train_target_start < TRAIN_FLOOR
             or self.last_target >= self.reserved_start
             or self.first_origin >= self.reserved_start
             or self.train_target_start > add_months(self.first_origin, -1 - self.label_delay_months)
@@ -87,6 +98,9 @@ class ExperimentData:
     y: pd.Series
     controls: pd.DataFrame
     predictors: tuple[str, ...] = tuple(PREDICTORS)
+    # Derivadas de preparación que la receta declaró; van al final de X, nunca
+    # son canónicas y la lista vacía deja el contrato histórico intacto.
+    derived: tuple[str, ...] = ()
 
 
 class FoldEstimator(Protocol):
@@ -102,7 +116,11 @@ class FoldEstimator(Protocol):
 
 
 def from_prepared(
-    prepared: PreparedSet, horizon: int, *, label_delay_months: int = 0
+    prepared: PreparedSet,
+    horizon: int,
+    *,
+    label_delay_months: int = 0,
+    derived: tuple[str, ...] = (),
 ) -> ExperimentData:
     """Enlazar la preparación aprobada con el arnés sin reconstruir etiquetas.
 
@@ -110,6 +128,8 @@ def from_prepared(
         prepared: Conjunto utilizable con X/y separados.
         horizon: Uno o dos meses.
         label_delay_months: Demora adicional declarada después del objetivo.
+        derived: Columnas de preparación que X trae al final, si la receta las
+            declara. Sin ellas el contrato histórico no cambia.
 
     Returns:
         Copias con claves objetivo y mes de disponibilidad explícito.
@@ -129,6 +149,7 @@ def from_prepared(
         prepared.X.copy(),
         prepared.y.copy(),
         pd.DataFrame({"eligible_at_t": [True] * len(keys)}, index=keys.index),
+        derived=tuple(derived),
     )
     validate_data(data, horizon)
     return data
@@ -162,8 +183,10 @@ def validate_data(data: ExperimentData, horizon: int, reserved_start: str = "202
     if (
         not data.predictors
         or list(data.predictors) != [p for p in PREDICTORS if p in data.predictors]
-        or list(data.X) != list(data.predictors)
+        or list(data.X) != [*data.predictors, *data.derived]
         or data.X.columns.duplicated().any()
+        or set(data.derived) & set(PREDICTORS)
+        or (data.derived and list(data.derived) != [c for c in MARGIN_COLUMNS if c in data.derived])
     ):
         raise ValueError("Predictores fuera del esquema canónico cerrado")
     if any(not obj.index.equals(keys.index) for obj in (data.X, data.y, data.controls)):

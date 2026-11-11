@@ -10,6 +10,7 @@ import pandas as pd
 import xgboost as xgb
 
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
+from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS
 from sat_dengue_pipeline.models.adapters import (
     AdapterSpec,
     validate_features,
@@ -52,6 +53,11 @@ class XGBoostOnsetAdapter:
             raise ValueError("Configuración de adaptador incompleta o adicional")
         self.candidate = self.settings["candidate"]
         self.preparation = self.settings["preparation"]
+        # Derivadas de preparación: vacías salvo que la receta declare el bloque
+        # de margen. Nunca son canónicas y siempre van al final de la matriz.
+        self.derived: tuple[str, ...] = (
+            tuple(MARGIN_COLUMNS) if self.preparation.get("variables_g") else ()
+        )
         if (
             not self.settings["predictors"]
             or self.settings["predictors"]
@@ -93,7 +99,7 @@ class XGBoostOnsetAdapter:
             or self.preparation["zone_mapping"] != zones
             or self.preparation["zone_columns"] != ["zona_canal_t__" + z for z in zones]
             or self.preparation["matrix_dtype"] != "float32"
-            or self.preparation["variables_g"] is not False
+            or type(self.preparation["variables_g"]) is not bool
             or self.preparation["channel_budget"] is not False
             or self.preparation["missing"] != "error"
             or self.preparation["scaling"] != "none"
@@ -105,18 +111,26 @@ class XGBoostOnsetAdapter:
             for name in self.settings["predictors"]
             for column in (self.preparation["zone_columns"] if name == "zona_canal_t" else [name])
         ]
-        if self.preparation["matrix_columns"] != expected:
+        # El bloque de margen va al final y solo si la receta lo declara; sin él
+        # la matriz es byte a byte la histórica.
+        if self.preparation["variables_g"] and self.derived != tuple(MARGIN_COLUMNS):
+            raise ValueError("Bloque de margen declarado con columnas alteradas")
+        if not self.preparation["variables_g"] and self.derived:
+            raise ValueError("Columnas derivadas sin declarar variables_g")
+        if self.preparation["matrix_columns"] != [*expected, *self.derived]:
             raise ValueError("Orden o cardinalidad de matriz interna alterados")
 
     def matrix(self, X: pd.DataFrame) -> np.ndarray:
         """Validar 33 entradas y proyectar predictores declarados a float32 sin aprender."""
+        canonical = list(X) == PREDICTORS
         validate_features(
             X,
             self._dtypes,
-            predictors=tuple(PREDICTORS if list(X) == PREDICTORS else self.settings["predictors"]),
+            predictors=tuple(PREDICTORS if canonical else self.settings["predictors"]),
+            derived=() if canonical else self.derived,
         )
         parts = []
-        for name in self.settings["predictors"]:
+        for name in [*self.settings["predictors"], *(() if canonical else self.derived)]:
             if name == "zona_canal_t":
                 codes = X[name].map(self.preparation["zone_mapping"]).to_numpy(dtype=int)
                 parts.append(np.eye(len(self.preparation["zone_mapping"]), dtype=np.float32)[codes])

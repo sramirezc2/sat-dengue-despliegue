@@ -101,7 +101,9 @@ def ejecutar(table: pd.DataFrame, schema: dict, config: dict[str, Any], audit: d
         "reserved_start": config["reserved_start"],
     }
     for h in config["horizons"]:
-        preds, omitidos = predicciones_rolling(table, schema, config, int(h), primer, ultimo)
+        # La cobertura del conjunto común no entra al soporte: este payload va a
+        # la certificación y su forma está fijada por pruebas de contrato.
+        preds, omitidos, _ = predicciones_rolling(table, schema, config, int(h), primer, ultimo)
         run.support[str(h)] = {
             "predicciones": int(len(preds)),
             "folds": int(preds.fold_id.nunique()) if len(preds) else 0,
