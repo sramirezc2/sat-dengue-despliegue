@@ -1,0 +1,28 @@
+retroanalisis:
+  configuraciones:
+  - conf/retroanalisis/logistica_sin_clima.yml
+  - conf/retroanalisis/logistica_g.yml
+  - conf/retroanalisis/noche/log_C0p01.yml
+  - conf/retroanalisis/noche/log_C0p1.yml
+  - conf/retroanalisis/noche/log_C10.yml
+  - conf/retroanalisis/noche/log_C100.yml
+  - conf/retroanalisis/noche/log_canal_dengue.yml
+  - conf/retroanalisis/noche/log_conclima.yml
+  - conf/retroanalisis/noche/log_minima.yml
+  - conf/retroanalisis/noche/log_minima_lag2.yml
+  - conf/retroanalisis/noche/log_minima_p25.yml
+  - conf/retroanalisis/noche/log_minima_total.yml
+  - conf/retroanalisis/noche/log_sin_log1p.yml
+  - conf/retroanalisis/noche/log_sin_log1p_g.yml
+  horizontes:
+  - 1
+  - 2
+  primer_entrenamiento: 2012-01
+  primer_origen: 2018-01
+  ultimo_objetivo: 2024-12
+  cobertura_desde: 2007-01
+  municipios_minimos: 76
+  salida: data/noche/log
+  departamentos:
+  - '50'
+  - '73'

@@ -1,0 +1,22 @@
+retroanalisis:
+  configuraciones:
+  - conf/retroanalisis/logistica_sin_clima.yml
+  - conf/retroanalisis/noche/log_conclima.yml
+  - conf/retroanalisis/noche/log_minima.yml
+  - conf/retroanalisis/noche/logc_lluvia_temp.yml
+  - conf/retroanalisis/noche/logc_sin_viento.yml
+  - conf/retroanalisis/noche/logc_log1p_lluvia.yml
+  - conf/retroanalisis/noche/logc_C10.yml
+  - conf/retroanalisis/noche/logc_minima.yml
+  horizontes:
+  - 1
+  - 2
+  primer_entrenamiento: 2012-01
+  primer_origen: 2018-01
+  ultimo_objetivo: 2024-12
+  cobertura_desde: 2007-01
+  municipios_minimos: 76
+  salida: data/noche/clima
+  departamentos:
+  - '50'
+  - '73'
