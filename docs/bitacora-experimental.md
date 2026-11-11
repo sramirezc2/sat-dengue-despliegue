@@ -1991,7 +1991,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AV. El punto de rocío como único clima | **Cerrada** en la tanda 40: equivalente por la regla (±5 pp), pero pierde 7 de los 12 inicios que el clima completo suma en T+1; se mantiene el clima completo |
 | AW. Reglas desplegables: umbrales fijados con el año anterior | **Cerrada** en la tanda 41: con umbrales fijados el año anterior, el modelo detecta más con menos alertas (T+2 con clima: 169 con 557 frente a 141 con 601) |
 | AX. Las probabilidades como riesgo | **Leída** en la tanda 42: bien calibradas en T+1 y en T+2 (decil alto 0,55/0,53 y 0,35/0,33); T+2 ya no subestima |
-| AY. Transferir el modelo de un departamento al otro | Preinscrita para la tanda 43 |
+| AY. Transferir el modelo de un departamento al otro | **Cerrada** en la tanda 43: sin clima transfiere en los dos sentidos; con clima, el modelo de Meta falla en Tolima (−33 inicios en T+1) |
 | AZ. Todas las recetas al presupuesto de referencia | **Leída** en la tanda 44: al 10 %, en T+2 pasan 25 de 36 recetas, todas las logísticas con log1p; en T+1 ninguna |
 | BA. La curva de presupuesto completa | **Leída** en la tanda 45: en T+2 el modelo pasa la barra desde el 10 %; en T+1, desde el 20 % con clima y el 25 % sin clima |
 | BB. Los inicios que nadie anticipa | **Leída** en la tanda 46: la mitad de los inicios no los anticipa nadie y la mitad de esos arranca con cero casos; el modelo gana sobre todo inicios desde cero casos |
