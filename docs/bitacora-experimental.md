@@ -1930,6 +1930,7 @@ distinguir de uno bueno es peor que una excepción, porque viaja.
 | Z. Entrenar con todo el país, evaluar en Tolima y Meta | Preinscrita para la tanda 18 |
 | AA. Lectura por nivel de transmisión del año | Preinscrita para la tanda 19 |
 | AB. Ajustes de XGBoost sobre la base común | Preinscrita para la tanda 20 |
+| AC. Ventana de entrenamiento móvil | Preinscrita para la tanda 21 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
