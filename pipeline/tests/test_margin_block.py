@@ -205,3 +205,90 @@ def test_el_adaptador_xgboost_tambien_se_construye_con_el_bloque() -> None:
     ]
     adaptador = XGBoostOnsetAdapter(adapter_spec(config))
     assert adaptador.derived == tuple(MARGIN_COLUMNS)
+
+
+def _datos_con_bloque(horizonte: int = 1):
+    """Muestra artificial del arnés con las seis columnas del bloque al final."""
+    from fixtures.experiment_fixture import make_experiment
+
+    from sat_dengue_pipeline.experiments.rolling import ExperimentData
+
+    datos = make_experiment(horizonte)
+    X = datos.X.copy()
+    for i, nombre in enumerate(MARGIN_COLUMNS):
+        # Márgenes con signo, como los reales; no se parecen a ningún canónico.
+        X[nombre] = [((j + i) % 9 - 4) / 3.0 for j in range(len(X))]
+    return ExperimentData(datos.keys, X, datos.y, datos.controls, derived=tuple(MARGIN_COLUMNS))
+
+
+def test_el_bloque_llega_hasta_el_modelo_a_traves_del_arnes() -> None:
+    """De punta a punta por `run_candidate`, con el adaptador real de la receta G.
+
+    Esta es la prueba que faltaba. El envoltorio `CheckedAdapter` valida la
+    matriz por su cuenta, aparte del adaptador, así que el bloque puede estar
+    bien construido, bien declarado y bien proyectado y aun así ser rechazado
+    en la frontera. Pasaba: los 82 orígenes de la primera corrida con G se
+    omitieron con «Esquema de características inválido», y ninguna prueba que
+    parara antes del arnés podía verlo.
+    """
+    import yaml
+
+    from sat_dengue_pipeline.experiments.rolling import ExperimentSpec
+    from sat_dengue_pipeline.factory.configuration import adapter_spec
+    from sat_dengue_pipeline.models.adapters import ModelRegistry, run_candidate
+    from sat_dengue_pipeline.models.familias import ADAPTERS
+
+    receta = Path(__file__).resolve().parents[1] / "conf/retroanalisis/logistica_g.yml"
+    config = yaml.safe_load(receta.read_text(encoding="utf-8"))
+    spec = adapter_spec(config)
+    registry = ModelRegistry()
+    registry.register(spec.family, spec.version, ADAPTERS[(spec.family, spec.version)])
+    datos = _datos_con_bloque()
+    protocolo = ExperimentSpec(
+        1,
+        seed=config["seed"],
+        last_target="2019-04",
+        label_delay_months=config["label_delay_months"],
+    )
+    frame, auditoria = run_candidate(datos, protocolo, spec, registry)
+    assert not frame.empty and frame.raw_probability.between(0, 1).all()
+    # La procedencia tiene que declarar lo que el modelo vio de verdad.
+    assert all(fila["features"][-6:] == MARGIN_COLUMNS for fila in auditoria["adapters"])
+
+
+def test_receta_y_preparacion_tienen_que_declarar_lo_mismo() -> None:
+    """Una receta sin G contra datos con el bloque se rechaza, y al revés."""
+    import yaml
+
+    from sat_dengue_pipeline.experiments.rolling import ExperimentData, ExperimentSpec
+    from sat_dengue_pipeline.factory.configuration import adapter_spec
+    from sat_dengue_pipeline.models.adapters import ModelRegistry, run_candidate
+    from sat_dengue_pipeline.models.familias import ADAPTERS
+
+    base = Path(__file__).resolve().parents[1] / "conf/retroanalisis/logistica_sin_clima.yml"
+    config = yaml.safe_load(base.read_text(encoding="utf-8"))
+    spec = adapter_spec(config)
+    registry = ModelRegistry()
+    registry.register(spec.family, spec.version, ADAPTERS[(spec.family, spec.version)])
+    protocolo = ExperimentSpec(
+        1,
+        seed=config["seed"],
+        last_target="2019-04",
+        label_delay_months=config["label_delay_months"],
+    )
+    with pytest.raises(ValueError, match="derivadas"):
+        run_candidate(_datos_con_bloque(), protocolo, spec, registry)
+    # Y los datos sin bloque con esa misma receta sí corren, para que la prueba
+    # distinga el desajuste de un rechazo general.
+    from fixtures.experiment_fixture import make_experiment
+
+    datos = make_experiment(1)
+    registry_limpio = ModelRegistry()
+    registry_limpio.register(spec.family, spec.version, ADAPTERS[(spec.family, spec.version)])
+    frame, _ = run_candidate(
+        ExperimentData(datos.keys, datos.X, datos.y, datos.controls),
+        protocolo,
+        spec,
+        registry_limpio,
+    )
+    assert not frame.empty

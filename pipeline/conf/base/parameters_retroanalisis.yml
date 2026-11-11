@@ -4,9 +4,10 @@
 retroanalisis:
   # Las recetas corren en la misma corrida, sobre el mismo panel, los mismos
   # folds y las mismas filas, para que sus resultados sean comparables entre sí.
-  # logistica_g es la misma receta más el bloque de margen (línea G), que es la
-  # única mejora confirmada del proyecto; la diferencia entre las dos filas del
-  # resumen es atribuible al bloque y a nada más.
+  # logistica_g es la misma receta más el bloque de margen (línea G); la
+  # diferencia entre las dos filas del resumen es atribuible al bloque y a nada
+  # más. Sobre esta receta el bloque no mueve las detecciones (tanda 11): se
+  # conserva para poder medirlo, no porque mejore.
   configuraciones:
     - conf/retroanalisis/logistica_sin_clima.yml
     - conf/retroanalisis/logistica_g.yml

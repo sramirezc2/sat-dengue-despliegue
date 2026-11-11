@@ -8,11 +8,23 @@ está. El modelo recibía esa decisión ya tomada —`zona_canal_t`— pero no s
 **a qué distancia** del umbral estaba el municipio. Un municipio al 99 % del
 P75 y otro al 10 % entran como el mismo "no exceso".
 
-Darle esa distancia es la línea G de la bitácora, confirmada en la tanda 5 y
-medida otra vez en la tanda 9 sobre el banco de ventana expansiva. Es, hasta
-hoy, la única mejora confirmada del proyecto: al mismo presupuesto de alertas
-lleva al modelo de 388 a 467 inicios anticipados de 647 en T+1, y es lo que
-hace que el modelo alcance al canal condicionado en vez de perder contra él.
+Darle esa distancia es la línea G de la bitácora, confirmada en la tanda 5
+**sobre XGBoost**, donde al mismo presupuesto de alertas lleva al modelo de 388
+a 467 inicios anticipados de 647 en T+1.
+
+**No se reproduce sobre una logística.** La tanda 11 la midió sobre la base
+común contra la receta `logistica_sin_clima`, con el mismo panel, los mismos
+folds y las mismas filas: el bloque mueve las detecciones entre 0 y 5 inicios
+sobre 641, dentro de lo que la regla 9 prohíbe reportar sin cinco semillas. La
+razón está medida y no es un defecto del bloque: esa receta aplica `log1p` a
+conteos y umbrales, así que el modelo ya forma el margen como una resta de
+logaritmos, y la correlación de rangos entre `margen_objetivo` y
+`log1p(casos) − log1p(p75_objetivo)` es de 0,999. Un árbol tiene que aproximar
+ese cociente con cortes sucesivos; un modelo log-lineal lo obtiene con dos
+coeficientes.
+
+Es decir: el bloque sigue siendo útil donde se confirmó, y queda aquí para
+poder medirlo en cualquier receta, no como una mejora que valga para todas.
 
 Dónde vive y por qué aquí
 -------------------------

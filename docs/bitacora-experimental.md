@@ -1691,7 +1691,7 @@ T+1 con el T+2 no ayuda. Son cifras exploratorias, calculadas con una
 evaluación local fuera del registro; la cifra oficial saldrá de EXP003 con la
 evaluación científica del contrato.
 
-### Tanda 11, línea S — El retroanálisis sobre la base común, y tres defectos que lo impedían
+### Tanda 11, línea S — El retroanálisis sobre la base común, y G que no reproduce
 
 **Origen.** Antes de que el equipo empiece a correr experimentos comparables,
 el retroanálisis del pipeline tenía que reproducir el banco de la línea O sobre
@@ -1753,6 +1753,19 @@ De paso apareció un cuarto: la rama de G en el adaptador XGBoost usaba
 habría fallado con `NameError`. Lo encontró el linter, no las pruebas; ahora hay
 una prueba que construye el adaptador con el bloque declarado.
 
+Y un quinto, que solo apareció en la **primera corrida real** con G: los 82
+orígenes de T+1 se omitieron con «Esquema de características inválido». El
+envoltorio `CheckedAdapter` valida la matriz por su cuenta, aparte del
+adaptador, y no recibía las derivadas: el bloque estaba bien construido, bien
+declarado y bien proyectado, y lo rechazaba la frontera. Ninguna de las pruebas
+nuevas lo vio porque todas paraban antes del arnés. La que faltaba —y que ahora
+existe— entra por `run_candidate` con el adaptador real de la receta G y
+reproduce exactamente ese error cuando se desactiva el arreglo.
+
+La lección, otra vez de método: **una prueba que se detiene antes de la frontera
+no prueba la frontera.** Cuatro pruebas del bloque pasaban en verde mientras la
+corrida real fallaba en todos sus folds.
+
 #### El banco queda reproducido
 
 Contando inicios sobre el panel real (release `satd-raw-173d5856`, Tolima y
@@ -1795,34 +1808,74 @@ completa y por eso nunca se notó, pero la definición decía una cosa y el cód
 hacía otra. Ahora el mes anterior se busca por su nombre y un hueco produce una
 ausencia, que es la respuesta correcta.
 
-#### Primera medición sobre el panel real
+#### La medición comparativa: sin clima contra G, sobre todo lo mismo
 
-Logística sin clima, ventana expansiva, 2018-2024, contra las tres líneas base
-del canal. T+1 sobre 641 inicios evaluados:
+Dos recetas en la misma corrida, mismo panel, mismos folds y **las mismas filas**
+—7 612 en T+1 y 7 572 en T+2, idénticas para las dos, verificado en
+`conjunto.csv`—, cero orígenes omitidos. T+1, 641 inicios evaluados:
 
-| Línea base | Alertas | Base detecta | Modelo detecta | Δ (IC 95 %) | Falsas/acierto base → modelo |
-| --- | --- | --- | --- | --- | --- |
-| Canal P75 | 315 | 177 | 175 | −2 (−18 a 16) | 0,78 → 0,80 |
-| Canal ajustado | 1 128 | 360 | 391 | **+31 (1 a 66)** | 2,13 → 1,88 |
-| Canal condicionado | 817 | 323 | 348 | **+25 (2 a 51)** | 1,53 → 1,35 |
-
-T+2 sobre 459 inicios evaluados:
-
-| Línea base | Alertas | Base detecta | Modelo detecta | Δ (IC 95 %) |
+| Línea base | Alertas | Canal | Sin clima | Con bloque G |
 | --- | --- | --- | --- | --- |
-| Canal P75 | 378 | 99 | 117 | +18 (−1 a 36) |
-| Canal ajustado | 1 147 | 206 | 245 | **+39 (11 a 67)** |
-| Canal condicionado | 1 158 | 207 | 248 | **+41 (12 a 71)** |
+| Canal P75 | 315 | 177 | 176 (−1; −17 a 17) | 176 (−1; −17 a 16) |
+| Canal ajustado | 1 128 | 360 | 391 (+31; 0 a 66) | **396 (+36; 7 a 70)** |
+| Canal condicionado | 817 | 323 | 347 (+24; 1 a 50) | **349 (+26; 2 a 53)** |
 
-Cero orígenes omitidos en los dos horizontes. Contra el canal P75 al mismo
-presupuesto el modelo no aporta; contra las dos líneas base fuertes gana, y los
-intervalos excluyen el cero salvo en T+1 contra el P75.
+T+2, 459 inicios evaluados:
 
-**Estas cifras son previas al filtro del conjunto común**, que retira 152 filas
-de entrenamiento de 2012, y previas a G: son la referencia contra la que se mide
-la corrida comparativa, no un resultado de la línea G. La comparación
-sin clima contra G, sobre el mismo panel, los mismos folds y las mismas filas,
-corre a continuación y sus cifras entran aquí.
+| Línea base | Alertas | Canal | Sin clima | Con bloque G |
+| --- | --- | --- | --- | --- |
+| Canal P75 | 378 | 99 | 117 (+18; −0 a 37) | **120 (+21; 3 a 40)** |
+| Canal ajustado | 1 147 | 206 | 246 (+40; 14 a 68) | 247 (+41; 17 a 68) |
+| Canal condicionado | 1 158 | 207 | 248 (+41; 14 a 70) | 250 (+43; 17 a 70) |
+
+El modelo le gana a las dos líneas base fuertes en los dos horizontes, con los
+intervalos excluyendo el cero. Contra el canal P75 al mismo presupuesto no
+aporta en T+1 y sí en T+2.
+
+**Y el bloque G no cambia nada.** La diferencia entre las dos recetas es de 0,
++5 y +2 inicios en T+1 y de +3, +1 y +2 en T+2, sobre 641 y 459. La regla 9
+dice expresamente que ninguna diferencia de uno o dos inicios se reporta sin
+cinco semillas detrás, y estas están en ese orden de magnitud. **No es una
+mejora.**
+
+#### Por qué G no aporta aquí, cuando en la tanda 5 fue la única mejora confirmada
+
+No es que el bloque esté mal construido ni mal cableado: es que **este modelo ya
+lo tenía**. La receta aplica `log1p` a los conteos y a los umbrales, y después
+estandariza. Una logística sobre esas columnas puede formar el margen como una
+resta de logaritmos con coeficientes de signo opuesto, que es exactamente lo que
+hace: sus dos coeficientes más grandes son `p75_h5_t1` en −2,83 y
+`total_notifications_count` en +1,29.
+
+La medición que lo cierra: la correlación de rangos entre `margen_objetivo` y
+`log1p(casos) − log1p(p75_objetivo)` —una resta que el modelo puede construir
+con lo que ya tiene— es de **0,999**. Como la comparación ordena dentro de cada
+mes de origen, un orden idéntico es información idéntica. El bloque recibe peso
+(1,48 de 12,53 en suma de coeficientes absolutos, casi todo en `pos_banda`),
+pero no mueve las detecciones.
+
+En la tanda 5 el bloque se midió sobre **XGBoost**, y ahí sí aportaba. La
+diferencia no es el dato: es la familia. Un árbol tiene que aproximar un
+cociente con cortes sucesivos en dos variables, y eso es caro; un modelo
+log-lineal lo obtiene con dos coeficientes. **G no es una mejora del proyecto:
+es una mejora de los árboles.**
+
+Esto es la regla 9 —«separar no es aportar»— un paso más allá. Su procedimiento
+pregunta si las variables vigentes **predicen** la feature nueva. Aquí la
+pregunta que hacía falta es más barata y más directa: si el modelo puede
+**construirla** con lo que ya tiene y la métrica solo mira el orden, no agrega,
+y da igual cuánto separe. La respuesta depende de la familia del modelo, así que
+una línea confirmada sobre una familia no está confirmada sobre otra.
+
+#### Lo que queda preinscrito para la tanda siguiente
+
+Correr esta misma comparación con **XGBoost**, que es donde G ganó su
+confirmación, sobre esta base común y estas mismas filas. Es la receta `EXP001`
+con `variables_g: true` y las seis columnas al final de la matriz. Decide lo
+mismo que decidió la tanda 5: inicios detectados al mismo presupuesto. Si G no
+aporta tampoco ahí, la línea G pasa de «confirmada» a «confirmada solo en los
+tres cortes de la tanda 5, no reproducida sobre el banco», que es un resultado
+publicable y bastante más honesto que el que veníamos cargando.
 
 #### Una discrepancia pendiente con la tanda 10
 
@@ -1854,7 +1907,7 @@ distinguir de uno bueno es peor que una excepción, porque viaja.
 | B. Entrenar sin las variables del canal | **Cerrada**: rechazada en la tanda 4; esas variables son necesarias |
 | C. Modelo en dos etapas | **Cerrada**: rechazada en la tanda 3; el modelo ya estratifica solo |
 | D. Costo asimétrico en el entrenamiento | **Cerrada**: rechazada en la tanda 4 |
-| G. Margen continuo al umbral del canal | **Confirmada** en la tanda 5; pasa a ser el vigente. Desde la tanda 11 es ejecutable también por el retroanálisis del pipeline (`conf/retroanalisis/logistica_g.yml`) |
+| G. Margen continuo al umbral del canal | **Confirmada en la tanda 5 sobre XGBoost y no reproducida en la tanda 11 sobre la logística**: sobre la base común no mueve las detecciones, porque un modelo log-lineal ya forma el margen con lo que tiene. Pendiente medirla sobre XGBoost en la base común |
 | H. Presión epidémica regional | **Cerrada**: rechazada en la tanda 5 con esta forma de medirla |
 | I. Memoria y agotamiento de susceptibles | **Cerrada**: rechazada en la tanda 5 |
 | J. Regresión sobre el margen | **Cerrada**: no aporta sobre la clasificación |
@@ -1869,6 +1922,7 @@ distinguir de uno bueno es peor que una excepción, porque viaja.
 | Q. Canal condicionado a no estar en exceso | **Confirmada** en la tanda 9 a T+1 y **rechazada a T+2 por fuga**; pasa a ser la línea base principal y reduce la ventaja publicada del modelo a +22 % en el punto de operación |
 | R. Retroanálisis con datos reales y logística | Confirmada en la tanda 10 como exploratoria; su receta versionada no enciende G (ver tanda 11) |
 | S. Base común del retroanálisis | **Confirmada** en la tanda 11: el banco queda reproducido (647 inicios, año por año) y las recetas corren sobre el mismo panel, los mismos folds y las mismas filas |
+| T. Reproducir G sobre la base común | Preinscrita para la tanda 12: la misma comparación con XGBoost, que es donde G ganó su confirmación |
 | R. Regresión logística sobre el margen, con datos reales | **Exploratoria** en la tanda 10: supera al canal condicionado y a XGBoost, sin llegar a la meta de 10 puntos; pendiente de confirmar en EXP003 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
