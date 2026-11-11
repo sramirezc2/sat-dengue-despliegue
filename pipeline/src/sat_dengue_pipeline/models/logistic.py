@@ -20,6 +20,7 @@ from sat_dengue_pipeline.domain.margin import (
     DEPTO_COLUMNS,
     MARGIN_COLUMNS,
     MES_COLUMNS,
+    ROCIO_META_COLUMNS,
 )
 from sat_dengue_pipeline.models.adapters import (
     AdapterSpec,
@@ -82,6 +83,7 @@ class LogisticOnsetAdapter:
         ) + (tuple(MES_COLUMNS) if self.preparation.get("variables_mes") else ())
         self.derived += tuple(DEPTO_COLUMNS) if self.preparation.get("variable_depto") else ()
         self.derived += tuple(CLIMA_LAG_COLUMNS) if self.preparation.get("clima_rezagos") else ()
+        self.derived += tuple(ROCIO_META_COLUMNS) if self.preparation.get("rocio_meta") else ()
         predictors = self.settings["predictors"]
         if (
             not predictors
@@ -120,6 +122,7 @@ class LogisticOnsetAdapter:
         )
         esperadas += tuple(DEPTO_COLUMNS) if self.preparation.get("variable_depto") else ()
         esperadas += tuple(CLIMA_LAG_COLUMNS) if self.preparation.get("clima_rezagos") else ()
+        esperadas += tuple(ROCIO_META_COLUMNS) if self.preparation.get("rocio_meta") else ()
         if self.derived != esperadas:
             raise ValueError("Columnas derivadas alteradas o sin declarar")
         if self.preparation["matrix_columns"] != [*expected, *self.derived]:

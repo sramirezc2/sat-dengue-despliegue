@@ -31,6 +31,7 @@ from sat_dengue_pipeline.domain.margin import (
     MARGIN_COLUMNS,
     MARGIN_SOURCES,
     MES_COLUMNS,
+    ROCIO_META_COLUMNS,
     margin_features,
 )
 from sat_dengue_pipeline.experiments.rolling import TRAIN_FLOOR, ExperimentSpec, from_prepared
@@ -110,6 +111,12 @@ def conjunto_comun(
                 rezago = serie.groupby(level=0).shift(k)
                 X[f"{nombre}_lag{k}"] = rezago.reindex(idx).to_numpy(dtype=float)
         derivadas += tuple(CLIMA_LAG_COLUMNS)
+    if preparacion.get("rocio_meta"):
+        rocio = table.set_index(KEYS)["dewpoint_mean_c_month_mean"]
+        idx = pd.MultiIndex.from_frame(keys.loc[:, KEYS])
+        meta = keys.municipality_code.str[:2].eq("50").to_numpy(dtype=float)
+        X["rocio_x_meta"] = rocio.reindex(idx).to_numpy(dtype=float) * meta
+        derivadas += tuple(ROCIO_META_COLUMNS)
     return PreparedSet(keys, X, y), derivadas, cobertura
 
 

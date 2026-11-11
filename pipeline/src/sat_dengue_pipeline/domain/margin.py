@@ -193,4 +193,12 @@ CLIMA_LAG_FUENTES = {
 CLIMA_LAG_COLUMNS = [f"{n}_lag{k}" for n in CLIMA_LAG_FUENTES for k in (1, 2)]
 
 # Orden fijo de todas las derivadas de preparación, al final de la matriz.
-DERIVADAS_ORDEN = [*MARGIN_COLUMNS, *MES_COLUMNS, *DEPTO_COLUMNS, *CLIMA_LAG_COLUMNS]
+# Interacción del punto de rocío con Meta (tanda 49).
+ROCIO_META_COLUMNS = ["rocio_x_meta"]
+DERIVADAS_ORDEN = [
+    *MARGIN_COLUMNS,
+    *MES_COLUMNS,
+    *DEPTO_COLUMNS,
+    *CLIMA_LAG_COLUMNS,
+    *ROCIO_META_COLUMNS,
+]
