@@ -4,7 +4,8 @@
 > resumen y el enlace quedan en [la bitácora principal](../bitacora-experimental.md),
 > sección 5, cuando la tanda cierre.
 >
-> Línea reclamada por Stevan. Estado: **corrida 1 cerrada**; ver Resultados.
+> Línea reclamada por Stevan. Estado: **cerrada**. El banco queda explicado y
+> la línea G también; ver Resultados de la corrida 2.
 
 ## El problema que hay que resolver
 
@@ -133,7 +134,154 @@ presupuesto del canal condicionado y +10 a 1 866 alertas, contra los **32 o más
 con cota inferior sobre cero** que esta preinscripción exigía. Es el mismo orden
 de magnitud que midió la tanda 12 bajo cadencia mensual.
 
-## Qué sigue, y un cambio de orden declarado antes de correr
+## Corrección: el razonamiento del cupo estaba mal, y leyendo el código apareció la respuesta
+
+Arriba quedó escrito que la siguiente corrida sería el reparto de alertas,
+porque «el cupo mensual del banco obliga a repartir parejo entre los doce meses
+y el retroanálisis deja que el umbral las concentre». **Eso era una mala lectura
+de los dos lados, y se corrige antes de medir nada.**
+
+Leyendo `top_cupo` y `anio` en el script del banco: el cupo **no es mensual**.
+Se calcula una vez por año —la tasa de alerta del canal en los últimos doce
+meses de entrenamiento, por el número de filas del año— y `top_cupo` toma las
+mejores de **todo el año**, los doce meses y los 76 municipios juntos. Y el
+retroanálisis hace lo contrario: `emparejar` emite **en cada mes de origen**
+exactamente tantas alertas como la línea base emitió ese mes.
+
+O sea que el que concentra es el banco, no nosotros. Y como concentrar
+libremente dentro del año es una restricción **menos** exigente que igualar mes
+a mes, el reparto del banco **favorece** al modelo del banco. Predice el signo
+contrario al que hace falta: no puede explicar por qué el banco detecta menos.
+
+### La diferencia que sí explica el gap
+
+Comparando el `features.csv` del replay que el banco consume contra el contrato
+canónico: el banco entrena con 28 columnas y **ninguna de las siete de umbral**.
+
+| En el canon | En el banco |
+| --- | --- |
+| `p25_canal_t`, `p50_canal_t`, `p75_canal_t` | no están |
+| `p25_h5_t1`, `p75_h5_t1`, `p25_h5_t2`, `p75_h5_t2` | no están |
+| `total_notifications_count` y sus rezagos | no están |
+| `zona_canal_t` | sí, y es lo único del canal que ve |
+
+El banco ve **la zona del canal**, que es la decisión ya tomada, pero nunca ve
+**el umbral**. Y la etiqueta que queremos predecir es exactamente «los casos del
+mes objetivo pasan ese umbral».
+
+Eso reordena todo lo medido en las tandas 11, 12 y 13 en una sola explicación:
+
+- El modelo del banco no puede ver el umbral, así que el bloque G —que es la
+  distancia al umbral— es su **única** vía para conocerlo. De ahí el +79.
+- El modelo del pipeline ve los umbrales directamente. La logística forma el
+  margen como resta de logaritmos (correlación de rangos 0,999, tanda 11) y
+  XGBoost puede cortar sobre las dos columnas. De ahí que G no aporte: +2 sobre
+  la logística, entre −2 y +12 sobre los árboles.
+- Y de ahí también los 515 contra 388: la columna más informativa para esta
+  etiqueta es el umbral del mes objetivo, y el banco no la tenía. En la tanda 11
+  el coeficiente más grande de la logística es `p75_h5_t1` en −2,83, contra
+  +1,29 de los casos.
+
+**Si esto es correcto, G nunca fue una mejora general: era el parche de un
+modelo que no podía ver el umbral del canal.**
+
+## Corrida 2 — los insumos. Predicción declarada antes de medir
+
+Se corre el modelo del banco sobre la base común **quitándole las siete columnas
+de umbral**, con y sin el bloque G, cadencia mensual, mismo panel, mismo
+calendario y mismas filas. Dos predicciones, las dos falsables:
+
+1. **El brazo sin bloque cae.** De 515 a **452 o menos** en T+1 a 1 866 alertas,
+   acercándose a los 388 del banco.
+2. **El aporte de G reaparece.** Sin los umbrales, el bloque suma **32 inicios o
+   más** con la cota inferior del intervalo por encima de cero, contra los +10
+   que suma hoy teniéndolos.
+
+**Si las dos se cumplen, la línea G queda explicada**: aporta cuando el modelo
+no ve el umbral y no aporta cuando sí lo ve, y el banco queda reproducido en su
+mecanismo aunque no en su cifra exacta.
+
+**Si la primera se cumple y la segunda no**, los umbrales explican el nivel pero
+no el aporte del bloque, y G sigue sin explicación.
+
+**Si ninguna se cumple**, esta lectura del `features.csv` es incorrecta y hay que
+volver a empezar por el script del banco.
+
+## Resultados de la corrida 2: las dos predicciones se cumplen
+
+Mismo panel, mismo calendario, mismas 7 612 filas en T+1, cero orígenes
+omitidos. Inicios detectados en T+1 a 1 866 alertas:
+
+| Brazo | Inicios de 641 |
+| --- | --- |
+| Con umbrales, sin bloque | 515 |
+| Con umbrales, con bloque | 519 |
+| **Sin umbrales, sin bloque** | **411** |
+| **Sin umbrales, con bloque** | **527** |
+
+Y al presupuesto de las líneas base, T+1:
+
+| Brazo | Canal P75 (315) | Ajustado (1 128) |
+| --- | --- | --- |
+| Con umbrales, sin bloque | 160 | 385 |
+| Sin umbrales, sin bloque | 106 | 283 |
+| Sin umbrales, con bloque | 163 | 388 |
+
+**Predicción 1, cumplida.** Quitar las siete columnas de umbral derrumba el
+modelo: de 515 a **411** a 1 866 alertas, por debajo del 452 declarado, y a
+tiro de los 388 del banco. En el presupuesto del canal ajustado la caída es de
+385 a 283.
+
+**Predicción 2, cumplida y por mucho.** Sin los umbrales, el bloque G suma
+**+116 inicios** (411 → 527), contra los 32 que exigía el criterio y contra los
++4 que suma cuando los umbrales están presentes. En el presupuesto del canal
+ajustado, +105 (283 → 388).
+
+## Lo que esto explica, que es todo
+
+**El bloque G no es una mejora: es un sustituto de una columna faltante.**
+
+El modelo del banco no podía ver el umbral del canal. G se lo daba, codificado
+como distancia relativa. Por eso allá valía +79 inicios. El modelo del pipeline
+tiene los umbrales en su contrato canónico, así que G le repite algo que ya
+sabe, y por eso no vale nada: +2 sobre la logística (tanda 11) y entre −2 y +12
+sobre los árboles (tanda 12).
+
+La prueba está en que **G recupera casi exactamente lo que quitar los umbrales
+destruye**: 283 → 388 contra los 385 del modelo que sí los tiene. No es que el
+bloque agregue información nueva; es que vuelve a meter la que se había sacado.
+
+Vale anotar un matiz, sin sobreleerlo: sin umbrales y con bloque (527) queda
+apenas por encima de con umbrales y sin bloque (515), y las dos diferencias
+contra 519 están dentro de lo que la regla 9 no deja reportar. La lectura
+prudente es que **la información es la misma y la representación casi no
+importa**; la lectura tentadora —que el cociente es mejor que los números
+crudos para un árbol— necesitaría cinco semillas antes de escribirse.
+
+## Veredicto de la línea U
+
+**El banco queda explicado en su mecanismo.** La distancia de 127 inicios es, en
+su mayor parte, las siete columnas de umbral que el `features.csv` del replay no
+traía: quitarlas lleva el modelo de 515 a 411, y los 23 que faltan para los 388
+del banco caben de sobra en las otras diferencias del `features.csv`, que son
+muchas más que las siete.
+
+**Y la línea G queda cerrada, con explicación.** No se cierra por no reproducir:
+se cierra porque **se entiende qué medía**. G aporta cuando el modelo es ciego al
+umbral y no aporta cuando no lo es. La tanda 5 y la tanda 7 midieron bien sobre
+un modelo ciego; lo que no era válido era extrapolar ese aporte a un modelo que
+ve los umbrales, y el contrato canónico del pipeline los ve.
+
+Consecuencia directa para el informe: **la configuración declarada vigente tras
+la tanda 5 —el modelo con el bloque G— es equivalente a darle al modelo las
+columnas de umbral que el canon ya tiene.** No hay nada que portar. Lo que hay
+que reportar es el modelo canónico sin bloque, y entre los medidos el mejor es
+la logística sin clima.
+
+## Qué quedó del orden anterior
+
+
+
 
 Quedan dos diferencias: los insumos (29 variables sin clima contra las 33 del
 contrato) y el reparto de alertas (cupo mensual contra volumen igualado).
