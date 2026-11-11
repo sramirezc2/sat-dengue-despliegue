@@ -4,7 +4,7 @@
 > resumen y el enlace quedan en [la bitácora principal](../bitacora-experimental.md),
 > sección 5, cuando la tanda cierre.
 >
-> Estado: **preinscrita, sin correr.** Se corre sobre la base común del
+> Estado: **cerrada** el 11 de noviembre de 2026. Se corre sobre la base común del
 > retroanálisis: `canonical.mode=approved`, calendario y departamentos de
 > `parameters_retroanalisis.yml` sin tocar, `conjunto.csv` reportado.
 
@@ -55,3 +55,9 @@ inicios por año; ningún año con menos de 30 inicios decide nada (regla 4).
 No decide sobre la meta del contrato ni registra nada en la fábrica. Es
 exploración sobre la base común; lo que sobreviva se propone como experimento
 registrado.
+
+## Resultado: sin efecto
+
+Contra la logística con clima, el punto de rocío × Meta queda en −4 y −1; contra la
+mínima con clima, en −2 y −1 (tablas completas en la tanda 48, misma corrida). El
+modelo único ya usa el clima donde sirve; un término propio para Meta no agrega.

@@ -1996,9 +1996,9 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | BA. La curva de presupuesto completa | **Leída** en la tanda 45: en T+2 el modelo pasa la barra desde el 10 %; en T+1, desde el 20 % con clima y el 25 % sin clima |
 | BB. Los inicios que nadie anticipa | **Leída** en la tanda 46: la mitad de los inicios no los anticipa nadie y la mitad de esos arranca con cero casos; el modelo gana sobre todo inicios desde cero casos |
 | BC. En qué meses del año gana el modelo | **Leída** en la tanda 47: en T+2 gana en todos los trimestres, más en el primer semestre; en T+1 empata en enero-marzo |
-| BD. El clima de los meses anteriores | Preinscrita para la tanda 48 |
-| BE. El punto de rocío distinto en Meta | Preinscrita para la tanda 49 |
-| BF. Combinar lo que sumó | Preinscrita para la tanda 50, con la regla de selección escrita antes de ver las tandas que la alimentan |
+| BD. El clima de los meses anteriores | **Cerrada** en la tanda 48: sin clima, los rezagos suman +14 en T+1 (como el clima del mes); sobre el clima no agregan nada |
+| BE. El punto de rocío distinto en Meta | **Cerrada** en la tanda 49: sin efecto (−4 y −1) |
+| BF. Combinar lo que sumó | **Cerrada** en la tanda 50: solo pasaron los rezagos de clima, y sobre el clima no suman; la configuración que queda es la logística con clima |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
