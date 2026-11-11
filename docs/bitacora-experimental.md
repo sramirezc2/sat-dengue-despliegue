@@ -1972,7 +1972,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AA. Lectura por nivel de transmisión del año | **Leída** en la tanda 19: la ventaja de la logística en T+1 es igual en años altos y bajos; la de la mínima y la de XGBoost está en los años altos; en T+2 la ventaja es mayor en años bajos |
 | AB. Ajustes de XGBoost sobre la base común | Preinscrita para la tanda 20 |
 | AC. Ventana de entrenamiento móvil | **Cerrada** en la tanda 21: ninguna ventana supera a la expansiva; la de 3 años empeora |
-| AD. Qué parte del clima aporta | Preinscrita para la tanda 22 |
+| AD. Qué parte del clima aporta | **Cerrada** en la tanda 22: ninguna forma del clima cambia más de 4 inicios; sobre la mínima el clima suma +15 en T+1, seis años a favor |
 | AE. Ensambles entre logísticas | **Cerrada** en la tanda 23: el ensamble queda entre sus componentes, sin superar a la logística con clima |
 | AF. El mes como ciclo en la logística | Preinscrita para la tanda 24 |
 | AG. Lectura por departamento | **Leída** en la tanda 25: en T+1 la ventaja de la logística es de Tolima (+22) y empata en Meta (+2); con clima gana en Meta (+16) |
