@@ -2,7 +2,8 @@
 
 Para cada receta contra la de referencia y cada horizonte, ambas emiten en cada mes de origen
 el mismo número de alertas: el del canal condicionado y presupuestos fijos del 5, 10 y 20 % de
-los 76 municipios del mes (sección 0.1; antes de las 23:00 eran filas elegibles). Diferencia de inicios detectados con IC 95 % por bootstrap de
+los 76 municipios del mes (sección 0.1; antes de las 23:00 eran filas elegibles).
+Diferencia de inicios detectados con IC 95 % por bootstrap de
 municipios (el mismo de validar_candidato), carga por 100 municipio-mes y detalle por año.
 Uso: python tools/noche/comparar.py <carpeta> <referencia> [receta ...]  (sin recetas: todas)
 Lee también resumen_ensambles/predicciones_ensambles.csv si existen.
