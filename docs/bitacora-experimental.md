@@ -1967,6 +1967,28 @@ razonamiento sobre el reparto de alertas quedó corregido en el mismo archivo
 tras leer `top_cupo`: el banco concentra más que el pipeline, no menos, así que
 el reparto predecía el signo contrario y no podía explicar nada.
 
+### Tandas 55 a 93 — Búsqueda declarada con confirmación reservada
+
+Preinscripción del 11 de noviembre de 2026, en
+[`bitacora/preinscripcion-tandas-55-a-93.md`](bitacora/preinscripcion-tandas-55-a-93.md).
+Arranca en la 55 porque las tandas 52 a 54 ya estaban preinscritas.
+
+Treinta y nueve configuraciones en seis familias, apuntadas a la única
+pregunta que queda abierta: si alguna supera al canal condicionado por la
+barra de la sección 0.3. Lo que la hace distinta de las tandas anteriores es
+que **no es confirmatoria**: su producto es una lista ordenada de candidatas y
+el número de configuraciones probadas, no un veredicto.
+
+Con treinta y nueve pruebas y un intervalo del 95 %, alrededor de dos pasan la
+barra por azar aunque ninguna sirva. Por eso la búsqueda corre con orígenes
+hasta **2022-12** y **2023 y 2024 quedan reservados**: las candidatas que pasen
+se miden una sola vez sobre esos dos años, y ese resultado es el que va al
+informe. La reserva no se sostiene con disciplina sino en el arnés local, que
+fuerza el corte y aborta si alguien intenta abrirlo sin declararlo.
+
+El informe reportará las treinta y nueve, pasen o no. Si ninguna pasa, el
+veredicto es el que ya tiene redactado la sección 0.4.
+
 ## 6. Estado de las líneas de trabajo
 
 | Línea | Estado |
@@ -2032,6 +2054,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | BH. El clima sobre las variantes de la mínima | Preinscrita para la tanda 52 |
 | BI. El clima con regularización más fuerte | Preinscrita para la tanda 53 |
 | BJ. XGBoost de profundidad 2 sin clima, con cinco semillas | Preinscrita para la tanda 54 |
+| BK a CW. Búsqueda declarada en seis familias | Preinscritas para las tandas 55 a 93; reparto del presupuesto, reglas desplegables, estratificación, vecindad, robustez y controles negativos |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
