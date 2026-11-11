@@ -4,7 +4,7 @@
 > resumen y el enlace quedan en [la bitácora principal](../bitacora-experimental.md),
 > sección 5, cuando la tanda cierre.
 >
-> Línea reclamada por Stevan. Estado: **preinscrita, sin correr.**
+> Línea reclamada por Stevan. Estado: **corrida 1 cerrada**; ver Resultados.
 
 ## El problema que hay que resolver
 
@@ -99,5 +99,58 @@ a punto de usar esa coincidencia como si lo fuera.
 
 ## Resultados
 
-Pendiente. Esta sección se llena cuando la corrida termine, sin tocar nada de lo
-anterior.
+> Estado: **corrida 1 cerrada. La hipótesis se rechaza por su propio criterio.**
+
+Mismas filas que las tandas 11 y 12 —7 612 en T+1 y 7 572 en T+2—, cero
+orígenes omitidos, mismo panel y mismo calendario. Lo único que cambió es la
+cadencia.
+
+**El brazo sin bloque, en T+1 a 1 866 alertas: 515 con cadencia mensual, 520 con
+cadencia anual.** El criterio declarado era bajar a 452 o menos para explicar la
+distancia, y a 483 o más para no explicarla. No solo no bajó: **subió**, que es
+exactamente la condición de fracaso que esta preinscripción había escrito.
+
+Al presupuesto de cada línea base, T+1, inicios detectados:
+
+| Brazo | Canal P75 (315) | Condicionado (817) | Ajustado (1 128) |
+| --- | --- | --- | --- |
+| Sin bloque, mensual | 160 | 328 | 385 |
+| Sin bloque, anual | 156 | 325 | 376 |
+| Con bloque, mensual | 169 | 340 | 391 |
+| Con bloque, anual | 174 | 337 | 388 |
+
+En T+2 el patrón es el mismo: sin bloque pasa de 106, 242 y 243 a 113, 241 y
+242. Nada se mueve más allá del ruido, y lo poco que se mueve va en los dos
+sentidos.
+
+**Veredicto declarado: la cadencia no explica nada de los 127 inicios.** Siete
+reentrenamientos al año producen prácticamente el mismo modelo que ochenta y
+dos. Eso es un hallazgo por sí solo: la ventaja del retroanálisis sobre el banco
+no viene de mirar más veces.
+
+**Y el bloque G sigue sin reaparecer.** Bajo cadencia anual suma +12 inicios al
+presupuesto del canal condicionado y +10 a 1 866 alertas, contra los **32 o más
+con cota inferior sobre cero** que esta preinscripción exigía. Es el mismo orden
+de magnitud que midió la tanda 12 bajo cadencia mensual.
+
+## Qué sigue, y un cambio de orden declarado antes de correr
+
+Quedan dos diferencias: los insumos (29 variables sin clima contra las 33 del
+contrato) y el reparto de alertas (cupo mensual contra volumen igualado).
+
+**Se cambia el orden declarado en esta preinscripción, y la razón se escribe
+antes de medir:** la siguiente corrida es el **reparto de alertas**, no los
+insumos. El motivo es mecánico. El cupo mensual del banco obliga a repartir las
+alertas parejo entre los doce meses; el retroanálisis deja que el umbral las
+concentre donde la probabilidad es alta, que es justamente donde el brote está
+ocurriendo. Un instrumento que gasta el mismo número de alertas en un mes de
+enero tranquilo que en el pico de la epidemia tiene que detectar menos inicios,
+y esa pérdida crece con lo estacional que sea el fenómeno. Después de la tanda 6
+sabemos que este lo es bastante.
+
+Criterio, declarado igual que el anterior: el reparto explica la distancia si
+imponer el cupo mensual baja el brazo sin bloque de 515 a **452 o menos** en
+T+1 a 1 866 alertas; no la explica si queda en **483 o más**; en medio es
+parcial. Si tampoco la explica, quedan los insumos, y si los insumos tampoco,
+hay que volver a leer el script del banco buscando una cuarta diferencia que no
+vimos.
