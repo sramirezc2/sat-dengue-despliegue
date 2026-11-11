@@ -1969,7 +1969,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | X. Regularización y escala log1p de la logística | **Cerrada** en la tanda 16: C ≥ 1 no cambia nada; sin log1p pierde 43 inicios en T+1 y G recupera la mayor parte, lo que confirma el mecanismo de la tanda 11 |
 | Y. Versiones reducidas de la logística | **Aceptada** en la tanda 17: la mínima de cinco variables no pierde más de 5 puntos en ningún horizonte (−8 y −3 inicios) |
 | Z. Entrenar con todo el país, evaluar en Tolima y Meta | Preinscrita para la tanda 18 |
-| AA. Lectura por nivel de transmisión del año | Preinscrita para la tanda 19 |
+| AA. Lectura por nivel de transmisión del año | **Leída** en la tanda 19: la ventaja de la logística en T+1 es igual en años altos y bajos; la de la mínima y la de XGBoost está en los años altos; en T+2 la ventaja es mayor en años bajos |
 | AB. Ajustes de XGBoost sobre la base común | Preinscrita para la tanda 20 |
 | AC. Ventana de entrenamiento móvil | **Cerrada** en la tanda 21: ninguna ventana supera a la expansiva; la de 3 años empeora |
 | AD. Qué parte del clima aporta | Preinscrita para la tanda 22 |
