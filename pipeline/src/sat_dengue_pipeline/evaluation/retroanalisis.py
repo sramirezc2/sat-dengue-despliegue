@@ -112,6 +112,7 @@ def predicciones_rolling(
     primer_entrenamiento: str = TRAIN_FLOOR,
     ventana_anios: int | None = None,
     excluir_anios: list | None = None,
+    entrenar_departamentos: list | None = None,
 ) -> tuple[pd.DataFrame, list[dict[str, str]], dict[str, int]]:
     """Producir predicciones fuera de muestra reentrenando en cada mes de origen.
 
@@ -129,6 +130,8 @@ def predicciones_rolling(
             indicados (sin bajar del piso); si no, la ventana es expansiva.
         excluir_anios: Años objetivo que no entran al entrenamiento (siguen
             evaluándose).
+        entrenar_departamentos: Si se declara, solo esos departamentos entran al
+            entrenamiento; los demás se predicen sin haber entrenado con ellos.
 
     Returns:
         Predicciones del arnés, la lista de meses omitidos con su motivo y el
@@ -151,6 +154,9 @@ def predicciones_rolling(
         anio = data.keys.target_period.str[:4]
         y = data.y.astype("Int64").mask(anio.isin([str(a) for a in excluir_anios]))
         data = dataclasses.replace(data, y=y)
+    if entrenar_departamentos:
+        fuera = ~data.keys.municipality_code.str[:2].isin([str(d) for d in entrenar_departamentos])
+        data = dataclasses.replace(data, y=data.y.astype("Int64").mask(fuera.to_numpy()))
     spec = adapter_spec(config)
     registry = ModelRegistry()
     if (spec.family, spec.version) not in ADAPTERS:

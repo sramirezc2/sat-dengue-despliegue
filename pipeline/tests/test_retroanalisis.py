@@ -266,3 +266,17 @@ def test_excluir_anios_no_cambia_las_filas(tmp_path, monkeypatch) -> None:
     sin = pd.read_csv(salida)
     claves = ["municipality_code", "origin_period", "target_period"]
     assert sin[claves].equals(base[claves])
+
+
+def test_entrenar_departamentos_no_cambia_las_filas(tmp_path, monkeypatch) -> None:
+    """Entrenar solo con un departamento no cambia qué filas se predicen."""
+    table, schema = build_table(make_panel())
+    codigo = str(table.department_code.iloc[0])
+    monkeypatch.setattr(nodos, "load_canonical", lambda _: (table, schema))
+    monkeypatch.chdir(tmp_path)
+    salida = tmp_path / "data/prueba-retroanalisis/predicciones.csv"
+    retroanalisis(object(), params_artificiales(horizontes=[1]))
+    base = pd.read_csv(salida)
+    retroanalisis(object(), params_artificiales(horizontes=[1], entrenar_departamentos=[codigo]))
+    claves = ["municipality_code", "origin_period", "target_period"]
+    assert pd.read_csv(salida)[claves].equals(base[claves])

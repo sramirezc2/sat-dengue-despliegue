@@ -132,6 +132,7 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
                 piso,
                 params.get("ventana_anios"),
                 params.get("excluir_entrenamiento"),
+                params.get("entrenar_departamentos"),
             )
             etiquetas = {"horizonte": h, "receta": receta}
             if nacional is not None:
