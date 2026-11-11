@@ -1994,6 +1994,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AY. Transferir el modelo de un departamento al otro | Preinscrita para la tanda 43 |
 | AZ. Todas las recetas al presupuesto de referencia | **Leída** en la tanda 44: al 10 %, en T+2 pasan 25 de 36 recetas, todas las logísticas con log1p; en T+1 ninguna |
 | BA. La curva de presupuesto completa | **Leída** en la tanda 45: en T+2 el modelo pasa la barra desde el 10 %; en T+1, desde el 20 % con clima y el 25 % sin clima |
+| BB. Los inicios que nadie anticipa | Preinscrita para la tanda 46 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
