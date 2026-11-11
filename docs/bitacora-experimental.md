@@ -1967,11 +1967,15 @@ razonamiento sobre el reparto de alertas quedó corregido en el mismo archivo
 tras leer `top_cupo`: el banco concentra más que el pipeline, no menos, así que
 el reparto predecía el signo contrario y no podía explicar nada.
 
-### Tandas 55 a 93 — Búsqueda declarada con confirmación reservada
+### Tandas 94 a 132 — Búsqueda declarada con confirmación reservada
 
 Preinscripción del 11 de noviembre de 2026, en
-[`bitacora/preinscripcion-tandas-55-a-93.md`](bitacora/preinscripcion-tandas-55-a-93.md).
-Arranca en la 55 porque las tandas 52 a 54 ya estaban preinscritas.
+[`bitacora/preinscripcion-tandas-94-a-132.md`](bitacora/preinscripcion-tandas-94-a-132.md),
+con el resultado en
+[`bitacora/tandas-94-a-132-busqueda.md`](bitacora/tandas-94-a-132-busqueda.md).
+Se preinscribió en 55-93 y se corrió a 94-132 el mismo día, al cerrarse las
+tandas 55 a 57 sobre ese rango; queda reservado 58-93 (BN a CX) para el resto
+del equipo.
 
 Treinta y nueve configuraciones en seis familias, apuntadas a la única
 pregunta que queda abierta: si alguna supera al canal condicionado por la
@@ -2057,7 +2061,7 @@ veredicto es el que ya tiene redactado la sección 0.4.
 | BK. Ensamble de dos modelos buenos y distintos | **Cerrada** en la tanda 55: queda por debajo de la logística con clima en las cinco semillas (−3 a −6 en T+1, −4 a −10 en T+2) |
 | BL. Otros síndromes febriles | **Cerrada** en la tanda 56: sin efecto (−1 y −1) |
 | BM. Los cinco vecinos más cercanos | **Cerrada** en la tanda 57: sin efecto en el total (−5 y −3), aunque en T+1 anticipa 8 inicios más desde cero casos |
-| BK a CW. Búsqueda declarada en seis familias | Preinscritas para las tandas 55 a 93; reparto del presupuesto, reglas desplegables, estratificación, vecindad, robustez y controles negativos |
+| CY a EK. Búsqueda declarada en seis familias | **23 de 39 corridas** el 11 de noviembre: ni el reparto del presupuesto ni la estratificación mejoran el modelo único; DG y DH pasan la búsqueda y **no confirman**; **DJ —los dos horizontes en una sola lista— sí confirma en la reserva, +7,5 pp (IC 1,2 a 14,3)**. El techo (tanda 131) dice que al 10 % hay +41,9 pp disponibles en T+1 y +55,2 en T+2. Ver [el resultado](bitacora/tandas-94-a-132-busqueda.md) |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
