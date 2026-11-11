@@ -1989,7 +1989,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AT. El canal como ranking, con cupo fijo por mes | **Cerrada** en la tanda 38: es una línea base más débil que el condicionado; contra ella el modelo pasa la barra en T+2 y, con clima, en T+1 |
 | AU. Qué aprende la logística con clima | **Leída** en la tanda 39: el modelo es el margen en escala log; del clima pesa el punto de rocío (+0,42 en T+1), con signo positivo |
 | AV. El punto de rocío como único clima | Preinscrita para la tanda 40 |
-| AW. Reglas desplegables: umbrales fijados con el año anterior | Preinscrita para la tanda 41 |
+| AW. Reglas desplegables: umbrales fijados con el año anterior | **Cerrada** en la tanda 41: con umbrales fijados el año anterior, el modelo detecta más con menos alertas (T+2 con clima: 169 con 557 frente a 141 con 601) |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
