@@ -16,7 +16,10 @@ if sys.argv[3:]:
 nombres = {"canal_fuera_exceso": "condicionado", "0.05": "5 %", "0.1": "10 %", "0.2": "20 %"}
 for h, g in c.groupby("horizonte"):
     ini = int(g.inicios.iloc[0])
-    print(f"\n| T+{h}, {ini} inicios | Presupuesto | Alertas | Referencia | Receta | Diferencia (IC 95 %) | pp | Carga ref → receta | Años a favor |")
+    print(
+        f"\n| T+{h}, {ini} inicios | Presupuesto | Alertas | Referencia | Receta "
+        "| Diferencia (IC 95 %) | pp | Carga ref → receta | Años a favor |"
+    )
     print("| --- | --- | --- | --- | --- | --- | --- | --- | --- |")
     for _, r in g.iterrows():
         anios = ""
@@ -26,6 +29,7 @@ for h, g in c.groupby("horizonte"):
         p = nombres.get(str(r.presupuesto), str(r.presupuesto))
         print(
             f"| {r.receta} | {p} | {int(r.alertas)} | {int(r.ref_detectados)} | "
-            f"{int(r.receta_detectados)} | {int(r.diferencia):+d} ({r.ic95_lo:.0f} a {r.ic95_hi:.0f}) | "
+            f"{int(r.receta_detectados)} | {int(r.diferencia):+d} "
+            f"({r.ic95_lo:.0f} a {r.ic95_hi:.0f}) | "
             f"{r.dif_pp:+.1f} | {r.ref_carga_100mm:.2f} → {r.receta_carga_100mm:.2f} | {anios} |"
         )

@@ -43,22 +43,22 @@ for receta in sys.argv[2:]:
         razon = (d.casos_t / (d.p75_objetivo + 1)).values
         a_c, a_m = top(d, razon), top(d, d.score.values)
         ini = d.inicio.values == 1
-        I = int(ini.sum())
+        n_inicios = int(ini.sum())
         dif = (a_m - a_c) * ini
         s = pd.Series(dif, index=d.index).groupby(d.origen).sum().values
         lo, hi = np.percentile(rng.choice(s, size=(2000, len(s))).sum(axis=1), [2.5, 97.5])
         mc, mm = va.metricas(a_c, d), va.metricas(a_m, d)
-        dpp = 100 * dif.sum() / I
+        dpp = 100 * dif.sum() / n_inicios
         filas.append(
             {
                 "receta": receta,
                 "horizonte": h,
                 "alertas": int(a_c.sum()),
-                "inicios": I,
+                "inicios": n_inicios,
                 "canal_ranking": mc["inicios_detectados"],
                 "modelo": mm["inicios_detectados"],
                 "dif_pp": round(dpp, 1),
-                "ic_mes_pp": f"{100 * lo / I:.1f} a {100 * hi / I:.1f}",
+                "ic_mes_pp": f"{100 * lo / n_inicios:.1f} a {100 * hi / n_inicios:.1f}",
                 "carga_canal": round(mc["carga_100mm"], 2),
                 "carga_modelo": round(mm["carga_100mm"], 2),
                 "barra_5pp": "CUMPLE" if dpp >= 5 and lo > 0 else "NO",

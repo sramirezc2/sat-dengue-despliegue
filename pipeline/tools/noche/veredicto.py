@@ -64,8 +64,8 @@ for receta in sys.argv[2:]:
             lo_m, hi_m = boot(d, dif, "municipio")
             lo_o, hi_o = boot(d, dif, "origen")
             lo_c, hi_c = boot(d, fa, "origen")
-            I = mc["inicios"]
-            dpp, lopp = 100 * dif.sum() / I, 100 * lo_o / I
+            n_inicios = mc["inicios"]
+            dpp, lopp = 100 * dif.sum() / n_inicios, 100 * lo_o / n_inicios
             dcarga = mm["carga_100mm"] - mc["carga_100mm"]
             filas.append(
                 {
@@ -78,12 +78,12 @@ for receta in sys.argv[2:]:
                     "alertas_mes": round(a_c.sum() / meses, 1),
                     "fraccion_real": round(a_c.sum() / total, 3),
                     "filas_evaluadas": n,
-                    "inicios": I,
+                    "inicios": n_inicios,
                     "canal": mc["inicios_detectados"],
                     "modelo": mm["inicios_detectados"],
                     "dif_pp": round(dpp, 1),
-                    "ic_mun_pp": f"{100 * lo_m / I:.1f} a {100 * hi_m / I:.1f}",
-                    "ic_mes_pp": f"{lopp:.1f} a {100 * hi_o / I:.1f}",
+                    "ic_mun_pp": f"{100 * lo_m / n_inicios:.1f} a {100 * hi_m / n_inicios:.1f}",
+                    "ic_mes_pp": f"{lopp:.1f} a {100 * hi_o / n_inicios:.1f}",
                     "dif_carga": round(dcarga, 2),
                     "ic_carga": f"{lo_c:.2f} a {hi_c:.2f}",
                     "A": "CUMPLE" if lo_o > 0 else "NO",

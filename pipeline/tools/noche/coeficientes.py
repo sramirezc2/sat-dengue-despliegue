@@ -37,7 +37,9 @@ for ruta in sys.argv[1:]:
     config = yaml.safe_load(Path(ruta).read_text(encoding="utf-8"))
     for h in (1, 2):
         ultimo = {1: "2024-10", 2: "2024-09"}[h]
-        preds, omit, _ = ra.predicciones_rolling(table, schema, config, h, ultimo, "2024-12", "2012-01")
+        preds, omit, _ = ra.predicciones_rolling(
+            table, schema, config, h, ultimo, "2024-12", "2012-01"
+        )
         print(len(preds), omit[:1])
         coef = instancias[-1].coeficientes()
         for col, v in coef.items():

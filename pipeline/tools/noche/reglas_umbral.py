@@ -56,6 +56,8 @@ for receta in sys.argv[2:]:
                 )
 out = pd.DataFrame(filas)
 out.to_csv(carpeta / "reglas_umbral.csv", index=False)
-tot = out.groupby(["receta", "horizonte", "metodo"])[["alertas", "inicios", "detectados", "falsas"]].sum()
+tot = out.groupby(["receta", "horizonte", "metodo"])[
+    ["alertas", "inicios", "detectados", "falsas"]
+].sum()
 tot["falsas_por_acierto"] = (tot.falsas / tot.detectados).round(2)
 print(tot.to_string())

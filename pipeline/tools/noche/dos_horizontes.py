@@ -42,12 +42,16 @@ def alertas(receta, h):
 filas = []
 for receta in sys.argv[2:]:
     d1, d2 = alertas(receta, 1), alertas(receta, 2)
-    m = d1[d1.inicio == 1][["municipio", "objetivo_mes", "canal", "modelo"]].merge(
-        d2[["municipio", "objetivo_mes", "canal", "modelo"]],
-        on=["municipio", "objetivo_mes"],
-        how="left",
-        suffixes=("_1", "_2"),
-    ).fillna(0)
+    m = (
+        d1[d1.inicio == 1][["municipio", "objetivo_mes", "canal", "modelo"]]
+        .merge(
+            d2[["municipio", "objetivo_mes", "canal", "modelo"]],
+            on=["municipio", "objetivo_mes"],
+            how="left",
+            suffixes=("_1", "_2"),
+        )
+        .fillna(0)
+    )
     for quien in ("canal", "modelo"):
         a1, a2 = m[f"{quien}_1"] == 1, m[f"{quien}_2"] == 1
         filas.append(

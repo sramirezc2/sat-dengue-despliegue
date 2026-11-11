@@ -71,8 +71,11 @@ for receta in sys.argv[2:]:
             f2[top] = 1
             a_h[i] = llenar(g, f2, k)
         ini = d.inicio.values == 1
-        det = {n: int((a * ini).sum()) for n, a in (("canal", a_c), ("modelo", a_m), ("seguras", a_s), ("mitad", a_h))}
-        I = int(ini.sum())
+        det = {
+            n: int((a * ini).sum())
+            for n, a in (("canal", a_c), ("modelo", a_m), ("seguras", a_s), ("mitad", a_h))
+        }
+        n_inicios = int(ini.sum())
         for n, a in (("seguras", a_s), ("mitad", a_h)):
             lo, hi = ic(d, (a - a_m) * ini)
             lc, hc = ic(d, (a - a_c) * ini)
@@ -81,15 +84,15 @@ for receta in sys.argv[2:]:
                     "receta": receta,
                     "horizonte": h,
                     "regla": n,
-                    "inicios": I,
+                    "inicios": n_inicios,
                     "alertas": int(a.sum()),
                     "canal": det["canal"],
                     "modelo": det["modelo"],
                     "regla_det": det[n],
-                    "vs_modelo_pp": round(100 * (det[n] - det["modelo"]) / I, 1),
-                    "ic_vs_modelo_pp": f"{100 * lo / I:.1f} a {100 * hi / I:.1f}",
-                    "vs_canal_pp": round(100 * (det[n] - det["canal"]) / I, 1),
-                    "ic_vs_canal_pp": f"{100 * lc / I:.1f} a {100 * hc / I:.1f}",
+                    "vs_modelo_pp": round(100 * (det[n] - det["modelo"]) / n_inicios, 1),
+                    "ic_vs_modelo_pp": f"{100 * lo / n_inicios:.1f} a {100 * hi / n_inicios:.1f}",
+                    "vs_canal_pp": round(100 * (det[n] - det["canal"]) / n_inicios, 1),
+                    "ic_vs_canal_pp": f"{100 * lc / n_inicios:.1f} a {100 * hc / n_inicios:.1f}",
                 }
             )
 out = pd.DataFrame(filas)
