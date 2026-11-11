@@ -25,12 +25,14 @@ import pandas as pd
 
 from sat_dengue_pipeline.domain.calendar import add_months
 from sat_dengue_pipeline.domain.derived import DERIVED_COLUMNS, declared_derived
+from sat_dengue_pipeline.domain.febriles import febriles_features
 from sat_dengue_pipeline.domain.margin import (
     CLIMA_LAG_FUENTES,
     MARGIN_SOURCES,
     margin_features,
 )
 from sat_dengue_pipeline.domain.regional import regional_features
+from sat_dengue_pipeline.domain.vecinos import vecinos_features
 from sat_dengue_pipeline.experiments.rolling import (
     TRAIN_FLOOR,
     ExperimentData,
@@ -108,6 +110,11 @@ def bloques_derivados(
     regional = regional_features(table).reindex(claves)
     for columna in regional.columns:
         columnas[columna] = regional[columna].to_numpy()
+
+    for bloque in (febriles_features(table), vecinos_features(table)):
+        bloque = bloque.reindex(claves)
+        for columna in bloque.columns:
+            columnas[columna] = bloque[columna].to_numpy()
 
     return pd.DataFrame(
         {columna: columnas[columna] for columna in DERIVED_COLUMNS}, index=keys.index

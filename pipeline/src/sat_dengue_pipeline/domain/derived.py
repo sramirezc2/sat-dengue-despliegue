@@ -19,6 +19,7 @@ podía fallar nunca. Con `declared_derived` hay una definición y las guardas qu
 quedan son las que sí pueden saltar.
 """
 
+from .febriles import FEBRILES_COLUMNS
 from .margin import (
     CLIMA_LAG_COLUMNS,
     DEPTO_COLUMNS,
@@ -27,6 +28,7 @@ from .margin import (
     ROCIO_META_COLUMNS,
 )
 from .regional import REGIONAL_COLUMNS
+from .vecinos import VECINOS_COLUMNS
 
 #: Qué interruptor de la receta enciende cada bloque, en el orden en que sus
 #: columnas van al final de la matriz. Añadir un bloque es añadirlo aquí.
@@ -37,6 +39,8 @@ DERIVED_BLOCKS = (
     ("clima_rezagos", tuple(CLIMA_LAG_COLUMNS)),
     ("rocio_meta", tuple(ROCIO_META_COLUMNS)),
     ("variables_h", tuple(REGIONAL_COLUMNS)),
+    ("variables_febriles", tuple(FEBRILES_COLUMNS)),
+    ("variables_vecinos", tuple(VECINOS_COLUMNS)),
 )
 
 #: Orden canónico de todas las derivadas conocidas.
