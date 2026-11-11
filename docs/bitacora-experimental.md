@@ -1995,6 +1995,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AZ. Todas las recetas al presupuesto de referencia | **Leída** en la tanda 44: al 10 %, en T+2 pasan 25 de 36 recetas, todas las logísticas con log1p; en T+1 ninguna |
 | BA. La curva de presupuesto completa | **Leída** en la tanda 45: en T+2 el modelo pasa la barra desde el 10 %; en T+1, desde el 20 % con clima y el 25 % sin clima |
 | BB. Los inicios que nadie anticipa | **Leída** en la tanda 46: la mitad de los inicios no los anticipa nadie y la mitad de esos arranca con cero casos; el modelo gana sobre todo inicios desde cero casos |
+| BC. En qué meses del año gana el modelo | Preinscrita para la tanda 47 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
 tanda 5: con el margen al umbral, G detecta más inicios y más barato en los tres
