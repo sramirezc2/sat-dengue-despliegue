@@ -12,7 +12,7 @@
 
 Ninguna. Es una tabla de referencia para el informe: el veredicto de la sección 0
 al 10 % (tanda 33) para todas las recetas corridas sobre la base común esta noche,
-con la regla 3.3 de reportar todas las configuraciones probadas y no solo las que
+con la regla 4.3 de reportar todas las configuraciones probadas y no solo las que
 funcionaron.
 
 ## Qué se corre
