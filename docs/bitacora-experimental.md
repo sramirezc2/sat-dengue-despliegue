@@ -1977,7 +1977,7 @@ el reparto predecía el signo contrario y no podía explicar nada.
 | AF. El mes como ciclo en la logística | **Cerrada** en la tanda 24: sin efecto, con y sin clima |
 | AG. Lectura por departamento | **Leída** en la tanda 25: en T+1 la ventaja de la logística es de Tolima (+22) y empata en Meta (+2); con clima gana en Meta (+16) |
 | AH. Un modelo por departamento, con y sin clima | **Cerrada** en la tanda 26: empeora; con clima pierde 18 inicios en T+2 (IC −31 a −5) y Meta pierde la ganancia del clima |
-| AI. Un solo modelo con indicador de departamento | Preinscrita para la tanda 27 |
+| AI. Un solo modelo con indicador de departamento | **Cerrada** en la tanda 27: sin efecto (±4 inicios) |
 | AJ. Excluir 2020 del entrenamiento | Preinscrita para la tanda 28 |
 | AM. XGBoost de profundidad 2 con cinco semillas | Preinscrita para la tanda 31 |
 | AN. El clima con otro remuestreo | **Cerrada** en la tanda 32: con bloques de mes el clima en T+1 excluye el cero (+15, IC 1 a 30 sobre la mínima), unos 2 puntos, lejos de la barra |
