@@ -516,6 +516,7 @@ scientific_evaluation:
     sha256: f701ae4a6731d6a40dd0b7e03a3a50f6f07e9b8154d25091b984f91834e6b97b
   readings:
   - primary
+  - secondary_t2
   seeds:
   - 7
   - 13

@@ -5,9 +5,9 @@ title: Historia reciente de 36 meses frente a pesos uniformes en logística con 
 experiment_type: scientific
 status: PROPOSED
 protocol: docs/experiments/EXP004/SPECIFICATION.md
-protocol_sha256: 785bd9e16e36cc219719c13d514e4d41e2c9a1e3c3955a0cc96e99843e16599d
+protocol_sha256: ee40e74fa0dbf7bdd150340c9103961ef9fe0300c87743faab1c3337aa6ab2fd
 configuration: pipeline/conf/experiments/EXP004.yml
-configuration_sha256: 87860f2f66965fa20cba8647cfa7b120aecaac26df3773b077f0e9f4547c008f
+configuration_sha256: ed55aedb9259ae253863fd97cf255d48b56cba2a15854e4746e666df32e7132f
 pipeline: experiment_run
 conclusions: docs/experiments/EXP004/CONCLUSIONS.md
 scientific_result: PENDING

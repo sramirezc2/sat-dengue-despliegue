@@ -1,6 +1,10 @@
 # EXP004 — Historia reciente frente a pesos uniformes
 
-Estado de preparación: **PROPOSED**, 11 de noviembre de 2026.
+Estado de preparación: **PROPOSED**, revisión R2 previa a aprobación,
+12 de noviembre de 2026 (propuesta inicial: 11 de noviembre).
+La persona solicitó añadir `secondary_t2` antes de
+congelar la receta; no se han ejecutado EXP004 ni su retroanálisis. La propuesta
+anterior y su recibo se conservan en Git y PREPARATION_VALIDATION.json.
 Autoridad científica: equipo SAT DENGUE. La receta requiere aprobación humana
 explícita; esta preinscripción no concede aprobación ni autoriza entrenamiento.
 
@@ -49,7 +53,9 @@ recibo; no se guardan pesos por fila ni modelos en Git o MLflow.
 
 Ambos brazos comparten release, canónico certificado, predictores y orden,
 preparación, filas, claves, etiquetas, horizontes, cinco roles, cortes, semillas,
-calibración, grillas, presupuesto y comparadores. La comparación usa únicamente
+calibración, grillas, presupuesto y comparadores **dentro de cada lectura**.
+Las lecturas primaria y secundaria tienen cohortes propias; no se exige igualdad
+entre ellas ni se mezclan sus denominadores. La comparación usa únicamente
 la población `common`; como ambos brazos tienen los mismos predictores no se
 repiten ajustes redundantes de una población nativa idéntica. Antes del primer
 fit se exigen X, claves y etiquetas productoras idénticos. Evaluation.y sigue
@@ -63,9 +69,13 @@ diferida; tras predecir se exigen claves y etiquetas de evaluación idénticas.
   El pipeline reconstruye y valida contra el certificado N=3 versionado de T27;
   no repite ni modifica la certificación histórica.
 - Entrenamiento y evaluación solo en Meta/Tolima (50/73, 76 municipios).
-- Cohorte primaria sin exceso observado en T; inicio H5 en T+h, con los estados
-  anterior/objetivo conocidos. T+2 usa T+1 solo para el desenlace posterior.
-  No se añade lectura secundaria ni se combina T+2 con T+1.
+- Lecturas obligatorias de esta receta: `primary` para T+1 y T+2, y
+  `secondary_t2` solo para T+2. En primaria se exige estado observado sin exceso
+  en T; en secundaria se incluyen ambos estados conocidos en T, con y sin
+  exceso, para modelo y comparadores. Cada lectura mantiene su soporte común
+  propio. El evento H5 no cambia: inicio T+2 = no exceso en T+1 y exceso en T+2.
+  T+1 se consulta solo para el desenlace posterior al freeze y las predicciones;
+  nunca selecciona filas, cupo, alertas ni ajuste en T. No se combina T+2 con T+1.
 - Ningún origen, objetivo, etiqueta, disponibilidad o transformación de 2025
   participa en aprendizaje, selección, ajuste o evaluación de EXP004.
 - Demora de etiqueta: un mes; embargo adicional: un mes en la fábrica. Son
@@ -77,7 +87,8 @@ diferida; tras predecir se exigen claves y etiquetas de evaluación idénticas.
 ## Cinco roles de la fábrica
 
 Siete cortes independientes por año objetivo Y, **Y=2018,…,2024**. Los intervalos
-son por objetivo e inclusivos; ambos horizontes usan el mismo calendario:
+son por objetivo e inclusivos; ambas lecturas y ambos horizontes usan el mismo
+calendario, aplicado sobre la cohorte propia de cada lectura:
 
 | Rol | Ventana objetivo |
 |---|---|
@@ -123,14 +134,26 @@ Se conservan C0 histórico sin cupo, persistencia C1, prevalencia y los controle
 negativos: ranking aleatorio al mismo presupuesto, alertar todo y canal inflado.
 Persistencia primaria es degenerada: B queda NO_EVALUABLE, causa
 DEGENERATE_PRIMARY_COHORT, sin atribuir victoria. A/C siguen siendo obligatorias.
+En `secondary_t2`, persistencia C1 = exceso observado en T puede ser informativa:
+B y la comparación de utilidad con persistencia son **obligatorias**. Se exige
+TP_modelo > TP_persistencia sobre las mismas claves. Si no hay alertas de
+persistencia en el soporte evaluado, B queda NO_EVALUABLE con causa
+NO_PERSISTENCE_ALERTS; esa comparación vacía no acredita éxito ni se elimina
+para favorecer el voto. B, su causa, obligatoriedad y base de decisión se
+conservan en celdas, cortes, semillas y recibo.
 
 Para contribuir a un resultado afirmativo del proyecto, **cada brazo** debe
 satisfacer ganancia de sensibilidad frente al canal condicionado **≥10 pp** y
 cota inferior **≥10 pp**; carga adicional de falsas de inicio y cota superior
-**≤5 por 100 municipio-mes**, A/C, soporte, presupuesto, controles negativos y
+**≤5 por 100 municipio-mes**, A/C en primaria y A/B/C en secundaria T+2,
+soporte, presupuesto, controles negativos y
 demás condiciones contractuales. C histórica mantiene margen de FAR de exceso
 ≤0,05. Se conserva la mayoría estricta de cortes utilizables (mínimo tres) y
 unanimidad de las cinco semillas. No se cuentan semillas como nuevos cortes.
+Se generan resúmenes separados para T+1 primario, T+2 primario y T+2 secundario,
+por brazo y territorio. No se mezclan sus cohortes, votos, intervalos o
+veredictos ni se elige a posteriori la lectura más favorable. Se derivan 140
+variantes y 210 ajustes: 140 primarios (dos horizontes) y 70 secundarios T+2.
 La evidencia exploratoria de EXP004 no cierra afirmativamente la pregunta de
 grado; faltan cohorte confirmatoria independiente y N=3 E2E de un finalista.
 
@@ -140,7 +163,7 @@ La pregunta de pesos se responde **frente al mismo modelo uniforme**, separada
 del contrato frente al canal. Estimando primario: sensibilidad de inicio de
 `recent_history_36m` menos `uniform_history`, en pp, al punto predeclarado, sobre
 las mismas claves/etiquetas. Se reportan N, I, TP, alertas, falsas, diferencia
-emparejada y su IC95 % por horizonte, semilla, corte, año y territorio.
+emparejada y su IC95 % por horizonte, **lectura**, semilla, corte, año y territorio.
 
 Se reporta además el agregado de los siete cortes predeclarados con bootstrap
 emparejado por mes objetivo, **2.000 réplicas, semilla 42**, sin sumar semillas
@@ -153,7 +176,8 @@ utilizables y diferencia positiva en mayoría estricta de esos cortes. Se
 reportan signos contrarios, empates, intervalos que incluyan cero y celdas no
 evaluables; no se ocultan. No se exige la ganancia histórica de 5 pp ni se usa
 como regla contractual. La evaluación del proyecto sigue exigiendo 10 pp y su
-cota inferior. T+2 se informa por separado y **no rescata T+1**.
+cota inferior. Ambas lecturas T+2 se informan por separado y **ninguna rescata
+T+1 ni sustituye un incumplimiento de la otra lectura**.
 
 El equipo asigna POSITIVE, NEGATIVE o INCONCLUSIVE al revisar la evidencia.
 El software y este documento no aprueban conclusiones, campeón o uso operativo.
@@ -175,7 +199,9 @@ umbral probabilístico, canal ajustado/condicionado elegido con el año previo,
 mismo volumen realizado por mes y bootstrap municipal descriptivo de 1.000
 réplicas. Ambos brazos comparten esas reglas. Es un diagnóstico adicional;
 **no sustituye la evaluación científica de la fábrica, no se mezcla con ella ni
-se le atribuye un veredicto contractual desde esos CSV**.
+se le atribuye un veredicto contractual desde esos CSV**. La lectura secundaria
+contractual T+2 y B se evalúan en la fábrica; este retroanálisis conserva su
+cohorte vigente y no se presenta como implementación de esa lectura secundaria.
 
 Comandos desde la raíz, solo después de aprobación humana de EXP004:
 
@@ -202,8 +228,9 @@ Un único intento aprobado; éxito técnico deja registro RUNNING/PENDING para l
 decisión científica humana. No publica ni selecciona campeón.
 
 Se preservan EXP001/EXP002, certificados, bitácora previa, recibos, recetas
-históricas y resultados publicados. La preinscripción por tanda es un archivo
-inmutable; los resultados se añadirán en otro archivo y se enlazarán sin editarla.
+históricas y resultados publicados. La preinscripción por tanda solo se ha revisado por solicitud humana antes de
+aprobación o resultados. Tras aprobarla es inmutable; los resultados se añadirán
+en otro archivo y se enlazarán sin editarla.
 Se preparará CONCLUSIONS.md tras las corridas, con decisión humana pendiente.
 
 ## Identidades congeladas
@@ -214,8 +241,8 @@ Se preparará CONCLUSIONS.md tras las corridas, con decisión humana pendiente.
 | `pipeline/conf/retroanalisis/noche/log_conclima.yml` | `7d67f0595cfdd990e331682ae581d4f49d1f74f83a107f4d9474540412443ec8` |
 | `pipeline/conf/releases/operational-raw-173d5856.json` | `846c72ecd2e641373d55b40e7a8e2b790ea02239b44cff08e412990bcdb404fe` |
 | `docs/evidence/task27/canonical-full-93ac27fd-certification.json` | `5c1d2adc0a7967be9ee5e3398b5541cf74963ed6f6b4ee94e6f4a4838a77a966` |
-| `pipeline/conf/experiments/EXP004.yml` | `87860f2f66965fa20cba8647cfa7b120aecaac26df3773b077f0e9f4547c008f` |
+| `pipeline/conf/experiments/EXP004.yml` | `ed55aedb9259ae253863fd97cf255d48b56cba2a15854e4746e666df32e7132f` |
 | `pipeline/conf/retroanalisis/EXP004_uniform_history.yml` | `2708be7132badb66ba169df12c96b7af7fa16a957d22d47ddff405e4b789c0c8` |
 | `pipeline/conf/retroanalisis/EXP004_recent_history_36m.yml` | `9fe505a6dd721a0177856b3b29eb5fd6531466e527ab4183b77273623d5d348a` |
 | `pipeline/conf/exp004/parameters_exp004.yml` | `68272b9c09747cf16a19bcf0b2e8a76a857c8e882ce70e6ccf97e4cf4d4008c2` |
-| `docs/bitacora/tanda-exp004-recencia.md` | `9281174418694d4b3bf8460b1327274017d1b02883c04ccb7e10088dd3b54fa9` |
+| `docs/bitacora/tanda-exp004-recencia.md` | `0a6a3d9b82121fc8d8742fe7c09ea54c2992a888d65a16594e8808c39977fe95` |

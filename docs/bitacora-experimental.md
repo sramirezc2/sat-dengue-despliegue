@@ -2007,4 +2007,7 @@ Preinscripción del 11 de noviembre de 2026 en
 [tanda-exp004-recencia.md](bitacora/tanda-exp004-recencia.md): logística con clima,
 pesos uniformes frente a recencia exponencial fija de 36 meses. Hipótesis ya
 explorada informalmente; receta PROPOSED y ejecución pendiente de aprobación
-humana. Resultados posteriores se documentarán aparte, sin editar la preinscripción.
+humana. Revisión R2 del 12 de noviembre, previa a aprobación: incorpora
+`secondary_t2`, con B
+obligatoria y resúmenes separados de la lectura primaria. Resultados posteriores
+se documentarán aparte, sin editar la preinscripción aprobada.

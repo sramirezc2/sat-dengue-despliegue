@@ -230,7 +230,7 @@ def test_logistic_scientific_e2e_records_weight_lineage_and_receipt(tmp_path, mo
     for key in ("predictors", "preparation", "candidate"):
         config[key] = reference[key]
     science = config["scientific_evaluation"]
-    science["readings"] = ["primary"]
+    science["readings"] = ["primary", "secondary_t2"]
     science["arms"] = [
         {"id": name, "predictors": config["predictors"], "training_weighting": policy}
         for name, policy in [("uniform", UNIFORM), ("recent", RECENT)]
@@ -266,7 +266,46 @@ def test_logistic_scientific_e2e_records_weight_lineage_and_receipt(tmp_path, mo
     assert receipt["scientific_evaluation"]["contract_status"] == "APPROVED"
     assert receipt["champion_status"] == "NOT_SELECTED"
     assert receipt["scientific_evaluation"]["scientific_conclusion"] == "NOT_APPROVED"
-    assert all(v["1"]["raw_latest_weight"] == 1 for v in receipt["training_weighting"].values())
+    assert all(
+        report["raw_latest_weight"] == 1
+        for horizons in receipt["training_weighting"].values()
+        for report in horizons.values()
+    )
+    science_receipt = receipt["scientific_evaluation"]
+    records = [
+        record
+        for name in science_receipt["records"]
+        for record in json.loads((folder / name).read_bytes())["records"]
+    ]
+    expected_views = {("primary", 1), ("primary", 2), ("secondary_t2", 2)}
+    assert {
+        (row["reading"], row["horizon"]) for row in science_receipt["summary"]
+    } == expected_views
+    assert {row["reading"] for row in records if row["kind"] == "paired_arm_difference"} == {
+        "primary",
+        "secondary_t2",
+    }
+    for row in science_receipt["summary"]:
+        primary = row["reading"] == "primary"
+        assert row["B"]["required_for_verdict"] is not primary
+        assert row["decision_basis"] == (
+            ["UTILIDAD_PROPUESTA", "A", "C"] if primary else ["UTILIDAD_PROPUESTA", "A", "B", "C"]
+        )
+    secondary = [
+        row for row in records if row["kind"] == "cell" and row["reading"] == "secondary_t2"
+    ]
+    assert secondary and all(not row["methods"]["persistence"]["degenerate"] for row in secondary)
+    assert any(row["B"]["status"] == "EVALUABLE" for row in secondary)
+    for row in secondary:
+        comparison = row["utility_persistence_comparison"]
+        assert row["B"]["required_for_verdict"] is True
+        if comparison["status"] == "EVALUABLE":
+            assert comparison["superior"] == (
+                row["methods"]["candidate"]["TP"] > row["methods"]["persistence"]["TP"]
+            )
+        else:
+            assert row["B"]["reason"] in {"NO_PERSISTENCE_ALERTS", "NO_ONSETS"}
+            assert row["UTILIDAD_PROPUESTA"] != "CUMPLE"
 
 
 def test_exp004_closed_recipe_and_reference_are_identical_except_weights() -> None:
@@ -276,7 +315,28 @@ def test_exp004_closed_recipe_and_reference_are_identical_except_weights() -> No
     for key in ("predictors", "predictor_availability", "preparation", "candidate"):
         assert config[key] == reference[key]
     effective = variants(validate_configuration(config))
-    assert len(effective) == 70 and sum(len(c["horizons"]) for _, c, _ in effective) == 140
+    assert config["scientific_evaluation"]["readings"] == ["primary", "secondary_t2"]
+    assert len(effective) == 140 and sum(len(c["horizons"]) for _, c, _ in effective) == 210
+    assert all(c["horizons"] == [2] for _, c, d in effective if d["reading"] == "secondary_t2")
+    assert sum(len(c["horizons"]) for _, c, d in effective if d["reading"] == "primary") == 140
+    assert sum(len(c["horizons"]) for _, c, d in effective if d["reading"] == "secondary_t2") == 70
+    groups = {}
+    for _, variant, dimensions in effective:
+        key = (dimensions["cut"], dimensions["seed"], dimensions["arm"])
+        groups.setdefault(key, {})[dimensions["reading"]] = variant
+    for readings in groups.values():
+        assert set(readings) == {"primary", "secondary_t2"}
+        for key in (
+            "roles_by_horizon",
+            "predictors",
+            "candidate",
+            "preparation",
+            "calibration",
+            "training_weighting",
+            "data",
+        ):
+            assert readings["primary"][key] == readings["secondary_t2"][key]
+
     assert config["scientific_evaluation"]["seeds"] == [7, 13, 31, 53, 101]
     for cut in config["scientific_evaluation"]["cuts"]:
         for roles in cut["roles_by_horizon"].values():
