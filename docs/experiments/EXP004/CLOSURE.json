@@ -1,0 +1,271 @@
+{
+  "branch": "feature/exp004-recency-36m",
+  "champion_status": "NOT_SELECTED",
+  "closure_operations": {
+    "HF_TOKEN_removed_from_command_processes": true,
+    "acquisition": false,
+    "canonical_build": false,
+    "hf_token_used": false,
+    "new_experiment_created": false,
+    "real_factory_runs": 0,
+    "real_retroanalysis_runs": 0,
+    "real_training_runs": 0,
+    "remote_actions": false,
+    "scope": "documentation_and_official_state_only"
+  },
+  "closure_status": "COMPLETED",
+  "cohort_and_temporal_evidence": {
+    "factory": "docs/experiments/EXP004/EXECUTION_AUDIT.json",
+    "factory_paired_models_horizons": 105,
+    "factory_roles_compared": 525,
+    "new_predictions_or_labels_reconstructed": false,
+    "no_2025": true,
+    "omitted_retroanalysis_folds": 0,
+    "retroanalysis": "docs/experiments/EXP004/RECOVERY_VALIDATION.json",
+    "retroanalysis_paired_folds": 815,
+    "retroanalysis_prediction_rows": 81240,
+    "rows_and_labels_match_within_each_reading": true
+  },
+  "contract": {
+    "affirmative_project_result": false,
+    "integral_compliance_accredited": false,
+    "sha256": "f701ae4a6731d6a40dd0b7e03a3a50f6f07e9b8154d25091b984f91834e6b97b",
+    "status": "APPROVED",
+    "version": "1.0.0"
+  },
+  "decision_authority": "equipo SAT DENGUE, communicated explicitly by the user in this conversation",
+  "decision_reason": "Predeclared recency hypothesis not met: factory paired intervals include zero, primary T+1 fails positive lower bound and strict cut majority; recovered retroanalysis changes +2 TP at T+1 and -2 at T+2, without stable improvement.",
+  "decision_scope": "Only the exponential training-recency weighting with 36-month half-life evaluated in EXP004, at the predeclared operating point.",
+  "document_hashes_at_closure": {
+    "docs/bitacora-experimental.md": "0fb538b6d6a3f4ec9e12760a0871fb7edcd9f5f3641dd95187e4574c50c8dfa3",
+    "docs/bitacora/tanda-exp004-resultados.md": "8c0d56c86b1d6525d7970930663c999cddb9ccd4efc95113d5dede880974bcb8",
+    "docs/experiments/EXP004/CONCLUSIONS.md": "72b66f5cd76cd2708c795d77014e73c5b3a2381389de9bbf6c462ca39d0ef320",
+    "docs/experiments/EXP004/POST_RUN_REVIEW.md": "50e99ac9cbc50c48e0f9dcbfc61c23403f1a79357d158c6908b33b7700342359",
+    "docs/experiments/registry.yml": "0a30e1ef06efeffea7e56b50d45613178277f8808c21a335c318aa598de033b3"
+  },
+  "experiment_id": "EXP004",
+  "factory_complete_alert_volume_curve": {
+    "authority": "explicit team decision in current user instruction",
+    "curve_generated_during_closure": false,
+    "disposition": "DEFERRED",
+    "production_status": "NOT_PRODUCED",
+    "retroanalisis_curve_is_substitute": false,
+    "specific_negative_closure_permitted": true
+  },
+  "factory_results_verified": [
+    {
+      "expected_human_values": [
+        130,
+        131,
+        0.17,
+        -0.83,
+        1.17
+      ],
+      "horizon": 1,
+      "reading": "primary",
+      "verified_seeds": [
+        7,
+        13,
+        31,
+        53,
+        101
+      ]
+    },
+    {
+      "expected_human_values": [
+        81,
+        84,
+        0.7,
+        -0.66,
+        2.13
+      ],
+      "horizon": 2,
+      "reading": "primary",
+      "verified_seeds": [
+        7,
+        13,
+        31,
+        53,
+        101
+      ]
+    },
+    {
+      "expected_human_values": [
+        97,
+        101,
+        0.67,
+        -0.53,
+        1.95
+      ],
+      "horizon": 2,
+      "reading": "secondary_t2",
+      "verified_seeds": [
+        7,
+        13,
+        31,
+        53,
+        101
+      ]
+    }
+  ],
+  "frozen_hashes_preserved": {
+    "docs/bitacora/tanda-exp004-recencia.md": "0a6a3d9b82121fc8d8742fe7c09ea54c2992a888d65a16594e8808c39977fe95",
+    "docs/experiments/EXP004/SPECIFICATION.md": "ee40e74fa0dbf7bdd150340c9103961ef9fe0300c87743faab1c3337aa6ab2fd",
+    "docs/experiments/contrato.md": "f701ae4a6731d6a40dd0b7e03a3a50f6f07e9b8154d25091b984f91834e6b97b",
+    "pipeline/conf/exp004/parameters_exp004.yml": "68272b9c09747cf16a19bcf0b2e8a76a857c8e882ce70e6ccf97e4cf4d4008c2",
+    "pipeline/conf/experiments/EXP004.yml": "ed55aedb9259ae253863fd97cf255d48b56cba2a15854e4746e666df32e7132f",
+    "pipeline/conf/retroanalisis/EXP004_recent_history_36m.yml": "9fe505a6dd721a0177856b3b29eb5fd6531466e527ab4183b77273623d5d348a",
+    "pipeline/conf/retroanalisis/EXP004_uniform_history.yml": "2708be7132badb66ba169df12c96b7af7fa16a957d22d47ddff405e4b789c0c8"
+  },
+  "future_decisions": {
+    "complete_factory_curve": "DEFERRED; reprioritization requires its own decision and scope",
+    "independent_review_and_confirmation": "not accredited by EXP004",
+    "model_champion_operational_use": "not authorized",
+    "other_temporal_update_hypotheses": "no general rejection and no new experiment authorized"
+  },
+  "human_decision_received": true,
+  "immutable_factory_inventory": {
+    "executions": 1,
+    "path": "docs/evidence/experiments/EXP004/04a0554e6fa7470394b185b5dab36d7a/inventory.json",
+    "sha256": "9eb1aa806d301efc7e2ec2d363d831446d94925cfd18c3eab31b161f66c3c219",
+    "status": "COMPLETED"
+  },
+  "initial_head": "6cfb487b02ecc02350af1edac804738b088c6b59",
+  "model_approval": "NOT_APPROVED",
+  "not_inferred": [
+    "all temporal-update strategies are useless",
+    "exact equivalence of arms",
+    "exactly zero effect",
+    "confirmatory negative answer to the whole project question"
+  ],
+  "omissions": {
+    "all_real_experimental_computation": "Not authorized; not performed.",
+    "curve_generation_and_contract_amendment": "Not authorized; curve remains NOT_PRODUCED/DEFERRED.",
+    "full_872_test_suite": "Explicitly not repeated; no functional change. Only requested two modules were run using artificial fixtures.",
+    "independent_review": "Not performed or claimed; same-agent review explicitly documented."
+  },
+  "operational_authorization": false,
+  "post_run_review": {
+    "independent": false,
+    "path": "docs/experiments/EXP004/POST_RUN_REVIEW.md",
+    "recommendation": "APPROVED_WITH_LIMITATIONS",
+    "reviewer_relationship": "same agent as preparation and execution",
+    "scope": "correspondence of evidence/recipe/human NEGATIVE decision only"
+  },
+  "preservation": {
+    "EXP001_EXP002_and_other_entries_unchanged": true,
+    "all_inventories_closed_receipts_scientific_records_and_CSV_unchanged": true,
+    "all_other_tracked_files_unchanged": true,
+    "allowed_changed_existing_files": [
+      "docs/bitacora-experimental.md",
+      "docs/bitacora/tanda-exp004-resultados.md",
+      "docs/experiments/EXP004/CONCLUSIONS.md",
+      "docs/experiments/EXP004/POST_RUN_REVIEW.md",
+      "docs/experiments/registry.yml"
+    ],
+    "historical_receipt_states_not_reclassified": true,
+    "main_bitacora_previous_bytes_preserved_as_prefix": true,
+    "plan_unchanged": true,
+    "preflight": "PASS",
+    "tracked_baseline_files": 686,
+    "unchanged_tracked_files": 681
+  },
+  "recorded_utc": "2026-11-12T19:24:30.301583+00:00",
+  "registry_transition": {
+    "command": "uv run --directory pipeline python -m sat_dengue_pipeline.experiment_management transition EXP004 COMPLETED --result NEGATIVE",
+    "exit_code": 0,
+    "from": {
+      "scientific_result": "PENDING",
+      "status": "RUNNING"
+    },
+    "interface": "official experiment_management CLI",
+    "manual_state_edit": false,
+    "result": "OK",
+    "started_utc": "2026-11-12 19:21:16 UTC",
+    "to": {
+      "scientific_result": "NEGATIVE",
+      "status": "COMPLETED"
+    }
+  },
+  "retroanalysis_csv_hashes": {
+    "conjunto.csv": {
+      "rows": 1630,
+      "sha256": "9e303378d63e5d84b9ba6dfeb7aa7cf665b1777529dc126de3607e75c6ea727d",
+      "size_bytes": 1434553
+    },
+    "curva.csv": {
+      "rows": 620,
+      "sha256": "a38b1035f6b046881b6a3edf182f198262e570bf53b5d6f267300b10a9f25dfa",
+      "size_bytes": 33579
+    },
+    "omitidos.csv": {
+      "rows": 0,
+      "sha256": "79aa87ddf2ea78dc6c10a83b25fdf0be7a2da4a189ddfd4c88023f94402e3099",
+      "size_bytes": 31
+    },
+    "por_anio.csv": {
+      "rows": 140,
+      "sha256": "b4b4747a8040b811fd51b49347a3536bfa221708fa535bf93715d78cf6a9ff7a",
+      "size_bytes": 8461
+    },
+    "predicciones.csv": {
+      "rows": 81240,
+      "sha256": "59e9e9e414a4a72d0d7e1c3f7c7d5eb55d53a1f9b0337625df1a03d7a42010cf",
+      "size_bytes": 10601400
+    },
+    "resumen.csv": {
+      "rows": 80,
+      "sha256": "a89171dc2dbc9d9c6d3e88ba2dc8fd089eae22c39fc040b83a2ddf2dfb019c28",
+      "size_bytes": 12939
+    }
+  },
+  "retroanalysis_results_verified": [
+    {
+      "delta_TP": 2,
+      "horizon": 1,
+      "reading": "primary",
+      "recent_TP": 361,
+      "uniform_TP": 359
+    },
+    {
+      "delta_TP": -2,
+      "horizon": 2,
+      "reading": "primary",
+      "recent_TP": 251,
+      "uniform_TP": 253
+    }
+  ],
+  "schema": "satd.exp004-scientific-closure/v1",
+  "scientific_result": "NEGATIVE",
+  "seed_selection": false,
+  "seeds": [
+    7,
+    13,
+    31,
+    53,
+    101
+  ],
+  "single_local_commit_requested": true,
+  "validation": {
+    "focused_tests": {
+      "command": "uv run --directory pipeline pytest tests/test_experiment_management.py tests/test_training_weighting.py --junitxml=data/exp004-closure-validation/focused.xml",
+      "errors": 0,
+      "failures": 0,
+      "path": "pipeline/data/exp004-closure-validation/focused.xml",
+      "sha256": "5d7a7855a59975b1cc41eb2a1cf92ab015183d3fc0d2135f26126561e11baffe",
+      "skipped": 0,
+      "tests": 73
+    },
+    "git_diff_check": "PASS",
+    "git_status_reviewed": "only the five authorized existing paths and this new closure record",
+    "official_conclusion_validator": "PASS",
+    "preservation_normal": "PASS: 49 protected files, 22 published JSON, 16 historical receipts, T16 N3 identity",
+    "preservation_python_O": "PASS",
+    "registry_validate": "VALID",
+    "status": "PASS"
+  },
+  "warnings": [
+    "Two existing OmegaConf resolver deprecation warnings in requested tests",
+    "Existing VIRTUAL_ENV mismatch; uv used pipeline environment"
+  ]
+}

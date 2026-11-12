@@ -1,9 +1,15 @@
-# EXP004 R2 — evidencia y conclusiones pendientes del equipo
+# EXP004 R2 — cierre científico NEGATIVE
 
-Fecha: 12 de noviembre de 2026. Resultado científico: **PENDING**.
-`scientific_conclusion: NOT_APPROVED`; `champion_status: NOT_SELECTED`;
-sin autorización operativa. El registro conserva RUNNING hasta la decisión humana;
-el terminal COMPLETED del recibo solo describe la fábrica terminada.
+Fecha de cierre: 12 de noviembre de 2026. Resultado científico: **NEGATIVE**,
+por decisión explícita del equipo SAT DENGUE comunicada por la persona usuaria
+en esta conversación. Cierre autorizado del registro: **COMPLETED/NEGATIVE**,
+mediante la interfaz oficial. `champion_status: NOT_SELECTED`; sin aprobación
+de modelo ni autorización operativa.
+
+La decisión y las comprobaciones de cierre se registran en `CLOSURE.json`.
+Los recibos cerrados conservan sus estados originales, incluido
+scientific_conclusion NOT_APPROVED: no se reescriben para simular una decisión
+humana previa a su producción. Este cierre usa exclusivamente evidencia existente.
 
 Aprobación humana: [APPROVAL.md](APPROVAL.md), commit
 `a075b0d6e87627b4cabc650b729afbc298c498f5`. Protocolo SHA-256
@@ -40,17 +46,22 @@ Inventario verificado; 105 archivos agregados, ninguno mayor de 512 kB.
 No contiene filas de predicción o pesos por fila. Se entrenaron las 140 variantes
 y 210 modelos de la receta; se conservaron las cinco semillas.
 
-El retroanálisis predeclarado se invocó una vez:
+El retroanálisis predeclarado tuvo un intento fallido previo al ajuste y una
+única invocación adicional de recuperación autorizada, con el mismo comando:
 
 ```sh
 uv run --locked --directory pipeline kedro run --pipeline retroanalisis --env exp004
 ```
 
-Terminó con salida 1 en raw_input, antes del canónico o del ajuste, por ausencia
-del release corregido en inbox. No produjo los seis CSV ni una comparación
-retrospectiva. [Intento preservado](RETROANALYSIS_ATTEMPT_1.json) y
-[diagnóstico y recuperación propuesta](RETROANALYSIS_RECOVERY.md).
-No se ha autorizado ni efectuado un reintento a la fecha de este borrador.
+El primer intento terminó con salida 1 en raw_input, por caché corregida ausente
+en inbox: [fallo preservado](RETROANALYSIS_ATTEMPT_1.json) y
+[diagnóstico](RETROANALYSIS_RECOVERY.md). La
+[recuperación autorizada](RECOVERY_AUTHORIZATION.md) completó 15/15 nodos,
+salida 0, en 724,7 segundos: [segundo intento](RECOVERY_ATTEMPT_2.json),
+[resultado y hashes](RECOVERY_RESULT.md) y [validación](RECOVERY_VALIDATION.json).
+Se conservan seis CSV bajo `pipeline/data/retroanalisis/EXP004/run1/`, con
+815 pares de folds, 1.630 registros de ajuste, 81.240 predicciones y cero
+omisiones. El cierre no repite ninguno de estos recorridos ni sus modelos.
 
 ## Métricas principales
 
@@ -74,18 +85,22 @@ En T+1 reciente−uniforme por corte, las diferencias de TP son
 idénticas en las cinco semillas. Hay 3/7 cortes positivos frente a los 4/7
 exigidos, dos empates y dos deterioros. Tampoco se alcanza cota inferior >0
 en el agregado T+1. No se satisface el criterio predeclarado de evidencia a
-favor de la hipótesis; esto no asigna una categoría científica al registro.
+favor de la hipótesis. El equipo asigna NEGATIVE por ese incumplimiento,
+sin afirmar que los procedimientos sean equivalentes o que el efecto sea cero.
 T+2 primaria tiene tres cortes positivos y cuatro empates; secundaria tiene
 cuatro positivos, dos deterioros y un empate. Ninguna rescata T+1.
 
 ## Comparación
 
-La pregunta del proyecto se evaluó bajo contrato **1.0.0 APPROVED**: ganancia
+Las condiciones implementadas de la pregunta del proyecto se evaluaron bajo
+contrato **1.0.0 APPROVED**: ganancia
 frente al canal condicionado ≥10 pp y cota inferior ≥10 pp, además de carga,
 intervalo, A/C primaria o A/B/C secundaria, soporte, controles y consistencia.
-No se usaron los 5 pp históricos como sustituto.
+No se usaron los 5 pp históricos como sustituto. Estas comprobaciones del punto
+predeclarado no acreditan cumplimiento integral del contrato: falta la curva
+completa de fábrica y la evidencia no es confirmatoria independiente.
 
-| Brazo | Lectura | Cortes que pasan solo ganancia y cota ≥10 pp | Votos con todas las reglas / cortes utilizables |
+| Brazo | Lectura | Cortes que pasan solo ganancia y cota ≥10 pp | Votos de las condiciones implementadas / cortes utilizables |
 |---|---|---:|---:|
 | uniform_history | T+1 primaria | 0/7 | 0/7 |
 | recent_history_36m | T+1 primaria | 0/7 | 0/7 |
@@ -120,6 +135,31 @@ además AP, AUROC, Brier y desgloses anuales/territoriales. No hubo
 controles negativos con CUMPLE ni violaciones de presupuesto en las celdas
 conjuntas. Los resultados departamentales con soporte insuficiente siguen visibles.
 
+Retroanálisis, lectura primaria, punto descriptivo propio frente a
+canal_fuera_exceso y su volumen realizado por mes. Los cinco resultados coinciden;
+no se elige una semilla ni se mezclan cifras con la fábrica:
+
+| Horizonte | Inicios | Alertas por brazo | TP canal | TP uniforme | TP reciente | Reciente−uniforme |
+|---|---:|---:|---:|---:|---:|---:|
+| T+1 | 641 | 817 | 323 | 359 | 361 | +2 |
+| T+2 | 459 | 1.158 | 207 | 253 | 251 | −2 |
+
+El cambio de signo entre horizontes no muestra una mejora estable del instrumento
+adicional. Los intervalos de resumen.csv comparan cada brazo con su canal,
+no reciente con uniforme. No se reinterpretan como intervalos de la hipótesis.
+El retroanálisis no declara secondary_t2 y no se le atribuyen los resultados
+de esa lectura de fábrica.
+
+La [auditoría de fábrica](EXECUTION_AUDIT.json) conserva 105 pares de modelos por
+horizonte y 525 comparaciones de claves, predictores y matrices en los cinco
+roles. Las etiquetas productoras se verificaron antes de ajustar y las de
+evaluación tras predecir. La [validación de recuperación](RECOVERY_VALIDATION.json)
+conserva igualdad de claves y etiquetas train/evaluación por horizonte, lectura
+primaria, semilla y fold; las claves efectivas del CSV y los desenlaces H5 se
+contrastaron con el canónico ya producido. No se recalculan ahora predicciones
+ni desenlaces. Se mantienen las cohortes propias de cada lectura, sin exigir
+igualdad entre primaria y secundaria.
+
 ## Limitaciones
 
 - Evidencia exploratoria en periodos conocidos: no prueba confirmación,
@@ -134,19 +174,32 @@ conjuntas. Los resultados departamentales con soporte insuficiente siguen visibl
 - La certificación N=3 del canónico no es N=3 E2E de estos modelos. El recibo
   tiene un seed base 53 heredado de la plantilla; sus variantes y bloque
   científico incluyen las cinco identidades, sin escoger una.
-- El diagnóstico adicional de retroanálisis aún no se obtuvo; su instrumento
-  descriptivo no sustituiría la evaluación contractual de la fábrica.
-- El inventario de fábrica no contiene una curva completa de TP frente a volumen
-  de alertas del apartado 9 del contrato. Se conserva el punto predeclarado y sus
-  métricas; la curva de retroanálisis todavía no existe. No se afirma cobertura
-  completa de ese requisito para una pretensión de superioridad.
+- El retroanálisis recuperado usa ventanas, ranking y presupuesto distintos;
+  es descriptivo y no sustituye la evaluación contractual de la fábrica.
+- **Curva contractual completa de fábrica: NOT_PRODUCED/DEFERRED.** El equipo
+  decidió no implementarla ahora. curva.csv del retroanálisis no sustituye la
+  curva faltante de fábrica. EXP004 no acredita cumplimiento integral del contrato,
+  no puede producir un resultado afirmativo del proyecto ni seleccionar champion.
+  Esta limitación no impide la conclusión NEGATIVE sobre la hipótesis específica
+  de recencia en el punto predeclarado. No se genera la curva o una nueva evaluación.
 - La revisión posterior del mismo agente no constituye revisión independiente.
 
 ## Decisión científica
 
-**PENDING**. Se solicita al equipo decidir POSITIVE, NEGATIVE o INCONCLUSIVE
-tras revisar la evidencia y el alcance pendiente; no se asigna ninguna aquí.
-El registro no se cierra. Sin campeón, publicación ni autorización operativa.
+**NEGATIVE**, decisión humana explícita del equipo SAT DENGUE. La hipótesis
+predeclarada no se cumplió: los intervalos incluyen cero, T+1 incumple la cota
+inferior positiva y la mayoría de cortes, y el retroanálisis no muestra mejora
+estable. La [revisión posterior](POST_RUN_REVIEW.md) verifica la correspondencia
+con receta y evidencia; fue realizada por el mismo agente, **no es independiente**.
+
+La decisión rechaza únicamente la ponderación exponencial de 36 meses evaluada
+en EXP004. No demuestra que toda estrategia de actualización temporal sea inútil,
+ni igualdad exacta entre brazos o ausencia de cualquier efecto. Tampoco es una
+respuesta confirmatoria negativa a toda la pregunta del proyecto. El registro
+se cierra mediante el CLI oficial con COMPLETED y resultado NEGATIVE. No se
+aprueba un modelo, campeón, publicación o uso operativo; no se modifican los
+veredictos automáticos ni los recibos históricos para hacerlos coincidir con
+la categoría humana.
 
 ## Qué se aprendió
 
@@ -155,13 +208,17 @@ con intervalos que incluyen cero. Una diferencia puntual positiva no satisface
 la hipótesis primaria predeclarada, y superar un margen frente al canal en
 algunos cortes no satisface simultáneamente carga, A/B/C y consistencia.
 Se conserva el resultado sin retocar vida media, umbral, soportes o semillas.
+El criterio que no se cumplió pertenece a esta receta y a su punto predeclarado;
+no permite extrapolar el rechazo a todas las formas de actualización temporal.
 
 ## Próximo paso
 
-Resolver por decisión humana la recuperación ambiental del retroanálisis,
-conservando el fallo, sin repetir la fábrica. Completar o declarar explícitamente
-pendiente ese diagnóstico. Solicitar revisión científica independiente y decisión
-del equipo antes de cerrar el registro. No publicar, abrir PR, hacer push o merge.
+Conservar EXP004 cerrado como NEGATIVE. La curva completa de fábrica queda
+diferida por el equipo; cualquier decisión futura sobre esa capacidad o nuevas
+hipótesis necesita su alcance y autorización propios. No se inicia otro experimento
+ni se genera nueva evidencia en este cierre. Revisión independiente, disponibilidad
+operativa, cohorte confirmatoria y eventual N=3 E2E siguen sin acreditarse; no
+son aprobaciones concedidas por este resultado. Sin push, PR, merge o publicación.
 
 ## Linaje y tracking
 

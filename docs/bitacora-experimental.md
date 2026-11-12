@@ -2034,3 +2034,23 @@ retroanálisis, reciente−uniforme cambia +2 TP en T+1 y −2 en T+2 frente al 
 descriptivo predeclarado. No se combina con la fábrica ni se atribuye a secondary_t2.
 Se conserva íntegro el primer fallo y no se repite la fábrica. RUNNING/PENDING,
 sin conclusión científica o campeón; la curva ausente de fábrica sigue pendiente.
+
+## Tanda EXP004 — cierre científico NEGATIVE, 12 de noviembre de 2026
+
+El equipo SAT DENGUE decidió explícitamente **NEGATIVE** para la hipótesis de
+recencia exponencial de 36 meses y autorizó el cierre oficial **COMPLETED**.
+Los [resultados consolidados](bitacora/tanda-exp004-resultados.md) y las
+[conclusiones](experiments/EXP004/CONCLUSIONS.md) conservan las tres lecturas de
+fábrica con intervalos que incluyen cero: T+1 130/131 TP (+0,17 pp), T+2 primaria
+81/84 (+0,70 pp), secundaria 97/101 (+0,67 pp). T+1 no alcanza cota inferior
+positiva ni mayoría 4/7. El retroanálisis recuperado produce 359/361 TP en T+1
+y 253/251 en T+2, sin mejora estable; cinco semillas, filas/etiquetas comunes
+y exclusión de 2025 verificadas. No se repitió cómputo científico para cerrar.
+
+La curva contractual completa de fábrica queda **NOT_PRODUCED/DEFERRED** por
+decisión del equipo. curva.csv del retroanálisis no la sustituye: no hay
+cumplimiento contractual integral, resultado afirmativo del proyecto, champion
+o autorización operativa. Esto no impide NEGATIVE sobre la hipótesis específica
+en el punto predeclarado. La decisión no demuestra que toda actualización temporal
+sea inútil. La revisión es del mismo agente, no independiente; las limitaciones
+retrospectivas y la ausencia de confirmación independiente permanecen explícitas.

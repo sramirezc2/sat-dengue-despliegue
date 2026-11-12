@@ -1,7 +1,8 @@
 # Tanda EXP004 — resultados de la receta R2 aprobada
 
-Fecha: 12 de noviembre de 2026. Resultado científico: **PENDING**, decisión del
-equipo pendiente. Esta entrada añade resultados sin editar la
+Fecha: 12 de noviembre de 2026. Resultado científico de cierre: **NEGATIVE**,
+por decisión humana explícita del equipo SAT DENGUE. Estado final autorizado:
+**COMPLETED**, mediante el CLI oficial. Esta entrada actualiza resultados sin editar la
 [preinscripción R2](tanda-exp004-recencia.md).
 
 ## Hipótesis y receta ejecutada
@@ -40,8 +41,9 @@ resultados coinciden exactamente; no se selecciona uno.
 
 T+1 no satisface la regla de mejora predeclarada: cota inferior no positiva y
 3/7 cortes con diferencia positiva, frente a mayoría exigida de 4/7; dos
-empates y dos deterioros. Ningún T+2 rescata T+1. No se declara categoría
-científica POSITIVE/NEGATIVE/INCONCLUSIVE en esta entrada.
+empates y dos deterioros. Ningún T+2 rescata T+1. El equipo establece NEGATIVE
+por el incumplimiento de la hipótesis predeclarada, sin inferir equivalencia
+exacta entre brazos ni ausencia de cualquier efecto.
 
 ## Pregunta del proyecto y límites
 
@@ -52,23 +54,41 @@ ganancia y cota, pero excede la carga; 2024 no alcanza la cota. En secundaria,
 2023/2024 pasan ganancia y cota pero fallan B y otras condiciones históricas;
 2021 supera persistencia y tiene precisión insuficiente frente al canal.
 B secundaria se evaluó como informativa y obligatoria en los siete cortes.
-Los controles negativos no pasaron. La evidencia no aprueba un modelo,
-campeón, utilidad operacional o respuesta afirmativa del proyecto.
+Los controles negativos no pasaron. La curva contractual completa de fábrica
+permanece **NOT_PRODUCED/DEFERRED**, por decisión explícita del equipo de no
+implementarla ahora. curva.csv del retroanálisis no la sustituye. EXP004 no
+acredita cumplimiento integral del contrato, no puede seleccionar champion ni
+producir un resultado afirmativo del proyecto. Esa limitación no impide concluir
+NEGATIVE sobre la hipótesis específica de recencia en el punto predeclarado.
 
-## Retroanálisis: intento conservado
+## Retroanálisis recuperado e intento fallido conservado
 
 ```sh
 uv run --locked --directory pipeline kedro run --pipeline retroanalisis --env exp004
 ```
 
-Una invocación, salida 1 en raw_input por caché corregida ausente en inbox,
-antes de construir el canónico o entrenar. No hay CSV ni verificación de
-conjunto.csv todavía. La fábrica usa otra raíz de caché, con los cinco archivos
-íntegros. Se conserva el [registro del fallo](../experiments/EXP004/RETROANALYSIS_ATTEMPT_1.json)
-y el [diagnóstico](../experiments/EXP004/RETROANALYSIS_RECOVERY.md).
-No se relanza sin autorización humana adicional de la recuperación concreta.
+El primer intento terminó con salida 1 en raw_input por caché corregida ausente
+en inbox, antes de construir el canónico o entrenar. Se conservan el
+[fallo](../experiments/EXP004/RETROANALYSIS_ATTEMPT_1.json) y su
+[diagnóstico](../experiments/EXP004/RETROANALYSIS_RECOVERY.md).
+La recuperación humana autorizada materializó solo la caché local y completó
+una única invocación adicional: [resultado y hashes](../experiments/EXP004/RECOVERY_RESULT.md).
+Los seis CSV verifican, con 815 pares de folds, 81.240 predicciones, cero
+omisiones e igualdad de claves y etiquetas entre brazos por horizonte,
+lectura primaria, semilla y fold. No se añadió secondary_t2 al retroanálisis.
 
-## Evidencia, aprendizaje y decisión pendiente
+| Horizonte | TP uniforme | TP reciente | Reciente−uniforme |
+|---|---:|---:|---:|
+| T+1 | 359 | 361 | +2 |
+| T+2 | 253 | 251 | −2 |
+
+Son resultados idénticos en las cinco semillas, en el punto descriptivo propio
+frente a canal_fuera_exceso y con igual presupuesto entre brazos. No muestran
+mejora estable entre horizontes; no se combinan con las cohortes, intervalos
+o votos de fábrica. Los objetivos y la disponibilidad de etiquetas terminan
+antes de 2025 en ambos instrumentos.
+
+## Evidencia, aprendizaje y decisión científica de cierre
 
 [CONCLUSIONS.md](../experiments/EXP004/CONCLUSIONS.md) separa hipótesis de pesos,
 evaluación contractual, desgloses, disponibilidad retrospectiva, soporte
@@ -78,6 +98,15 @@ dad66d3b49894b518a0b3805858b0d3c y sus dos hijos terminaron FINISHED.
 
 Las diferencias pequeñas no prueban mejora; un margen aislado frente al canal
 no sustituye carga, B, A/C y consistencia. No se ajusta la receta para favorecer
-un resultado. El equipo debe decidir la recuperación ambiental pendiente y,
-tras la revisión científica posterior e independiente, el resultado científico
-antes de cerrar el registro. Sin publicación, push, PR, merge o campeón.
+un resultado. La [revisión posterior](../experiments/EXP004/POST_RUN_REVIEW.md)
+contrasta receta, evidencia y decisión: fue realizada por el mismo agente y
+**no es independiente**. El equipo decidió NEGATIVE y autorizó el cierre oficial.
+
+La decisión rechaza únicamente la ponderación exponencial de 36 meses evaluada
+en EXP004. No demuestra que toda estrategia de actualización temporal sea inútil.
+La evidencia sigue siendo retrospectiva y exploratoria, sin confirmación
+independiente ni acreditación de disponibilidad operativa. Las cinco semillas
+7/13/31/53/101 se conservaron sin elegir la mejor; no se suman como nuevas cohortes.
+El cierre utiliza solo lo ya producido, sin adquirir, construir, entrenar,
+repetir recorridos ni reconstruir predicciones o curvas. Sin publicación, push,
+PR, merge, aprobación de modelo, champion o autorización operativa.
