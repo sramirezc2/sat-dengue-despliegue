@@ -1,6 +1,6 @@
 # Manual de la fábrica de experimentos
 
-Esta guía sirve para personas y agentes. Todos los comandos se ejecutan desde la raíz del repositorio. La fábrica sigue una receta aprobada, ejecuta adquisición → construcción canónica → entrenamiento → evaluación y guarda un recibo exclusivo de cada corrida. El [contrato científico](contrato.md) define qué resultados pueden interpretarse; sigue pendiente de aprobación del equipo.
+Esta guía sirve para personas y agentes. Todos los comandos se ejecutan desde la raíz del repositorio. La fábrica sigue una receta aprobada, ejecuta adquisición → construcción canónica → entrenamiento → evaluación y guarda un recibo exclusivo de cada corrida. El [contrato científico](contrato.md) define qué resultados pueden interpretarse; está aprobado por el equipo (versión 1.0.0).
 
 ## Elija la ayuda adecuada
 
@@ -51,7 +51,7 @@ La fábrica verifica los datos, construye el canónico certificado, prepara los 
 
 ## 3. Revise la evaluación y cierre
 
-Lea `receipt.json`, `inventory.json` y los resultados enlazados desde el recibo. El [contrato](contrato.md) explica A/B/C, el canal, persistencia, soportes y veredictos; la [guía de evaluación](scientific-evaluation.md) explica los brazos con y sin clima, cortes y cinco semillas. La fábrica muestra T+1 y T+2 por separado, las diferencias por año y territorio, y conserva todas las semillas: **no elija la mejor**. Los veredictos actuales son bajo contrato propuesto, no aprobación académica ni elección de campeón. Los resultados de 2025, ya conocidos en V2, no son confirmación independiente.
+Lea `receipt.json`, `inventory.json` y los resultados enlazados desde el recibo. El [contrato](contrato.md) explica A/B/C, el canal, persistencia, soportes y veredictos; la [guía de evaluación](scientific-evaluation.md) explica los brazos con y sin clima, cortes y cinco semillas. La fábrica muestra T+1 y T+2 por separado, las diferencias por año y territorio, y conserva todas las semillas: **no elija la mejor**. Los veredictos nuevos aplican el contrato aprobado; las conclusiones académicas y la elección de campeón requieren decisiones humanas separadas. Los resultados de 2025, ya conocidos en V2, no son confirmación independiente.
 
 Pida una revisión posterior con `$sat-dengue-scientific-review`. Escriba `docs/experiments/EXP003/CONCLUSIONS.md` con la hipótesis, resultados, comparación, límites, aprendizaje y enlace al inventario. El equipo decide `POSITIVE`, `NEGATIVE` o `INCONCLUSIVE`; después cierre y valide:
 

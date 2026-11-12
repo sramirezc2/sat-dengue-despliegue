@@ -1,11 +1,11 @@
-# Evaluación integrada bajo contrato propuesto
+# Evaluación integrada bajo contrato aprobado
 
 El pipeline `experiment_run` incorpora la evaluación como etapa Kedro y conserva
 el lifecycle, registro, tracking e inventario existentes. Las recetas V1/V2
 siguen siendo legibles y ejecutables bajo sus controles previos; la evaluación
 nueva es explícita en recetas **V3**, sin reinterpretar evidencia histórica.
-El [contrato](contrato.md) continúa en `PROPUESTA_PARA_APROBACION`. Todas las
-salidas nuevas llevan `VEREDICTO_BAJO_CONTRATO_PROPUESTO`, sin conclusión académica
+El [contrato](contrato.md) está en `APROBADO` (versión 1.0.0). Todas las
+salidas nuevas llevan `VEREDICTO_BAJO_CONTRATO_APROBADO`, sin conclusión académica
 aprobada, selección de campeón o autorización operativa.
 
 ## Un solo flujo y un solo comando
@@ -75,8 +75,7 @@ brazo/corte. Se guardan esas configuraciones e identidades. No se agrega búsque
 refit ni una selección silenciosa de variables o hiperparámetros.
 
 La selección por F1, la regla de cupo y el criterio de voto son **opciones
-implementadas que la receta debe comprometer**, no decisiones científicas
-aprobadas ni valores predeterminados inventados. El contrato exige predeclarar
+implementadas que la receta debe comprometer**, políticas que cada receta debe predeclarar bajo el contrato aprobado. El contrato exige predeclarar
 esas políticas. No se asigna una fracción de capacidad sanitaria por defecto.
 Si falta grilla o presupuesto, A/B/C conserva sus cálculos descriptivos en el
 punto congelado, pero la utilidad se informa `NO_EVALUABLE` con
@@ -109,8 +108,8 @@ dar un voto afirmativo, sin significar superioridad sobre persistencia.
 en el soporte evaluado produce `NO_EVALUABLE`, causa `NO_PERSISTENCE_ALERTS`,
 y ese corte no vota afirmativamente. Si tiene soporte suficiente, mantiene
 la consistencia no evaluable. `INVALIDO`, controles negativos, soportes mínimos
-y unanimidad conservan precedencia y reglas. El contrato completo permanece
-`PROPUESTA_PARA_APROBACION`.
+y unanimidad conservan precedencia y reglas. El contrato completo está aprobado; las recetas y conclusiones requieren
+decisiones humanas propias.
 
 Cada celda, corte, consistencia, semilla y resumen conserva `B` con `status`,
 `reason` y `required_for_verdict`, además de `decision_basis`: utilidad/A/C en
@@ -131,7 +130,7 @@ el tope idéntico permite que un método se sature antes. C0/C1 conservan su pun
 histórico para A/B/C y no se retocan para pasar C. Si faltan desenlaces, el cupo
 original no se recalcula para gastar de nuevo sus alertas en las filas restantes.
 
-**Propuesta científica pendiente de aprobación del equipo:** la prioridad del
+**Regla contractual aprobada:** la prioridad del
 cupo del canal es el exceso absoluto `casos(T) − fracción × P75_h5(T+h)`, de mayor
 a menor, entre filas elegibles; los empates se resuelven por código municipal
 ascendente. Se usa la fracción propia (1 en el estándar, la congelada en el
@@ -178,13 +177,13 @@ semilla y territorio con la regla predeclarada; una celda inválida no se elimin
 para mejorar el voto. Las cinco diferencias por semilla, su dispersión y cambios
 de signo se reportan también para diferencias de uno o dos inicios.
 
-**Agregación implementada como propuesta, pendiente de aprobación del equipo:**
+**Agregación contractual aprobada:**
 la función pequeña `aggregate_seed_consistency` en `evaluation/scientific/reporting.py`
 consume las consistencias por semilla que ya produce la etapa final
 `scientific_evaluation`. Para cada brazo × población × lectura × horizonte ×
 territorio conserva la mayoría estricta de cortes utilizables dentro de cada
 semilla (mínimo tres) y exige las cinco identidades predeclaradas con `CUMPLE`
-para emitir `CUMPLE_BAJO_CONTRATO_PROPUESTO`. No añade métricas, pipelines,
+para emitir `CUMPLE_BAJO_CONTRATO_APROBADO`. No añade métricas, pipelines,
 comandos ni ejecuciones. Las vistas anuales no votan como cortes adicionales.
 
 Faltantes de corridas/cortes, políticas o soporte producen `NO_EVALUABLE`;
@@ -199,14 +198,14 @@ soporte se mantienen visibles y 2/3 utilizables sigue siendo mayoría suficiente
 Cada registro `seed_stability` conserva los cinco resultados en `seeds`, los
 votos y cortes observados, y las distribuciones existentes. Incluye
 `aggregation_rule: all_five_declared_seeds_cumple`,
-`contract_status: PROPUESTA_PARA_APROBACION`, `team_approval_required: true` y
+`contract_status: APPROVED`, `team_approval_required: true` y
 `scientific_conclusion: NOT_APPROVED`. T+1 y ambas lecturas de T+2, las
 poblaciones, brazos y territorios se agregan por separado. No se escoge la mejor
 semilla ni se cuentan semillas como cortes o cohortes independientes. La regla
-comprueba sensibilidad algorítmica y requiere aprobación prospectiva del equipo
+comprueba sensibilidad algorítmica y tiene aprobación prospectiva del equipo
 según el apartado 13 del contrato. Sustituye solo el bloqueo técnico anterior.
 
-Siguen pendientes aprobación del equipo, cohorte confirmatoria independiente y
+Siguen pendientes la decisión científica humana, cohorte confirmatoria independiente y
 reproducción E2E N=3 de un eventual finalista. El N=3 canónico no satisface esa
 reproducción de modelos. La evidencia retrospectiva ya consumida, incluido 2025,
 no se convierte en confirmatoria; 2025 permanece fuera de todo desarrollo.

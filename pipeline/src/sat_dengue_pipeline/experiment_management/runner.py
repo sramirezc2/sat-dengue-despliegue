@@ -190,8 +190,8 @@ def begin_execution(
     tags.update(execution_id=execution_id, code_sha256=lineage["source_sha256"], evidence=relative)
     if config.get("schema_version") == 3:
         tags.update(
-            evaluation_label="VEREDICTO_BAJO_CONTRATO_PROPUESTO",
-            contract_status="PROPUESTA_PARA_APROBACION",
+            evaluation_label="VEREDICTO_BAJO_CONTRATO_APROBADO",
+            contract_status="APPROVED",
             contract_sha256=config["scientific_evaluation"]["contract"]["sha256"],
         )
     session = RegisteredExecution(
@@ -392,7 +392,8 @@ def finish_execution(
             additions = scientific_artifacts(session.scientific_records)
             artifacts.update(additions)
             receipt["scientific_evaluation"] = {
-                "label": "VEREDICTO_BAJO_CONTRATO_PROPUESTO",
+                "label": "VEREDICTO_BAJO_CONTRATO_APROBADO",
+                "contract_status": "APPROVED",
                 "contract": config["scientific_evaluation"]["contract"],
                 "seeds": config["scientific_evaluation"]["seeds"],
                 "cuts": [c["id"] for c in config["scientific_evaluation"]["cuts"]],

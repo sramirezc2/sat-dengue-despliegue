@@ -54,7 +54,9 @@ def compare(
             }
             if "scientific_evaluation" in record:
                 common["evaluation_label"] = record["scientific_evaluation"]["label"]
-                common["contract_status"] = "PROPUESTA_PARA_APROBACION"
+                common["contract_status"] = record["scientific_evaluation"].get(
+                    "contract_status", "PROPUESTA_PARA_APROBACION"
+                )
                 common["contract_sha256"] = record["scientific_evaluation"]["contract"]["sha256"]
             for h in record["horizons"]:
                 if horizon is not None and h != horizon:

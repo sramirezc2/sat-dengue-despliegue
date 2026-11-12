@@ -22,7 +22,7 @@ from .statistics import (
     utility_verdict,
 )
 
-PROPOSED = "VEREDICTO_BAJO_CONTRATO_PROPUESTO"
+EVALUATION_LABEL = "VEREDICTO_BAJO_CONTRATO_APROBADO"
 
 
 def read_outcomes(run: Any) -> None:
@@ -192,8 +192,8 @@ def evaluate_cell(
     }
     record = {
         "kind": "cell",
-        "label": PROPOSED,
-        "contract_status": "PROPUESTA_PARA_APROBACION",
+        "label": EVALUATION_LABEL,
+        "contract_status": "APPROVED",
         "prediction_rows": len(frame),
         "missing_labels": int((~known).sum()),
         "missing_predictions": missing_predictions,
@@ -226,14 +226,14 @@ def evaluate_cell(
 
 
 def aggregate_seed_consistency(seed_rows: list[dict], declared_seeds: list[int]) -> str:
-    """Aplicar unanimidad propuesta sin convertir semillas en cortes o evidencia independiente.
+    """Aplicar unanimidad aprobada sin convertir semillas en cortes o evidencia independiente.
 
     Args:
         seed_rows: Resultados individuales, incluidos faltantes, de una misma vista.
         declared_seeds: Las cinco identidades congeladas en la receta.
 
     Returns:
-        Estado bajo propuesta; una invalidez tiene precedencia sobre falta de soporte.
+        Estado bajo contrato aprobado; una invalidez tiene precedencia sobre falta de soporte.
         Todo resultado válido que no sea unanimidad queda inconcluso, sin inferir efecto.
     """
     observed = [row["seed"] for row in seed_rows]
@@ -252,7 +252,7 @@ def aggregate_seed_consistency(seed_rows: list[dict], declared_seeds: list[int])
     ):
         return "NO_EVALUABLE"
     return (
-        "CUMPLE_BAJO_CONTRATO_PROPUESTO"
+        "CUMPLE_BAJO_CONTRATO_APROBADO"
         if all(status == "CUMPLE" for status in statuses)
         else "INCONCLUSO_POR_INESTABILIDAD"
     )
@@ -360,7 +360,7 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
             {
                 "kind": "consistency",
                 **dims,
-                "label": PROPOSED,
+                "label": EVALUATION_LABEL,
                 "planned_cuts": len(policy["cuts"]),
                 "usable_cuts": k,
                 "excluded_insufficient_support": len(group) - k,
@@ -466,14 +466,14 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
                 **dict(
                     zip(("arm", "population", "reading", "horizon", "territory"), key, strict=True)
                 ),
-                "label": PROPOSED,
+                "label": EVALUATION_LABEL,
                 "seeds": seed_rows,
                 "distributions": distributions,
                 "five_seeds_check": "REPORTED"
                 if len(declared_seeds) == 5 and observed == set(declared_seeds)
                 else "NOT_VERIFIED",
                 "aggregation_rule": "all_five_declared_seeds_cumple",
-                "contract_status": "PROPUESTA_PARA_APROBACION",
+                "contract_status": "APPROVED",
                 "B": b,
                 "decision_basis": decision_basis(b),
                 "team_approval_required": True,
@@ -495,7 +495,9 @@ def evaluate_runs(runs: dict[str, Any], configuration: dict) -> tuple[list[dict]
         Registros agregados para el inventario habitual y métricas compactas de tracking.
     """
     records, retained = [], {}
-    tracking = {str(h): {"metrics": {}, "label": PROPOSED} for h in configuration["horizons"]}
+    tracking = {
+        str(h): {"metrics": {}, "label": EVALUATION_LABEL} for h in configuration["horizons"]
+    }
     verified_artifacts = set()
     for name, run in runs.items():
         artifact_key = (run.artifact.serialized_sha256, run.artifact.semantic_digest)
@@ -589,7 +591,7 @@ def evaluate_runs(runs: dict[str, Any], configuration: dict) -> tuple[list[dict]
                         "territory": territory,
                         "year": year,
                         "population": "common",
-                        "label": PROPOSED,
+                        "label": EVALUATION_LABEL,
                         "paired_keys_digest": stable_digest(lf.loc[known, LINK].to_dict("records")),
                         "intervals": paired_intervals(
                             lf.loc[known].reset_index(drop=True),

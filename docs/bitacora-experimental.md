@@ -9,6 +9,14 @@ Este archivo se actualiza en cada prueba, análisis, resultado y decisión. Es l
 trazabilidad del trabajo: si una cifra del informe no se puede rastrear hasta
 una entrada de aquí, esa cifra no está sustentada.
 
+> **Aclaración normativa — 11 de noviembre de 2026.** El criterio de 5 puntos
+> de ganancia del §0.3 se conserva como regla histórica; no gobierna futuras
+> conclusiones del proyecto. Rige el [contrato aprobado 1.0.0](experiments/contrato.md):
+> ganancia frente al canal condicionado **≥10 pp** y cota inferior del IC
+> **≥10 pp**, además de todas las condiciones aplicables. Los 5 puntos no
+> sustituyen esa regla. Esta aclaración no reclasifica resultados previos ni
+> aprueba modelos, recetas, conclusiones, campeón o uso operativo.
+
 ---
 
 ## 0. Criterio de decisión A/B/C — preinscrito el 10 de noviembre de 2026

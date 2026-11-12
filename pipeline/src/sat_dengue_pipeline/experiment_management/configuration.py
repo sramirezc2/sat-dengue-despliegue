@@ -161,8 +161,8 @@ def load_configuration(root: Path, entry: dict) -> dict:
         document = confined(root, contract["path"], "docs/experiments")
         if sha256(document) != contract[
             "sha256"
-        ] or "PROPUESTA_PARA_APROBACION" not in document.read_text(encoding="utf-8"):
-            raise ValueError("Contrato propuesto ausente o distinto del congelado")
+        ] or "- **Estado:** `APROBADO`" not in document.read_text(encoding="utf-8"):
+            raise ValueError("Contrato aprobado ausente o distinto del congelado")
     config["specification"] = entry["experiment_id"]
     config["governance"] = {
         "purpose": entry["experiment_type"],

@@ -1,1 +1,1 @@
-"""Evaluación bajo contrato propuesto, integrada en el lifecycle registrado."""
+"""Evaluación bajo contrato aprobado, integrada en el lifecycle registrado."""

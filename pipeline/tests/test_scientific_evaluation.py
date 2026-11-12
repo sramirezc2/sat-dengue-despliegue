@@ -423,7 +423,7 @@ def test_insufficient_producer_support_preserves_invalid_cell_cuts_and_five_seed
     combined = next(r for r in records if r["kind"] == "seed_stability")
     assert len(combined["seeds"]) == 5
     assert combined["status"] == (
-        "CUMPLE_BAJO_CONTRATO_PROPUESTO" if cause == "support_only" else "INVALIDO"
+        "CUMPLE_BAJO_CONTRATO_APROBADO" if cause == "support_only" else "INVALIDO"
     )
     assert all(s["consistency"] == "CUMPLE" for s in combined["seeds"] if s["seed"] != 53)
 
@@ -446,7 +446,7 @@ def test_scientific_fragment_hash_and_presence_are_required(tmp_path: Path) -> N
         "configuration_sha256": "b" * 64,
         "scientific_contract": {"sha256": "c" * 64},
     }
-    extra = scientific_artifacts([{"kind": "cell", "label": "VEREDICTO_BAJO_CONTRATO_PROPUESTO"}])
+    extra = scientific_artifacts([{"kind": "cell", "label": "VEREDICTO_BAJO_CONTRATO_APROBADO"}])
     receipt = {
         "status": "COMPLETED",
         "experiment_id": "SYNTHSCIENCE",
@@ -568,7 +568,7 @@ def test_tracking_logs_more_than_one_thousand_metrics_with_tags(tmp_path: Path) 
     (tmp_path / ".gitignore").write_text("pipeline/.tracking/\n", encoding="utf-8")
     subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
     tracker = ExperimentTracker(tmp_path / "pipeline", True)
-    tags = {"execution_id": "large-technical-batch", "contract_status": "PROPUESTA_PARA_APROBACION"}
+    tags = {"execution_id": "large-technical-batch", "contract_status": "APPROVED"}
     run_id = tracker.start(tags)
     metrics = {"technical": [{"metric": f"value_{i}", "value": float(i)} for i in range(1200)]}
     tracker.finish(run_id, "COMPLETED", tags, metrics)
@@ -764,7 +764,7 @@ def test_primary_degeneracy_preserves_channel_evidence_and_propagates_to_seeds(
     assert all(r["status"] == ("NO_CUMPLE" if weak_model else "CUMPLE") for r in consistency)
     combined = results[-1]
     assert combined["status"] == (
-        "INCONCLUSO_POR_INESTABILIDAD" if weak_model else "CUMPLE_BAJO_CONTRATO_PROPUESTO"
+        "INCONCLUSO_POR_INESTABILIDAD" if weak_model else "CUMPLE_BAJO_CONTRATO_APROBADO"
     )
     assert all(
         cut["utility_persistence_comparison"] == comparison
@@ -878,7 +878,7 @@ def test_declared_B_rule_controls_votes_and_preserves_causes(
     assert (
         combined["status"]
         == {
-            "CUMPLE": "CUMPLE_BAJO_CONTRATO_PROPUESTO",
+            "CUMPLE": "CUMPLE_BAJO_CONTRATO_APROBADO",
             "NO_CUMPLE": "INCONCLUSO_POR_INESTABILIDAD",
             "NO_EVALUABLE": "NO_EVALUABLE",
             "INVALIDO": "INVALIDO",
