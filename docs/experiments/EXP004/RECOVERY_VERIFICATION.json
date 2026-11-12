@@ -1,0 +1,120 @@
+{
+  "additional_retroanalysis_invocations": 1,
+  "all_five_seeds_retained": true,
+  "baseline_commit": "4efcd767b893684c50bf49f14e1c3225d4b0fe8f",
+  "champion_status": "NOT_SELECTED",
+  "credential_accessed": false,
+  "csv_counts": {
+    "conjunto.csv": 1630,
+    "curva.csv": 620,
+    "omitidos.csv": 0,
+    "por_anio.csv": 140,
+    "predicciones.csv": 81240,
+    "resumen.csv": 80
+  },
+  "csv_validation": "docs/experiments/EXP004/RECOVERY_VALIDATION.json",
+  "downloads": 0,
+  "experiment_id": "EXP004",
+  "factory_complete_alert_volume_curve": "STILL_ABSENT_NOT_RESOLVED",
+  "focused_tests": {
+    "errors": 0,
+    "failures": 0,
+    "path": "pipeline/data/exp004-recovery-validation/focused.xml",
+    "sha256": "e0ada6059aaa6f7227fb0741a3b27e58828a2a5fc17009da286914be54cbb6a1",
+    "skipped": 0,
+    "tests": 141
+  },
+  "gates": [
+    {
+      "command": "uv lock --check --project pipeline",
+      "status": "PASS"
+    },
+    {
+      "command": "uv run --directory pipeline ruff check .",
+      "status": "PASS"
+    },
+    {
+      "command": "uv run --directory pipeline pytest tests/test_operational_acquisition.py tests/test_acquisition.py tests/test_operational_releases.py tests/test_training_weighting.py tests/test_retroanalisis.py --junitxml=data/exp004-recovery-validation/focused.xml",
+      "status": "141 PASS"
+    },
+    {
+      "command": "uv run --directory pipeline python -m sat_dengue_pipeline.experiment_management validate",
+      "status": "VALID"
+    },
+    {
+      "command": "uv run --directory pipeline python tools/check_experiment_preservation.py",
+      "status": "PASS"
+    },
+    {
+      "command": "uv run --directory pipeline python -O tools/check_experiment_preservation.py",
+      "status": "PASS"
+    },
+    {
+      "command": "read-only CSV/canonical/weight/temporal/paired-set checks",
+      "status": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS"
+    }
+  ],
+  "hashes": {
+    "docs/bitacora-experimental.md": "75fe178eda4ba974b334d7f7d560c549d58caf85a9236fb401ed7c9fd4c10fb5",
+    "docs/experiments/EXP004/RECOVERY_ATTEMPT_2.json": "7dfb2e740766c455043640a659d4beafe10fbf7144023a76aa96bf317a577925",
+    "docs/experiments/EXP004/RECOVERY_AUTHORIZATION.md": "18c288a9269ae9ab4e216a1503e4a3b4edccfe60e7074e498379855a3a3b4af9",
+    "docs/experiments/EXP004/RECOVERY_MATERIALIZATION.json": "9a5fa72494c8af28185255b6c41908e51b8e7c78fd5983dc2baba23757382ae8",
+    "docs/experiments/EXP004/RECOVERY_RESULT.md": "56b059284a7bf8b44f79dbd4515ee1fc10da470d03e6c359452d69b0c311ca14",
+    "docs/experiments/EXP004/RECOVERY_VALIDATION.json": "b71eed2504c44c87d93a18c0d667e4cf40104fd154c3e4610ad57eb3e2b12010"
+  },
+  "ignored_stdout_log": {
+    "path": "pipeline/data/retroanalisis/EXP004/retroanalisis-attempt2.log",
+    "sha256": "127db22a83de2d3fffa4a69447a5d408c5c47f10bf95a21d019e4003825a0d00"
+  },
+  "next_action": "Report recovery result and stop as instructed; no further execution, scientific decision, champion or registry transition.",
+  "no_2025": true,
+  "no_omitted_folds": true,
+  "omissions": {
+    "full_suite_sync_API_dashboard_publication": "No code, tests, configuration, dependency or product changes. Previous full suite and lock/source/test identities preserved; focused gates and actual six-CSV validation used.",
+    "remote_CI_push_PR_merge": "Not authorized; not performed.",
+    "scientific_reclassification_or_closure": "Explicitly not authorized; RUNNING/PENDING retained."
+  },
+  "operational_authorization": false,
+  "operator_validation_locator_correction": {
+    "cause": "Temporary verification script initially omitted provisional in the canonical artifact path",
+    "correction": "Only temporary read-only verifier locator corrected to canonical/provisional; no pipeline rerun, no CSV or recipe modification",
+    "final_status": "PASS",
+    "initial_exit_code": 1
+  },
+  "paired_folds": 815,
+  "preservation": {
+    "bitacora_change": "append-only; previous bytes preserved as prefix",
+    "factory_and_all_prior_evidence": "UNCHANGED",
+    "only_prior_file_modified": "docs/bitacora-experimental.md",
+    "prior_tracked_files": 680,
+    "source_and_target_cache_names_sizes_sha256": "VERIFIED_AFTER_RUN",
+    "unchanged": 679
+  },
+  "previous_failed_attempt_preserved": true,
+  "prior_full_suite": {
+    "reference": "docs/experiments/EXP004/EXECUTION_VALIDATION.json",
+    "status": "PREVIOUS_PASS_ON_IDENTICAL_SOURCE_AND_TESTS; not presented as a new run",
+    "tests": 872
+  },
+  "reading": "primary",
+  "real_factory_invocations_this_recovery": 0,
+  "recipe_parameters_code_tests_dependencies_changed": false,
+  "recorded_utc": "2026-11-12T12:33:43.949703+00:00",
+  "registry_status": "RUNNING",
+  "retroanalisis_curve": "PRODUCED; does not replace the factory curve",
+  "schema": "satd.exp004-recovery-verification/v1",
+  "scientific_conclusion": "NOT_APPROVED",
+  "scientific_result": "PENDING",
+  "scope": "authorized_local_materialization_and_one_additional_retroanalysis_invocation_only",
+  "secondary_t2": "NOT_DECLARED_IN_RETROANALYSIS",
+  "status": "PASS",
+  "warnings": [
+    "Two existing OmegaConf resolver warnings in focused tests",
+    "Existing VIRTUAL_ENV mismatch; uv used pipeline environment",
+    "Exact predeclared --pipeline flag is deprecated in Kedro"
+  ]
+}

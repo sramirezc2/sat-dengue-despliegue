@@ -2022,3 +2022,15 @@ tienen intervalos que incluyen cero en las tres lecturas; ambos brazos obtienen
 antes del ajuste por la caché corregida ausente en inbox; su recuperación requiere
 autorización adicional. Registro RUNNING/PENDING, sin decisión científica,
 campeón, autorización operativa o publicación. La preinscripción permanece intacta.
+
+## Tanda EXP004 — recuperación ambiental autorizada, 12 de noviembre de 2026
+
+Una autorización humana adicional permitió copiar los cinco crudos verificados
+al inbox ausente, sin descargas, y realizar una única invocación adicional del
+retroanálisis. Completó 15/15 nodos; [resultado técnico y hashes](experiments/EXP004/RECOVERY_RESULT.md).
+Los seis CSV verifican: 815 pares de folds, cinco semillas, igualdad de claves y
+etiquetas, cero omisiones y exclusión de 2025. En la única lectura primaria del
+retroanálisis, reciente−uniforme cambia +2 TP en T+1 y −2 en T+2 frente al punto
+descriptivo predeclarado. No se combina con la fábrica ni se atribuye a secondary_t2.
+Se conserva íntegro el primer fallo y no se repite la fábrica. RUNNING/PENDING,
+sin conclusión científica o campeón; la curva ausente de fábrica sigue pendiente.
