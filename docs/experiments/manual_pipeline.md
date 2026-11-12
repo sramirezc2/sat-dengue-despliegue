@@ -1,6 +1,6 @@
 # Manual de la fábrica de experimentos
 
-Esta guía sirve para personas y agentes. Todos los comandos se ejecutan desde la raíz del repositorio. La fábrica sigue una receta aprobada, ejecuta adquisición → construcción canónica → entrenamiento → evaluación y guarda un recibo exclusivo de cada corrida. El [contrato científico](contrato.md) define qué resultados pueden interpretarse; sigue pendiente de aprobación del equipo.
+Esta guía sirve para personas y agentes. Todos los comandos se ejecutan desde la raíz del repositorio. La fábrica sigue una receta aprobada, ejecuta adquisición → construcción canónica → entrenamiento → evaluación y guarda un recibo exclusivo de cada corrida. El [contrato científico](contrato.md) define qué resultados pueden interpretarse; está aprobado por el equipo (versión 1.0.0).
 
 ## Elija la ayuda adecuada
 
@@ -51,7 +51,7 @@ La fábrica verifica los datos, construye el canónico certificado, prepara los 
 
 ## 3. Revise la evaluación y cierre
 
-Lea `receipt.json`, `inventory.json` y los resultados enlazados desde el recibo. El [contrato](contrato.md) explica A/B/C, el canal, persistencia, soportes y veredictos; la [guía de evaluación](scientific-evaluation.md) explica los brazos con y sin clima, cortes y cinco semillas. La fábrica muestra T+1 y T+2 por separado, las diferencias por año y territorio, y conserva todas las semillas: **no elija la mejor**. Los veredictos actuales son bajo contrato propuesto, no aprobación académica ni elección de campeón. Los resultados de 2025, ya conocidos en V2, no son confirmación independiente.
+Lea `receipt.json`, `inventory.json` y los resultados enlazados desde el recibo. El [contrato](contrato.md) explica A/B/C, el canal, persistencia, soportes y veredictos; la [guía de evaluación](scientific-evaluation.md) explica los brazos con y sin clima, cortes y cinco semillas. La fábrica muestra T+1 y T+2 por separado, las diferencias por año y territorio, y conserva todas las semillas: **no elija la mejor**. Los veredictos nuevos aplican el contrato aprobado; las conclusiones académicas y la elección de campeón requieren decisiones humanas separadas. Los resultados de 2025, ya conocidos en V2, no son confirmación independiente.
 
 Pida una revisión posterior con `$sat-dengue-scientific-review`. Escriba `docs/experiments/EXP003/CONCLUSIONS.md` con la hipótesis, resultados, comparación, límites, aprendizaje y enlace al inventario. El equipo decide `POSITIVE`, `NEGATIVE` o `INCONCLUSIVE`; después cierre y valide:
 
@@ -74,3 +74,23 @@ Compare científicamente solo experimentos con población, periodos, evento y da
 Para repetir `EXP003`, prepare **EXP004** con un ID y aprobación nuevos. Declare si busca repetir exactamente la receta o estudiar un cambio concreto; conserve `EXP003` y toda su evidencia. Si la corrida falla o queda bloqueada, use `$sat-dengue-recovery` antes de reintentar. No borre recibos, desbloquee a ciegas ni vuelva a usar un ID ejecutado.
 
 **Ejemplo.** El equipo quiere comprobar si añadir clima ayuda. Prepara `EXP003` con dos brazos predeclarados, uno epidemiológico y otro con clima, sobre las mismas observaciones comparables. Un revisor comprueba la receta y el equipo la aprueba. Se ejecuta el comando E2E; la fábrica guarda ambos brazos, los cinco resultados por semilla y la evaluación por horizonte. Otra persona revisa la evidencia y documenta si el clima aportó algo, si el resultado fue inconcluso y qué límites tiene. Una repetición se registra como `EXP004`, sin alterar `EXP003`.
+
+
+## Receta de recencia EXP004
+
+[EXP004](EXP004/SPECIFICATION.md) formaliza una hipótesis ya explorada, con dos
+logísticas climáticas y único cambio de pesos de ajuste. Se registró inicialmente
+como PROPOSED y no es un ID libre para los ejemplos de repetición anteriores. Su
+[revisión previa](EXP004/PRE_APPROVAL_REVIEW.md) y hashes se presentan al equipo
+antes de aprobar. La autorización explícita de esta operación usa aprobación
+humana en la conversación, registrada posteriormente en Git; no autoriza PR,
+push o merge. Las recetas e intervalos no se modifican después de observarlas.
+El entorno `conf/exp004` permite ejecutar sus dos recetas de retroanálisis juntas
+sin cambiar defaults globales; los comandos exactos están en la especificación.
+
+El 12 de noviembre de 2026 se registró la [aprobación humana R2](EXP004/APPROVAL.md)
+y terminó un intento de fábrica. El registro conserva RUNNING/PENDING hasta la
+decisión científica; [conclusiones pendientes](EXP004/CONCLUSIONS.md). El primer
+intento de retroanálisis falló antes del ajuste por falta de la caché corregida
+en inbox. Su [recuperación propuesta](EXP004/RETROANALYSIS_RECOVERY.md) requiere
+autorización adicional; no se repite automáticamente ni se modifica la receta.

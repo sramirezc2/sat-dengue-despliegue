@@ -1,0 +1,171 @@
+{
+  "schema": "satd.exp004-preparation/v1",
+  "revision": "R2",
+  "phase": "revise_proposed_recipe_before_approval",
+  "date": "2026-11-12",
+  "status": "PASS",
+  "base_commit": "17635ee1d2f81314864154875a884887edcbeeaa",
+  "branch": "feature/exp004-recency-36m",
+  "normative_commit": "afb0edd6fda6cc66ec1e529d9c6fd505a2788749",
+  "experiment_id": "EXP004",
+  "registry_status": "PROPOSED",
+  "human_recipe_approval_received": false,
+  "scientific_result": "PENDING",
+  "scientific_conclusion": "NOT_APPROVED",
+  "champion_status": "NOT_SELECTED",
+  "operational_authorization": false,
+  "contract": {
+    "version": "1.0.0",
+    "status": "APPROVED",
+    "sha256": "f701ae4a6731d6a40dd0b7e03a3a50f6f07e9b8154d25091b984f91834e6b97b"
+  },
+  "validated_source_sha256": "4531f1080b62a9a482061bbcf686191274e8ff997b515f15c8dd81dc46a45321",
+  "production_code_unchanged": true,
+  "change": "Human requested secondary_t2 before approval; no EXP004 results have been observed",
+  "recipe_readings": [
+    "primary",
+    "secondary_t2"
+  ],
+  "variants": 140,
+  "model_fits_planned": 210,
+  "views": [
+    {
+      "reading": "primary",
+      "horizons": [
+        1,
+        2
+      ],
+      "cohort": "known_non_excess_at_T",
+      "B_required": false
+    },
+    {
+      "reading": "secondary_t2",
+      "horizons": [
+        2
+      ],
+      "cohort": "both_known_states_at_T",
+      "B_required": true
+    }
+  ],
+  "B_secondary_no_alerts": {
+    "status": "NO_EVALUABLE",
+    "reason": "NO_PERSISTENCE_ALERTS",
+    "affirmative_vote": false
+  },
+  "readings_are_never_pooled_or_selected_after_evaluation": true,
+  "hashes": {
+    "docs/experiments/contrato.md": "f701ae4a6731d6a40dd0b7e03a3a50f6f07e9b8154d25091b984f91834e6b97b",
+    "docs/experiments/EXP004/SPECIFICATION.md": "ee40e74fa0dbf7bdd150340c9103961ef9fe0300c87743faab1c3337aa6ab2fd",
+    "pipeline/conf/experiments/EXP004.yml": "ed55aedb9259ae253863fd97cf255d48b56cba2a15854e4746e666df32e7132f",
+    "docs/experiments/EXP004/registration.yml": "ed74375d9eca779cdad9b4f0a245d373e41684af3bcb16cff82b91e62ebaa065",
+    "docs/bitacora/tanda-exp004-recencia.md": "0a6a3d9b82121fc8d8742fe7c09ea54c2992a888d65a16594e8808c39977fe95",
+    "docs/experiments/EXP004/PRE_APPROVAL_REVIEW.md": "2a669eb02e769e14b1e318e12675c1ea7615ce548767c9ae3a83137453eb5e36",
+    "pipeline/conf/retroanalisis/EXP004_uniform_history.yml": "2708be7132badb66ba169df12c96b7af7fa16a957d22d47ddff405e4b789c0c8",
+    "pipeline/conf/retroanalisis/EXP004_recent_history_36m.yml": "9fe505a6dd721a0177856b3b29eb5fd6531466e527ab4183b77273623d5d348a",
+    "pipeline/conf/exp004/parameters_exp004.yml": "68272b9c09747cf16a19bcf0b2e8a76a857c8e882ce70e6ccf97e4cf4d4008c2",
+    "pipeline/tests/test_training_weighting.py": "99138db9c9cf5abe4cad6bbbd70aa6a112b4d1312d8c6d784638ef3eaa1fc3e2"
+  },
+  "junit_reports": {
+    "focused": {
+      "path": "pipeline/data/exp004-preparation-r2/focused.xml",
+      "sha256": "0904949f32dc7d7cf86b5fb4aefb179094b8f925b89221766268d05517e48e93",
+      "tests": "104",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "17.779"
+    },
+    "pipeline-suite": {
+      "path": "pipeline/data/exp004-preparation-r2/pipeline-suite.xml",
+      "sha256": "a952fd12acdecc734cf1200727f22ddf27f25a1485c8d9dd315bcfee914f3725",
+      "tests": "872",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "341.850"
+    }
+  },
+  "gates": [
+    {
+      "command": "uv lock --check --project pipeline",
+      "result": "PASS"
+    },
+    {
+      "command": "uv sync --locked --project pipeline",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --directory pipeline ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --directory pipeline pytest tests/test_training_weighting.py tests/test_scientific_evaluation.py tests/test_seed_aggregation.py --junitxml=data/exp004-preparation-r2/focused.xml",
+      "result": "104 PASS"
+    },
+    {
+      "command": "uv run --directory pipeline pytest --junitxml=data/exp004-preparation-r2/pipeline-suite.xml",
+      "result": "872 PASS, no failures/errors/skips"
+    },
+    {
+      "command": "uv run --directory pipeline python -m sat_dengue_pipeline.experiment_management validate",
+      "result": "VALID"
+    },
+    {
+      "command": "uv run --directory pipeline python tools/check_experiment_preservation.py",
+      "result": "PASS: 49 files, 22 JSON, 16 receipts, T16 N=3 identity"
+    },
+    {
+      "command": "uv run --directory pipeline python -O tools/check_experiment_preservation.py",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "Markdown links, hash table, proposal/review/registry coherence",
+      "result": "PASS"
+    },
+    {
+      "command": "Protected files, production code, sole executable recipe change, file sizes and secret-pattern candidates",
+      "result": "PASS"
+    }
+  ],
+  "previous_preparation_record": {
+    "path": "docs/experiments/EXP004/PREPARATION_VALIDATION.json",
+    "sha256": "a3894dbe62a85f8f07c2397e6793f3601429f4cdb9161c27b35971bc6c0e09ee",
+    "preserved_without_changes": true
+  },
+  "preservation": {
+    "protected_files": 150,
+    "all_hashes_unchanged": true,
+    "EXP001_EXP002_registry_bytes_unchanged": true,
+    "contract_unchanged": true,
+    "source_unchanged": true,
+    "retro_recipes_and_environment_unchanged": true,
+    "old_proposal_preserved_in_git_commit": "17635ee1d2f81314864154875a884887edcbeeaa"
+  },
+  "scientific_review": {
+    "mode": "pre-approval",
+    "revision": "R2",
+    "recommendation": "APPROVED_WITH_LIMITATIONS",
+    "independent_review": false,
+    "reference": "docs/experiments/EXP004/PRE_APPROVAL_REVIEW.md",
+    "human_approval_pending": true
+  },
+  "warnings": [
+    "Eight existing OmegaConf/Kedro deprecation warnings in complete suite; two in focused suite",
+    "Existing VIRTUAL_ENV mismatch; uv used the pipeline environment"
+  ],
+  "omissions": {
+    "API_dashboard_and_publication_consumers": "Not rerun: no product, source, dependencies or publication changes; this revision changes only proposal/configuration and its tests",
+    "Kedro_pipeline_commands": "Not executed as instructed; only pytest validation on artificial sources",
+    "remote_CI_push_PR_merge": "Not authorized; not performed"
+  },
+  "real_executions": {
+    "factory": "NOT_RUN_PENDING_HUMAN_RECIPE_APPROVAL",
+    "retroanalisis": "NOT_RUN_PENDING_HUMAN_RECIPE_APPROVAL",
+    "official_mlflow_run_created": false
+  },
+  "next_safe_action": "Present R2 recipe and hashes; request explicit human approval; keep PROPOSED and do not execute until received"
+}

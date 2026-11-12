@@ -1,0 +1,41 @@
+canonical:
+  mode: approved
+  profile: operational_full
+  manifest: conf/releases/operational-raw-173d5856.json
+  workspace: data/retroanalisis/EXP004/canonical
+  tracking: false
+retroanalisis:
+  configuraciones:
+  - conf/retroanalisis/EXP004_uniform_history.yml
+  - conf/retroanalisis/EXP004_recent_history_36m.yml
+  semillas:
+  - 7
+  - 13
+  - 31
+  - 53
+  - 101
+  horizontes:
+  - 1
+  - 2
+  cadencia: mensual
+  primer_entrenamiento: 2012-03
+  primer_origen: 2018-01
+  ultimo_objetivo: 2024-12
+  cobertura_desde: 2007-01
+  municipios_minimos: 76
+  departamentos:
+  - '50'
+  - '73'
+  salida: data/retroanalisis/EXP004/run1
+  exclusive_output: true
+  exigir_conjunto_igual: true
+  certified_data:
+    mode: raw
+    manifest: pipeline/conf/releases/operational-raw-173d5856.json
+    manifest_sha256: 846c72ecd2e641373d55b40e7a8e2b790ea02239b44cff08e412990bcdb404fe
+    require_private: true
+    release_id: satd-raw-173d5856
+    canonical:
+      profile: operational_full
+      certificate: docs/evidence/task27/canonical-full-93ac27fd-certification.json
+      certificate_sha256: 5c1d2adc0a7967be9ee5e3398b5541cf74963ed6f6b4ee94e6f4a4838a77a966

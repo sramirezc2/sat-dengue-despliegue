@@ -1,6 +1,7 @@
 """Ejecutor registrado; reutiliza ciencia de factory.engine sin alterar T16."""
 
 import importlib.metadata
+import json
 import subprocess
 import uuid
 from dataclasses import dataclass, field
@@ -190,8 +191,8 @@ def begin_execution(
     tags.update(execution_id=execution_id, code_sha256=lineage["source_sha256"], evidence=relative)
     if config.get("schema_version") == 3:
         tags.update(
-            evaluation_label="VEREDICTO_BAJO_CONTRATO_PROPUESTO",
-            contract_status="PROPUESTA_PARA_APROBACION",
+            evaluation_label="VEREDICTO_BAJO_CONTRATO_APROBADO",
+            contract_status="APPROVED",
             contract_sha256=config["scientific_evaluation"]["contract"]["sha256"],
         )
     session = RegisteredExecution(
@@ -280,6 +281,12 @@ def advance(session: RegisteredExecution, *, stage: str) -> RegisteredExecution:
             function = getattr(engine, stage)
             for run in session.runs.values():
                 function(run)
+            if stage == "preflight" and session.config.get("schema_version") == 3:
+                from sat_dengue_pipeline.evaluation.scientific.configuration import (
+                    verify_weighting_cohorts,
+                )
+
+                verify_weighting_cohorts(session.runs)
     except BaseException as error:
         finish_execution(session, error)
     return session
@@ -310,6 +317,17 @@ def finish_execution(
         if isinstance(error, (engine.FactoryGateError, ValueError))
         else "FAILED"
     )
+    weighting_summaries = {
+        name: {
+            str(h): json.loads(fitted.decisions.trace_json)["training_weighting"]
+            for h, fitted in variant.fitted.items()
+            if "training_weighting" in json.loads(fitted.decisions.trace_json)
+        }
+        for name, variant in session.runs.items()
+        if "training_weighting" in getattr(variant, "config", {})
+    }
+    if weighting_summaries:
+        lineage["training_weighting"] = weighting_summaries
     signature_fields = {
         "experiment_id": experiment_id,
         "protocol_sha256": entry["protocol_sha256"],
@@ -371,6 +389,8 @@ def finish_execution(
         "champion_status": "NOT_SELECTED",
         "operational_authorization": False,
     }
+    if weighting_summaries:
+        receipt["training_weighting"] = weighting_summaries
     artifacts = {
         "receipt.json": receipt,
         "configuration.json": config,
@@ -392,7 +412,8 @@ def finish_execution(
             additions = scientific_artifacts(session.scientific_records)
             artifacts.update(additions)
             receipt["scientific_evaluation"] = {
-                "label": "VEREDICTO_BAJO_CONTRATO_PROPUESTO",
+                "label": "VEREDICTO_BAJO_CONTRATO_APROBADO",
+                "contract_status": "APPROVED",
                 "contract": config["scientific_evaluation"]["contract"],
                 "seeds": config["scientific_evaluation"]["seeds"],
                 "cuts": [c["id"] for c in config["scientific_evaluation"]["cuts"]],

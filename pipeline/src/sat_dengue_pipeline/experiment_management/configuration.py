@@ -87,6 +87,16 @@ def validate_configuration(config: dict) -> dict:
             "2019-01" <= ventana["first_origin"] < ventana["last_target"] < config["reserved_start"]
         ):
             raise ValueError("Ventana expansiva fuera del periodo autorizado")
+    from sat_dengue_pipeline.experiments.weighting import validate_weighting
+
+    if rolling and "training_weighting" in config:
+        raise ValueError(
+            "Ponderación registrada requiere cinco roles; use retroanalisis para rolling"
+        )
+    weighting = config.get("training_weighting", {"method": "uniform"})
+    validate_weighting(weighting)
+    if weighting["method"] != "uniform" and config["candidate"]["family"] != "logistic_onset":
+        raise ValueError("El adaptador no soporta ponderación de entrenamiento")
     candidate = config["candidate"]
     key = (candidate["family"], candidate["adapter_version"])
     if key not in ADAPTERS:
@@ -161,8 +171,8 @@ def load_configuration(root: Path, entry: dict) -> dict:
         document = confined(root, contract["path"], "docs/experiments")
         if sha256(document) != contract[
             "sha256"
-        ] or "PROPUESTA_PARA_APROBACION" not in document.read_text(encoding="utf-8"):
-            raise ValueError("Contrato propuesto ausente o distinto del congelado")
+        ] or "- **Estado:** `APROBADO`" not in document.read_text(encoding="utf-8"):
+            raise ValueError("Contrato aprobado ausente o distinto del congelado")
     config["specification"] = entry["experiment_id"]
     config["governance"] = {
         "purpose": entry["experiment_type"],

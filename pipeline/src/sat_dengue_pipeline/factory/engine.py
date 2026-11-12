@@ -294,6 +294,11 @@ def fit(run: FactoryRun) -> FactoryRun:
             policy,
             calibration_parameters=run.config["calibration"]["parameters"],
             brier_tolerance=run.config["calibration"]["brier_tolerance"],
+            **(
+                {"training_weighting": run.config["training_weighting"]}
+                if "training_weighting" in run.config
+                else {}
+            ),
         )
         if run.label_reads.get(f"{h}:evaluation", 0):
             raise FactoryGateError("evaluation_labels_during_fit")

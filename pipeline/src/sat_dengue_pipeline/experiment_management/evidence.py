@@ -102,6 +102,6 @@ def scientific_artifacts(records: list[dict]) -> dict[str, dict]:
             chunks.append([])
         chunks[-1].append(record)
     return {
-        f"scientific-{i:04d}.json": {"schema": "satd-scientific-proposed-v1", "records": chunk}
+        f"scientific-{i:04d}.json": {"schema": "satd-scientific-approved-v1", "records": chunk}
         for i, chunk in enumerate(chunks)
     }

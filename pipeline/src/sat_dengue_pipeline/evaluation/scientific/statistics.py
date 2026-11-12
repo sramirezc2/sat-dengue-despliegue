@@ -171,7 +171,7 @@ def paired_intervals(
             "valid_replicates": valid,
             "invalid_replicates": replicates - valid,
             "requested_replicates": replicates,
-            "status": "OK_UNDER_PROPOSED_CONTRACT"
+            "status": "OK_UNDER_APPROVED_CONTRACT"
             if evaluable
             else "UNDEFINED_OR_INSUFFICIENT_BLOCKS",
         }
@@ -184,7 +184,7 @@ def paired_intervals(
         "target_months": len(months),
         "draws_digest": stable_digest({"months": months, "draws": draws.tolist()}),
         "intervals": result,
-        "contract_status": "PROPUESTA_PARA_APROBACION",
+        "contract_status": "APPROVED",
     }
 
 
@@ -197,7 +197,7 @@ def utility_verdict(
     budget_respected: bool = True,
     missing_predictions: int = 0,
 ) -> str:
-    """Devolver solo el veredicto bajo contrato propuesto, separado de A/B/C."""
+    """Devolver solo el veredicto bajo contrato aprobado, separado de A/B/C."""
     model, channel = (methods[n] for n in (candidate, "channel_conditioned"))
     if missing_predictions:
         return "INVALIDO"

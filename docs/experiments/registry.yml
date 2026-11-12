@@ -28,3 +28,18 @@ experiments:
   conclusions: docs/experiments/EXP002/CONCLUSIONS.md
   scientific_result: NOT_APPLICABLE
   champion_status: NOT_SELECTED
+- experiment_id: EXP004
+  experiment_slug: exp004-recency-36m
+  hypothesis_id: EXP004-H1
+  title: "Historia reciente de 36 meses frente a pesos uniformes en log\xEDstica con\
+    \ clima"
+  experiment_type: scientific
+  status: COMPLETED
+  protocol: docs/experiments/EXP004/SPECIFICATION.md
+  protocol_sha256: ee40e74fa0dbf7bdd150340c9103961ef9fe0300c87743faab1c3337aa6ab2fd
+  configuration: pipeline/conf/experiments/EXP004.yml
+  configuration_sha256: ed55aedb9259ae253863fd97cf255d48b56cba2a15854e4746e666df32e7132f
+  pipeline: experiment_run
+  conclusions: docs/experiments/EXP004/CONCLUSIONS.md
+  scientific_result: NEGATIVE
+  champion_status: NOT_SELECTED

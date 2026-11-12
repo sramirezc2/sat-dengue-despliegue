@@ -187,9 +187,7 @@ def validate_data(data: ExperimentData, horizon: int, reserved_start: str = "202
         or data.X.columns.duplicated().any()
         or set(data.derived) & set(PREDICTORS)
         or (
-            data.derived
-            and list(data.derived)
-            != [c for c in DERIVED_COLUMNS if c in data.derived]
+            data.derived and list(data.derived) != [c for c in DERIVED_COLUMNS if c in data.derived]
         )
     ):
         raise ValueError("Predictores fuera del esquema canónico cerrado")
@@ -300,7 +298,11 @@ def fold_inputs(
 
 
 def run_rolling(
-    data: ExperimentData, spec: ExperimentSpec, factory: Callable[[], FoldEstimator]
+    data: ExperimentData,
+    spec: ExperimentSpec,
+    factory: Callable[[], FoldEstimator],
+    *,
+    training_weighting: dict | None = None,
 ) -> tuple[pd.DataFrame, dict[str, Any]]:
     """Ejecutar folds con instancias nuevas y copias de X/y, sin métricas finales.
 
@@ -308,6 +310,7 @@ def run_rolling(
         data: Entradas artificiales o preparación autorizada, nunca publicaciones.
         spec: Calendario congelado.
         factory: Crea una instancia nueva y sin ajustar por fold.
+        training_weighting: Política opcional de ajuste, calculada con train efectivo.
 
     Returns:
         Probabilidades enlazadas sin y_true y auditoría de soporte efectivo.
@@ -320,7 +323,15 @@ def run_rolling(
         if any(model is previous for previous in models) or getattr(model, "fitted", False):
             raise ValueError("Cada fold requiere una instancia nueva no ajustada")
         models.append(model)
-        model.fit(train.X.copy(deep=True), train.y.copy(deep=True))
+        weight_summary = None
+        if training_weighting is not None:
+            from .weighting import training_weights
+
+            weights, weight_summary = training_weights(train.keys, training_weighting)
+        if training_weighting is not None and training_weighting["method"] != "uniform":
+            model.fit(train.X.copy(deep=True), train.y.copy(deep=True), sample_weight=weights)
+        else:
+            model.fit(train.X.copy(deep=True), train.y.copy(deep=True))
         probability = model.predict_positive(validation.X.copy(deep=True))
         if not isinstance(probability, pd.Series) or not probability.index.equals(
             validation.X.index
@@ -340,6 +351,16 @@ def run_rolling(
                 "prediction_rows": len(frame),
                 "last_training_target": str(train.keys.target_period.max()),
                 "last_label_available": str(train.keys.label_available_period.max()),
+                **(
+                    {
+                        "training_keys_sha256": stable_digest(train.keys.to_dict("records")),
+                        "training_labels_sha256": stable_digest(train.y.astype(int).tolist()),
+                        "prediction_keys_sha256": stable_digest(validation.keys.to_dict("records")),
+                        "training_weighting": weight_summary,
+                    }
+                    if weight_summary is not None
+                    else {}
+                ),
             }
         )
     return pd.concat(predictions, ignore_index=True), {**calendar_audit(spec), "support": supports}

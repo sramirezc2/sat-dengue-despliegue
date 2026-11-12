@@ -1,0 +1,51 @@
+{
+  "schema": "satd.exp004-local-cache-recovery/v1",
+  "experiment_id": "EXP004",
+  "authorization": "docs/experiments/EXP004/RECOVERY_AUTHORIZATION.md",
+  "started_utc": "2026-11-12T12:14:51.801763+00:00",
+  "status": "VERIFIED",
+  "downloads": 0,
+  "source_cache": "pipeline/data/01_raw/experiments/satd-raw-173d5856/1b2a28a4c90d3225272c2103b27d3cef1bfb69f3a6aeb9470e4177fd3798ed01",
+  "target_cache": "pipeline/data/01_raw/inbox/satd-raw-173d5856/1b2a28a4c90d3225272c2103b27d3cef1bfb69f3a6aeb9470e4177fd3798ed01",
+  "manifest": "pipeline/conf/releases/operational-raw-173d5856.json",
+  "manifest_sha256": "1b2a28a4c90d3225272c2103b27d3cef1bfb69f3a6aeb9470e4177fd3798ed01",
+  "source_modified": false,
+  "recipe_modified": false,
+  "credential_accessed": false,
+  "transport": "local_copy_via_existing_resolver",
+  "temporary_files_and_atomic_replace": true,
+  "preexisting_target_allowed": false,
+  "symlinks_allowed": false,
+  "additional_files_allowed": false,
+  "source_hashes_unchanged": true,
+  "file_count": 5,
+  "total_bytes": 2621954146,
+  "files": [
+    {
+      "name": "Divipola-municipios.md",
+      "size_bytes": 209867,
+      "sha256": "72eabcea0ff26370d23b9688e8d8f2246946cc815c040ccf1a6966b37a1de9f3"
+    },
+    {
+      "name": "divipola-provenance.json",
+      "size_bytes": 925,
+      "sha256": "92091306f0130910f27de999776b5cf4ed36b7dd7c89bd724d58caeb74f8c158"
+    },
+    {
+      "name": "dengue.csv",
+      "size_bytes": 875694283,
+      "sha256": "58d277cfef7a60c28d488eefe4e7a1a7bf0f7b0df3dd88245971cd7b3d32c84b"
+    },
+    {
+      "name": "dengue_grave.csv",
+      "size_bytes": 24537734,
+      "sha256": "3d60e96ccbedc35a19a8f5f54be8d786aa599813259c914f131522bf17dd1d70"
+    },
+    {
+      "name": "google_earth_engine.csv",
+      "size_bytes": 1721511337,
+      "sha256": "a92fd7c7e013136280ba3766b870a303c22ad6196b5411a3fefb81b46670ec8e"
+    }
+  ],
+  "finished_utc": "2026-11-12T12:14:57.080738+00:00"
+}

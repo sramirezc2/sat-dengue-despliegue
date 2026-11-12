@@ -1,21 +1,21 @@
 # Contrato científico de experimentación y decisión — SAT DENGUE V3
 
-- **Versión:** 0.2.2-propuesta
-- **Estado:** `PROPUESTA_PARA_APROBACION`
-- **Fecha de revisión:** 10 de noviembre de 2026 (propuesta inicial: 8 de noviembre)
-- **Autoridad requerida:** equipo SAT DENGUE
+- **Versión:** 1.0.0
+- **Estado:** `APROBADO`
+- **Fecha de revisión:** 11 de noviembre de 2026 (propuesta inicial: 8 de noviembre)
+- **Autoridad:** equipo SAT DENGUE
 - **Alcance:** todo experimento científico futuro de V3, sin importar la familia
   de modelo, la arquitectura, los predictores o el volumen de datos.
 
 Este contrato define qué significa producir evidencia válida y qué debe superar
 un candidato para contribuir a la respuesta del proyecto de grado. No aprueba
-un modelo, no selecciona un campeón y no autoriza alertas operativas. Mientras
-no exista aprobación formal del equipo, este documento es una propuesta
-normativa: sirve para revisar y cerrar las decisiones pendientes, pero no
-reclasifica resultados históricos.
+un modelo, no selecciona un campeón y no autoriza alertas operativas.
+La aprobación del equipo SAT DENGUE se registra por instrucción humana explícita
+del 11 de noviembre de 2026, en el commit exclusivo de reconciliación normativa
+de esta versión. Rige prospectivamente y no reclasifica resultados históricos.
 
-El PR #3 reúne la revisión documental y la implementación técnica de **este mismo
-contrato propuesto**, según [plan.md](../../plan.md). La implementación y sus
+El PR #3 reunió la propuesta y su implementación técnica, según el historial de
+[plan.md](../../plan.md). La implementación y sus
 límites se describen en [evaluación integrada](scientific-evaluation.md).
 Esto no aprueba recetas, no cambia el evento y no reclasifica experimentos.
 
@@ -25,7 +25,7 @@ V3, el repositorio `sramirezc2/sat-dengue-despliegue`, es la fuente activa. V2
 es antecedente y procedencia histórica. Sus resultados y políticas congeladas
 se conservan, pero no sustituyen las reglas de un experimento V3.
 
-Después de su aprobación, este contrato será la autoridad científica común. La
+Este contrato aprobado es la autoridad científica común. La
 especificación de cada experimento podrá hacerlo más estricto, nunca omitirlo o
 debilitarlo. Ante una contradicción entre este contrato, una especificación y la
 configuración ejecutable, el experimento debe detenerse antes de adquirir datos
@@ -64,7 +64,7 @@ o ajustar una decisión emitida en T.
 
 La pregunta histórica se evalúa explícitamente mediante las condiciones A/B/C
 del apartado 10.3. La pregunta ampliada y la regla de utilidad del apartado 11
-son propuestas adicionales. Sus resultados deben presentarse por separado:
+son reglas contractuales adicionales. Sus resultados deben presentarse por separado:
 cumplir la regla nueva no convierte un incumplimiento de A/B/C en cumplimiento
 académico. La diferencia entre falsas alertas de exceso e inicio y entre sus
 denominadores debe permanecer visible.
@@ -115,7 +115,7 @@ inicio(p) = 1 si exceso(p-1) = 0 y exceso(p) = 1
 
 ### 4.3 Elegibilidad
 
-**Propuesta de continuidad con el contrato académico V2:** la cohorte principal
+**Continuidad aprobada con el contrato académico V2:** la cohorte principal
 contiene municipios-mes con estado de T observado y sin exceso en T para ambos
 horizontes. Se fija antes de evaluar. En T+2 esta restricción define la población
 estudiada, no la etiqueta: `inicio(T+2) = [exceso(T+1)=0 y exceso(T+2)=1]`.
@@ -146,13 +146,13 @@ comparador anticipatorio. Este documento cita esos resultados; no los reproduce.
 
 La misma entrada muestra que imponer la compuerta observable al modelo T+2
 reduce sus aciertos de **350 a 309**. Por tanto, conservar la cohorte académica
-no demuestra que sea la mejor política operativa a dos meses. Se propone además
+no demuestra que sea la mejor política operativa a dos meses. Se aprueba además
 una **lectura secundaria T+2** con todos los estados conocidos en T, tanto
 exceso como no exceso, sin esa restricción de emisión para modelo y canal.
 Mantiene exactamente el mismo evento T+1 → T+2 y usa soporte común propio,
 identificado por separado. Ambas lecturas y sus reglas se predeclaran; no se
-elige la favorable después de evaluar. La aprobación de esta doble lectura
-corresponde al equipo y no habilita cambiar hoy la cohorte del ejecutor.
+elige la favorable después de evaluar. Esta doble lectura debe predeclararse en cada receta; aprobar el contrato no
+autoriza una receta o ejecución concreta.
 
 ### 4.4 Población primaria
 
@@ -252,7 +252,7 @@ desarrollo y queda congelada antes de evaluación.
 Para T+2, el comparador solo puede condicionarse con información observable en T.
 Condicionarlo con el estado de T+1 es fuga temporal.
 
-En la cohorte principal del apartado 4.3 se propone la decisión
+En la cohorte principal del apartado 4.3 se aprueba la decisión
 `alerta_canal_h = g_T y [casos(T) > f_h × P75_histórico(T+h)]`, con P75 construido
 solo con historia permitida y disponible en T. `f_h`, la grilla, los empates y
 el periodo de selección se fijan en desarrollo por horizonte. Modelo y canal
@@ -325,7 +325,7 @@ Si existe una capacidad real de las secretarías de salud, esa capacidad debe
 reemplazar el presupuesto proxy mediante una enmienda aprobada antes del
 experimento confirmatorio.
 
-**Propuesta científica pendiente de aprobación del equipo:** para asignar el
+**Regla aprobada por el equipo:** para asignar el
 cupo del canal, ordenar solo las filas elegibles por exceso absoluto descendente,
 `casos(T) − fracción × P75_histórico(T+h)`, con desempate por código municipal
 ascendente. Usar la fracción propia del canal (1 para el estándar; la congelada
@@ -341,7 +341,7 @@ ese soporte, `TP_m` los inicios alertados por el método `m`, `L_m` sus alertas,
 `FP_inicio_m = L_m - TP_m` y `FP_exceso_m` sus alertas sin exceso en el objetivo.
 Cada salida identifica cohorte, horizonte, corte, territorio y digest de claves.
 
-### 10.1 Métricas de la regla adicional propuesta
+### 10.1 Métricas de la regla contractual adicional
 
 **Sensibilidad de inicio**
 
@@ -355,7 +355,7 @@ S_m = TP_m / I
 carga_FA_inicio_100mm_m = 100 × FP_inicio_m / N
 ```
 
-La carga usa un denominador fijado por la cohorte. Se propone como seguridad de
+La carga usa un denominador fijado por la cohorte. Se adopta como seguridad de
 la regla adicional del apartado 11; no es la condición B académica y no la
 reemplaza. El símbolo aislado `B` queda reservado a **B — superar persistencia**.
 
@@ -382,7 +382,7 @@ de numeradores y denominadores, no promediando tasas de subgrupos.
 Procedencia: [contrato académico V2, versión propuesta 1.0, estado Aprobado](https://github.com/j-mauro-r/SAT-Dengue-V2/blob/447ef9fd85303de61848d2b01733d25c8ad8a935/docs/product/experiments/contrato.md),
 apartados 3–8. Se consultó el archivo de ese commit; SHA-256:
 `e966bdecac08b2b54e597391cb716a20195ea1a09abacf9ad737f8cd063d4607`.
-Ese estado histórico no aprueba esta propuesta V3.
+Ese estado histórico es independiente de la aprobación actual de V3.
 
 Por cada horizonte, sobre exactamente el mismo soporte para modelo, C0 y C1:
 
@@ -444,16 +444,14 @@ En términos de inicio, cuando `L_m > 0`:
 No es una transformación equivalente de `FAR_exceso_m`: cambian el evento y
 el denominador. Tampoco cinco puntos de FAR equivalen a cinco falsas por 100
 municipio-mes. La política v2 heredó el número **5,0**, sin calibrarlo para esa
-nueva unidad, y **10,0** para ganancia de sensibilidad. Se mantienen visibles
-como propuestas pendientes; no se reajustan aquí tras conocer resultados.
-Su justificación, adopción y eventual calibración con capacidad sanitaria
-requieren decisión del equipo antes de una evaluación futura independiente.
+nueva unidad, y **10,0** para ganancia de sensibilidad. Se adoptan prospectivamente en esta versión, sin reajustarlos tras conocer
+resultados. Una futura calibración con capacidad sanitaria requiere enmienda
+aprobada antes de observar la evaluación independiente.
 
-## 11. Regla adicional de utilidad propuesta
+## 11. Regla contractual adicional de utilidad
 
-Los siguientes umbrales proceden de la política v2 propuesta y todavía requieren
-aprobación formal del equipo. Se mantienen visibles para que no puedan elegirse
-después de observar una nueva evaluación:
+Los siguientes umbrales proceden de la política v2 y quedan aprobados
+prospectivamente por el equipo. Se fijan antes de observar una nueva evaluación:
 
 - ganancia mínima de sensibilidad frente al canal condicionado: **10 puntos
   porcentuales**;
@@ -479,13 +477,13 @@ solo si simultáneamente:
    suficiente; toda heterogeneidad material queda reportada.
 
 Esta salida no modifica `ABC_HISTORICA`: un resultado puede cumplir una regla y
-fallar la otra, y debe decirlo. La respuesta afirmativa propuesta exige utilidad
+fallar la otra, y debe decirlo. La respuesta afirmativa exige utilidad
 y las condiciones históricas aplicables (A/C en primaria; A/B/C en secundaria),
 además de consistencia y evidencia confirmatoria; esa
-articulación también requiere aprobación del equipo. Ningún umbral, comparador
+articulación queda aprobada en esta versión. Ningún umbral, comparador
 o condición cambia a posteriori para resolver una discrepancia favorablemente.
 
-**Decisión del equipo para esta propuesta:** en la lectura primaria B se informa
+**Decisión aprobada del equipo:** en la lectura primaria B se informa
 `NO_EVALUABLE`, causa `DEGENERATE_PRIMARY_COHORT`, y queda fuera del voto. La
 utilidad se decide por el canal condicionado, los márgenes de sensibilidad y
 falsas alertas, sus intervalos y las demás compuertas; A y C siguen siendo
@@ -501,8 +499,8 @@ En la lectura secundaria T+2, B y la comparación de utilidad con persistencia
 siguen siendo obligatorias. Si persistencia no emite alertas en el soporte
 evaluado, se informa `NO_EVALUABLE` con causa `NO_PERSISTENCE_ALERTS`; no se
 convierte una comparación vacía en éxito. Los defectos de validez siguen siendo
-`INVALIDO`. Esta decisión no reinterpreta evidencia previa ni aprueba por sí
-sola el contrato completo, que permanece `PROPUESTA_PARA_APROBACION`.
+`INVALIDO`. La aprobación global del contrato no reinterpreta evidencia previa ni aprueba
+modelos, recetas, conclusiones, campeón o uso operativo.
 
 ## 12. Veredictos y respuesta final
 
@@ -516,8 +514,7 @@ sola el contrato completo, que permanece `PROPUESTA_PARA_APROBACION`.
 
 La tabla anterior se refiere solo a `UTILIDAD_PROPUESTA`. Se reportan además
 `ABC_HISTORICA`, consistencia, soporte y nivel de evidencia, sin un veredicto
-global que esconda desacuerdos. La conclusión propuesta del proyecto, pendiente
-de aprobación del equipo, se redacta por horizonte:
+global que esconda desacuerdos. La conclusión del proyecto requiere decisión humana y se redacta por horizonte:
 
 - **Sí:** existe un resultado confirmatorio con `UTILIDAD_PROPUESTA: CUMPLE`,
   condiciones aplicables satisfechas (`AC_CUMPLE` en primaria, con B no evaluable
@@ -543,7 +540,7 @@ excluir 2020-12 por soporte. Se reportan todos los cortes y configuraciones,
 incluidos empates, deterioros y resultados no evaluables. La mejora y su regla
 de decisión se predeclaran, no se elige el mejor corte o el agregado favorable.
 
-Para otro número de cortes se propone, sujeto a aprobación, **mayoría estricta
+Para otro número de cortes se aprueba prospectivamente **mayoría estricta
 de cortes utilizables**, `floor(K/2) + 1`, con al menos **K = 3**. Reproduce
 3/4 y 2/3; por ejemplo, exige 4/6 o 4/7. Esta generalización no estaba fijada
 para todo K en la bitácora. La especificación debe congelar calendario, K
@@ -553,8 +550,7 @@ territorios ni se cuentan semillas como cortes. Con menos de tres utilizables,
 la consistencia queda insuficiente. Un cambio de K previsto requiere nuevo
 protocolo aprobado; no se agregan o eliminan cortes tras ver su rendimiento.
 No se interpreta como una conversión única del 75 % histórico ni se aplica
-retroactivamente a resultados conocidos; el equipo debe decidir esta extensión
-antes de una nueva evaluación y conservar separada la lectura histórica.
+retroactivamente a resultados conocidos; la extensión aprobada conserva separada la lectura histórica.
 
 **Soporte — bitácora 4.4.** Cada celda horizonte × corte (o año exterior) ×
 territorio declarado necesita **al menos 30 inicios reales evaluables `I`** para
@@ -584,7 +580,7 @@ con al menos cinco semillas predeclaradas. Se reportan distribución, dirección
 casos en que la conclusión cambia; no se escoge la mejor semilla. Un algoritmo
 determinista debe demostrarlo con ejecuciones aisladas.
 
-**Agregación entre semillas — propuesta que requiere aprobación del equipo.**
+**Agregación entre semillas — regla aprobada prospectivamente.**
 Para cada combinación de horizonte, lectura, brazo, población y territorio se
 conserva primero la mayoría estricta de cortes utilizables **dentro de cada
 semilla**, con mínimo de tres cortes y el voto predeclarado que exige utilidad
@@ -597,9 +593,9 @@ Las vistas anuales no se añaden como cortes extra a la consistencia de todos lo
 
 El resumen exige **exactamente las cinco identidades predeclaradas** en la receta:
 
-| Estado del resumen bajo propuesta | Condición |
+| Estado del resumen bajo contrato aprobado | Condición |
 |---|---|
-| `CUMPLE_BAJO_CONTRATO_PROPUESTO` | Las cinco semillas tienen soporte y políticas válidos y cada una obtiene `CUMPLE` en su consistencia entre cortes. |
+| `CUMPLE_BAJO_CONTRATO_APROBADO` | Las cinco semillas tienen soporte y políticas válidos y cada una obtiene `CUMPLE` en su consistencia entre cortes. |
 | `NO_EVALUABLE` | Falta una semilla/corrida/corte declarado, no hay cinco identidades predeclaradas, falta una política o denominador necesario, o alguna semilla no alcanza tres cortes utilizables. |
 | `INCONCLUSO_POR_INESTABILIDAD` | Los cinco resultados son válidos y evaluables, pero no todos obtienen `CUMPLE`; en particular, 4/5 no basta. |
 | `INVALIDO` | Hay una corrida inválida o evidencia inconsistente: duplicados, semilla ajena o soportes no emparejados entre semillas. Tiene precedencia sobre la falta de soporte y no se excluye para mejorar el voto. |
@@ -621,12 +617,10 @@ del ajuste, evitando que una mayoría de semillas o una selección favorable ocu
 una inversión de resultado. La mayoría de cortes evalúa consistencia temporal;
 la unanimidad de semillas agrega una comprobación de sensibilidad algorítmica,
 sin crear cinco cohortes independientes ni una prueba inferencial adicional.
-Es una **decisión prospectiva propuesta**, no una regla histórica ya aprobada ni
-una regla elegida por rendimiento observado. Se implementa con resultados
+Es una **decisión prospectiva aprobada**, no una regla histórica ni una regla
+elegida por rendimiento observado de EXP004. Se implementó con resultados
 artificiales, sin usar 2025 ni ajustar umbrales a resultados reales. Sustituye
-el bloqueo técnico `PENDING_SEED_AGGREGATION_RULE`, pero **no aprueba el contrato**:
-el equipo debe aprobar y congelar esta regla antes de una evaluación científica
-nueva. Cada receta V3 fija el hash del contrato; su cambio requiere identidad y
+el bloqueo técnico `PENDING_SEED_AGGREGATION_RULE`. Cada receta V3 fija el hash del contrato; su cambio requiere identidad y
 aprobación nuevas, sin reinterpretar evidencia previa.
 
 Un candidato finalista requiere además una reproducción E2E N=3 con datos,
@@ -689,45 +683,46 @@ autoriza a relajar la política después de observar resultados.
 | Registro, hashes, evidencia, conclusiones y comparación | Implementado | Compatible. |
 | Canal condicionado y presupuesto | Etapa `scientific_evaluation` de `experiment_run`, recetas V3 | Exige grilla, regla y cupo predeclarados; null detiene la utilidad dependiente. |
 | C0/C1 históricos, FAR de exceso y A/B/C | Implementados por horizonte y soporte común | C1 histórica usa exceso en T, también en lectura secundaria. |
-| Carga por 100 municipio-mes | Implementada con nombre separado de condición B | Resultado bajo propuesta, sin reemplazar A/B/C. |
+| Carga por 100 municipio-mes | Implementada con nombre separado de condición B | Resultado bajo contrato aprobado, sin reemplazar A/B/C. |
 | 2.000 bloques emparejados por mes objetivo | Implementados en recetas V3, con réplicas indefinidas visibles | No confiere carácter confirmatorio a datos consumidos. |
-| Controles negativos de la política | Implementados, con invalidación si un control cumple | La aprobación científica sigue pendiente. |
-| Cortes y cinco semillas | Ejecutables dentro de una receta V3 | Unanimidad de cinco consistencias implementada como propuesta; requiere aprobación del equipo y conserva resultados individuales. |
+| Controles negativos de la política | Implementados, con invalidación si un control cumple | Las conclusiones científicas requieren decisión humana. |
+| Cortes y cinco semillas | Ejecutables dentro de una receta V3 | Unanimidad aprobada de cinco consistencias; conserva resultados individuales. |
 | Reproducción E2E de eventual finalista | Pendiente | La certificación del canónico no equivale a N=3 de modelos. |
-| Consistencia y mínimo de 30 inicios por celda | Aplicados bajo las reglas propuestas y el voto predeclarado | Celdas pequeñas se reportan sin voto ni conclusión científica. |
+| Consistencia y mínimo de 30 inicios por celda | Aplicados bajo las reglas aprobadas y el voto predeclarado | Celdas pequeñas se reportan sin voto ni conclusión científica. |
 | Con/sin clima y horizonte/año/territorio | Implementados en V3, con poblaciones nativas y comunes | Población común en los cinco roles para comparar brazos; cobertura adicional separada. |
 
 Por lo anterior, la fábrica está preparada para ejecutar y preservar
 experimentos, pero **ninguna corrida actual puede declarar que respondió
 afirmativamente la pregunta de grado**. La implementación se comprueba con fuentes
-artificiales; la aprobación del equipo (incluida la regla entre semillas), cohorte
-confirmatoria y reproducción finalista continúan pendientes. Las evidencias de
+artificiales; la cohorte confirmatoria y la reproducción finalista continúan pendientes;
+las conclusiones científicas y recetas requieren aprobaciones propias. Las evidencias de
 T16, EXP001/EXP002 y recetas V1/V2 conservan sus bytes y significado. Las recetas
 V3 fijan predictores, población y ausencias antes de ejecutar; la cobertura nativa
 adicional no se atribuye al aporte climático medido sobre población común.
 
 ## 17. Aprobación y cambios al contrato
 
-Antes de convertir esta propuesta en norma, el equipo debe aprobar explícitamente:
+El equipo SAT DENGUE aprueba la versión 1.0.0 mediante la instrucción humana
+explícita del 11 de noviembre de 2026. Incluye población, doble lectura T+2,
+comparadores, A/C primaria y A/B/C secundaria, umbrales de utilidad, soporte,
+consistencia y unanimidad de las cinco semillas. La cohorte confirmatoria futura
+y cada receta necesitan protocolo y aprobación propios. El commit exclusivo de
+reconciliación registra esta decisión; no se inventan nombres o actas adicionales.
 
-1. la redacción de la pregunta central y que T+1 sea primario;
-2. Meta y Tolima como población primaria, aunque se entrene con datos nacionales;
-3. continuidad de la cohorte principal sin exceso en T, doble lectura T+2 y
-   compuertas simétricas, sin adoptar la regla futura que produjo 329 inicios;
-4. C0/C1 para A/B/C y canal condicionado para la regla adicional, con sus puntos
-   de operación, así como exigir ambas reglas para una respuesta afirmativa;
-   incorporar la decisión acotada ya aprobada de B no exigida en primaria y
-   obligatoria en secundaria T+2, sin extender esa aprobación al contrato completo;
-5. adopción de la carga por 100 municipio-mes, su justificación frente a la FAR
-   histórica y umbrales propuestos de 10 puntos/5 falsas por 100, todavía sin
-   calibración de capacidad real; no se interpreta 5 como unidad equivalente;
-6. generalización de consistencia `floor(K/2)+1`, mínimo de tres cortes
-   utilizables y aplicación del mínimo histórico de 30 inicios por celda;
-7. método de incertidumbre, cinco semillas (incluida la comprobación histórica
-   para diferencias de uno o dos inicios), unanimidad propuesta de las cinco
-   consistencias con estados y justificación del apartado 13, y reproducción N=3;
-8. cohorte futura confirmatoria y protocolo/recetas con y sin clima. Aprobar el
-   contrato no aprueba automáticamente ninguna receta o ejecución real.
+**Regla histórica frente a regla contractual.** Los 5 puntos de ganancia de
+sensibilidad de la bitácora §0.3 describen una regla histórica y no gobiernan
+futuras conclusiones del proyecto. Para contribuir a un resultado afirmativo,
+la ganancia frente al canal condicionado y la cota inferior de su IC deben ser
+ambas **al menos 10 puntos porcentuales**, además de todas las condiciones
+aplicables. Cinco puntos no sustituyen esta regla. Los 5 puntos de FAR de exceso
+de C histórica y las 5 falsas por 100 municipio-mes son restricciones distintas,
+con sus propias unidades; permanecen intactas.
+
+Las salidas estructuradas nuevas usan `contract_status: APPROVED`; la
+documentación muestra `APROBADO`. Recibos, resultados y contratos congelados
+anteriores conservan su estado normativo original. Aprobar este contrato no
+aprueba ninguna receta, modelo, `scientific_conclusion`, `champion_status` ni
+autorización operativa.
 
 La aprobación debe registrar nombres o rol de los aprobadores, fecha y commit.
 Toda modificación posterior requiere Pull Request, justificación, análisis de
@@ -736,14 +731,14 @@ anteriores permanecen en Git; no se reescriben decisiones históricas.
 
 ---
 
-### Fuentes revisadas que sustentan esta propuesta
+### Fuentes revisadas que sustentan el contrato
 
 - [Bitácora experimental](../bitacora-experimental.md): reglas de método §4,
   tanda 6 (3/4, 2/3, soporte y semillas) y tanda 9, línea Q (209 frente a 329).
 - [Contrato académico V2](https://github.com/j-mauro-r/SAT-Dengue-V2/blob/447ef9fd85303de61848d2b01733d25c8ad8a935/docs/product/experiments/contrato.md):
   cohorte, comparadores y A/B/C; antecedente versionado, no autoridad de ejecución V3.
 - [Política v2 propuesta](../politica-de-decision-v2.md): corrección de la política y sus
-  umbrales aún no aprobados.
+  umbrales históricos; la adopción prospectiva V3 se registra aquí.
 - `docs/reviews/scientific-review.md`: límites verificados de la fábrica actual.
 - `pipeline/src/sat_dengue_pipeline/domain/onset.py`: evento y elegibilidad.
 - `pipeline/src/sat_dengue_pipeline/domain/temporal.py`: frontera temporal.

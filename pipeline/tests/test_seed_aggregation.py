@@ -52,7 +52,7 @@ def stability(rows: list[dict], policy: dict | None = None) -> dict:
 @pytest.mark.parametrize(
     "case,expected",
     [
-        ("five_pass", "CUMPLE_BAJO_CONTRATO_PROPUESTO"),
+        ("five_pass", "CUMPLE_BAJO_CONTRATO_APROBADO"),
         ("four_pass", "INCONCLUSO_POR_INESTABILIDAD"),
         ("missing_seed", "NO_EVALUABLE"),
         ("insufficient_support", "NO_EVALUABLE"),
@@ -89,7 +89,7 @@ def test_five_required_seed_cases(case: str, expected: str) -> None:
         for s in result["seeds"]
     )
     assert result["scientific_conclusion"] == "NOT_APPROVED"
-    assert result["contract_status"] == "PROPUESTA_PARA_APROBACION"
+    assert result["contract_status"] == "APPROVED"
     assert result["team_approval_required"]
     assert all(r["consistency"] == "CUMPLE" for r in result["seeds"][:4])
     assert all(r["usable_cuts"] == 4 for r in result["seeds"][:4])
@@ -129,7 +129,7 @@ def test_predeclared_small_cut_exclusion_keeps_two_of_three_rule() -> None:
             row["support_status"] = "INSUFFICIENT_30_ONSETS"
             row["UTILIDAD_PROPUESTA"] = "NO_EVALUABLE"
     result = stability(rows)
-    assert result["status"] == "CUMPLE_BAJO_CONTRATO_PROPUESTO"
+    assert result["status"] == "CUMPLE_BAJO_CONTRATO_APROBADO"
     assert all(s["usable_cuts"] == 3 and s["votes"] == 2 for s in result["seeds"])
 
 
@@ -193,7 +193,7 @@ def test_horizons_readings_populations_arms_and_territories_never_mix() -> None:
             expected = (
                 "INCONCLUSO_POR_INESTABILIDAD"
                 if tuple(result[n] for n in names) == target
-                else "CUMPLE_BAJO_CONTRATO_PROPUESTO"
+                else "CUMPLE_BAJO_CONTRATO_APROBADO"
             )
             assert result["status"] == expected
             assert len(result["seeds"]) == 5
@@ -222,5 +222,5 @@ def test_one_failed_rule_in_one_seed_prevents_unanimity(failed_rule: str | None)
     assert cut["ABC_HISTORICA"] == changed["ABC_HISTORICA"]
     assert cut["UTILIDAD_PROPUESTA"] == changed["UTILIDAD_PROPUESTA"]
     assert result["status"] == (
-        "CUMPLE_BAJO_CONTRATO_PROPUESTO" if failed_rule is None else "INCONCLUSO_POR_INESTABILIDAD"
+        "CUMPLE_BAJO_CONTRATO_APROBADO" if failed_rule is None else "INCONCLUSO_POR_INESTABILIDAD"
     )

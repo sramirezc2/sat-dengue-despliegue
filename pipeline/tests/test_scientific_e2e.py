@@ -46,7 +46,7 @@ def test_receipt_summary_matches_saved_aggregation_and_inventory(
                 reading="primary",
                 horizon=1,
                 territory="national",
-                status="CUMPLE_BAJO_CONTRATO_PROPUESTO",
+                status="CUMPLE_BAJO_CONTRATO_APROBADO",
                 B=primary_b,
                 decision_basis=["UTILIDAD_PROPUESTA", "A", "C"],
             ),
@@ -79,7 +79,7 @@ def test_receipt_summary_matches_saved_aggregation_and_inventory(
         else []
     )
     session.scientific_records = [
-        {"kind": "seed_stability", "label": "VEREDICTO_BAJO_CONTRATO_PROPUESTO", **row}
+        {"kind": "seed_stability", "label": "VEREDICTO_BAJO_CONTRATO_APROBADO", **row}
         for row in expected
     ]
     session.gate = "scientific_evaluation"
@@ -99,7 +99,7 @@ def test_receipt_summary_matches_saved_aggregation_and_inventory(
     ]
     assert science["summary"] == expected
     assert records == [
-        {"kind": "seed_stability", "label": "VEREDICTO_BAJO_CONTRATO_PROPUESTO", **row}
+        {"kind": "seed_stability", "label": "VEREDICTO_BAJO_CONTRATO_APROBADO", **row}
         for row in expected
     ]
     assert science["pending_scientific_limits"] == [
@@ -108,6 +108,8 @@ def test_receipt_summary_matches_saved_aggregation_and_inventory(
         "independent_confirmatory_cohort",
     ]
     assert science["scientific_conclusion"] == "NOT_APPROVED"
+    assert science["contract_status"] == "APPROVED"
+    assert receipt["champion_status"] == "NOT_SELECTED"
     assert receipt["status"] == ("COMPLETED" if case == "success" else "BLOCKED")
     inventory = json.loads((folder / "inventory.json").read_bytes())
     assert set(inventory) == {
@@ -197,7 +199,7 @@ def test_scientific_kedro_e2e_uses_its_certified_data_and_fitted_models(
     reference = f"docs/evidence/experiments/{entry['experiment_id']}/synthetic-e2e/inventory.json"
     assert verify_execution(tmp_path, reference) == receipt
     assert receipt["status"] == "COMPLETED" and receipt["gate"] == "scientific_evaluation"
-    assert receipt["scientific_evaluation"]["label"] == "VEREDICTO_BAJO_CONTRATO_PROPUESTO"
+    assert receipt["scientific_evaluation"]["label"] == "VEREDICTO_BAJO_CONTRATO_APROBADO"
     folder = (tmp_path / reference).parent
     records = [
         r
@@ -295,7 +297,7 @@ def test_scientific_kedro_e2e_uses_its_certified_data_and_fitted_models(
     queried = compare(tmp_path)
     assert {r["seed"] for r in queried} == {7, 13, 31, 53, 101}
     assert {r["cut"] for r in queried} == {"cut2022", "cut2023", "cut2024"}
-    assert all(r["evaluation_label"] == "VEREDICTO_BAJO_CONTRATO_PROPUESTO" for r in queried)
+    assert all(r["evaluation_label"] == "VEREDICTO_BAJO_CONTRATO_APROBADO" for r in queried)
     inventory = json.loads((folder / "inventory.json").read_bytes())
     assert all(sha256(folder / name) == digest for name, digest in inventory.items())
     assert receipt["execution_signature"] == stable_digest(lineage)

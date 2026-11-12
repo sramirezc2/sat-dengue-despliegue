@@ -9,6 +9,14 @@ Este archivo se actualiza en cada prueba, análisis, resultado y decisión. Es l
 trazabilidad del trabajo: si una cifra del informe no se puede rastrear hasta
 una entrada de aquí, esa cifra no está sustentada.
 
+> **Aclaración normativa — 11 de noviembre de 2026.** El criterio de 5 puntos
+> de ganancia del §0.3 se conserva como regla histórica; no gobierna futuras
+> conclusiones del proyecto. Rige el [contrato aprobado 1.0.0](experiments/contrato.md):
+> ganancia frente al canal condicionado **≥10 pp** y cota inferior del IC
+> **≥10 pp**, además de todas las condiciones aplicables. Los 5 puntos no
+> sustituyen esa regla. Esta aclaración no reclasifica resultados previos ni
+> aprueba modelos, recetas, conclusiones, campeón o uso operativo.
+
 ---
 
 ## 0. Criterio de decisión A/B/C — preinscrito el 10 de noviembre de 2026
@@ -1992,3 +2000,57 @@ La validación histórica de fábrica T16 conserva su propósito de ingeniería 
 identidades. Los dos fixtures de aceptación de esta infraestructura son pruebas
 técnicas; no se incorporan como resultados científicos ni modifican los hallazgos
 anteriores de esta bitácora. No hay selección de campeón ni autorización operativa.
+
+## Tanda EXP004 — recencia de 36 meses, preinscrita
+
+Preinscripción del 11 de noviembre de 2026 en
+[tanda-exp004-recencia.md](bitacora/tanda-exp004-recencia.md): logística con clima,
+pesos uniformes frente a recencia exponencial fija de 36 meses. Hipótesis ya
+explorada informalmente; receta PROPOSED y ejecución pendiente de aprobación
+humana. Revisión R2 del 12 de noviembre, previa a aprobación: incorpora
+`secondary_t2`, con B
+obligatoria y resúmenes separados de la lectura primaria. Resultados posteriores
+se documentarán aparte, sin editar la preinscripción aprobada.
+
+## Tanda EXP004 — ejecución R2 y resultados, 12 de noviembre de 2026
+
+La receta R2 recibió aprobación humana explícita y se ejecutó una vez la fábrica.
+Los [resultados y el intento de retroanálisis](bitacora/tanda-exp004-resultados.md)
+se añaden en un archivo separado. Las diferencias reciente−uniforme de fábrica
+tienen intervalos que incluyen cero en las tres lecturas; ambos brazos obtienen
+0/7 votos contractuales completos por lectura y semilla. El retroanálisis falló
+antes del ajuste por la caché corregida ausente en inbox; su recuperación requiere
+autorización adicional. Registro RUNNING/PENDING, sin decisión científica,
+campeón, autorización operativa o publicación. La preinscripción permanece intacta.
+
+## Tanda EXP004 — recuperación ambiental autorizada, 12 de noviembre de 2026
+
+Una autorización humana adicional permitió copiar los cinco crudos verificados
+al inbox ausente, sin descargas, y realizar una única invocación adicional del
+retroanálisis. Completó 15/15 nodos; [resultado técnico y hashes](experiments/EXP004/RECOVERY_RESULT.md).
+Los seis CSV verifican: 815 pares de folds, cinco semillas, igualdad de claves y
+etiquetas, cero omisiones y exclusión de 2025. En la única lectura primaria del
+retroanálisis, reciente−uniforme cambia +2 TP en T+1 y −2 en T+2 frente al punto
+descriptivo predeclarado. No se combina con la fábrica ni se atribuye a secondary_t2.
+Se conserva íntegro el primer fallo y no se repite la fábrica. RUNNING/PENDING,
+sin conclusión científica o campeón; la curva ausente de fábrica sigue pendiente.
+
+## Tanda EXP004 — cierre científico NEGATIVE, 12 de noviembre de 2026
+
+El equipo SAT DENGUE decidió explícitamente **NEGATIVE** para la hipótesis de
+recencia exponencial de 36 meses y autorizó el cierre oficial **COMPLETED**.
+Los [resultados consolidados](bitacora/tanda-exp004-resultados.md) y las
+[conclusiones](experiments/EXP004/CONCLUSIONS.md) conservan las tres lecturas de
+fábrica con intervalos que incluyen cero: T+1 130/131 TP (+0,17 pp), T+2 primaria
+81/84 (+0,70 pp), secundaria 97/101 (+0,67 pp). T+1 no alcanza cota inferior
+positiva ni mayoría 4/7. El retroanálisis recuperado produce 359/361 TP en T+1
+y 253/251 en T+2, sin mejora estable; cinco semillas, filas/etiquetas comunes
+y exclusión de 2025 verificadas. No se repitió cómputo científico para cerrar.
+
+La curva contractual completa de fábrica queda **NOT_PRODUCED/DEFERRED** por
+decisión del equipo. curva.csv del retroanálisis no la sustituye: no hay
+cumplimiento contractual integral, resultado afirmativo del proyecto, champion
+o autorización operativa. Esto no impide NEGATIVE sobre la hipótesis específica
+en el punto predeclarado. La decisión no demuestra que toda actualización temporal
+sea inútil. La revisión es del mismo agente, no independiente; las limitaciones
+retrospectivas y la ausencia de confirmación independiente permanecen explícitas.
