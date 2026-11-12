@@ -1,0 +1,117 @@
+{
+  "schema": "satd.exp004-execution-audit/v1",
+  "date": "2026-11-12T05:34:06.924420+00:00",
+  "scope": "factory_aggregate_evidence_only",
+  "status": "PASS",
+  "experiment_id": "EXP004",
+  "scientific_result": "PENDING",
+  "scientific_conclusion": "NOT_APPROVED",
+  "champion_status": "NOT_SELECTED",
+  "operational_authorization": false,
+  "inventory": "docs/evidence/experiments/EXP004/04a0554e6fa7470394b185b5dab36d7a/inventory.json",
+  "inventory_sha256": "9eb1aa806d301efc7e2ec2d363d831446d94925cfd18c3eab31b161f66c3c219",
+  "execution_count": 1,
+  "execution_status": "COMPLETED",
+  "git_sha": "a075b0d6e87627b4cabc650b729afbc298c498f5",
+  "dirty_at_start": false,
+  "protocol_sha256": "ee40e74fa0dbf7bdd150340c9103961ef9fe0300c87743faab1c3337aa6ab2fd",
+  "configuration_sha256": "ed55aedb9259ae253863fd97cf255d48b56cba2a15854e4746e666df32e7132f",
+  "source_sha256": "4531f1080b62a9a482061bbcf686191274e8ff997b515f15c8dd81dc46a45321",
+  "lock_sha256": "5bd75700f0b6a9785478cf808e58544ac3d7d98bc36409c0e6086e5531a60fb7",
+  "canonical": {
+    "profile": {
+      "end": "2024-12",
+      "epi_start": "2007-01",
+      "municipalities": 1122,
+      "profile": "operational_full",
+      "reserved_start": "2025-01",
+      "start": "2007-01"
+    },
+    "serialized_sha256": "b4562ba50def7a98dceede0b7e95feed0e799b4652939d8037f1604bef37a23d",
+    "semantic_digest": "de49b11bad43c35983a098ead2faa149d4e744da4172432aecdaadd828c73158",
+    "certificate": "docs/evidence/task27/canonical-full-93ac27fd-certification.json",
+    "certificate_file_sha256": "5c1d2adc0a7967be9ee5e3398b5541cf74963ed6f6b4ee94e6f4a4838a77a966"
+  },
+  "variants": 140,
+  "model_fits": 210,
+  "seeds": [
+    7,
+    13,
+    31,
+    53,
+    101
+  ],
+  "cohort_comparison": {
+    "paired_models_horizons": 105,
+    "roles_compared": 525,
+    "role_keys_predictors_prepared_matrix_digests": "IDENTICAL",
+    "producer_labels": "VERIFIED_LIVE_BY_PREFLIGHT_BEFORE_ANY_FIT",
+    "evaluation_LINK_and_onset": "VERIFIED_LIVE_BY_SCIENTIFIC_PAIRED_COMPARISON",
+    "future_evaluation_labels_used_for_training": false
+  },
+  "temporal": {
+    "all_140_plans_checked": true,
+    "all_role_targets_origins_and_availability_before_2025": true,
+    "evaluation_read_after_predictions_in_all_variants": true,
+    "quarantine": {
+      "daily_climate": {
+        "digest": "acb3dd655810ec54f869de4cf28656272de5e8419a6985a879c69c09a1ee0672",
+        "input": 7786680,
+        "invalid_date": 0,
+        "reserved": 409530,
+        "retained": 7377150
+      },
+      "dengue_notifications": {
+        "digest": "b42c6eed13c9edd76c7d9ff60f580f40d4296f1516c431bb5ab7020c4e59189f",
+        "input": 1705604,
+        "invalid_date": 133,
+        "reserved": 119138,
+        "retained": 1586333
+      },
+      "severe_dengue_notifications": {
+        "digest": "daff297445fe1f049aae838451a77acd7dcae0aed6d8d0dbc2f493df128a4134",
+        "input": 50101,
+        "invalid_date": 3,
+        "reserved": 1259,
+        "retained": 48839
+      }
+    }
+  },
+  "weighting": {
+    "summaries": 210,
+    "all_mean_one": true,
+    "all_raw_latest_one": true,
+    "all_positive": true,
+    "all_train_only": true,
+    "all_reference_targets_before_2025": true,
+    "row_weights_persisted": false
+  },
+  "mlflow_store": "pipeline/.tracking/experiments/tracking.sqlite",
+  "mlflow_verified_readonly": [
+    {
+      "run_id": "dad66d3b49894b518a0b3805858b0d3c",
+      "status": "FINISHED",
+      "metrics": 4270
+    },
+    {
+      "run_id": "9bbe5dab0e1647a1a6519278880fbbee",
+      "status": "FINISHED",
+      "metrics": 1400
+    },
+    {
+      "run_id": "4a631d3203e547249201b66a5fb84d7c",
+      "status": "FINISHED",
+      "metrics": 2870
+    }
+  ],
+  "record_kinds": {
+    "variant": 140,
+    "cell": 1680,
+    "paired_arm_difference": 1320,
+    "consistency": 120,
+    "seed_stability": 24
+  },
+  "retroanalisis_cohort_equality": "NOT_VERIFIED_SEPARATE_PIPELINE_FAILED_BEFORE_TRAINING",
+  "alert_volume_curve_in_factory_inventory": "NOT_PRESENT",
+  "human_scientific_decision": "PENDING"
+}

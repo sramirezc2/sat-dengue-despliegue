@@ -2011,3 +2011,14 @@ humana. Revisión R2 del 12 de noviembre, previa a aprobación: incorpora
 `secondary_t2`, con B
 obligatoria y resúmenes separados de la lectura primaria. Resultados posteriores
 se documentarán aparte, sin editar la preinscripción aprobada.
+
+## Tanda EXP004 — ejecución R2 y resultados, 12 de noviembre de 2026
+
+La receta R2 recibió aprobación humana explícita y se ejecutó una vez la fábrica.
+Los [resultados y el intento de retroanálisis](bitacora/tanda-exp004-resultados.md)
+se añaden en un archivo separado. Las diferencias reciente−uniforme de fábrica
+tienen intervalos que incluyen cero en las tres lecturas; ambos brazos obtienen
+0/7 votos contractuales completos por lectura y semilla. El retroanálisis falló
+antes del ajuste por la caché corregida ausente en inbox; su recuperación requiere
+autorización adicional. Registro RUNNING/PENDING, sin decisión científica,
+campeón, autorización operativa o publicación. La preinscripción permanece intacta.

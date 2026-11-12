@@ -1,0 +1,151 @@
+{
+  "schema": "satd.exp004-execution-validation/v1",
+  "recorded_utc": "2026-11-12T05:40:27.914159+00:00",
+  "experiment_id": "EXP004",
+  "branch": "feature/exp004-recency-36m",
+  "base_commit": "a075b0d6e87627b4cabc650b729afbc298c498f5",
+  "technical_gates_status": "PASS",
+  "overall_delivery": "PARTIAL_BLOCKED_RETROANALYSIS",
+  "registry_status": "RUNNING",
+  "scientific_result": "PENDING",
+  "scientific_conclusion": "NOT_APPROVED",
+  "champion_status": "NOT_SELECTED",
+  "operational_authorization": false,
+  "human_recipe_approval": {
+    "received": true,
+    "reference": "docs/experiments/EXP004/APPROVAL.md",
+    "commit": "a075b0d6e87627b4cabc650b729afbc298c498f5"
+  },
+  "factory": {
+    "command": "uv run --locked --directory pipeline kedro run --pipeline experiment_run --params experiment_id=EXP004",
+    "invocations": 1,
+    "exit_code": 0,
+    "status": "COMPLETED",
+    "duration_seconds": 856.7,
+    "inventory": "docs/evidence/experiments/EXP004/04a0554e6fa7470394b185b5dab36d7a/inventory.json",
+    "inventory_sha256": "9eb1aa806d301efc7e2ec2d363d831446d94925cfd18c3eab31b161f66c3c219",
+    "audit": "docs/experiments/EXP004/EXECUTION_AUDIT.json"
+  },
+  "retroanalisis": {
+    "command": "uv run --locked --directory pipeline kedro run --pipeline retroanalisis --env exp004",
+    "invocations": 1,
+    "exit_code": 1,
+    "status": "FAILED_BEFORE_TRAINING",
+    "attempt_record": "docs/experiments/EXP004/RETROANALYSIS_ATTEMPT_1.json",
+    "recovery": "docs/experiments/EXP004/RETROANALYSIS_RECOVERY.md",
+    "recovery_authorization": "PENDING",
+    "csv_files_produced": false,
+    "cohort_equality": "NOT_VERIFIED"
+  },
+  "junit": {
+    "initial_full_suite": {
+      "path": "pipeline/data/exp004-execution-validation/pipeline-suite.xml",
+      "sha256": "93d01c26175bd56212b9ec5589ab3b693edcf8c171a3a8482f7ff410f41b3c90",
+      "tests": 872,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "legacy_test_after_fix": {
+      "path": "pipeline/data/exp004-execution-validation/legacy-compatibility.xml",
+      "sha256": "e7c1203a8d90fdcbd5fb723486a589ea2a2f83abf1f1164ca166c38ac0de9f74",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "final_full_suite": {
+      "path": "pipeline/data/exp004-execution-validation/pipeline-suite-r2.xml",
+      "sha256": "54a5f87979581022f4e79b251ff885bc558d1e26b88c15a3c20a2bdab00c376b",
+      "tests": 872,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "test_adjustment": {
+    "file": "pipeline/tests/test_certified_experiment_run.py",
+    "reason": "Legacy preservation check assumed only EXP001/EXP002 had evidence. Scope old-field assertions to legacy rows while preserving all-file hash verification. No scientific production/configuration change."
+  },
+  "gates": [
+    {
+      "command": "uv lock --check --project pipeline",
+      "result": "PASS"
+    },
+    {
+      "command": "uv sync --locked --project pipeline",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --directory pipeline ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --directory pipeline pytest --junitxml=data/exp004-execution-validation/pipeline-suite-r2.xml",
+      "result": "872 PASS, no failures/errors/skips"
+    },
+    {
+      "command": "uv run --directory pipeline python -m sat_dengue_pipeline.experiment_management validate",
+      "result": "VALID"
+    },
+    {
+      "command": "uv run --directory pipeline python tools/check_experiment_preservation.py",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --directory pipeline python -O tools/check_experiment_preservation.py",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "preservation": {
+    "baseline_files": 566,
+    "unchanged_files": 562,
+    "expected_modified_files": [
+      "docs/bitacora-experimental.md",
+      "docs/experiments/manual_pipeline.md",
+      "docs/experiments/registry.yml",
+      "pipeline/tests/test_certified_experiment_run.py"
+    ],
+    "all_frozen_EXP004_files_unchanged": true,
+    "EXP001_EXP002_unchanged": true,
+    "historical_evidence_unchanged": true,
+    "bitacora_append_only": true,
+    "production_source_unchanged": true,
+    "release_recipes_environment_lock_unchanged": true
+  },
+  "warnings": [
+    "Eight existing OmegaConf warnings in each full suite",
+    "Existing VIRTUAL_ENV mismatch; uv used pipeline environment",
+    "Deprecated Kedro --pipeline option retained to execute the exact predeclared command"
+  ],
+  "omissions": {
+    "API_dashboard_publication": "Not rerun: no source, dependencies, API/dashboard or publication changes. Pipeline gates and preserved 22 published JSON verified.",
+    "remote_CI_push_PR_merge": "Not authorized; not performed.",
+    "retroanalisis_retry": "Not authorized under one-attempt limit; concrete recovery question pending.",
+    "scientific_closure": "Human decision and independent review pending; no category assigned."
+  },
+  "hashes": {
+    "docs/bitacora/tanda-exp004-resultados.md": "4b241bf0ad6f139aad41ed54b9381e4c1aef00bf7c5b03e4fa562d30441d4f05",
+    "docs/bitacora-experimental.md": "12353ff3a1db9570b6392b4a225e42ce477b714a2fa05d500de9e4b4f03229e0",
+    "docs/experiments/EXP004/APPROVAL.md": "b37005bfbf11213d8029a72318263ae6936830ce4b2c0d2c9c53069eca76b266",
+    "docs/experiments/EXP004/CONCLUSIONS.md": "58e642c07a62d71e1d80ef78bc1da2f7d136088cc0858b7352c22a4eeb9c5564",
+    "docs/experiments/EXP004/EXECUTION_AUDIT.json": "2da08a6d3c7c6de69fc955c5474c5e131f8d72ae481acd02eb4cd8d9c8b0915d",
+    "docs/experiments/EXP004/POST_RUN_REVIEW.md": "de045230d910108ba51c4aae15ed29d8c29ab050b28744a81ac18106bb1c77d6",
+    "docs/experiments/EXP004/PREPARATION_VALIDATION.json": "a3894dbe62a85f8f07c2397e6793f3601429f4cdb9161c27b35971bc6c0e09ee",
+    "docs/experiments/EXP004/PREPARATION_VALIDATION_R2.json": "0d32386be433618920691b1ec9390a6a3a51a109374c87c4d0fb822c0ac3b738",
+    "docs/experiments/EXP004/PRE_APPROVAL_REVIEW.md": "2a669eb02e769e14b1e318e12675c1ea7615ce548767c9ae3a83137453eb5e36",
+    "docs/experiments/EXP004/RESULTS_SUMMARY.json": "e62c063ce16755b603581c0839b3f9df09f690af7d3525e7ba3a567613c4b00d",
+    "docs/experiments/EXP004/RETROANALYSIS_ATTEMPT_1.json": "4ec419c8f67b9ff167135f2ab4ce3f7cc8efa08a103d8cceae7dddb34887973f",
+    "docs/experiments/EXP004/RETROANALYSIS_RECOVERY.md": "8962296fca70d9fbcbb3ca5dadd3e32d429342a403e9f381975d7824a8e091f0",
+    "docs/experiments/EXP004/SPECIFICATION.md": "ee40e74fa0dbf7bdd150340c9103961ef9fe0300c87743faab1c3337aa6ab2fd",
+    "docs/experiments/EXP004/registration.yml": "ed74375d9eca779cdad9b4f0a245d373e41684af3bcb16cff82b91e62ebaa065",
+    "docs/experiments/manual_pipeline.md": "dd0e8a04b7f2ca9e506436e89257daaadaf75973ab2aefa8a80d8072d2211684",
+    "docs/experiments/registry.yml": "d8fefe09e07c61ed2fb43d4deba7ec6d7a6d8a506df69f73ee8075e51e570f2b",
+    "pipeline/tests/test_certified_experiment_run.py": "d55fc597a6f8951b10f1adad86abaa4f1439e738ba7c6a7823679170036d576d"
+  },
+  "next_safe_action": "Obtain explicit bounded recovery authorization; preserve failure and frozen recipe. Request team scientific decision after completed scope/review; do not rerun factory."
+}

@@ -79,11 +79,18 @@ Para repetir `EXP003`, prepare **EXP004** con un ID y aprobación nuevos. Declar
 ## Receta de recencia EXP004
 
 [EXP004](EXP004/SPECIFICATION.md) formaliza una hipótesis ya explorada, con dos
-logísticas climáticas y único cambio de pesos de ajuste. Está registrado como
-PROPOSED y no es un ID libre para los ejemplos de repetición anteriores. Su
+logísticas climáticas y único cambio de pesos de ajuste. Se registró inicialmente
+como PROPOSED y no es un ID libre para los ejemplos de repetición anteriores. Su
 [revisión previa](EXP004/PRE_APPROVAL_REVIEW.md) y hashes se presentan al equipo
 antes de aprobar. La autorización explícita de esta operación usa aprobación
 humana en la conversación, registrada posteriormente en Git; no autoriza PR,
 push o merge. Las recetas e intervalos no se modifican después de observarlas.
 El entorno `conf/exp004` permite ejecutar sus dos recetas de retroanálisis juntas
 sin cambiar defaults globales; los comandos exactos están en la especificación.
+
+El 12 de noviembre de 2026 se registró la [aprobación humana R2](EXP004/APPROVAL.md)
+y terminó un intento de fábrica. El registro conserva RUNNING/PENDING hasta la
+decisión científica; [conclusiones pendientes](EXP004/CONCLUSIONS.md). El primer
+intento de retroanálisis falló antes del ajuste por falta de la caché corregida
+en inbox. Su [recuperación propuesta](EXP004/RETROANALYSIS_RECOVERY.md) requiere
+autorización adicional; no se repite automáticamente ni se modifica la receta.

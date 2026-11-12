@@ -366,11 +366,12 @@ def test_legacy_receipts_remain_readable_and_unchanged() -> None:
     files = list((ROOT / "docs/evidence/experiments").glob("*/*/*.json"))
     before = {p: sha256(p) for p in files}
     rows = compare(ROOT)
-    assert {r["experiment_id"] for r in rows} == {"EXP001", "EXP002"}
+    legacy_rows = [r for r in rows if r["experiment_id"] in {"EXP001", "EXP002"}]
+    assert {r["experiment_id"] for r in legacy_rows} == {"EXP001", "EXP002"}
     assert all(
         r["dataset_sha256"]
         and r["dataset_manifest_file_sha256"] is None
         and r["dataset_manifest_digest"] is None
-        for r in rows
+        for r in legacy_rows
     )
     assert {p: sha256(p) for p in files} == before
