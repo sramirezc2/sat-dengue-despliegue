@@ -34,7 +34,7 @@ experiments:
   title: "Historia reciente de 36 meses frente a pesos uniformes en log\xEDstica con\
     \ clima"
   experiment_type: scientific
-  status: PROPOSED
+  status: APPROVED
   protocol: docs/experiments/EXP004/SPECIFICATION.md
   protocol_sha256: ee40e74fa0dbf7bdd150340c9103961ef9fe0300c87743faab1c3337aa6ab2fd
   configuration: pipeline/conf/experiments/EXP004.yml
