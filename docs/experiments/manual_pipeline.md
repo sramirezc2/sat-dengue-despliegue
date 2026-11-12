@@ -74,3 +74,16 @@ Compare científicamente solo experimentos con población, periodos, evento y da
 Para repetir `EXP003`, prepare **EXP004** con un ID y aprobación nuevos. Declare si busca repetir exactamente la receta o estudiar un cambio concreto; conserve `EXP003` y toda su evidencia. Si la corrida falla o queda bloqueada, use `$sat-dengue-recovery` antes de reintentar. No borre recibos, desbloquee a ciegas ni vuelva a usar un ID ejecutado.
 
 **Ejemplo.** El equipo quiere comprobar si añadir clima ayuda. Prepara `EXP003` con dos brazos predeclarados, uno epidemiológico y otro con clima, sobre las mismas observaciones comparables. Un revisor comprueba la receta y el equipo la aprueba. Se ejecuta el comando E2E; la fábrica guarda ambos brazos, los cinco resultados por semilla y la evaluación por horizonte. Otra persona revisa la evidencia y documenta si el clima aportó algo, si el resultado fue inconcluso y qué límites tiene. Una repetición se registra como `EXP004`, sin alterar `EXP003`.
+
+
+## Receta de recencia EXP004
+
+[EXP004](EXP004/SPECIFICATION.md) formaliza una hipótesis ya explorada, con dos
+logísticas climáticas y único cambio de pesos de ajuste. Está registrado como
+PROPOSED y no es un ID libre para los ejemplos de repetición anteriores. Su
+[revisión previa](EXP004/PRE_APPROVAL_REVIEW.md) y hashes se presentan al equipo
+antes de aprobar. La autorización explícita de esta operación usa aprobación
+humana en la conversación, registrada posteriormente en Git; no autoriza PR,
+push o merge. Las recetas e intervalos no se modifican después de observarlas.
+El entorno `conf/exp004` permite ejecutar sus dos recetas de retroanálisis juntas
+sin cambiar defaults globales; los comandos exactos están en la especificación.

@@ -140,6 +140,7 @@ def fit_procedure(
     *,
     calibration_parameters: dict[str, Any] | None = None,
     brier_tolerance: float = 1e-12,
+    training_weighting: dict | None = None,
 ) -> FittedProcedure:
     """Ajustar y congelar etapas usando exclusivamente su rol autorizado.
 
@@ -151,6 +152,7 @@ def fit_procedure(
         threshold_policy: Cuadrícula y límite explícitos, definidos antes del ajuste.
         calibration_parameters: Parámetros completos aprobados, sin decisiones implícitas.
         brier_tolerance: Mejora mínima aprobada antes de escoger sigmoide.
+        training_weighting: Pesos solo del modelo; otros ajustes permanecen sin ponderar.
 
     Returns:
         Procedimiento listo para inferencia posterior, sin consumir evaluación.
@@ -163,7 +165,15 @@ def fit_procedure(
     train = batches["train"]
     y_train = labels["train"]
     model = CheckedAdapter(registry.create(spec), predictors=train.predictors)
-    model.fit(train.X, y_train)
+    weight_summary = None
+    if training_weighting is not None:
+        from .weighting import training_weights
+
+        weights, weight_summary = training_weights(train.keys, training_weighting)
+    if training_weighting is not None and training_weighting["method"] != "uniform":
+        model.fit(train.X, y_train, sample_weight=weights)
+    else:
+        model.fit(train.X, y_train)
     prevalence = float(y_train.mean())
     fit = batches["calibration_fit"]
     raw_fit = model.predict_positive(fit.X)
@@ -226,6 +236,8 @@ def fit_procedure(
                 "y": [int(v) for v in y],
             }
         )
+    if weight_summary is not None:
+        trace["training_weighting"] = weight_summary
     if train.allow_excess_at_origin:
         trace["allow_excess_at_origin"] = True
     if list(train.predictors) != list(batches["evaluation"].X):

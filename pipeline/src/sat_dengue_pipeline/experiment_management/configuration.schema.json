@@ -1667,6 +1667,39 @@
         "last_target"
       ],
       "additionalProperties": false
+    },
+    "training_weighting": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "method": {
+              "const": "uniform"
+            }
+          },
+          "required": [
+            "method"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "method": {
+              "const": "exponential_recency"
+            },
+            "half_life_months": {
+              "type": "integer",
+              "const": 36
+            }
+          },
+          "required": [
+            "method",
+            "half_life_months"
+          ],
+          "additionalProperties": false
+        }
+      ]
     }
   },
   "required": [

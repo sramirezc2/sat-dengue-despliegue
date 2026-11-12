@@ -2000,3 +2000,11 @@ La validación histórica de fábrica T16 conserva su propósito de ingeniería 
 identidades. Los dos fixtures de aceptación de esta infraestructura son pruebas
 técnicas; no se incorporan como resultados científicos ni modifican los hallazgos
 anteriores de esta bitácora. No hay selección de campeón ni autorización operativa.
+
+## Tanda EXP004 — recencia de 36 meses, preinscrita
+
+Preinscripción del 11 de noviembre de 2026 en
+[tanda-exp004-recencia.md](bitacora/tanda-exp004-recencia.md): logística con clima,
+pesos uniformes frente a recencia exponencial fija de 36 meses. Hipótesis ya
+explorada informalmente; receta PROPOSED y ejecución pendiente de aprobación
+humana. Resultados posteriores se documentarán aparte, sin editar la preinscripción.

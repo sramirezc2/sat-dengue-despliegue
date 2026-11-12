@@ -133,8 +133,7 @@ def validate_features(
             el contrato histórico intacto.
     """
     if derived and (
-        list(derived)
-        != [c for c in DERIVED_COLUMNS if c in derived]
+        list(derived) != [c for c in DERIVED_COLUMNS if c in derived]
         or set(derived) & set(PREDICTORS)
     ):
         raise ValueError("Derivadas de preparación no declaradas, repetidas o canónicas")
@@ -213,12 +212,13 @@ class CheckedAdapter:
         """Exponer estado de ajuste validado."""
         return self.dtypes is not None
 
-    def fit(self, X: pd.DataFrame, y: pd.Series) -> None:
+    def fit(self, X: pd.DataFrame, y: pd.Series, *, sample_weight: pd.Series | None = None) -> None:
         """Ajustar una sola vez y detectar mutaciones del backend.
 
         Args:
             X: Predictores exclusivamente del entrenamiento.
             y: Etiquetas binarias completas y alineadas con ambas clases.
+            sample_weight: Opcional, solo para un backend que declare soporte explícito.
         """
         if self.fitted:
             raise ValueError("No se permite reutilizar una instancia ajustada")
@@ -226,7 +226,18 @@ class CheckedAdapter:
         if not X.index.equals(y.index) or y.isna().any() or set(y.unique()) != {0, 1}:
             raise ValueError("Entrenamiento requiere ambas clases completas y alineadas")
         copied_X, copied_y = X.copy(deep=True), y.copy(deep=True)
-        self.adapter.fit(copied_X, copied_y)
+        if sample_weight is None:
+            self.adapter.fit(copied_X, copied_y)
+        else:
+            from sat_dengue_pipeline.experiments.weighting import validate_sample_weight
+
+            validate_sample_weight(sample_weight, X.index)
+            if not getattr(self.adapter, "supports_sample_weight", False):
+                raise ValueError("El adaptador no soporta sample_weight")
+            copied_weight = sample_weight.copy(deep=True)
+            self.adapter.fit(copied_X, copied_y, sample_weight=copied_weight)
+            if not sample_weight.equals(copied_weight):
+                raise ValueError("El adaptador mutó sample_weight")
         try:
             pd.testing.assert_frame_equal(X, copied_X)
             pd.testing.assert_series_equal(y, copied_y)
@@ -307,7 +318,12 @@ def validate_predictions(frame: pd.DataFrame, keys: pd.DataFrame, candidate: str
 
 
 def run_candidate(
-    data: ExperimentData, experiment: ExperimentSpec, spec: AdapterSpec, registry: ModelRegistry
+    data: ExperimentData,
+    experiment: ExperimentSpec,
+    spec: AdapterSpec,
+    registry: ModelRegistry,
+    *,
+    training_weighting: dict | None = None,
 ) -> tuple[pd.DataFrame, dict[str, Any]]:
     """Usar el mismo arnés para cualquier familia, sin duplicar evaluación.
 
@@ -316,6 +332,7 @@ def run_candidate(
         experiment: Protocolo temporal aprobado.
         spec: Familia, configuración y semilla.
         registry: Constructores explícitos.
+        training_weighting: Política de pesos aplicada solo a train dentro de cada fold.
 
     Returns:
         Predicciones comunes sin etiquetas y auditoría de procedencia.
@@ -344,7 +361,8 @@ def run_candidate(
         wrappers.append(wrapper)
         return wrapper
 
-    raw, audit = run_rolling(data, experiment, factory)
+    kwargs = {} if training_weighting is None else {"training_weighting": training_weighting}
+    raw, audit = run_rolling(data, experiment, factory, **kwargs)
     frame = raw[PREDICTION_KEYS].copy()
     frame["candidate"] = spec.candidate
     frame["raw_probability"] = raw.raw_probability

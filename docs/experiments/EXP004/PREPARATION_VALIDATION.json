@@ -1,0 +1,183 @@
+{
+  "schema": "satd.exp004-preparation/v1",
+  "phase": "prepare_and_register",
+  "status": "PASS",
+  "date": "2026-11-11",
+  "base_main": "a9c2c1abac386053b2e78f072bdb44e0141f4045",
+  "branch": "feature/exp004-recency-36m",
+  "normative_commit": "afb0edd6fda6cc66ec1e529d9c6fd505a2788749",
+  "validated_source_sha256": "4531f1080b62a9a482061bbcf686191274e8ff997b515f15c8dd81dc46a45321",
+  "experiment_id": "EXP004",
+  "registry_status": "PROPOSED",
+  "human_recipe_approval_received": false,
+  "scientific_result": "PENDING",
+  "scientific_conclusion": "NOT_APPROVED",
+  "champion_status": "NOT_SELECTED",
+  "contract": {
+    "version": "1.0.0",
+    "status": "APPROVED",
+    "sha256": "f701ae4a6731d6a40dd0b7e03a3a50f6f07e9b8154d25091b984f91834e6b97b"
+  },
+  "hashes": {
+    "docs/experiments/contrato.md": "f701ae4a6731d6a40dd0b7e03a3a50f6f07e9b8154d25091b984f91834e6b97b",
+    "docs/experiments/EXP004/SPECIFICATION.md": "785bd9e16e36cc219719c13d514e4d41e2c9a1e3c3955a0cc96e99843e16599d",
+    "pipeline/conf/experiments/EXP004.yml": "87860f2f66965fa20cba8647cfa7b120aecaac26df3773b077f0e9f4547c008f",
+    "docs/experiments/EXP004/registration.yml": "9410295c456fb6316d84b4d545e307eb2547b0b96907ff5d146ce7d8c51e47e4",
+    "docs/bitacora/tanda-exp004-recencia.md": "9281174418694d4b3bf8460b1327274017d1b02883c04ccb7e10088dd3b54fa9",
+    "pipeline/conf/retroanalisis/EXP004_uniform_history.yml": "2708be7132badb66ba169df12c96b7af7fa16a957d22d47ddff405e4b789c0c8",
+    "pipeline/conf/retroanalisis/EXP004_recent_history_36m.yml": "9fe505a6dd721a0177856b3b29eb5fd6531466e527ab4183b77273623d5d348a",
+    "pipeline/conf/exp004/parameters_exp004.yml": "68272b9c09747cf16a19bcf0b2e8a76a857c8e882ce70e6ccf97e4cf4d4008c2",
+    "docs/experiments/EXP004/PRE_APPROVAL_REVIEW.md": "86c165fa0be15aef1ff728209702000d067c5d4186cb3b9e90323618e2b81bde"
+  },
+  "junit_reports": {
+    "pipeline-suite-initial": {
+      "path": "pipeline/data/exp004-preparation/pipeline-suite-initial.xml",
+      "sha256": "1a3e26e08fcd1c4a97485f2ab6faf03bacd8e011afb17f9e23bc7797ef522563",
+      "tests": "872",
+      "failures": "4",
+      "errors": "0",
+      "skipped": "0",
+      "time": "339.666"
+    },
+    "pipeline-suite": {
+      "path": "pipeline/data/exp004-preparation/pipeline-suite.xml",
+      "sha256": "8b6836c07010d75f6958c44dcedd6d3078c62635efa785fc2826c17590afb0a0",
+      "tests": "872",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "341.152"
+    },
+    "weighting": {
+      "path": "pipeline/data/exp004-preparation/weighting.xml",
+      "sha256": "cb0fa8bf25bede5f1ddb81a7be4c82cdceab1e916ec0096cf01bc1a661013aa3",
+      "tests": "28",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "9.508"
+    }
+  },
+  "gates": [
+    {
+      "command": "uv lock --check --project pipeline",
+      "status": "PASS"
+    },
+    {
+      "command": "uv sync --locked --project pipeline",
+      "status": "PASS"
+    },
+    {
+      "command": "uv run --directory pipeline ruff check .",
+      "status": "PASS"
+    },
+    {
+      "command": "uv run --directory pipeline pytest --junitxml=data/exp004-preparation/pipeline-suite.xml",
+      "status": "PASS",
+      "tests": 872,
+      "warnings": 8,
+      "failures": 0,
+      "skips": 0
+    },
+    {
+      "command": "uv run --directory pipeline python -m sat_dengue_pipeline.experiment_management validate",
+      "status": "VALID"
+    },
+    {
+      "command": "uv run --directory pipeline python tools/check_experiment_preservation.py",
+      "status": "PASS",
+      "protected_files": 49,
+      "published_json": 22,
+      "previous_receipts": 16
+    },
+    {
+      "command": "uv run --directory pipeline python -O tools/check_experiment_preservation.py",
+      "status": "PASS"
+    },
+    {
+      "command": "python -m pytest (cwd app/api)",
+      "status": "PASS",
+      "tests": 35,
+      "warnings": 1
+    },
+    {
+      "command": "bun install --frozen-lockfile (cwd app/dashboard)",
+      "status": "PASS",
+      "changes": false
+    },
+    {
+      "command": "bun run lint (cwd app/dashboard)",
+      "status": "PASS",
+      "warnings": 6
+    },
+    {
+      "command": "bun run test (cwd app/dashboard)",
+      "status": "PASS",
+      "tests": 55
+    },
+    {
+      "command": "NITRO_PRESET=node_server bun run build (cwd app/dashboard)",
+      "status": "PASS"
+    },
+    {
+      "command": "uv run --directory pipeline kedro run --pipelines synthetic",
+      "status": "PASS",
+      "scientific": false
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS"
+    },
+    {
+      "command": "local links and frozen hash table validation",
+      "status": "PASS"
+    }
+  ],
+  "preservation": {
+    "extended_historical_files": 91,
+    "all_original_hashes_unchanged": true,
+    "baseline_map_sha256": "45a478f338bfe1865940b8aa7e0f9c104ed6c039d4678338424538f213b178bc",
+    "original_log_text_preserved": true,
+    "new_experiment_entry_only": true,
+    "notebooks_modified": false,
+    "global_retro_parameters_modified": false,
+    "dependencies_modified": false,
+    "published_results_modified": false
+  },
+  "iteration_history": {
+    "first_accumulated_gate": "4 failed, 868 passed; report preserved",
+    "corrections": [
+      "Avoid assuming FactoryRun attributes in legacy RollingRun receipts",
+      "Only add recency pooled contrast when arm metadata exists; preserve internal historical evaluator fixtures"
+    ],
+    "focused_after_fixes": "6 passed",
+    "weighting_and_rolling_focus": "28 passed",
+    "fixture_corrections": "Artificial retro fixture expanded to ensure eligible folds and consistent epidemiological/climate metadata",
+    "invalid_focused_command": "One optional invocation named a nonexistent test module; no tests ran; corrected command passed"
+  },
+  "warnings": [
+    "Existing VIRTUAL_ENV differs from pipeline environment; uv uses pipeline/.venv",
+    "OmegaConf/Kedro register_new_resolver deprecation",
+    "Starlette/httpx deprecation",
+    "Six existing react-refresh lint warnings",
+    "Existing Vite advisory"
+  ],
+  "real_executions": {
+    "factory": "NOT_RUN_PENDING_HUMAN_RECIPE_APPROVAL",
+    "retroanalisis": "NOT_RUN_PENDING_HUMAN_RECIPE_APPROVAL",
+    "official_mlflow_run_created": false
+  },
+  "scientific_review": {
+    "mode": "pre-approval",
+    "recommendation": "APPROVED_WITH_LIMITATIONS",
+    "independent_review": false,
+    "reference": "docs/experiments/EXP004/PRE_APPROVAL_REVIEW.md"
+  },
+  "external_checks": {
+    "new_remote_ci": "NOT_RUN_NO_PUSH_AUTHORIZED",
+    "pull_request": "NOT_CREATED",
+    "push": "NOT_PERFORMED",
+    "merge": "NOT_PERFORMED"
+  },
+  "next_safe_action": "Present immutable recipe and request explicit human approval; keep PROPOSED until received"
+}

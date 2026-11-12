@@ -36,14 +36,32 @@ def validate_scientific(configuration: dict[str, Any]) -> None:
         names = [item["id"] for item in science[collection]]
         if len(names) != len(set(names)):
             raise ValueError("Identidades de brazo/corte repetidas")
+    from sat_dengue_pipeline.experiments.weighting import validate_weighting
+
     union = set()
     for arm in science["arms"]:
+        weighting = arm.get(
+            "training_weighting", configuration.get("training_weighting", {"method": "uniform"})
+        )
+        validate_weighting(weighting)
+        if (
+            weighting["method"] != "uniform"
+            and configuration["candidate"]["family"] != "logistic_onset"
+        ):
+            raise ValueError("El adaptador no soporta ponderación de entrenamiento")
         predictors = arm["predictors"]
         if not predictors or predictors != [p for p in PREDICTORS if p in predictors]:
             raise ValueError("Predictores de brazo fuera del contrato canónico")
         union.update(predictors)
     if configuration["predictors"] != [p for p in PREDICTORS if p in union]:
         raise ValueError("La receta debe declarar exactamente la unión de sus brazos")
+    weighting_comparison = any("training_weighting" in arm for arm in science["arms"])
+    if weighting_comparison and not all("training_weighting" in arm for arm in science["arms"]):
+        raise ValueError("Cada brazo debe declarar explícitamente su política de pesos")
+    if weighting_comparison and any(
+        arm["predictors"] != science["arms"][0]["predictors"] for arm in science["arms"]
+    ):
+        raise ValueError("La comparación de pesos exige exactamente los mismos predictores")
     seen: dict[str, set[str]] = {h: set() for h in horizons}
     for cut in science["cuts"]:
         if set(cut["roles_by_horizon"]) != horizons:
@@ -74,10 +92,17 @@ def variants(configuration: dict[str, Any]) -> list[tuple[str, dict[str, Any], d
     """
     science = configuration["scientific_evaluation"]
     result = []
+    populations = (
+        ["common"]
+        if any("training_weighting" in arm for arm in science["arms"])
+        else ["native", "common"]
+        if len(science["arms"]) > 1
+        else ["native"]
+    )
     for cut in science["cuts"]:
         for seed in science["seeds"]:
             for arm in science["arms"]:
-                for population in ["native", "common"] if len(science["arms"]) > 1 else ["native"]:
+                for population in populations:
                     for reading in science["readings"]:
                         config = copy.deepcopy(configuration)
                         config["roles_by_horizon"] = cut["roles_by_horizon"]
@@ -97,14 +122,17 @@ def variants(configuration: dict[str, Any]) -> list[tuple[str, dict[str, Any], d
                         ]
                         config["calibration"]["parameters"]["random_state"] = seed
                         candidate = config["candidate"]
-                        for name in ("seed", "random_state"):
-                            candidate["parameters"][name] = seed
-                            candidate["expected_native_configuration"]["learner"]["generic_param"][
-                                name
-                            ] = str(seed)
-                        candidate["expected_native_configuration"]["learner"][
-                            "learner_model_param"
-                        ]["num_feature"] = str(len(config["preparation"]["matrix_columns"]))
+                        if "training_weighting" in arm:
+                            config["training_weighting"] = copy.deepcopy(arm["training_weighting"])
+                        if candidate["family"] == "xgboost_onset":
+                            for name in ("seed", "random_state"):
+                                candidate["parameters"][name] = seed
+                                candidate["expected_native_configuration"]["learner"][
+                                    "generic_param"
+                                ][name] = str(seed)
+                            candidate["expected_native_configuration"]["learner"][
+                                "learner_model_param"
+                            ]["num_feature"] = str(len(config["preparation"]["matrix_columns"]))
                         dimensions = {
                             "cut": cut["id"],
                             "seed": seed,
@@ -116,3 +144,34 @@ def variants(configuration: dict[str, Any]) -> list[tuple[str, dict[str, Any], d
                         name = f"{cut['id']}.{seed}.{arm['id']}.{reading}.{population}"
                         result.append((name, config, dimensions))
     return result
+
+
+def verify_weighting_cohorts(runs: dict[str, Any]) -> None:
+    """Exigir los mismos X, claves y etiquetas productoras antes de cualquier fit.
+
+    Args:
+        runs: Variantes después del preflight; evaluation.y permanece diferida.
+    """
+    groups = {}
+    for run in runs.values():
+        if "training_weighting" not in run.config:
+            continue
+        dimensions = run.config["scientific_dimensions"]
+        for h, batches in run.batches.items():
+            group = (
+                dimensions["cut"],
+                dimensions["seed"],
+                dimensions["reading"],
+                dimensions["population"],
+                h,
+            )
+            for role, batch in batches.items():
+                key = (*group, role)
+                if key not in groups:
+                    groups[key] = batch
+                    continue
+                other = groups[key]
+                if not batch.keys.equals(other.keys) or not batch.X.equals(other.X):
+                    raise ValueError("Brazos de ponderación con claves o predictores distintos")
+                if role != "evaluation" and not batch.read_y().equals(other.read_y()):
+                    raise ValueError("Brazos de ponderación con etiquetas distintas")

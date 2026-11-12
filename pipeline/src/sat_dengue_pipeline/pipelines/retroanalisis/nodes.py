@@ -16,6 +16,8 @@ para que ese caso falle diciendo qué pasó, en vez de dejar un resumen vacío q
 alguien pueda leer como resultado.
 """
 
+import copy
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -97,6 +99,20 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
     destino = Path(params["salida"])
     if destino.parts[:1] != ("data",):
         raise ValueError("La salida del retroanálisis debe quedar bajo data/")
+    if params.get("exclusive_output"):
+        if not destino.resolve().is_relative_to(Path("data").resolve()):
+            raise ValueError("Salida fuera de data/")
+        destino.mkdir(parents=True, exist_ok=False)
+    if "certified_data" in params:
+        from sat_dengue_pipeline.experiment_management.certification import load_certified_recipe
+
+        proof = load_certified_recipe(Path.cwd().parent, params["certified_data"])
+        expected = proof.certificate["n3"]["certified_identity"]
+        if (
+            artifact.serialized_sha256 != expected["serialized_sha256"]
+            or artifact.semantic_digest != expected["semantic_digest"]
+        ):
+            raise ValueError("Canónico del retroanálisis distinto del certificado predeclarado")
     table, schema = load_canonical(artifact)
     # Con `entrenamiento_nacional` el modelo entrena con todo el país y se evalúa
     # solo en los departamentos declarados: las predicciones y las líneas base se
@@ -121,52 +137,71 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
     }
     for ruta in recetas:
         receta = Path(ruta).stem
-        config = yaml.safe_load(Path(ruta).read_text(encoding="utf-8"))
-        for h in params["horizontes"]:
-            preds, omitidos, cobertura = predicciones_rolling(
-                table if nacional is None else nacional,
-                schema,
-                config,
-                int(h),
-                params["primer_origen"],
-                params["ultimo_objetivo"],
-                piso,
-                params.get("ventana_anios"),
-                params.get("excluir_entrenamiento"),
-                params.get("entrenar_departamentos"),
-                cadencia,
-            )
-            etiquetas = {"horizonte": h, "receta": receta, "cadencia": cadencia}
-            # Con entrenamiento nacional la cobertura se midió sobre el país
-            # entero, no sobre los departamentos evaluados: se marca, porque
-            # conjunto.csv es justamente el archivo con el que se verifica que
-            # dos recetas corrieron sobre las mismas filas.
-            cobertura = {**cobertura, "panel": "nacional" if nacional is not None else "declarado"}
-            if nacional is not None:
-                evaluados = set(table.municipality_code)
-                preds = preds[preds.municipality_code.isin(evaluados)].reset_index(drop=True)
-            salidas["omit"].append(pd.DataFrame(omitidos).assign(**etiquetas))
-            salidas["conjunto"].append(pd.DataFrame([{**cobertura, **etiquetas}]))
-            if preds.empty or preds.fold_id.nunique() < 2:
-                # El diagnóstico se escribe igual; lo que no se escribe es un resumen vacío.
-                destino.mkdir(parents=True, exist_ok=True)
-                pd.concat(salidas["omit"], ignore_index=True).to_csv(
-                    destino / "omitidos.csv", index=False
+        original = yaml.safe_load(Path(ruta).read_text(encoding="utf-8"))
+        for seed in params.get("semillas", [original["seed"]]):
+            config = copy.deepcopy(original)
+            config["seed"] = seed
+            for h in params["horizontes"]:
+                preds, omitidos, cobertura = predicciones_rolling(
+                    table if nacional is None else nacional,
+                    schema,
+                    config,
+                    int(h),
+                    params["primer_origen"],
+                    params["ultimo_objetivo"],
+                    piso,
+                    params.get("ventana_anios"),
+                    params.get("excluir_entrenamiento"),
+                    params.get("entrenar_departamentos"),
+                    cadencia,
                 )
-                motivo = omitidos[0]["motivo"] if omitidos else "sin orígenes evaluables"
-                raise ValueError(
-                    f"Retroanálisis sin folds en T+{h} con la receta {receta} "
-                    f"({len(omitidos)} orígenes omitidos); primer motivo: {motivo}. "
-                    f"El diagnóstico quedó en {destino / 'omitidos.csv'}."
+                etiquetas = {"horizonte": h, "receta": receta, "cadencia": cadencia, "seed": seed}
+                # Con entrenamiento nacional la cobertura se midió sobre el país
+                # entero, no sobre los departamentos evaluados: se marca, porque
+                # conjunto.csv es justamente el archivo con el que se verifica que
+                # dos recetas corrieron sobre las mismas filas.
+                cobertura = {
+                    **cobertura,
+                    "panel": "nacional" if nacional is not None else "declarado",
+                }
+                if nacional is not None:
+                    evaluados = set(table.municipality_code)
+                    preds = preds[preds.municipality_code.isin(evaluados)].reset_index(drop=True)
+                salidas["omit"].append(pd.DataFrame(omitidos).assign(**etiquetas))
+                folds = cobertura.pop("folds", None)
+                if folds is not None:
+                    for fold in folds:
+                        fold["training_weighting"] = json.dumps(
+                            fold["training_weighting"], sort_keys=True
+                        )
+                    salidas["conjunto"].append(pd.DataFrame(folds).assign(**cobertura, **etiquetas))
+                else:
+                    salidas["conjunto"].append(pd.DataFrame([{**cobertura, **etiquetas}]))
+                if params.get("exigir_conjunto_igual") and omitidos:
+                    pd.concat(salidas["omit"], ignore_index=True).to_csv(
+                        destino / "omitidos.csv", index=False
+                    )
+                    raise ValueError("La comparación cerrada no admite folds omitidos")
+                if preds.empty or preds.fold_id.nunique() < 2:
+                    # El diagnóstico se escribe igual; lo que no se escribe es un resumen vacío.
+                    destino.mkdir(parents=True, exist_ok=True)
+                    pd.concat(salidas["omit"], ignore_index=True).to_csv(
+                        destino / "omitidos.csv", index=False
+                    )
+                    motivo = omitidos[0]["motivo"] if omitidos else "sin orígenes evaluables"
+                    raise ValueError(
+                        f"Retroanálisis sin folds en T+{h} con la receta {receta} "
+                        f"({len(omitidos)} orígenes omitidos); primer motivo: {motivo}. "
+                        f"El diagnóstico quedó en {destino / 'omitidos.csv'}."
+                    )
+                candidato = str(preds.candidate.iloc[0])
+                salidas["predicciones"].append(preds.assign(receta=receta, seed=seed))
+                resumen, anio, curva = validar_candidato(
+                    table, preds, {"candidato": candidato, "horizonte": int(h)}
                 )
-            candidato = str(preds.candidate.iloc[0])
-            salidas["predicciones"].append(preds.assign(receta=receta))
-            resumen, anio, curva = validar_candidato(
-                table, preds, {"candidato": candidato, "horizonte": int(h)}
-            )
-            salidas["resumen"].append(resumen.assign(**etiquetas, candidato=candidato))
-            salidas["anio"].append(anio.assign(**etiquetas))
-            salidas["curva"].append(curva.assign(**etiquetas))
+                salidas["resumen"].append(resumen.assign(**etiquetas, candidato=candidato))
+                salidas["anio"].append(anio.assign(**etiquetas))
+                salidas["curva"].append(curva.assign(**etiquetas))
     tablas = tuple(
         pd.concat(v, ignore_index=True) if v else pd.DataFrame() for v in salidas.values()
     )
@@ -174,7 +209,36 @@ def retroanalisis(artifact, params: dict) -> tuple[pd.DataFrame, ...]:
     nombres = ("resumen", "por_anio", "curva", "omitidos", "conjunto", "predicciones")
     for nombre, tabla in zip(nombres, tablas):
         tabla.to_csv(destino / f"{nombre}.csv", index=False)
+    if params.get("exigir_conjunto_igual"):
+        verificar_conjuntos(pd.read_csv(destino / "conjunto.csv"), len(recetas))
     # El quinto CSV es auditoría del conjunto común y el sexto guarda el puntaje de
     # cada fila (para ensambles y lecturas posteriores); el nodo entrega los cuatro
     # que el pipeline declara.
     return tablas[:4]
+
+
+def verificar_conjuntos(conjunto: pd.DataFrame, recipes: int) -> None:
+    """Fallar si las claves o etiquetas efectivas difieren por horizonte/semilla/fold.
+
+    Args:
+        conjunto: Auditoría leída de conjunto.csv, sin filas científicas.
+        recipes: Número de brazos predeclarados; cada grupo debe contenerlos todos.
+    """
+    fields = [
+        "training_keys_sha256",
+        "training_labels_sha256",
+        "prediction_keys_sha256",
+        "evaluation_labels_sha256",
+        "train_rows",
+        "prediction_rows",
+    ]
+    required = ["horizonte", "seed", "fold_id", "receta", *fields]
+    if conjunto.empty or not set(required) <= set(conjunto):
+        raise ValueError("conjunto.csv sin auditoría efectiva de folds")
+    for _, group in conjunto.groupby(["horizonte", "seed", "fold_id"]):
+        if (
+            len(group) != recipes
+            or group.receta.nunique() != recipes
+            or any(group[field].isna().any() or group[field].nunique() != 1 for field in fields)
+        ):
+            raise ValueError("Conjuntos comparados difieren por horizonte, semilla o fold")

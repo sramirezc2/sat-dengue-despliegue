@@ -57,7 +57,7 @@ cerrado `scientific_evaluation`:
 |---|---|
 | `contract.path`, `contract.sha256` | Archivo `docs/experiments/contrato.md` y hash de sus bytes; una edición exige nueva identidad/aprobación. |
 | `readings` | `primary`, y opcionalmente `secondary_t2`. |
-| `arms` | IDs únicos y predictores canónicos ordenados de cada brazo. La lista superior `predictors` es exactamente su unión. |
+| `arms` | IDs únicos y predictores canónicos ordenados de cada brazo. La lista superior `predictors` es exactamente su unión. Opcionalmente cada brazo declara `training_weighting`, según el apartado siguiente. |
 | `cuts` | IDs y cinco ventanas completas `roles_by_horizon`; objetivos de evaluación no solapados entre cortes. |
 | `seeds` | Lista explícita, ordenada, sin repetidos; se ejecutan todas, sin escoger la mejor. |
 | `channel_fraction_grid` | Grilla por horizonte fijada antes de evaluar, o `null` si la decisión está pendiente. |
@@ -68,8 +68,9 @@ cerrado `scientific_evaluation`:
 | `consistency_vote` | `both_rules_cumple`, o `null`; explicita qué cuenta como mejora para votar. |
 | `uncertainty` | `paired_target_month_bootstrap`, 2.000 réplicas, semilla 42, nivel 0,95. |
 
-La plantilla debe declarar `matrix_columns` y configuración nativa de XGBoost
-coherentes con los predictores. Las recetas efectivas derivan únicamente cambios
+La plantilla debe declarar `matrix_columns` y, cuando la familia es XGBoost, su
+configuración nativa coherente con los predictores. Para logística se conserva
+la receta de su adaptador y solo cambia la semilla nominal del procedimiento. Las recetas efectivas derivan únicamente cambios
 mecánicos declarados: predictores/matriz, semilla/calibrador y ventanas de cada
 brazo/corte. Se guardan esas configuraciones e identidades. No se agrega búsqueda,
 refit ni una selección silenciosa de variables o hiperparámetros.
@@ -152,6 +153,34 @@ predictores con entrenar/evaluar en otra población.
 Las diferencias entre brazos usan claves y etiquetas idénticas, con bootstrap
 emparejado por mes, desglosadas por año y territorio. Las coberturas nativas y
 comunes llevan IDs diferentes y no se mezclan para favorecer un resultado.
+
+## Ponderación de entrenamiento
+
+La extensión de EXP004 permite únicamente `training_weighting: {method: uniform}`
+o `{method: exponential_recency, half_life_months: 36}`. Se rechazan claves
+adicionales, otra vida media y ponderación en un adaptador no compatible. Si un
+brazo declara esta política, todos deben declararla y compartir exactamente los
+predictores. Solo se ejecuta población `common`, sin repetir una nativa idéntica.
+La ausencia del campo conserva el comportamiento y las identidades previas.
+
+La función compartida `experiments/weighting.py` calcula edades por objetivo
+respecto al máximo del train efectivo del fold y normaliza los pesos a media uno.
+El peso crudo más reciente es uno. Solo el fit logístico recibe sample_weight;
+no se ponderan escalado, calibración, umbral, prevalencia o evaluación. La fábrica
+verifica claves, X y etiquetas productoras iguales antes del primer ajuste.
+El arnés del retroanálisis usa la misma función tras sus guards de madurez.
+
+El recibo y linaje guardan `training_weighting` por variante y horizonte con
+política, periodo de referencia, soporte, mínimo/máximo/media/suma, tamaño efectivo
+y digest de claves/pesos; nunca filas. El contraste entre brazos conserva
+conteos, delta_TP e intervalos emparejados. Para EXP004 se añade el agregado de
+los cortes predeclarados, que no constituye un corte extra ni un voto adicional.
+
+Protocolo, reglas, comandos y hashes de las dos recetas y del entorno versionado
+en [EXP004](EXP004/SPECIFICATION.md). Su registro PROPOSED no autoriza ejecución;
+requiere aprobación humana explícita. El retroanálisis es un instrumento
+adicional con presupuesto y bootstrap propios; no reemplaza el veredicto de la
+fábrica ni se combina con sus observaciones.
 
 ## Salidas y límites de interpretación
 

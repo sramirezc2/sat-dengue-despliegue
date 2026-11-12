@@ -16,6 +16,7 @@ from sklearn.linear_model import LogisticRegression
 
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
 from sat_dengue_pipeline.domain.derived import declared_derived
+from sat_dengue_pipeline.experiments.weighting import validate_sample_weight
 from sat_dengue_pipeline.models.adapters import (
     AdapterSpec,
     validate_features,
@@ -145,18 +146,23 @@ class LogisticOnsetAdapter:
             raise ValueError("Matriz interna inválida o no finita")
         return result
 
-    def fit(self, X: pd.DataFrame, y: pd.Series) -> None:
+    supports_sample_weight = True
+
+    def fit(self, X: pd.DataFrame, y: pd.Series, *, sample_weight: pd.Series | None = None) -> None:
         """Ajustar una sola vez con train; estandarización aprendida solo aquí.
 
         Args:
             X: Predictores del entrenamiento.
             y: Etiquetas binarias alineadas.
+            sample_weight: Pesos exclusivos del ajuste; el escalado permanece sin ponderar.
         """
         if self.fitted or self.fit_calls:
             raise ValueError("Refit o reutilización de modelo no autorizados")
         matrix = self.matrix(X)
         if not X.index.equals(y.index) or y.isna().any() or set(y.unique()) != {0, 1}:
             raise ValueError("Etiquetas de entrenamiento incompletas o desalineadas")
+        if sample_weight is not None:
+            validate_sample_weight(sample_weight, X.index)
         self.fit_calls += 1
         self._mean = matrix.mean(axis=0)
         self._std = np.where(matrix.std(axis=0) > 0, matrix.std(axis=0), 1.0)
@@ -164,7 +170,9 @@ class LogisticOnsetAdapter:
             C=float(self.candidate["C"]),
             max_iter=self.candidate["max_iter"],
             random_state=self.spec.seed,
-        ).fit((matrix - self._mean) / self._std, y.to_numpy(dtype=int))
+        )
+        kwargs = {} if sample_weight is None else {"sample_weight": sample_weight.to_numpy()}
+        self._model.fit((matrix - self._mean) / self._std, y.to_numpy(dtype=int), **kwargs)
         self._dtypes = tuple(str(dtype) for dtype in X.dtypes)
         self.fitted = True
 

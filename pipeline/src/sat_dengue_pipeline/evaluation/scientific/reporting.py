@@ -321,8 +321,7 @@ def summaries(records: list[dict], policy: dict) -> list[dict]:
         usable = [r for r in group if r["support_status"] == "SUFFICIENT"]
         cut_ids = [r["cut"] for r in group]
         invalid = len(cut_ids) != len(set(cut_ids)) or any(
-            r["UTILIDAD_PROPUESTA"] == "INVALIDO"
-            or r["ABC_HISTORICA"]["status"] == "INVALIDO"
+            r["UTILIDAD_PROPUESTA"] == "INVALIDO" or r["ABC_HISTORICA"]["status"] == "INVALIDO"
             for r in group
         )
         votes = sum(
@@ -570,12 +569,32 @@ def evaluate_runs(runs: dict[str, Any], configuration: dict) -> tuple[list[dict]
     for (cut, seed, reading, h, population, arm), pair in retained.items():
         if population == "common":
             common[(cut, seed, reading, h)][arm] = pair
+    # El agregado emparejado conserva todos los cortes predeclarados; no añade votos.
+    if any(
+        "training_weighting" in arm
+        for arm in configuration["scientific_evaluation"].get("arms", [])
+    ):
+        pooled = defaultdict(lambda: defaultdict(list))
+        for (cut, seed, reading, h), arms in list(common.items()):
+            for arm, pair in arms.items():
+                pooled[(seed, reading, h)][arm].append(pair)
+        for (seed, reading, h), arms in pooled.items():
+            common[("all_predeclared_cuts", seed, reading, h)] = {
+                arm: (
+                    pd.concat([frame for frame, _ in pairs], ignore_index=True),
+                    {
+                        name: np.concatenate([decisions[name] for _, decisions in pairs])
+                        for name in pairs[0][1]
+                    },
+                )
+                for arm, pairs in arms.items()
+            }
     for dims, arms in common.items():
         for left, right in combinations(sorted(arms), 2):
             lf, ld = arms[left]
             rf, rd = arms[right]
             if not lf[LINK].equals(rf[LINK]) or not lf.onset.equals(rf.onset):
-                raise ValueError("El aporte climático exige soporte común exacto en ambos brazos")
+                raise ValueError("La comparación de brazos exige soporte común exacto")
             for territory, year, mask in cells(lf):
                 known = lf.onset.notna().to_numpy() & mask
                 paired = {left: ld["candidate"][known], right: rd["candidate"][known]}
@@ -593,6 +612,14 @@ def evaluate_runs(runs: dict[str, Any], configuration: dict) -> tuple[list[dict]
                         "population": "common",
                         "label": EVALUATION_LABEL,
                         "paired_keys_digest": stable_digest(lf.loc[known, LINK].to_dict("records")),
+                        "methods": {
+                            arm: method_counts(lf.loc[known].reset_index(drop=True), decision)
+                            for arm, decision in paired.items()
+                        },
+                        "delta_TP": int(
+                            (paired[left] * lf.loc[known, "onset"].to_numpy()).sum()
+                            - (paired[right] * lf.loc[known, "onset"].to_numpy()).sum()
+                        ),
                         "intervals": paired_intervals(
                             lf.loc[known].reset_index(drop=True),
                             paired,

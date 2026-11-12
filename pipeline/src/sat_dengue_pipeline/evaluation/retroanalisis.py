@@ -34,10 +34,12 @@ from sat_dengue_pipeline.domain.margin import (
 from sat_dengue_pipeline.domain.regional import regional_features
 from sat_dengue_pipeline.domain.vecinos import vecinos_features
 from sat_dengue_pipeline.experiments.rolling import (
+    LINK,
     TRAIN_FLOOR,
     ExperimentData,
     ExperimentSpec,
     from_prepared,
+    stable_digest,
 )
 from sat_dengue_pipeline.factory.configuration import adapter_spec
 from sat_dengue_pipeline.models.adapters import ModelRegistry, run_candidate
@@ -55,9 +57,7 @@ def _rezago_mensual(table: pd.DataFrame, fuente: str, k: int, claves: pd.MultiIn
     equivocado sin avisar. Es el mismo arreglo que ya tiene `margin.py`.
     """
     serie = table.set_index(KEYS)[fuente]
-    anterior = [
-        str(pd.Period(mes, freq="M") - k) for mes in claves.get_level_values("year_month")
-    ]
+    anterior = [str(pd.Period(mes, freq="M") - k) for mes in claves.get_level_values("year_month")]
     buscado = pd.MultiIndex.from_arrays([claves.get_level_values("municipality_code"), anterior])
     return serie.reindex(buscado).to_numpy(dtype=float)
 
@@ -286,6 +286,16 @@ def predicciones_rolling(
     if entrenar_departamentos:
         fuera = ~data.keys.municipality_code.str[:2].isin([str(d) for d in entrenar_departamentos])
         data = dataclasses.replace(data, y=data.y.astype("Int64").mask(fuera.to_numpy()))
+    from sat_dengue_pipeline.experiments.weighting import validate_weighting
+
+    if "training_weighting" in config:
+        validate_weighting(config["training_weighting"])
+        if (
+            config["training_weighting"]["method"] != "uniform"
+            and config["candidate"]["family"] != "logistic_onset"
+        ):
+            raise ValueError("El adaptador no soporta ponderación")
+        cobertura["folds"] = []
     spec = adapter_spec(config)
     registry = ModelRegistry()
     if (spec.family, spec.version) not in ADAPTERS:
@@ -314,7 +324,22 @@ def predicciones_rolling(
         if cadencia == "anual":
             entradas = recortar_a_la_cadencia(data, origen, f"{int(origen[:4]) - 1}-12")
         try:
-            frame, _ = run_candidate(entradas, experimento, spec, registry)
+            kwargs = (
+                {"training_weighting": config["training_weighting"]}
+                if "training_weighting" in config
+                else {}
+            )
+            frame, audit = run_candidate(entradas, experimento, spec, registry, **kwargs)
+            if "training_weighting" in config:
+                labeled = data.keys[LINK].assign(onset=data.y.to_numpy())
+                joined = frame.merge(labeled, on=LINK, how="left", validate="one_to_one")
+                for support in audit["support"]:
+                    support["evaluation_labels_sha256"] = stable_digest(
+                        joined.loc[joined.fold_id.eq(support["fold_id"]), "onset"]
+                        .astype(int)
+                        .tolist()
+                    )
+                cobertura["folds"].extend(audit["support"])
             partes.append(frame)
         except ValueError as error:
             omitidos.append({"origin_period": origen, "motivo": str(error)})

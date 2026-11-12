@@ -1,0 +1,14 @@
+experiment_id: EXP004
+experiment_slug: exp004-recency-36m
+hypothesis_id: EXP004-H1
+title: Historia reciente de 36 meses frente a pesos uniformes en logística con clima
+experiment_type: scientific
+status: PROPOSED
+protocol: docs/experiments/EXP004/SPECIFICATION.md
+protocol_sha256: 785bd9e16e36cc219719c13d514e4d41e2c9a1e3c3955a0cc96e99843e16599d
+configuration: pipeline/conf/experiments/EXP004.yml
+configuration_sha256: 87860f2f66965fa20cba8647cfa7b120aecaac26df3773b077f0e9f4547c008f
+pipeline: experiment_run
+conclusions: docs/experiments/EXP004/CONCLUSIONS.md
+scientific_result: PENDING
+champion_status: NOT_SELECTED
