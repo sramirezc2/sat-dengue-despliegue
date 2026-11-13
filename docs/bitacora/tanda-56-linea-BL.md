@@ -91,3 +91,16 @@ El bloque de febriles queda en −1 en los dos horizontes. La logística ya arma
 diferencia por su cuenta con los conteos que tiene; dársela hecha no agrega nada.
 
 Corrida del 11 de noviembre sobre la rama del PR #9 (`a3280a9`). Mismas filas que siempre (7 612 y 7 572 comunes, 76 municipios); la referencia sin los bloques da predicciones idénticas a las de la tanda 15 (diferencia máxima 0).
+
+## Corrección del 13 de noviembre: la premisa del bloque era equivocada
+
+En el panel canónico, `total_notifications_count` **no es el total de notificaciones
+febriles**: es la suma de dengue (evento 210) y dengue grave (evento 220), y el
+productor del panel lo verifica (`total = dengue + grave`). Por lo tanto
+`prop_dengue_t` es la proporción de dengue no grave sobre dengue total, y
+`otros_febriles_t` son en realidad las notificaciones de **dengue grave** en escala
+log. La tanda no midió «otros síndromes febriles», que no están en el panel; midió una
+recodificación de las variables de dengue grave que el modelo ya tenía. El resultado
+(sin efecto) es coherente con eso. La hipótesis de los síndromes febriles sigue
+abierta y necesitaría datos que hoy no están en el release. El nombre del bloque y la
+documentación de `domain/febriles.py` (PR #9) quedan con la descripción equivocada.

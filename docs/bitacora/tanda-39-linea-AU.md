@@ -68,3 +68,10 @@ Lo que se lee:
   coherente con un aporte de unos 2 puntos (tandas 15, 22 y 32).
 
 Herramienta: `pipeline/tools/noche/coeficientes.py`.
+
+## Corrección del 13 de noviembre
+
+La lectura de arriba sobre «la diferencia entre total y dengue» se apoyaba en una
+premisa equivocada: en el panel, las notificaciones totales son dengue más dengue
+grave, así que esa diferencia es el dengue grave, no otros síndromes febriles. Ver la
+corrección de la tanda 56.
