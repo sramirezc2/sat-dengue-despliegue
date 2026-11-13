@@ -1,0 +1,808 @@
+{
+  "schema_version": "satd-risk-ranking-v1",
+  "reference_period": "2024-11",
+  "horizon": "T2",
+  "target_period": "2025-01",
+  "data_cutoff": "2024-11",
+  "logical_generated_at": "2024-11-01T00:00:00Z",
+  "data_version": "synthetic-risk-contract-v1",
+  "data_kind": "SYNTHETIC",
+  "selection_budget": 8,
+  "selection_scope": "META_TOLIMA_GLOBAL",
+  "population_count": 76,
+  "eligible_count": 76,
+  "tie_break": "SCORE_DESC_DIVIPOLA_ASC",
+  "trace": {
+    "recipe_sha256": "7d67f0595cfdd990e331682ae581d4f49d1f74f83a107f4d9474540412443ec8",
+    "recipe_commit": "a9c2c1abac386053b2e78f072bdb44e0141f4045",
+    "model_family": "logistic_onset",
+    "adapter_version": "v1",
+    "library_version": "1.7.2",
+    "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "effective_state_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "training_keys_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "preparation_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "predictors_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "raw_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "code_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "code_tree_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "lock_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "feature_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "procedure_id": "SATD-RISK-2025-LOG-CLIMATE-v1",
+    "procedure_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "training_target_start": "2012-01",
+    "training_target_end": "2024-09",
+    "training_available_end": "2024-10",
+    "first_origin": "2024-11",
+    "artifact_contract": "satd-frozen-logistic-v1"
+  },
+  "governance": {
+    "report_selection": "SELECTED",
+    "historical_reproduction": "APPROVED",
+    "operational_use": "NOT_AUTHORIZED",
+    "champion_status": "NOT_SELECTED",
+    "limitation": "Orden de prioridad retrospectivo. La posición no representa una probabilidad calibrada ni una autorización para uso operativo."
+  },
+  "municipalities": [
+    {
+      "municipality_code": "50900",
+      "municipality_name": "FICTICIO 50900",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 1,
+      "selected_for_attention": true,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50901",
+      "municipality_name": "FICTICIO 50901",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 2,
+      "selected_for_attention": true,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50902",
+      "municipality_name": "FICTICIO 50902",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 3,
+      "selected_for_attention": true,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50903",
+      "municipality_name": "FICTICIO 50903",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 4,
+      "selected_for_attention": true,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50904",
+      "municipality_name": "FICTICIO 50904",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 5,
+      "selected_for_attention": true,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50905",
+      "municipality_name": "FICTICIO 50905",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 6,
+      "selected_for_attention": true,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50906",
+      "municipality_name": "FICTICIO 50906",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 7,
+      "selected_for_attention": true,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50907",
+      "municipality_name": "FICTICIO 50907",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 8,
+      "selected_for_attention": true,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50908",
+      "municipality_name": "FICTICIO 50908",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 9,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50909",
+      "municipality_name": "FICTICIO 50909",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 10,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50910",
+      "municipality_name": "FICTICIO 50910",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 11,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50911",
+      "municipality_name": "FICTICIO 50911",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 12,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50912",
+      "municipality_name": "FICTICIO 50912",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 13,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50913",
+      "municipality_name": "FICTICIO 50913",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 14,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50914",
+      "municipality_name": "FICTICIO 50914",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 15,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50915",
+      "municipality_name": "FICTICIO 50915",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 16,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50916",
+      "municipality_name": "FICTICIO 50916",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 17,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50917",
+      "municipality_name": "FICTICIO 50917",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 18,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50918",
+      "municipality_name": "FICTICIO 50918",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 19,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50919",
+      "municipality_name": "FICTICIO 50919",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 20,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50920",
+      "municipality_name": "FICTICIO 50920",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 21,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50921",
+      "municipality_name": "FICTICIO 50921",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 22,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50922",
+      "municipality_name": "FICTICIO 50922",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 23,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50923",
+      "municipality_name": "FICTICIO 50923",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 24,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50924",
+      "municipality_name": "FICTICIO 50924",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 25,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50925",
+      "municipality_name": "FICTICIO 50925",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 26,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50926",
+      "municipality_name": "FICTICIO 50926",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 27,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50927",
+      "municipality_name": "FICTICIO 50927",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 28,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "50928",
+      "municipality_name": "FICTICIO 50928",
+      "department_code": "50",
+      "department_name": "Meta",
+      "risk_rank": 29,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73900",
+      "municipality_name": "FICTICIO 73900",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 30,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73901",
+      "municipality_name": "FICTICIO 73901",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 31,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73902",
+      "municipality_name": "FICTICIO 73902",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 32,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73903",
+      "municipality_name": "FICTICIO 73903",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 33,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73904",
+      "municipality_name": "FICTICIO 73904",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 34,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73905",
+      "municipality_name": "FICTICIO 73905",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 35,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73906",
+      "municipality_name": "FICTICIO 73906",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 36,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73907",
+      "municipality_name": "FICTICIO 73907",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 37,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73908",
+      "municipality_name": "FICTICIO 73908",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 38,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73909",
+      "municipality_name": "FICTICIO 73909",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 39,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73910",
+      "municipality_name": "FICTICIO 73910",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 40,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73911",
+      "municipality_name": "FICTICIO 73911",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 41,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73912",
+      "municipality_name": "FICTICIO 73912",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 42,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73913",
+      "municipality_name": "FICTICIO 73913",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 43,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73914",
+      "municipality_name": "FICTICIO 73914",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 44,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73915",
+      "municipality_name": "FICTICIO 73915",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 45,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73916",
+      "municipality_name": "FICTICIO 73916",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 46,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73917",
+      "municipality_name": "FICTICIO 73917",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 47,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73918",
+      "municipality_name": "FICTICIO 73918",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 48,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73919",
+      "municipality_name": "FICTICIO 73919",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 49,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73920",
+      "municipality_name": "FICTICIO 73920",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 50,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73921",
+      "municipality_name": "FICTICIO 73921",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 51,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73922",
+      "municipality_name": "FICTICIO 73922",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 52,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73923",
+      "municipality_name": "FICTICIO 73923",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 53,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73924",
+      "municipality_name": "FICTICIO 73924",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 54,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73925",
+      "municipality_name": "FICTICIO 73925",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 55,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73926",
+      "municipality_name": "FICTICIO 73926",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 56,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73927",
+      "municipality_name": "FICTICIO 73927",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 57,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73928",
+      "municipality_name": "FICTICIO 73928",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 58,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73929",
+      "municipality_name": "FICTICIO 73929",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 59,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73930",
+      "municipality_name": "FICTICIO 73930",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 60,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73931",
+      "municipality_name": "FICTICIO 73931",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 61,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73932",
+      "municipality_name": "FICTICIO 73932",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 62,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73933",
+      "municipality_name": "FICTICIO 73933",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 63,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73934",
+      "municipality_name": "FICTICIO 73934",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 64,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73935",
+      "municipality_name": "FICTICIO 73935",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 65,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73936",
+      "municipality_name": "FICTICIO 73936",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 66,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73937",
+      "municipality_name": "FICTICIO 73937",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 67,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73938",
+      "municipality_name": "FICTICIO 73938",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 68,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73939",
+      "municipality_name": "FICTICIO 73939",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 69,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73940",
+      "municipality_name": "FICTICIO 73940",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 70,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73941",
+      "municipality_name": "FICTICIO 73941",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 71,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73942",
+      "municipality_name": "FICTICIO 73942",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 72,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73943",
+      "municipality_name": "FICTICIO 73943",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 73,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73944",
+      "municipality_name": "FICTICIO 73944",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 74,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73945",
+      "municipality_name": "FICTICIO 73945",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 75,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    },
+    {
+      "municipality_code": "73946",
+      "municipality_name": "FICTICIO 73946",
+      "department_code": "73",
+      "department_name": "Tolima",
+      "risk_rank": 76,
+      "selected_for_attention": false,
+      "eligibility_status": "ELIGIBLE",
+      "ineligibility_reason": null
+    }
+  ]
+}

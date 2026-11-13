@@ -32,3 +32,5 @@ experimentos/
 
 # Datos crudos locales
 /datos/datos-crudos/
+# Nuevas ediciones generadas: despliegue externo, nunca datos científicos en Git.
+/datos/resultados/risk-ranking/
