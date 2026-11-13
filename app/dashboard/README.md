@@ -86,3 +86,13 @@ bun run test
 
 Las pruebas de integración montan la vista contra respuestas fijas y verifican
 el contrato, el orden de las secciones y el comportamiento ante fallos.
+
+## Vista inicial de prioridades 2025
+
+La ruta `/` monta `RiskDashboard`, T+2 predeterminado, y consulta únicamente
+`/api/prioridades/v1/periodos` y `/api/prioridades/v1`. Zod valida el documento
+global; filtros locales no reasignan cupo ni posiciones. Los componentes
+históricos siguen disponibles para compatibilidad, pero no se montan en esta
+ruta ni se solicitan payloads con desenlaces de 2025. T+1 está deshabilitado
+hasta contar con su publicación autorizada.
+[Contrato, leyenda y verificación](../../docs/operations/risk-2025.md).

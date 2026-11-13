@@ -1,12 +1,12 @@
 # Hoja de ruta de implementación — Pipeline E2E SAT DENGUE
 
-**Versión:** 1.8
+**Versión:** 1.9
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado del alcance actual:** etapas documental y funcional COMPLETAS como implementación bajo contrato propuesto; agregación entre semillas COMPLETA como implementación propuesta; auditoría final FAIL histórica preservada; AUD-01/AUD-02/AUD-03 corregidos y verificados técnicamente, sin aprobación científica
+**Estado del alcance actual:** prioridades retrospectivas 2025 autorizadas A–E; implementación EN CURSO en la sección 11. Registros anteriores conservados como historia.
 **Último corte histórico T1–T27:** 26/27; T27 BLOQUEADA en su registro previo, sin reauditar sus gates en este alcance
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
-**Rama del alcance actual:** `feature/contrato-cientifico-fabrica-final`, creada desde `origin/main@a324f3c7f141b0ec53582b461cf6586643c5b569`
-**Entrega actual:** un PR nuevo con etapa documental y posterior etapa funcional en la misma rama; PR #1 ya fusionado
+**Rama del alcance actual:** `feature/dashboard-2025-risk-ranking`, desde `origin/main@a9c2c1abac386053b2e78f072bdb44e0141f4045`
+**Entrega actual:** implementación modular de prioridades 2025 y pruebas focalizadas; validación intensiva y real pendiente de fin de EXP006. Sin acciones remotas.
 
 El [PR #1](https://github.com/sramirezc2/sat-dengue-despliegue/pull/1) está
 fusionado y `main` actualizado ya contiene la fábrica. No hay dependencia de un
@@ -1053,3 +1053,60 @@ el contrato, que permanece PROPUESTA_PARA_APROBACION. Revisión científica
 independiente, aprobación global, confirmación y N=3 finalista siguen pendientes.
 Solo se escriben informe y plan; sin correcciones, datos reales, uso de 2025 para
 ajustar la regla, campeón, commit/push o merge por esta auditoría.
+
+
+## 11. Prioridades retrospectivas 2025 — alcance autorizado
+
+Decisión A–E aprobada explícitamente en el chat el 2026-11-13, registrada en
+[decisión de cierre](docs/decisions/2025-risk-publication.md). SHA inicial:
+`a9c2c1abac386053b2e78f072bdb44e0141f4045`; rama limpia al comenzar.
+No se crea experimento ni se cambia el registro científico.
+
+| Tarea | Estado | Condición de salida |
+|---|---|---|
+| R1 Decisión y autorización | COMPLETA | A–E registradas; receta por hash y corte lógico fijados. |
+| R2 Artefacto e inferencia temporal | IMPLEMENTADA; gate final pendiente | Persistencia fiel, un fit, carga sin fit, productores reutilizados sin desenlaces. |
+| R3 Ranking y presupuesto | IMPLEMENTADA; gate final pendiente | Ocho globales, 76 registros, empates deterministas y fallos explícitos. |
+| R4 Contrato y publicación | IMPLEMENTADA; gate final pendiente | JSON Schema/Pydantic/Zod, transacción existente y ediciones inmutables. |
+| R5 API y dashboard | IMPLEMENTADA; gate final pendiente | Solo lectura, T+2 inicial, filtros sin reasignación, sin desenlaces/probabilidades. |
+| R6 Pruebas focalizadas y documentación | FOCALIZADA; incidencia previa abierta | Centinelas artificiales, preservación y guías comprobados; digest histórico discrepante también en base. |
+| R7 Validación intensiva y real | PENDIENTE | Esperar confirmación de fin de EXP006 antes de suites, builds, E2E intensivo, materialización y N=3. |
+
+Solo se utilizan rutas y entornos de este worktree. No hay autorización remota.
+El alcance no se declara terminado hasta R7; los registros previos no acreditan
+los gates de esta implementación.
+
+Operación y límites en [guía única](docs/operations/risk-2025.md). La publicación
+ordinaria exige activación de hashes certificados; no existe todavía artefacto
+real ni paquete nuevo publicado. N=3 real, cinco fuentes sintéticas E2E intensivo,
+suites completas, builds, checkout limpio y comprobación del producto con paquete
+real están diferidos. El centinela histórico de digest sintético falla también
+al ejecutar el productor del SHA base en el entorno Python disponible: ambos
+producen `8270c862…`, frente al esperado `26cc6895…`. No se modifica esa evidencia
+ni se declara aprobado el gate; queda por diagnosticar en el entorno bloqueado.
+
+Verificación local proporcional, sin ejecutar R7:
+
+- `PYTHONPATH=pipeline/src python3 -m pytest pipeline/tests/test_risk_2025.py
+  -m 'not intensive' -o addopts='' -q`: 31 aprobadas; después se añadió el test de
+  activación y se ejecutó junto con el import aislado (`-k 'activation or
+  outcome_builders'`): 2 aprobadas. Son 32 centinelas pequeños distintos verdes.
+- API: `test_risk_ranking.py` y la prueba S3 de no aplanar prioridades: 19 verdes.
+  Cuatro regresiones focalizadas del servicio (GET, cache, salud, OpenAPI): verdes.
+- Dashboard: `risk-ranking.test.tsx`: 17 verdes y un E2E de respuesta real omitido
+  explícitamente; prueba de enrutamiento: verde. ESLint focalizado: verde.
+- Preservación: verificador normal y `python -O`, 22 JSON/digest esperado,
+  49 protecciones originales y 127 adicionales: verdes. Pruebas del verificador
+  y herramientas privadas focalizadas: verdes, sin acceder a fuentes privadas.
+- Productores/puente/publicador previos: siete centinelas verdes; uno de digest
+  histórico falla como se describe arriba. Comparación directa del productor
+  base/actual: tablas y esquemas exactos e idéntico digest `8270c862…`.
+- Ruff sobre Python cambiado del pipeline y nuevos módulos API: verde con la
+  instalación disponible (no sustituye `uv sync --locked` ni el gate final).
+  Python 3.12.11, pytest 9.1.1, Ruff 0.17.0, jsonschema 4.26.0: esas versiones
+  de herramientas difieren del lock del pipeline. Sin builds ni suites completas.
+
+Pendiente por R7: resolver o clasificar formalmente la discrepancia heredada en
+el entorno bloqueado, E2E sintético intensivo y guard de futuro completo,
+materialización real, N=3 real, publicación real y verificación del producto con
+su edición. No hay hashes N=3 nuevos ni municipios reales publicados por este cambio.

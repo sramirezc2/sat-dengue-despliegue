@@ -323,3 +323,14 @@ revisión científica, selección/ejecución de gates y recuperación conservado
 Todas delegan en las autoridades versionadas existentes y fallan cerradas ante
 aprobaciones, secretos, publicación, push o merge. No se añadieron agentes,
 plugins, hooks ni una segunda implementación de comandos o reglas científicas.
+
+## Extensión autorizada: prioridades 2025
+
+Para este alcance rige `feature/dashboard-2025-risk-ranking` desde
+`a9c2c1abac386053b2e78f072bdb44e0141f4045`, según la autorización A–E.
+El flujo conserva `pipeline → datos/resultados → API → dashboard`; la nueva
+frontera es `datos/resultados/risk-ranking/<edition>/`, separada de los 22 JSON.
+La proyección de inferencia recorta fuentes antes de valores y reutiliza
+`source_panel`, mientras `canonical_panel` conserva el guard de desarrollo.
+Modelo congelado, scoring, ranking y presupuesto se calculan offline.
+[Etapas, contratos y gates](../operations/risk-2025.md). No hay inferencia en API.
