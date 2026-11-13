@@ -21,6 +21,7 @@ from .configuracion import Configuracion, ErrorDeConfiguracion, obtener_configur
 from .contrato.api import create_app as crear_app_contrato
 from .contrato.service import _SUPPORTED_DEPARTMENTS as DEPARTAMENTOS_DEL_CONTRATO
 from .repositorio import RepositorioDirectorio
+from .risk_repository import RiskRepository, create_risk_router
 
 registro = logging.getLogger(__name__)
 
@@ -45,7 +46,9 @@ def _validar_departamentos(configuracion: Configuracion) -> None:
 
 def _error(estado: int, codigo: str, mensaje: str) -> JSONResponse:
     """Devolver un error con la misma forma que usa el contrato."""
-    return JSONResponse(status_code=estado, content={"error_code": codigo, "message": mensaje})
+    return JSONResponse(
+        status_code=estado, content={"error_code": codigo, "message": mensaje}
+    )
 
 
 def crear_app(configuracion: Configuracion | None = None) -> FastAPI:
@@ -63,9 +66,14 @@ def crear_app(configuracion: Configuracion | None = None) -> FastAPI:
         registro.exception("No hay resultados disponibles y la sincronizacion fallo")
         raise
 
-    repositorio = RepositorioDirectorio(actual.directorio_resultados, actual.departamentos)
+    repositorio = RepositorioDirectorio(
+        actual.directorio_resultados, actual.departamentos
+    )
 
     aplicacion = crear_app_contrato(repositorio)
+    aplicacion.include_router(
+        create_risk_router(RiskRepository(actual.directorio_prioridades))
+    )
     aplicacion.title = "SAT Dengue, API del tablero"
     aplicacion.version = VERSION
     aplicacion.description = (
@@ -84,8 +92,13 @@ def crear_app(configuracion: Configuracion | None = None) -> FastAPI:
     async def cachear_resultados(peticion: Request, siguiente: Any):
         """Un resultado publicado es inmutable; la salud nunca se cachea."""
         respuesta = await siguiente(peticion)
-        if peticion.url.path == RUTA_DASHBOARD and respuesta.status_code == 200:
-            respuesta.headers["Cache-Control"] = f"public, max-age={actual.segundos_cache}"
+        if (
+            peticion.url.path == RUTA_DASHBOARD
+            or peticion.url.path == "/api/prioridades/v1"
+        ) and respuesta.status_code == 200:
+            respuesta.headers["Cache-Control"] = (
+                f"public, max-age={actual.segundos_cache}"
+            )
         elif peticion.url.path == RUTA_SALUD:
             respuesta.headers["Cache-Control"] = "no-store"
         return respuesta
@@ -94,10 +107,14 @@ def crear_app(configuracion: Configuracion | None = None) -> FastAPI:
     async def errores_http(_: Request, excepcion: ErrorHTTP) -> JSONResponse:
         """Dar a las rutas fuera del contrato la misma forma de error."""
         if excepcion.status_code == 404:
-            return _error(404, "NOT_FOUND", "La ruta solicitada no existe en este servicio.")
+            return _error(
+                404, "NOT_FOUND", "La ruta solicitada no existe en este servicio."
+            )
         if excepcion.status_code == 405:
             return _error(
-                405, "METHOD_NOT_ALLOWED", "Este servicio es de solo lectura y solo admite GET."
+                405,
+                "METHOD_NOT_ALLOWED",
+                "Este servicio es de solo lectura y solo admite GET.",
             )
         return _error(excepcion.status_code, "INTERNAL_ERROR", str(excepcion.detail))
 

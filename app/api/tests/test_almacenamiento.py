@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-
 from sat_api import almacenamiento
 from sat_api.almacenamiento import ErrorDeSincronizacion
 from sat_api.configuracion import Configuracion
@@ -55,7 +54,7 @@ class ClienteS3Falso:
         self.tamano_declarado = tamano_declarado or len(contenido)
         self.destinos: list[Path] = []
 
-    def get_paginator(self, _: str) -> "ClienteS3Falso":
+    def get_paginator(self, _: str) -> ClienteS3Falso:
         """Devolver el paginador falso."""
         return self
 
@@ -80,6 +79,32 @@ class ClienteS3Falso:
             ruta.write_bytes(self.contenido[:20])
             raise self.error
         ruta.write_bytes(self.contenido)
+
+
+def test_s3_historico_no_aplana_prioridades(tmp_path, monkeypatch):
+    """Una edición nueva o su manifiesto no se descarga como JSON histórico."""
+    cliente = ClienteS3Falso(b"{}")
+    monkeypatch.setattr(
+        cliente,
+        "paginate",
+        lambda **kwargs: [
+            {
+                "Contents": [
+                    {
+                        "Key": "resultados/risk-ranking/v1/prioridades_T2_2025-01.json",
+                        "Size": 2,
+                    },
+                    {
+                        "Key": "resultados/risk-ranking/v1/.publication/manifest.json",
+                        "Size": 2,
+                    },
+                ]
+            }
+        ],
+    )
+    monkeypatch.setattr(almacenamiento, "_cliente_s3", lambda _: cliente)
+    assert almacenamiento.sincronizar_desde_s3(_configuracion(tmp_path, "bucket")) == 0
+    assert cliente.destinos == []
 
 
 def test_sin_bucket_conserva_los_resultados_locales(
@@ -181,7 +206,9 @@ def test_asegurar_resultados_continua_con_la_copia_local_si_s3_falla(
 
 @pytest.mark.parametrize("stage", ["client", "listing", "download"])
 def test_sdk_errors_do_not_reach_tracebacks_or_fallback_logs(
-    stage: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    stage: str,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Ocultar texto arbitrario del SDK en creación, listado y descarga.
