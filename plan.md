@@ -1070,7 +1070,7 @@ No se crea experimento ni se cambia el registro científico.
 | R4 Contrato y publicación | IMPLEMENTADA; gate final pendiente | JSON Schema/Pydantic/Zod, transacción existente y ediciones inmutables. |
 | R5 API y dashboard | IMPLEMENTADA; gate final pendiente | Solo lectura, T+2 inicial, filtros sin reasignación, sin desenlaces/probabilidades. |
 | R6 Pruebas focalizadas y documentación | FOCALIZADA; incidencia previa abierta | Centinelas artificiales, preservación y guías comprobados; digest histórico discrepante también en base. |
-| R7 Validación intensiva y real | PENDIENTE | Esperar confirmación de fin de EXP006 antes de suites, builds, E2E intensivo, materialización y N=3. |
+| R7 Validación intensiva y real | EN CURSO | Reanudación autorizada 2026-11-14; EXP006 sin proceso activo. Bloqueos E2E/digest resueltos; gates completos y datos reales pendientes. |
 
 Solo se utilizan rutas y entornos de este worktree. No hay autorización remota.
 El alcance no se declara terminado hasta R7; los registros previos no acreditan
@@ -1110,3 +1110,30 @@ Pendiente por R7: resolver o clasificar formalmente la discrepancia heredada en
 el entorno bloqueado, E2E sintético intensivo y guard de futuro completo,
 materialización real, N=3 real, publicación real y verificación del producto con
 su edición. No hay hashes N=3 nuevos ni municipios reales publicados por este cambio.
+
+
+### Reanudación autorizada R7 — 14 de noviembre de 2026
+
+Inicio limpio en `70719f746183f31ef440b1711b31b4dcb710fae2`, rama esperada,
+siete commits sobre `origin/main@a9c2c1a`. EXP006 sin procesos activos; únicamente
+presencia booleana de HF_TOKEN comprobada. Ningún cambio en A–E, EXP004/EXP006
+ni evidencia cerrada. Entornos pipeline/API propios de este worktree.
+
+Corrección E2E: salida explícita MemoryDataset y recibo por `catalog.load`, seis
+nodos intactos; API con su intérprete separado. Dos intensivos PASS (139,58 s):
+tres materializaciones artificiales, freeze, certificación, publicación, API y
+consumo React; fit y etiquetas prohibidos en modo congelado.
+
+Digest resuelto con causa comprobada: PyArrow opcional cambiaba únicamente el
+dtype de `in_epi_coverage` de `boolean` a `bool[pyarrow]`. Filas/valores idénticos.
+El cast explícito restaura los bytes históricos; no cambia el hash esperado.
+`origin/main` en clon limpio y rama con uv.lock producen `26cc6895…` y `4ca14c3c…`,
+también Python normal/-O. El mismo host con PyArrow reproduce ambos hashes tras
+la corrección y al controlar `string_storage=python` sin cambios de código.
+[Evidencia agregada](docs/evidence/risk-2025/20261114-recovery.json).
+
+Carga congelada: permitir un commit descendiente solo con idénticos hashes de
+código científico/JSON, lock y crudos, conservando el SHA original de ajuste.
+Esto permite los commits finales documentales sin invalidar el modelo; cualquier
+cambio científico sigue bloqueando. CI prepara API y Bun para ejecutar el E2E
+completo; no omite pruebas ni nodos. Gates completos y datos reales aún pendientes.

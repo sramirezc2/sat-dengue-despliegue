@@ -418,6 +418,27 @@ def test_frozen_tamper_and_native_parameters_are_rejected(training, frozen, tmp_
         decode_artifact(raw, sha(raw), training[2])
 
 
+def test_frozen_accepts_only_descendant_with_identical_scientific_lineage(
+    training, frozen, monkeypatch
+):
+    """Permitir cierres documentales sin alterar la procedencia del modelo."""
+    from types import SimpleNamespace
+
+    from sat_dengue_pipeline.risk import frozen as module
+
+    current_provenance = {**training[2], "code_sha": "b" * 40}
+    monkeypatch.setattr(module.subprocess, "run", lambda *a, **k: SimpleNamespace(returncode=0))
+    raw = canonical_json(frozen.payload)
+    loaded = decode_artifact(raw, sha(raw), current_provenance)
+    assert loaded.payload["provenance"] == training[2]
+    for key in ("lock_sha256", "code_tree_sha256", "raw_manifest_sha256"):
+        with pytest.raises(ValueError, match="Identidad"):
+            decode_artifact(raw, sha(raw), {**current_provenance, key: "e" * 64})
+    monkeypatch.setattr(module.subprocess, "run", lambda *a, **k: SimpleNamespace(returncode=1))
+    with pytest.raises(ValueError, match="ancestro"):
+        decode_artifact(raw, sha(raw), current_provenance)
+
+
 def test_publication_does_not_fit(training, frozen, tmp_path, monkeypatch):
     """El recorrido posterior al freeze no aprende ni consulta etiquetas."""
     import sat_dengue_pipeline.preparation as preparation

@@ -1,5 +1,6 @@
 """Materialización única y carga verificable de la logística aprobada."""
 
+import subprocess
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
@@ -17,7 +18,7 @@ from sat_dengue_pipeline.factory.configuration import adapter_spec
 from sat_dengue_pipeline.models.logistic import LogisticOnsetAdapter, canonical_json
 from sat_dengue_pipeline.pipelines.deployment_publication.contract import decode_json
 
-from .configuration import BASE, GENERATED, RECIPE_SHA, digest, procedure, recipe, sha
+from .configuration import BASE, GENERATED, RECIPE_SHA, ROOT, digest, procedure, recipe, sha
 
 ARTIFACT_CONTRACT = "satd-frozen-logistic-v1"
 
@@ -147,7 +148,8 @@ def decode_artifact(raw: bytes, expected_sha: str, provenance: dict) -> FrozenLo
         or p["recipe"] != config
         or p["procedure"] != procedure()
         or p["logical_generated_at"] != GENERATED
-        or p["provenance"] != provenance
+        or {k: v for k, v in p["provenance"].items() if k != "code_sha"}
+        != {k: v for k, v in provenance.items() if k != "code_sha"}
         or p["predictors"] != config["predictors"]
         or p["matrix_columns"] != config["preparation"]["matrix_columns"]
         or p["fit_calls"] != 1
@@ -158,6 +160,22 @@ def decode_artifact(raw: bytes, expected_sha: str, provenance: dict) -> FrozenLo
         or digest(p["state"]) != p["effective_state_sha256"]
     ):
         raise ValueError("Identidad o corte del artefacto incompatible")
+    if p["provenance"]["code_sha"] != provenance["code_sha"]:
+        ancestor = subprocess.run(
+            [
+                "git",
+                "merge-base",
+                "--is-ancestor",
+                p["provenance"]["code_sha"],
+                provenance["code_sha"],
+            ],
+            cwd=ROOT,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+        if ancestor.returncode:
+            raise ValueError("El commit del artefacto no es un ancestro verificable")
     state = p["state"]
     adapter = LogisticOnsetAdapter(adapter_spec(config))
     expected_native = {

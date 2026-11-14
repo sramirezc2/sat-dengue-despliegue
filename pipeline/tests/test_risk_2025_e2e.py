@@ -3,7 +3,6 @@
 import json
 import os
 import subprocess
-import sys
 from pathlib import Path
 
 import pytest
@@ -57,9 +56,11 @@ def test_five_sources_to_http_and_dashboard_three_isolated_runs(tmp_path, monkey
             {
                 "params:risk_2025": MemoryDataset(data=settings),
                 "risk_context": MemoryDataset(copy_mode="assign"),
+                "risk_receipt": MemoryDataset(),
             }
         )
-        return SequentialRunner().run(create_pipeline(), catalog)["risk_receipt"]
+        SequentialRunner().run(create_pipeline(), catalog)
+        return catalog.load("risk_receipt")
 
     for index in range(1, 4):
         settings = {
@@ -127,8 +128,11 @@ Path(sys.argv[2]).write_text(json.dumps(response.json()))
     response_file = tmp_path / "api-response.json"
     env = {k: v for k, v in os.environ.items() if k != "HF_TOKEN"}
     env["PYTHONPATH"] = str(ROOT / "app/api")
+    api_python = (
+        ROOT / "app/api/.venv" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+    )
     subprocess.run(
-        [sys.executable, "-c", api_check, str(edition), str(response_file)],
+        [str(api_python), "-c", api_check, str(edition), str(response_file)],
         check=True,
         env=env,
         capture_output=True,

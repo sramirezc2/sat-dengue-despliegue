@@ -1,0 +1,116 @@
+{
+  "base_head": "a9c2c1abac386053b2e78f072bdb44e0141f4045",
+  "cause": {
+    "controlled_host_string_storage_python_restores_historical_bytes": true,
+    "first_divergence": "schema.columns[7].dtype: in_epi_coverage",
+    "fix": "Explicit nullable boolean cast at source_panel, preserving values and historical locked bytes",
+    "host_dtype": "bool[pyarrow]",
+    "locked_dtype": "boolean",
+    "rows_values_and_order_identical": true
+  },
+  "date": "2026-11-14",
+  "exp006_active": false,
+  "historical_expected_hashes_unchanged": true,
+  "initial_head": "70719f746183f31ef440b1711b31b4dcb710fae2",
+  "intensive_acceptance": {
+    "all_six_nodes": true,
+    "api_interpreter": "dedicated API venv",
+    "deselected_non_intensive": 32,
+    "frozen_fit_forbidden": true,
+    "frozen_label_builder_forbidden": true,
+    "materializations": 3,
+    "passed": 2,
+    "peak_rss_bytes": null,
+    "receipt_interface": "catalog.load(risk_receipt)",
+    "seconds": 139.58
+  },
+  "probes": {
+    "host-branch": {
+      "python": "3.12.11",
+      "semantic_digest": "8270c8623caae0845d61c74e98bb5bb9ad7eb10ad2a22bfb4754e04695ada8ff",
+      "serialized_sha256": "bb76214b8c0e7d7a7da91714c26b334e486c25a41a9f0bc6b6e6871789f961cf",
+      "string_storage": "auto",
+      "versions": {
+        "numpy": "2.5.4",
+        "pandas": "3.0.6",
+        "pyarrow": "25.0.1",
+        "python-dateutil": "2.9.0.post0",
+        "scipy": "1.18.1",
+        "tzdata": "2026.6"
+      }
+    },
+    "host-fixed": {
+      "python": "3.12.11",
+      "semantic_digest": "26cc689566b05ffaf46a42aaa8311cca0ffc3137e31af6f64cfb1e9834f6b957",
+      "serialized_sha256": "4ca14c3c07079130606a91274a516e083b513c6a1a7afe41d8df92be9b3bb046",
+      "string_storage": "auto",
+      "versions": {
+        "numpy": "2.5.4",
+        "pandas": "3.0.6",
+        "pyarrow": "25.0.1",
+        "python-dateutil": "2.9.0.post0",
+        "scipy": "1.18.1",
+        "tzdata": "2026.6"
+      }
+    },
+    "host-python-string": {
+      "python": "3.12.11",
+      "semantic_digest": "26cc689566b05ffaf46a42aaa8311cca0ffc3137e31af6f64cfb1e9834f6b957",
+      "serialized_sha256": "4ca14c3c07079130606a91274a516e083b513c6a1a7afe41d8df92be9b3bb046",
+      "string_storage": "python",
+      "versions": {
+        "numpy": "2.5.4",
+        "pandas": "3.0.6",
+        "pyarrow": "25.0.1",
+        "python-dateutil": "2.9.0.post0",
+        "scipy": "1.18.1",
+        "tzdata": "2026.6"
+      }
+    },
+    "locked-branch": {
+      "python": "3.12.13",
+      "semantic_digest": "26cc689566b05ffaf46a42aaa8311cca0ffc3137e31af6f64cfb1e9834f6b957",
+      "serialized_sha256": "4ca14c3c07079130606a91274a516e083b513c6a1a7afe41d8df92be9b3bb046",
+      "string_storage": "auto",
+      "versions": {
+        "numpy": "2.5.4",
+        "pandas": "3.0.6",
+        "pyarrow": null,
+        "python-dateutil": "4.0.0",
+        "scipy": "1.18.1",
+        "tzdata": "2026.6"
+      }
+    },
+    "locked-fixed-optimized": {
+      "python": "3.12.13",
+      "semantic_digest": "26cc689566b05ffaf46a42aaa8311cca0ffc3137e31af6f64cfb1e9834f6b957",
+      "serialized_sha256": "4ca14c3c07079130606a91274a516e083b513c6a1a7afe41d8df92be9b3bb046",
+      "string_storage": "auto",
+      "versions": {
+        "numpy": "2.5.4",
+        "pandas": "3.0.6",
+        "pyarrow": null,
+        "python-dateutil": "4.0.0",
+        "scipy": "1.18.1",
+        "tzdata": "2026.6"
+      }
+    },
+    "locked-main": {
+      "python": "3.12.13",
+      "semantic_digest": "26cc689566b05ffaf46a42aaa8311cca0ffc3137e31af6f64cfb1e9834f6b957",
+      "serialized_sha256": "4ca14c3c07079130606a91274a516e083b513c6a1a7afe41d8df92be9b3bb046",
+      "string_storage": "auto",
+      "versions": {
+        "numpy": "2.5.4",
+        "pandas": "3.0.6",
+        "pyarrow": null,
+        "python-dateutil": "4.0.0",
+        "scipy": "1.18.1",
+        "tzdata": "2026.6"
+      }
+    }
+  },
+  "real_data_accessed": false,
+  "status": "PASS",
+  "token_presence_checked_only": true
+}

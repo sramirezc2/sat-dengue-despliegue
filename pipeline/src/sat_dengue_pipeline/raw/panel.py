@@ -73,7 +73,9 @@ def source_panel(
     grid = municipality_month_grid(geography, config)
     panel = grid.merge(geography, on="municipality_code", validate="many_to_one")
     panel = panel.merge(epidemiology, on=KEYS, how="left", validate="one_to_one")
-    panel["in_epi_coverage"] = panel.year_month.ge(config.epi_start)
+    # Comparar strings usa el backend opcional de pandas (Python o Arrow).
+    # Fijar el booleano nullable histórico evita que esa dependencia cambie el esquema.
+    panel["in_epi_coverage"] = panel.year_month.ge(config.epi_start).astype("boolean")
     for name in COUNTS:
         panel[name] = panel[name].astype("Int64")
         panel.loc[panel.in_epi_coverage, name] = panel.loc[panel.in_epi_coverage, name].fillna(0)

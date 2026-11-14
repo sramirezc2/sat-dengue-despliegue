@@ -64,6 +64,7 @@ describe("Vista 2025", () => {
     "renderiza la respuesta E2E de las cinco fuentes",
     async () => {
       const payload = JSON.parse(readFileSync(process.env.SATD_RISK_E2E_RESPONSE!, "utf8"));
+      const published = riskViewSchema.parse(payload).ranking;
       vi.stubGlobal(
         "fetch",
         vi.fn(
@@ -74,24 +75,31 @@ describe("Vista 2025", () => {
             ),
         ),
       );
-      render(
+      const { container } = render(
         <QueryClientProvider client={new QueryClient()}>
           <RiskDashboard />
         </QueryClientProvider>,
       );
       const list = await screen.findByRole("list", { name: "Municipios seleccionados" });
       expect(within(list).getAllByRole("listitem")).toHaveLength(8);
-      for (const row of payload.ranking.municipalities.filter(
-        (r: { selected_for_attention: boolean }) => r.selected_for_attention,
-      )) {
+      const selected = published.municipalities.filter((r) => r.selected_for_attention);
+      for (const row of selected) {
         expect(
           within(list).getByText(`${row.municipality_name} · ${row.department_name}`),
         ).toBeVisible();
       }
       expect(screen.getByRole("tab", { selected: true })).toHaveTextContent("T+2");
       expect(screen.getByText(RISK_LEGEND)).toBeVisible();
+      expect(container.innerHTML).not.toMatch(
+        /\b(probability|threshold|y_true|acierto|fallo|sensibilidad|FAR)\b|[0-9]+%/i,
+      );
+      expect(container.textContent).toContain(published.trace.artifact_sha256);
       fireEvent.change(screen.getByLabelText("Departamento"), { target: { value: "73" } });
-      expect(within(list).queryAllByRole("listitem")).toHaveLength(0);
+      const filtered = selected.filter((r) => r.department_code === "73");
+      expect(within(list).queryAllByRole("listitem")).toHaveLength(filtered.length);
+      for (const row of filtered) {
+        expect(within(list).getByText(`Posición global ${row.risk_rank}`)).toBeVisible();
+      }
     },
   );
   it("abre T+2 con ocho prioridades y filtra sin reasignar cupos o posiciones", async () => {
