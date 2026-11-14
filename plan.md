@@ -1,12 +1,12 @@
 # Hoja de ruta de implementación — Pipeline E2E SAT DENGUE
 
-**Versión:** 1.10
+**Versión:** 1.11
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado del alcance actual:** R7 BLOQUEADA por gate completo de software; decisiones A–E intactas. Registros anteriores conservados como historia.
+**Estado del alcance actual:** R1–R7 COMPLETAS; validación local real PASS bajo decisiones A–E intactas. Registros anteriores conservados como historia.
 **Último corte histórico T1–T27:** 26/27; T27 BLOQUEADA en su registro previo, sin reauditar sus gates en este alcance
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama del alcance actual:** `feature/dashboard-2025-risk-ranking`, desde `origin/main@a9c2c1abac386053b2e78f072bdb44e0141f4045`
-**Entrega actual:** correcciones E2E/digest verificadas; validación completa bloqueada por registro/discovery. Sin datos reales nuevos ni acciones remotas.
+**Entrega actual:** registro/discovery corregidos, gates de software PASS, modelo real certificado N=3 y edición local 2025-log-climate-v1 publicada. Sin acciones remotas.
 
 El [PR #1](https://github.com/sramirezc2/sat-dengue-despliegue/pull/1) está
 fusionado y `main` actualizado ya contiene la fábrica. No hay dependencia de un
@@ -1065,16 +1065,18 @@ No se crea experimento ni se cambia el registro científico.
 | Tarea | Estado | Condición de salida |
 |---|---|---|
 | R1 Decisión y autorización | COMPLETA | A–E registradas; receta por hash y corte lógico fijados. |
-| R2 Artefacto e inferencia temporal | IMPLEMENTADA; gate final pendiente | Persistencia fiel, un fit, carga sin fit, productores reutilizados sin desenlaces. |
-| R3 Ranking y presupuesto | IMPLEMENTADA; gate final pendiente | Ocho globales, 76 registros, empates deterministas y fallos explícitos. |
-| R4 Contrato y publicación | IMPLEMENTADA; gate final pendiente | JSON Schema/Pydantic/Zod, transacción existente y ediciones inmutables. |
-| R5 API y dashboard | IMPLEMENTADA; gate final pendiente | Solo lectura, T+2 inicial, filtros sin reasignación, sin desenlaces/probabilidades. |
-| R6 Pruebas focalizadas y documentación | FOCALIZADA; incidencia previa abierta | Centinelas artificiales, preservación y guías comprobados; digest histórico discrepante también en base. |
-| R7 Validación intensiva y real | BLOQUEADA | Suite completa: 877 PASS/1 FAIL, test_registry_and_discovery. Parada solicitada antes de datos reales; no N=3, activación ni publicación. |
+| R2 Artefacto e inferencia temporal | COMPLETA | Persistencia fiel; ajuste hasta 2024-09, disponible hasta 2024-10; carga/publicación sin fit ni etiquetas. |
+| R3 Ranking y presupuesto | COMPLETA | Ocho globales, 76 registros, empates deterministas y fallos explícitos. |
+| R4 Contrato y publicación | COMPLETA | JSON Schema/Pydantic/Zod, transacción existente y edición real inmutable validada. |
+| R5 API y dashboard | COMPLETA | Solo lectura; respuesta real consumida por React, T+2 inicial y filtros sin reasignación. |
+| R6 Pruebas focalizadas y documentación | COMPLETA | Centinelas, digest resuelto sin cambiar expectativas y preservación normal/-O PASS. |
+| R7 Validación intensiva y real | COMPLETA | Software 878/54/73 PASS; dos intensivos PASS; N=3 real idéntico; congelado COMMITTED; doce meses con 76 municipios y ocho seleccionados. |
 
 Solo se utilizan rutas y entornos de este worktree. No hay autorización remota.
-El alcance no se declara terminado hasta R7; los registros previos no acreditan
-los gates de esta implementación.
+El cierre local de R7 se acredita en el recibo final enlazado al final de esta
+sección; los registros previos se conservan sin atribuirles esa validación.
+
+### Registro inicial de implementación — histórico
 
 Operación y límites en [guía única](docs/operations/risk-2025.md). La publicación
 ordinaria exige activación de hashes certificados; no existe todavía artefacto
@@ -1171,3 +1173,55 @@ del pipeline nuevo y exportar `create_pipeline` para discovery. Ejecutar primero
 esa regresión; repetir la suite completa tendría una causa concreta: la
 corrección de este fallo. Solo tras todos los gates verdes, continuar con datos
 reales, N=3 y publicación. R7 no está completa; sin acciones remotas.
+
+
+### Reanudación acotada de registro/discovery — 14 de noviembre de 2026
+
+Inicio limpio en `d399e4fb797148f3420a9092844eac8c8ab3195f`; HF_TOKEN presente
+(comprobación booleana exclusivamente). Corrección autorizada de tres archivos
+en `a6a4024`: paquete exporta create_pipeline/__all__, registro usa su interfaz
+pública, prueba conserva comprobaciones previas y valida discovery, seis nodos
+y params:risk_2025 → risk_receipt. Discovery 1, focalizadas 33, intensivas 2 PASS
+en ese orden, Ruff y diff PASS.
+
+Una ejecución del gate completo: 878 pipeline PASS (488,89 s), 54 API y 73 tablero
+sin omisiones; frozen install, lint, build, lock/sync, Ruff, contratos, registro
+y preservación normal/-O PASS. Los 22 JSON conservan su digest. Evidencia
+operacional en `pipeline/data/risk-2025/validation/20261114-e1d3946f0f/`.
+Se reanuda R7 real bajo A–E intactas, sin ejecutar EXP004/EXP006 ni acciones remotas.
+
+### Cierre local R7 — PASS, 14 de noviembre de 2026
+
+[Recibo final](docs/evidence/risk-2025/20261114-r7-final-e1d3946f0f.json).
+Código validado y usado para ajuste: `a6a40245b6eab7f8883f1b4b4567354bfed353b4`.
+Una suite completa: 878 pipeline, 54 API y 73 tablero PASS, sin omisiones;
+discovery 1, focalizadas 33 y dos intensivos PASS. Lock/sync, Ruff, contratos,
+registro, instalación congelada, lint/build y preservación normal/-O PASS.
+Checkout temporal limpio: discovery y digest histórico PASS, preservación normal/-O PASS.
+
+Los cinco archivos ausentes se adquirieron dentro del grafo y se verificaron
+contra el manifiesto aprobado. Materialización real: 7596 filas autorizadas,
+un fit, objetivo máximo 2024-09 y disponibilidad máxima 2024-10. N=3 en tres
+procesos/directorios independientes: artefacto, estado, configuración, linaje
+y manifiesto que compromete los doce documentos idénticos. Certificado activado
+solo después de PASS. Publicación ordinaria COMMITTED con el mismo hash de paquete;
+guard de ejecución confirmó cero fit y cero llamadas al constructor de etiquetas.
+
+Edición local `datos/resultados/risk-ranking/2025-log-climate-v1`: enero–diciembre
+de 2025, solo T+2, 76 municipios (29 Meta/47 Tolima) y ocho seleccionados globales
+por mes. Ineligibles explícitos; filtros sin reposición. API valida los doce
+documentos; HTTP directo/proxy y componente React con respuesta real PASS.
+No se transportan probabilidades, umbrales ni desenlaces de 2025. Los 22 JSON
+históricos y evidencias cerradas permanecen intactos.
+
+Duraciones reales: materialización 880,277 s; N=3 2094,749 s; publicación congelada
+643,713 s. Pico RSS observado máximo 2.471.657.472 bytes; versiones, comandos,
+hashes completos y doce archivos en el recibo. Modelos, crudos, edición y recibos
+operacionales permanecen fuera de Git, en rutas propias de este worktree.
+
+Limitación de validación: navegador automatizado indisponible; se verificaron
+render DOM/accesibilidad de React con respuesta real y transporte HTTP local,
+sin afirmar inspección visual de navegador. 2025 fue previamente consumido: no
+es confirmación independiente ni evaluación de desempeño; uso operativo no
+autorizado y champion no seleccionado. Revisión/CI remota y despliegue requieren
+autorización posterior; no se hicieron push, PR ni merge.
