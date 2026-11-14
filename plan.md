@@ -1,12 +1,12 @@
 # Hoja de ruta de implementación — Pipeline E2E SAT DENGUE
 
-**Versión:** 1.9
+**Versión:** 1.10
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado del alcance actual:** prioridades retrospectivas 2025 autorizadas A–E; implementación EN CURSO en la sección 11. Registros anteriores conservados como historia.
+**Estado del alcance actual:** R7 BLOQUEADA por gate completo de software; decisiones A–E intactas. Registros anteriores conservados como historia.
 **Último corte histórico T1–T27:** 26/27; T27 BLOQUEADA en su registro previo, sin reauditar sus gates en este alcance
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
 **Rama del alcance actual:** `feature/dashboard-2025-risk-ranking`, desde `origin/main@a9c2c1abac386053b2e78f072bdb44e0141f4045`
-**Entrega actual:** implementación modular de prioridades 2025 y pruebas focalizadas; validación intensiva y real pendiente de fin de EXP006. Sin acciones remotas.
+**Entrega actual:** correcciones E2E/digest verificadas; validación completa bloqueada por registro/discovery. Sin datos reales nuevos ni acciones remotas.
 
 El [PR #1](https://github.com/sramirezc2/sat-dengue-despliegue/pull/1) está
 fusionado y `main` actualizado ya contiene la fábrica. No hay dependencia de un
@@ -1070,7 +1070,7 @@ No se crea experimento ni se cambia el registro científico.
 | R4 Contrato y publicación | IMPLEMENTADA; gate final pendiente | JSON Schema/Pydantic/Zod, transacción existente y ediciones inmutables. |
 | R5 API y dashboard | IMPLEMENTADA; gate final pendiente | Solo lectura, T+2 inicial, filtros sin reasignación, sin desenlaces/probabilidades. |
 | R6 Pruebas focalizadas y documentación | FOCALIZADA; incidencia previa abierta | Centinelas artificiales, preservación y guías comprobados; digest histórico discrepante también en base. |
-| R7 Validación intensiva y real | EN CURSO | Reanudación autorizada 2026-11-14; EXP006 sin proceso activo. Bloqueos E2E/digest resueltos; gates completos y datos reales pendientes. |
+| R7 Validación intensiva y real | BLOQUEADA | Suite completa: 877 PASS/1 FAIL, test_registry_and_discovery. Parada solicitada antes de datos reales; no N=3, activación ni publicación. |
 
 Solo se utilizan rutas y entornos de este worktree. No hay autorización remota.
 El alcance no se declara terminado hasta R7; los registros previos no acreditan
@@ -1137,3 +1137,37 @@ código científico/JSON, lock y crudos, conservando el SHA original de ajuste.
 Esto permite los commits finales documentales sin invalidar el modelo; cualquier
 cambio científico sigue bloqueando. CI prepara API y Bun para ejecutar el E2E
 completo; no omite pruebas ni nodos. Gates completos y datos reales aún pendientes.
+
+
+### Terminal R7 — BLOCKED, 14 de noviembre de 2026
+
+[Evidencia agregada](docs/evidence/risk-2025/20261114-validation-blocked.json),
+sobre `9f0ff00`, árbol limpio al iniciar los gates. Una ejecución completa:
+pipeline **877 PASS / 1 FAIL**, 878 casos sin omisiones (493,32 s de pytest;
+495,594 s del comando; pico RSS hijo 1.658.306.560 bytes). El único fallo es
+`tests/test_synthetic.py:30`: su conjunto cerrado esperado no incluye el pipeline
+registrado `risk_2025_publication`. Además, `find_pipelines` avisa que su paquete
+no exporta `create_pipeline`. No se aplican más correcciones tras este gate fallido,
+por la condición explícita de parada del usuario.
+
+Ambos intensivos pasan también dentro de esa suite. API **54 PASS**, tablero
+**73 PASS**, sin fallos ni skips; instalación congelada, lint y build PASS. Lock,
+sync, Ruff, JSON Schema/Pydantic/Zod (incluidos en suites), registro, preservación
+normal/-O, enlaces nuevos/anclas, patrones de secretos, tamaños, imports, diff y
+clones limpios de main/rama con digest normal/-O PASS. Los enlaces históricos
+sin cambios quedan fuera del gate de enlaces nuevos; no se reescribe historia.
+
+Los 22 JSON conservan exactamente el digest
+`4d3ddd3890a6a622b658fc2b1ef0159d0da6bc855cacc2c5b62854290623e16e`;
+receta y 127 archivos de preservación extendida intactos. Logs/XML/recursos
+operacionales se conservan bajo `pipeline/data/risk-2025/validation/20261114-680a80bc3c/`.
+No hay acceso/descarga privada para ejecución científica, materialización real,
+N=3 real, certificado activado, edición nueva ni validación real de API/tablero
+en esta ejecución. No se hacen declaraciones científicas de 2025.
+
+Acción mínima recomendada para una reanudación autorizada: actualizar el conjunto
+esperado sin relajar su igualdad, comprobar los seis nodos y entradas/salidas
+del pipeline nuevo y exportar `create_pipeline` para discovery. Ejecutar primero
+esa regresión; repetir la suite completa tendría una causa concreta: la
+corrección de este fallo. Solo tras todos los gates verdes, continuar con datos
+reales, N=3 y publicación. R7 no está completa; sin acciones remotas.
