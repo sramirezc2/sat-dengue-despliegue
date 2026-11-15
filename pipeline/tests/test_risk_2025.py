@@ -16,6 +16,7 @@ from sat_dengue_pipeline.domain.canonical import KEYS, PREDICTORS
 from sat_dengue_pipeline.models.logistic import LogisticOnsetAdapter, canonical_json
 from sat_dengue_pipeline.pipelines.deployment_publication import io
 from sat_dengue_pipeline.pipelines.deployment_publication.package import PublicationPackage
+from sat_dengue_pipeline.risk import configuration
 from sat_dengue_pipeline.risk.configuration import ROOT, digest, local_path, sha
 from sat_dengue_pipeline.risk.frozen import (
     decode_artifact,
@@ -311,6 +312,71 @@ def test_publication_paths_cannot_escape_worktree():
         local_path("../../sat-dengue-despliegue/pipeline/data/model")
     with pytest.raises(ValueError):
         local_path("../app/api/forbidden")
+
+
+@pytest.mark.parametrize("published", [False, True])
+def test_local_path_rejects_absolute_paths(published):
+    """Rechazar rutas absolutas incluso dentro del espacio autorizado."""
+    target = ROOT / (
+        "datos/resultados/risk-ranking/edition" if published else "pipeline/data/model"
+    )
+    with pytest.raises(ValueError, match="relativa"):
+        local_path(str(target), published=published)
+
+
+@pytest.mark.parametrize("value", ["..", "data/../data/model", "data/model/.."])
+def test_local_path_rejects_parent_components(value):
+    """Rechazar cada componente padre antes de normalizarlo."""
+    with pytest.raises(ValueError):
+        local_path(value)
+
+
+def test_local_path_rejects_exit_and_reentry(tmp_path, monkeypatch):
+    """Reproducir el checkout repetido de Actions sin depender del host."""
+    root = tmp_path.resolve() / "sat-dengue-despliegue" / "sat-dengue-despliegue"
+    (root / "pipeline/data").mkdir(parents=True)
+    monkeypatch.setattr(configuration, "ROOT", root)
+    value = "../../sat-dengue-despliegue/pipeline/data/model"
+    assert (root / "pipeline" / value).resolve() == root / "pipeline/data/model"
+    with pytest.raises(ValueError):
+        local_path(value)
+
+
+@pytest.mark.parametrize("value", ["data/model", "data/risk-2025/runs/new", "data/model..json"])
+def test_local_path_accepts_normal_relative_paths(value):
+    """Admitir rutas normales bajo data, incluidas salidas aún inexistentes."""
+    assert local_path(value) == (ROOT / "pipeline" / value).resolve()
+
+
+def test_local_path_preserves_publication_destination():
+    """Publicar en la misma frontera sin componentes padre en la entrada."""
+    value = "datos/resultados/risk-ranking/edition"
+    assert local_path(value, published=True) == (ROOT / value).resolve()
+    with pytest.raises(ValueError):
+        local_path("datos/resultados/risk-ranking/../risk-ranking/edition", published=True)
+    with pytest.raises(ValueError):
+        local_path("datos/resultados/edition", published=True)
+    with pytest.raises(ValueError):
+        local_path("conf/model")
+
+
+@pytest.mark.parametrize("ancestor", [False, True])
+@pytest.mark.parametrize("external", [False, True])
+def test_local_path_preserves_symlink_guards(
+    tmp_path, monkeypatch, symlink_factory, ancestor, external
+):
+    """Rechazar enlaces en destino o ancestros, dentro o fuera del worktree."""
+    root = tmp_path.resolve() / "checkout"
+    data = root / "pipeline/data"
+    data.mkdir(parents=True)
+    target = tmp_path.resolve() / "outside" if external else data / "real"
+    target.mkdir()
+    link = data / "link"
+    symlink_factory(link, target, target_is_directory=True)
+    monkeypatch.setattr(configuration, "ROOT", root)
+    value = "data/link/model" if ancestor else "data/link"
+    with pytest.raises(ValueError, match="enlaces"):
+        local_path(value)
 
 
 def test_inference_does_not_import_outcome_builders():

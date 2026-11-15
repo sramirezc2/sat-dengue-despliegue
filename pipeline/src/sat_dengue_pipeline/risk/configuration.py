@@ -62,16 +62,16 @@ def local_path(value: str, *, published: bool = False) -> Path:
     """Confinar entradas/salidas y rechazar enlaces antes de resolver rutas.
 
     Args:
-        value: Ruta relativa al subproyecto, nunca otro worktree.
+        value: Ruta relativa al subproyecto, o al worktree si published es True.
         published: Admitir únicamente la nueva frontera versionada de publicación.
 
     Returns:
         Ruta absoluta validada dentro de este worktree.
     """
     relative = Path(value)
-    if relative.is_absolute():
-        raise ValueError("Se requiere una ruta relativa del worktree")
-    target = ROOT / "pipeline" / relative
+    if relative.is_absolute() or ".." in relative.parts:
+        raise ValueError("Se requiere una ruta relativa sin componentes '..'")
+    target = (ROOT if published else ROOT / "pipeline") / relative
     # /private/tmp no interviene: tampoco se aceptan escapes por symlink.
     if any(p.is_symlink() for p in (target, *target.parents) if p != ROOT.parent):
         raise ValueError("Las rutas de prioridades no admiten enlaces")

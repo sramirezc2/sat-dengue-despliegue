@@ -289,7 +289,7 @@ def publish(context: Context, result: Any) -> dict:
         context.record()
         return context.receipt
     destination = local_path(
-        "../datos/resultados/risk-ranking/" + context.settings["edition"], published=True
+        "datos/resultados/risk-ranking/" + context.settings["edition"], published=True
     )
     if context.settings["source"] == "synthetic":
         destination = context.run_dir / "results"
