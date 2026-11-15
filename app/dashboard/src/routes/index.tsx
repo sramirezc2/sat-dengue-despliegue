@@ -52,6 +52,7 @@ import { TablaTriaje } from "@/components/tabla-triaje";
 import { DetalleMunicipio } from "@/components/detalle-municipio";
 import { ComparacionModelo } from "@/components/comparacion-modelo";
 import { Retroanalisis } from "@/components/retroanalisis";
+import { RiskDashboard } from "@/components/risk-dashboard";
 import { useDashboard } from "@/lib/use-dashboard";
 import { DashboardClientError } from "@/lib/dashboard-client";
 import { etiquetaPeriodo, usePeriodos } from "@/lib/periodos";
@@ -61,21 +62,21 @@ import { enlacesDeEvidencia, textoDeGobernanza } from "@/lib/gobernanza";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Alerta Temprana de Dengue — Tolima y Meta" },
+      { title: "Prioridades de dengue 2025 — Tolima y Meta" },
       {
         name: "description",
         content:
-          "Tablero de solo lectura para vigilancia de dengue en Tolima y Meta: canal endémico, pronósticos T+1 y T+2 y desempeño del procedimiento evaluado.",
+          "Prioridades retrospectivas T+2 de 2025 en Tolima y Meta. Orden municipal y trazabilidad, sin autorización operativa.",
       },
-      { property: "og:title", content: "Alerta Temprana de Dengue — Tolima y Meta" },
+      { property: "og:title", content: "Prioridades de dengue 2025 — Tolima y Meta" },
       {
         property: "og:description",
-        content: "Canal endémico, pronósticos T+1 y T+2 y estado de gobernanza del modelo.",
+        content: "Ranking retrospectivo T+2, presupuesto global y gobernanza del procedimiento.",
       },
       { property: "og:type", content: "website" },
     ],
   }),
-  component: Dashboard,
+  component: RiskDashboard,
 });
 
 const ZONE_STYLE: Record<Zone, { cls: string; var: string; icon: string }> = {

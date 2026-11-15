@@ -261,6 +261,28 @@ def protected_repository(tmp_path: Path) -> Path:
         encoding="utf-8",
     )
     script = tmp_path / "pipeline/tools/check_experiment_preservation.py"
+    from hashlib import sha256 as bytes_sha256
+
+    from sat_dengue_pipeline.models.logistic import canonical_json
+
+    extension = tmp_path / "docs/decisions/risk-2025-preservation.json"
+    extension.parent.mkdir(parents=True)
+    extension.write_text(
+        json.dumps(
+            {
+                "sha256": {"docs/fixture-0.json": sha256(tmp_path / "docs/fixture-0.json")},
+                "historical_publication_sha256": bytes_sha256(
+                    canonical_json(
+                        {
+                            name: sha256(tmp_path / name)
+                            for name in sorted(names)
+                            if name.startswith("datos/resultados/")
+                        }
+                    )
+                ).hexdigest(),
+            }
+        )
+    )
     script.parent.mkdir(parents=True)
     shutil.copyfile(ROOT / "tools/check_experiment_preservation.py", script)
     return tmp_path

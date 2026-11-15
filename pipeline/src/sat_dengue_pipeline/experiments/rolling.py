@@ -1,10 +1,12 @@
 """Arnés mensual expansivo; contrato mínimo V3, sin afirmar reproducción de V2."""
 
+from __future__ import annotations
+
 import hashlib
 import json
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 import numpy as np
 import pandas as pd
@@ -13,7 +15,9 @@ from sat_dengue_pipeline.domain.calendar import add_months, validate_period
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
 from sat_dengue_pipeline.domain.derived import DERIVED_COLUMNS
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy, validate_keys
-from sat_dengue_pipeline.preparation import PreparedSet
+
+if TYPE_CHECKING:
+    from sat_dengue_pipeline.preparation import PreparedSet
 
 LINK = ["municipality_code", "origin_period", "target_period", "horizon"]
 KEY_COLUMNS = [*LINK, "label_available_period"]
@@ -187,9 +191,7 @@ def validate_data(data: ExperimentData, horizon: int, reserved_start: str = "202
         or data.X.columns.duplicated().any()
         or set(data.derived) & set(PREDICTORS)
         or (
-            data.derived
-            and list(data.derived)
-            != [c for c in DERIVED_COLUMNS if c in data.derived]
+            data.derived and list(data.derived) != [c for c in DERIVED_COLUMNS if c in data.derived]
         )
     ):
         raise ValueError("Predictores fuera del esquema canónico cerrado")
@@ -263,6 +265,8 @@ def fold_inputs(
         Entrenamiento y validación separados. La y de validación es ausente por
         diseño; las etiquetas observadas permanecen en data.y, fuera del modelo.
     """
+    from sat_dengue_pipeline.preparation import PreparedSet
+
     validate_data(data, spec.horizon, spec.reserved_start)
     if fold not in build_folds(spec):
         raise ValueError("Fold ajeno al protocolo")

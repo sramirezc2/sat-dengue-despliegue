@@ -9,7 +9,7 @@ import pandas as pd
 
 from sat_dengue_pipeline.domain.canonical import CLIMATE, COUNTS, KEYS
 
-from .contract import BuildConfig
+from .coverage import SourceCoverage
 from .temporal import parse_date
 
 CLIMATE_INPUT = [
@@ -33,7 +33,7 @@ def _code(value: str, width: int) -> str | None:
 
 
 def geography_normalization(
-    catalog: dict, provenance: dict, catalog_sha: str, config: BuildConfig
+    catalog: dict, provenance: dict, catalog_sha: str, config: SourceCoverage
 ) -> pd.DataFrame:
     """Interpretar el JSON aprobado y verificar la vinculación de procedencia."""
     try:
@@ -67,7 +67,7 @@ def geography_normalization(
 
 
 def epidemiology_normalization(
-    frames: dict[str, pd.DataFrame], geography: pd.DataFrame, config: BuildConfig
+    frames: dict[str, pd.DataFrame], geography: pd.DataFrame, config: SourceCoverage
 ) -> tuple[pd.DataFrame, dict]:
     """Contar cada registro aceptado, sin deduplicación ni fecha de notificación.
 
@@ -123,7 +123,7 @@ def epidemiology_normalization(
 
 
 def climate_daily_normalization(
-    frame: pd.DataFrame, geography: pd.DataFrame, config: BuildConfig
+    frame: pd.DataFrame, geography: pd.DataFrame, config: SourceCoverage
 ) -> tuple[pd.DataFrame, dict]:
     """Validar fechas redundantes, claves y valores después de cuarentena."""
     records, outside = [], 0

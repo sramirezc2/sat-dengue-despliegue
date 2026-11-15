@@ -1,0 +1,344 @@
+{
+  "blocker": {
+    "additional_warning": "risk_2025_publication package does not export create_pipeline for Kedro find_pipelines",
+    "cause": "Closed expected registry set omits the newly registered risk_2025_publication pipeline",
+    "fix_applied_after_gate_failure": false,
+    "gate": "complete pipeline suite",
+    "line": 30,
+    "proposed_minimum_fix": [
+      "Update expected registry set and assert six-node risk pipeline inputs/outputs",
+      "Export create_pipeline from risk_2025_publication/__init__.py"
+    ],
+    "test": "tests/test_synthetic.py::test_registry_and_discovery"
+  },
+  "branch": "feature/dashboard-2025-risk-ranking",
+  "clean_clone_digest": {
+    "base_head": "a9c2c1abac386053b2e78f072bdb44e0141f4045",
+    "branch_head": "9f0ff00869d5e3f5baa5c74b2970937d62920247",
+    "normal_and_optimized_pass": true,
+    "semantic_digest": "26cc689566b05ffaf46a42aaa8311cca0ffc3137e31af6f64cfb1e9834f6b957",
+    "serialized_sha256": "4ca14c3c07079130606a91274a516e083b513c6a1a7afe41d8df92be9b3bb046"
+  },
+  "date": "2026-11-14",
+  "environment": {
+    "api": {
+      "packages": {
+        "fastapi": "0.161.0",
+        "httpx": "0.28.1",
+        "pydantic": "2.14.1",
+        "pytest": "9.1.1"
+      },
+      "python": "3.12.13"
+    },
+    "architecture": "arm64",
+    "bun": "1.4.0",
+    "dashboard_lock_sha256": "8b0cacd32a4b8c06b1b00505a28324bc0c1d143da79e11393f91062bed2b90c2",
+    "disk_free_bytes": 667648000000,
+    "lock_sha256": "5bd75700f0b6a9785478cf808e58544ac3d7d98bc36409c0e6086e5531a60fb7",
+    "memory_bytes": 34359738368,
+    "os_release": "27.2.0",
+    "pipeline": {
+      "packages": {
+        "jsonschema": "4.23.0",
+        "kedro": "1.7.0",
+        "numpy": "2.5.4",
+        "pandas": "3.0.6",
+        "pytest": "9.2.0",
+        "ruff": "0.17.4",
+        "scikit-learn": "1.7.2",
+        "scipy": "1.18.1"
+      },
+      "python": "3.12.13"
+    },
+    "system": "Darwin",
+    "uv": "uv 0.11.19 (Homebrew 2026-06-03 aarch64-apple-darwin)"
+  },
+  "gates": {
+    "dashboard_build": {
+      "child_cpu_seconds": 4.681,
+      "command": [
+        "env",
+        "NITRO_PRESET=node_server",
+        "bun",
+        "run",
+        "build"
+      ],
+      "cwd": "app/dashboard",
+      "elapsed_seconds": 2.796,
+      "gate": "dashboard_build",
+      "peak_child_rss_bytes": 863256576,
+      "returncode": 0
+    },
+    "dashboard_install": {
+      "child_cpu_seconds": 0.052,
+      "command": [
+        "bun",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "cwd": "app/dashboard",
+      "elapsed_seconds": 0.132,
+      "gate": "dashboard_install",
+      "peak_child_rss_bytes": 21381120,
+      "returncode": 0
+    },
+    "dashboard_lint": {
+      "child_cpu_seconds": 4.189,
+      "command": [
+        "bun",
+        "run",
+        "lint"
+      ],
+      "cwd": "app/dashboard",
+      "elapsed_seconds": 1.7,
+      "gate": "dashboard_lint",
+      "peak_child_rss_bytes": 545538048,
+      "returncode": 0
+    },
+    "dashboard_tests": {
+      "child_cpu_seconds": 7.904,
+      "command": [
+        "bun",
+        "run",
+        "test",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=../../pipeline/data/risk-2025/validation/20261114-680a80bc3c/dashboard.xml"
+      ],
+      "cwd": "app/dashboard",
+      "elapsed_seconds": 2.334,
+      "gate": "dashboard_tests",
+      "peak_child_rss_bytes": 308756480,
+      "returncode": 0
+    },
+    "preservation": {
+      "child_cpu_seconds": 1.013,
+      "command": [
+        ".venv/bin/python",
+        "tools/check_experiment_preservation.py"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 1.026,
+      "gate": "preservation",
+      "peak_child_rss_bytes": 147374080,
+      "returncode": 0
+    },
+    "preservation_optimized": {
+      "child_cpu_seconds": 1.003,
+      "command": [
+        ".venv/bin/python",
+        "-O",
+        "tools/check_experiment_preservation.py"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 1.024,
+      "gate": "preservation_optimized",
+      "peak_child_rss_bytes": 147406848,
+      "returncode": 0
+    },
+    "registry": {
+      "child_cpu_seconds": 1.076,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "sat_dengue_pipeline.experiment_management",
+        "validate"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 1.091,
+      "gate": "registry",
+      "peak_child_rss_bytes": 156565504,
+      "returncode": 0
+    },
+    "software_api": {
+      "child_cpu_seconds": 0.91,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "--junitxml=../../pipeline/data/risk-2025/validation/20261114-680a80bc3c/api.xml"
+      ],
+      "cwd": "app/api",
+      "elapsed_seconds": 0.946,
+      "gate": "software_api",
+      "peak_child_rss_bytes": 79708160,
+      "returncode": 0
+    },
+    "software_pipeline": {
+      "child_cpu_seconds": 492.254,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-o",
+        "addopts=",
+        "-q",
+        "--junitxml=data/risk-2025/validation/20261114-680a80bc3c/pipeline.xml",
+        "--basetemp=data/risk-2025/validation/20261114-680a80bc3c/pytest-tmp"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 495.594,
+      "gate": "software_pipeline",
+      "peak_child_rss_bytes": 1658306560,
+      "returncode": 1
+    },
+    "software_ruff": {
+      "child_cpu_seconds": 0.079,
+      "command": [
+        ".venv/bin/ruff",
+        "check",
+        "."
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 0.022,
+      "gate": "software_ruff",
+      "peak_child_rss_bytes": 35373056,
+      "returncode": 0
+    }
+  },
+  "hf_token_presence_only": true,
+  "hygiene": {
+    "broken_new_anchors": [],
+    "broken_new_links": [],
+    "changed_notebooks": [],
+    "import_violations": [],
+    "large_tracked_files": [],
+    "limitations": [
+      "Pattern scan is not universal secret detection",
+      "Historical unchanged links are outside changed-link gate"
+    ],
+    "new_local_links": [
+      [
+        "PLAN_pipeline_e2e_experimentos_sat_dengue.md",
+        "docs/decisions/2025-risk-publication.md"
+      ],
+      [
+        "PLAN_pipeline_e2e_experimentos_sat_dengue.md",
+        "docs/operations/risk-2025.md"
+      ],
+      [
+        "README.md",
+        "docs/operations/risk-2025.md"
+      ],
+      [
+        "README.md",
+        "docs/decisions/2025-risk-publication.md"
+      ],
+      [
+        "app/dashboard/README.md",
+        "../../docs/operations/risk-2025.md"
+      ],
+      [
+        "docs/architecture/pipeline-e2e.md",
+        "../operations/risk-2025.md"
+      ],
+      [
+        "docs/decisions/2025-risk-publication.md",
+        "../operations/risk-2025.md"
+      ],
+      [
+        "docs/decisions/deployment-publication.md",
+        "2025-risk-publication.md"
+      ],
+      [
+        "docs/decisions/deployment-publication.md",
+        "../operations/risk-2025.md#contrato-y-entrega-apidashboard"
+      ],
+      [
+        "docs/experiments/manual_pipeline.md",
+        "../operations/risk-2025.md"
+      ],
+      [
+        "docs/operations/pipeline-operations.md",
+        "risk-2025.md"
+      ],
+      [
+        "docs/operations/risk-2025.md",
+        "../decisions/2025-risk-publication.md"
+      ],
+      [
+        "docs/operations/risk-2025.md",
+        "../evidence/risk-2025/20261114-recovery.json"
+      ],
+      [
+        "pipeline/README.md",
+        "../docs/operations/risk-2025.md"
+      ],
+      [
+        "plan.md",
+        "docs/decisions/2025-risk-publication.md"
+      ],
+      [
+        "plan.md",
+        "docs/operations/risk-2025.md"
+      ],
+      [
+        "plan.md",
+        "docs/evidence/risk-2025/20261114-recovery.json"
+      ]
+    ],
+    "scope": "new or modified Markdown link lines; tracked content for patterns/sizes/imports",
+    "secret_candidate_paths_only": [],
+    "status": "PASS"
+  },
+  "initial_head": "70719f746183f31ef440b1711b31b4dcb710fae2",
+  "intensive_tests_in_complete_suite": [
+    {
+      "passed": true,
+      "seconds": 7.265,
+      "test": "test_five_sources_future_invariance"
+    },
+    {
+      "passed": true,
+      "seconds": 140.476,
+      "test": "test_five_sources_to_http_and_dashboard_three_isolated_runs"
+    }
+  ],
+  "limitations": [
+    "2025 is previously consumed evidence, not independent confirmation or performance evaluation",
+    "No scientific statement about 2025 is made",
+    "Real API/dashboard package validation remains pending",
+    "No real output probability or outcome payload generated",
+    "Remote CI and human review not performed"
+  ],
+  "operational_receipts": "pipeline/data/risk-2025/validation/20261114-680a80bc3c/",
+  "preservation": {
+    "extended_verifier_normal_and_optimized": "PASS",
+    "original_files_intact": true,
+    "original_protected_files": 49,
+    "published_json_count": 22,
+    "published_map_sha256": "4d3ddd3890a6a622b658fc2b1ef0159d0da6bc855cacc2c5b62854290623e16e"
+  },
+  "private_data_access_or_download_for_scientific_execution": false,
+  "real_certificate": null,
+  "real_edition": null,
+  "real_materialization": "NOT_EXECUTED",
+  "real_model_artifact": null,
+  "real_n3": "NOT_EXECUTED",
+  "real_published_files": [],
+  "recipe_sha256": "7d67f0595cfdd990e331682ae581d4f49d1f74f83a107f4d9474540412443ec8",
+  "remote_actions": [],
+  "suite_counts": {
+    "api": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 54
+    },
+    "dashboard": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 73
+    },
+    "pipeline": {
+      "errors": 0,
+      "failures": 1,
+      "skipped": 0,
+      "tests": 878
+    }
+  },
+  "tested_head": "9f0ff00869d5e3f5baa5c74b2970937d62920247",
+  "verdict": "BLOCKED",
+  "working_tree_clean_when_gates_started": true
+}
