@@ -34,7 +34,7 @@ describe("interfaz de carga", () => {
     const city = within(ranking).getByRole("button", { name: /IBAGUÉ/ });
     fireEvent.click(city);
     expect(city).toHaveAttribute("aria-pressed", "true");
-    fireEvent.click(screen.getByRole("button", { name: "Meta", exact: true }));
+    fireEvent.click(screen.getByRole("button", { name: /^Meta$/ }));
     expect(within(ranking).getByRole("button", { name: /VILLAVICENCIO/ })).toHaveAttribute(
       "aria-pressed",
       "false",

@@ -28,7 +28,14 @@ export type Upload = {
   last: string;
   counts: Map<string, number>;
 };
-export type Result = { code: string; name: string; probability: number | null };
+export type Result = {
+  code: string;
+  name: string;
+  probability: number | null;
+  cases: number | null;
+  zone: string | null;
+  p75t2: number | null;
+};
 
 export function parseFile(buffer: ArrayBuffer): Upload {
   const book = XLSX.read(new Uint8Array(buffer), { type: "array", cellDates: true, raw: true });
@@ -211,11 +218,21 @@ export function rank(pkg: Package, upload: Upload): Result[] {
         return {
           code,
           name,
+          cases: n,
+          zone: String(f["zona_canal_t"]),
+          p75t2: Number(f["p75_h5_t2"]),
           probability:
             score >= 0 ? 1 / (1 + Math.exp(-score)) : Math.exp(score) / (1 + Math.exp(score)),
         };
       } catch {
-        return { code, name, probability: null };
+        return {
+          code,
+          name,
+          probability: null,
+          cases: history.get(`${code}:${upload.last}`)?.dengue_notifications_count ?? null,
+          zone: null,
+          p75t2: null,
+        };
       }
     })
     .sort((a, b) => (b.probability ?? -1) - (a.probability ?? -1) || a.code.localeCompare(b.code));

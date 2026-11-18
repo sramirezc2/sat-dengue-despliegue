@@ -25,6 +25,8 @@ export function CargaDemostracion() {
   const [upload, setUpload] = useState<Upload | null>(null);
   const [model, setModel] = useState<Awaited<ReturnType<typeof loadPackage>> | null>(null);
   const [results, setResults] = useState<Result[]>([]);
+  const [search, setSearch] = useState("");
+  const [zone, setZone] = useState("");
   const [selected, setSelected] = useState("");
   const [department, setDepartment] = useState<"tolima" | "meta">("tolima");
   const [dataName, setDataName] = useState("");
@@ -78,6 +80,9 @@ export function CargaDemostracion() {
     }
   }
   const visible = results.filter((r) => r.code.startsWith(department === "tolima" ? "73" : "50"));
+  const filtered = visible.filter(
+    (r) => normalizedName(r.name).includes(normalizedName(search)) && (!zone || r.zone === zone),
+  );
   const active = visible.find((r) => r.code === selected);
   return (
     <section className="border border-border bg-card" aria-label="Carga de demostración">
@@ -246,7 +251,19 @@ export function CargaDemostracion() {
                   ))}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Referencia {upload?.last} · Probabilidades sintéticas T+2
+                  Referencia {upload?.last} · Objetivo{" "}
+                  {upload?.last
+                    ? new Date(
+                        Date.UTC(
+                          Number(upload.last.slice(0, 4)),
+                          Number(upload.last.slice(5)) + 1,
+                          1,
+                        ),
+                      )
+                        .toISOString()
+                        .slice(0, 7)
+                    : "—"}{" "}
+                  · Probabilidades sintéticas T+2
                 </p>
               </div>
               <div className="grid items-start gap-5 lg:grid-cols-2">
@@ -260,8 +277,31 @@ export function CargaDemostracion() {
                       {visible.length} municipios
                     </span>
                   </header>
+                  <div className="flex flex-wrap gap-2 border-b border-border bg-muted/50 p-3">
+                    <input
+                      type="search"
+                      aria-label="Buscar municipio"
+                      placeholder="Buscar municipio…"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="min-w-0 flex-1 border border-border bg-input px-2 py-1.5 text-sm"
+                    />
+                    <select
+                      aria-label="Filtrar por zona"
+                      value={zone}
+                      onChange={(e) => setZone(e.target.value)}
+                      className="border border-border bg-input px-2 py-1.5 text-sm"
+                    >
+                      <option value="">Todas las zonas</option>
+                      {["EXITO", "SEGURIDAD", "ALERTA", "EXCESO"].map((z) => (
+                        <option key={z} value={z}>
+                          {z}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   <div className="max-h-[28rem] overflow-auto">
-                    <table className="w-full text-left text-sm">
+                    <table className="w-full min-w-[38rem] text-left text-sm">
                       <thead className="sticky top-0 z-10 bg-muted text-xs text-muted-foreground">
                         <tr>
                           <th scope="col" className="px-3 py-3">
@@ -270,13 +310,22 @@ export function CargaDemostracion() {
                           <th scope="col" className="px-3 py-3">
                             Municipio
                           </th>
+                          <th scope="col" className="px-3 py-3">
+                            Casos en T
+                          </th>
+                          <th scope="col" className="px-3 py-3">
+                            Zona en T
+                          </th>
+                          <th scope="col" className="px-3 py-3">
+                            P75 de T+2
+                          </th>
                           <th scope="col" className="px-3 py-3 text-right">
-                            T+2
+                            Probabilidad T+2
                           </th>
                         </tr>
                       </thead>
                       <tbody>
-                        {visible.map((r, i) => (
+                        {filtered.map((r, i) => (
                           <tr
                             key={r.code}
                             className={`border-t border-border hover:bg-muted/50 ${selected === r.code ? "bg-primary/10" : ""}`}
@@ -297,6 +346,13 @@ export function CargaDemostracion() {
                                 </span>
                               </button>
                             </td>
+                            <td className="px-3 py-3">{r.cases ?? "No disponible"}</td>
+                            <td className="px-3 py-3">{r.zone ?? "No disponible"}</td>
+                            <td className="px-3 py-3">
+                              {r.p75t2 == null
+                                ? "No disponible"
+                                : r.p75t2.toLocaleString("es-CO", { maximumFractionDigits: 2 })}
+                            </td>
                             <td
                               className="px-3 py-3 text-right font-mono"
                               title={
@@ -306,12 +362,24 @@ export function CargaDemostracion() {
                               }
                             >
                               {probability(r.probability)}
+                              {r.probability != null && (
+                                <span className="mt-1 block h-1.5 w-20 bg-muted" aria-hidden>
+                                  <span
+                                    className="block h-full bg-primary"
+                                    style={{ width: `${r.probability * 100}%` }}
+                                  />
+                                </span>
+                              )}
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
+                  <p className="border-t border-border p-3 text-xs text-muted-foreground">
+                    P75 de T+2: percentil histórico en casos. Probabilidad T+2: salida del modelo
+                    sintético, sin umbral de alerta.
+                  </p>
                 </section>
                 <section
                   className="min-w-0 border border-border bg-card"
