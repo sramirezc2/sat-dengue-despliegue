@@ -15,6 +15,7 @@ dist-ssr
 .tanstack/**
 .nitro
 *.local
+/public/demo/logistica-t2.json
 
 # Wrangler / Cloudflare
 .wrangler/

@@ -1,26 +1,56 @@
 import * as XLSX from "xlsx";
+import { z } from "zod";
 
 type Row = Record<string, unknown>;
-type Count = {
-  dengue_notifications_count: number;
-  dengue_grave_notifications_count: number;
-  total_notifications_count: number;
-};
-type Package = {
-  schema: string;
-  metadata: { kind: string; horizon: number; supported_periods: string[] };
-  history: (Count & { municipality_code: string; year_month: string })[];
-  geography: { municipality_code: string; municipality_name: string }[];
-  model: {
-    schema: string;
-    classes: number[];
-    coef: number[][];
-    intercept: number[];
-    mean: number[];
-    std: number[];
-    spec: { config_json: string };
-  };
-};
+const countSchema = z.object({
+  dengue_notifications_count: z.number().int().nonnegative(),
+  dengue_grave_notifications_count: z.number().int().nonnegative(),
+  total_notifications_count: z.number().int().nonnegative(),
+});
+type Count = z.infer<typeof countSchema>;
+const municipalityCode = z.string().regex(/^(50|73)\d{3}$/);
+const period = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
+const packageSchema = z.object({
+  schema: z.literal("sat-dengue.monthly-demo/v1"),
+  metadata: z.object({
+    kind: z.literal("synthetic"),
+    horizon: z.literal(2),
+    supported_periods: z.array(period).min(1),
+  }),
+  history: z.array(countSchema.extend({ municipality_code: municipalityCode, year_month: period })),
+  geography: z
+    .array(z.object({ municipality_code: municipalityCode, municipality_name: z.string().min(1) }))
+    .min(1),
+  model: z.object({
+    schema: z.literal("sat-dengue.logistic-inference/v1"),
+    classes: z.tuple([z.literal(0), z.literal(1)]),
+    coef: z.tuple([z.array(z.number()).min(1)]),
+    intercept: z.tuple([z.number()]),
+    mean: z.array(z.number()),
+    std: z.array(z.number().positive()),
+    spec: z.object({
+      family: z.literal("logistic_onset"),
+      version: z.literal("v1"),
+      config_json: z.string(),
+    }),
+  }),
+});
+const configSchema = z.object({
+  predictors: z.array(z.string()).min(1),
+  preparation: z.object({
+    zone_encoding: z.literal("fixed_onehot"),
+    zone_columns: z.array(z.string()).length(4),
+    matrix_columns: z.array(z.string()),
+    log1p_columns: z.array(z.string()),
+    scaling: z.literal("standard_train"),
+    imputation: z.literal("none"),
+    variables_g: z.literal(false),
+  }),
+});
+type Package = z.infer<typeof packageSchema> & { config: z.infer<typeof configSchema> };
+const MODEL_PATH = "/demo/logistica-t2.json";
+const INVALID_MODEL = "El modelo logístico T+2 es incompatible o está alterado.";
+let defaultPackage: Promise<Package> | undefined;
 export type Upload = {
   total: number;
   rejected: number;
@@ -89,28 +119,56 @@ export function parseFile(buffer: ArrayBuffer): Upload {
   return { total: rows.length, rejected, confirmed, last, counts };
 }
 
-export async function loadPackage(file: File): Promise<Package> {
-  const text = await file.text();
-  const doc = JSON.parse(text);
+export async function loadPackage(text: string): Promise<Package> {
+  const start = '{"payload":';
   const end = text.lastIndexOf(',"sha256":');
-  if (!text.startsWith('{"payload":') || end < 0) throw Error("Formato de paquete inválido.");
-  const digest = await crypto.subtle.digest(
+  if (!text.startsWith(start) || end < 0) throw Error(INVALID_MODEL);
+  if (!globalThis.crypto?.subtle)
+    throw Error("Abre el tablero por HTTPS o localhost para verificar el modelo logístico T+2.");
+  const digest = await globalThis.crypto.subtle.digest(
     "SHA-256",
-    new TextEncoder().encode(text.slice(11, end)),
+    new TextEncoder().encode(text.slice(start.length, end)),
   );
   const actual = Array.from(new Uint8Array(digest), (n) => n.toString(16).padStart(2, "0")).join(
     "",
   );
-  if (
-    actual !== doc.sha256 ||
-    doc.payload?.schema !== "sat-dengue.monthly-demo/v1" ||
-    doc.payload?.metadata?.kind !== "synthetic" ||
-    doc.payload?.metadata?.horizon !== 2 ||
-    doc.payload?.model?.schema !== "sat-dengue.logistic-inference/v1" ||
-    JSON.stringify(doc.payload.model.classes) !== "[0,1]"
-  )
-    throw Error("Paquete sintético inválido o alterado.");
-  return doc.payload as Package;
+  try {
+    const doc = JSON.parse(text);
+    if (actual !== doc.sha256) throw Error(INVALID_MODEL);
+    const pkg = packageSchema.parse(doc.payload);
+    const config = configSchema.parse(JSON.parse(pkg.model.spec.config_json));
+    const { predictors, preparation } = config;
+    const columns = predictors.flatMap((name) =>
+      name === "zona_canal_t" ? preparation.zone_columns : [name],
+    );
+    if (
+      new Set(columns).size !== columns.length ||
+      columns.length !== preparation.matrix_columns.length ||
+      columns.some((name, i) => name !== preparation.matrix_columns[i]) ||
+      [pkg.model.coef[0], pkg.model.mean, pkg.model.std].some((v) => v.length !== columns.length)
+    )
+      throw Error(INVALID_MODEL);
+    return { ...pkg, config };
+  } catch {
+    throw Error(INVALID_MODEL);
+  }
+}
+
+export function loadDefaultPackage(): Promise<Package> {
+  defaultPackage ??= fetch(MODEL_PATH, { cache: "no-store", signal: AbortSignal.timeout(10_000) })
+    .then(async (response) => {
+      if (!response.ok) throw Error();
+      return response.text();
+    })
+    .catch(() => {
+      throw Error("No se pudo cargar el modelo logístico T+2. Vuelve a intentar el cálculo.");
+    })
+    .then(loadPackage)
+    .catch((error: unknown) => {
+      defaultPackage = undefined;
+      throw error;
+    });
+  return defaultPackage;
 }
 
 function shift(month: string, n: number): string {
@@ -125,8 +183,10 @@ function quantile(values: number[], q: number): number {
   return a[k]! + (i - k) * (a[Math.ceil(i)]! - a[k]!);
 }
 export function rank(pkg: Package, upload: Upload): Result[] {
-  if (!upload.last || !pkg.metadata.supported_periods.includes(upload.last))
-    throw Error("El mes de referencia no está soportado por el paquete sintético.");
+  if (!upload.last) throw Error("El archivo no contiene filas válidas para calcular T+2.");
+  const periods = pkg.metadata.supported_periods;
+  if (!periods.includes(upload.last))
+    throw Error(`El modelo logístico T+2 admite estos meses de referencia: ${periods.join(", ")}.`);
   const history = new Map<string, Count>(
     pkg.history.map((r) => [`${r.municipality_code}:${r.year_month}`, r]),
   );
@@ -136,17 +196,8 @@ export function rank(pkg: Package, upload: Upload): Result[] {
       dengue_grave_notifications_count: 0,
       total_notifications_count: count,
     });
-  const model = pkg.model,
-    conf = JSON.parse(model.spec.config_json),
-    prep = conf.preparation;
-  if (
-    !Array.isArray(model.coef[0]) ||
-    !Number.isFinite(model.intercept[0]) ||
-    model.coef[0].some((v) => !Number.isFinite(v)) ||
-    model.mean.some((v) => !Number.isFinite(v)) ||
-    model.std.some((v) => !Number.isFinite(v) || v <= 0)
-  )
-    throw Error("Modelo incompatible");
+  const { model, config } = pkg;
+  const prep = config.preparation;
   return pkg.geography
     .map(({ municipality_code: code, municipality_name: name }) => {
       try {
@@ -189,13 +240,11 @@ export function rank(pkg: Package, upload: Upload): Result[] {
           f[`p75_h5_t${h}`] = quantile(values, 0.75);
         }
         const matrix: number[] = [];
-        for (const key of conf.predictors as string[]) {
+        for (const key of config.predictors) {
           const value = f[key];
           if (key === "zona_canal_t")
             matrix.push(
-              ...(prep.zone_columns as string[]).map((col) =>
-                Number(col === `zona_canal_t__${value}`),
-              ),
+              ...prep.zone_columns.map((col) => Number(col === `zona_canal_t__${value}`)),
             );
           else {
             if (typeof value !== "number" || !Number.isFinite(value))
@@ -203,16 +252,9 @@ export function rank(pkg: Package, upload: Upload): Result[] {
             matrix.push(prep.log1p_columns.includes(key) ? Math.log1p(Math.max(0, value)) : value);
           }
         }
-        if (
-          matrix.length !== model.mean.length ||
-          matrix.length !== model.std.length ||
-          matrix.length !== model.coef[0]!.length ||
-          model.std.some((v) => !Number.isFinite(v) || v <= 0)
-        )
-          throw Error("Modelo incompatible");
         const score = matrix.reduce(
-          (sum, x, i) => sum + (model.coef[0]![i]! * (x - model.mean[i]!)) / model.std[i]!,
-          model.intercept[0]!,
+          (sum, x, i) => sum + (model.coef[0][i]! * (x - model.mean[i]!)) / model.std[i]!,
+          model.intercept[0],
         );
         if (!Number.isFinite(score)) throw Error("Resultado inválido");
         return {

@@ -1,14 +1,13 @@
 import { useRef, useState } from "react";
-import {
-  Upload as UploadIcon,
-  PackageOpen,
-  FlaskConical,
-  ArrowRight,
-  ChevronDown,
-  CheckCircle2,
-} from "lucide-react";
+import { Upload as UploadIcon, FlaskConical, ArrowRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { loadPackage, parseFile, rank, type Upload, type Result } from "@/lib/demo-inference";
+import {
+  loadDefaultPackage,
+  parseFile,
+  rank,
+  type Upload,
+  type Result,
+} from "@/lib/demo-inference";
 import boundaries from "@/lib/municipal-boundaries.json";
 
 const normalizedName = (name: string) =>
@@ -23,23 +22,18 @@ const probability = (value: number | null | undefined) =>
 export function CargaDemostracion() {
   const [open, setOpen] = useState(false);
   const [upload, setUpload] = useState<Upload | null>(null);
-  const [model, setModel] = useState<Awaited<ReturnType<typeof loadPackage>> | null>(null);
   const [results, setResults] = useState<Result[]>([]);
   const [search, setSearch] = useState("");
   const [zone, setZone] = useState("");
   const [selected, setSelected] = useState("");
   const [department, setDepartment] = useState<"tolima" | "meta">("tolima");
   const [dataName, setDataName] = useState("");
-  const [modelName, setModelName] = useState("");
   const [dataError, setDataError] = useState("");
-  const [modelError, setModelError] = useState("");
   const [error, setError] = useState("");
   const [dataBusy, setDataBusy] = useState(false);
-  const [modelBusy, setModelBusy] = useState(false);
+  const [calculating, setCalculating] = useState(false);
   const dataInput = useRef<HTMLInputElement>(null);
-  const modelInput = useRef<HTMLInputElement>(null);
   const dataRequest = useRef(0);
-  const modelRequest = useRef(0);
   function clearResults() {
     setResults([]);
     setSelected("");
@@ -52,9 +46,13 @@ export function CargaDemostracion() {
     setDataName(file.name);
     setDataError("");
     setDataBusy(true);
+    setCalculating(false);
     try {
       const data = parseFile(await file.arrayBuffer());
-      if (request === dataRequest.current) setUpload(data);
+      if (request === dataRequest.current) {
+        setUpload(data);
+        if (!data.last) setDataError("El archivo no contiene filas válidas para calcular T+2.");
+      }
     } catch (e) {
       if (request === dataRequest.current)
         setDataError(e instanceof Error ? e.message : "Archivo inválido");
@@ -62,21 +60,19 @@ export function CargaDemostracion() {
       if (request === dataRequest.current) setDataBusy(false);
     }
   }
-  async function packageLoad(file: File) {
-    const request = ++modelRequest.current;
+  async function calculate() {
+    if (!upload?.last || calculating) return;
+    const request = dataRequest.current;
     clearResults();
-    setModel(null);
-    setModelName(file.name);
-    setModelError("");
-    setModelBusy(true);
+    setCalculating(true);
     try {
-      const data = await loadPackage(file);
-      if (request === modelRequest.current) setModel(data);
+      const model = await loadDefaultPackage();
+      if (request === dataRequest.current) setResults(rank(model, upload));
     } catch (e) {
-      if (request === modelRequest.current)
-        setModelError(e instanceof Error ? e.message : "Paquete inválido");
+      if (request === dataRequest.current)
+        setError(e instanceof Error ? e.message : "No se pudo calcular el ranking.");
     } finally {
-      if (request === modelRequest.current) setModelBusy(false);
+      if (request === dataRequest.current) setCalculating(false);
     }
   }
   const visible = results.filter((r) => r.code.startsWith(department === "tolima" ? "73" : "50"));
@@ -106,10 +102,10 @@ export function CargaDemostracion() {
       {open && (
         <div id="demo-content" className="space-y-5 border-t border-border p-4 sm:p-5">
           <p className="text-sm text-muted-foreground">
-            Modelo e historia sintéticos, sin alertas sanitarias. Procesamiento local en tu
-            navegador; se asumen cero casos graves en los meses cargados.
+            Modelo logístico e historia sintética para T+2. Tu navegador procesa los datos y asume
+            cero casos graves en los meses cargados. Las probabilidades son de demostración.
           </p>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="min-w-0 space-y-2">
               <input
                 hidden
@@ -134,33 +130,6 @@ export function CargaDemostracion() {
               {dataError && (
                 <p role="alert" className="text-sm text-destructive">
                   {dataError}
-                </p>
-              )}
-            </div>
-            <div className="min-w-0 space-y-2">
-              <input
-                hidden
-                ref={modelInput}
-                type="file"
-                aria-label="Paquete sintético local"
-                accept=".json"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  e.target.value = "";
-                  if (file) void packageLoad(file);
-                }}
-              />
-              <Button variant="outline" onClick={() => modelInput.current?.click()}>
-                <PackageOpen aria-hidden className="mr-2 h-4 w-4" />
-                Cargar paquete sintético
-              </Button>
-              <p className="break-all text-xs text-muted-foreground" role="status">
-                {modelBusy ? "Validando paquete…" : model ? "Paquete validado · " : ""}
-                {modelName || "Selecciona package.json del paquete local"}
-              </p>
-              {modelError && (
-                <p role="alert" className="text-sm text-destructive">
-                  {modelError}
                 </p>
               )}
             </div>
@@ -205,25 +174,15 @@ export function CargaDemostracion() {
           )}
           <div className="flex flex-wrap items-center gap-3">
             <Button
-              disabled={!model || !upload || dataBusy || modelBusy}
-              onClick={() => {
-                if (model && upload) {
-                  clearResults();
-                  try {
-                    setResults(rank(model, upload));
-                  } catch (e) {
-                    setError(e instanceof Error ? e.message : "No se pudo calcular");
-                  }
-                }
-              }}
+              disabled={!upload?.last || dataBusy || calculating}
+              onClick={() => void calculate()}
             >
               Calcular ranking T+2
               <ArrowRight aria-hidden className="ml-2 h-4 w-4" />
             </Button>
-            {model && upload && (
-              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                <CheckCircle2 aria-hidden className="h-4 w-4" />
-                Datos y paquete listos
+            {calculating && (
+              <span role="status" className="text-xs text-muted-foreground">
+                Preparando el ranking con el modelo logístico T+2…
               </span>
             )}
           </div>

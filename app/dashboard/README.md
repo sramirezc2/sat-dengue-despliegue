@@ -1,8 +1,9 @@
 # Tablero del SAT Dengue
 
-Interfaz de solo lectura del sistema de alerta temprana de dengue para Tolima y
-Meta. Presenta los resultados de evaluación que publica la API del mismo
-repositorio; no calcula nada, no entrena nada y no guarda estado del usuario.
+Interfaz del sistema de alerta temprana de dengue para Tolima y Meta. Presenta
+los resultados de evaluación que publica la API del mismo repositorio. La
+[carga de demostración](../../docs/operations/inferencia-sintetica.md) calcula
+un ranking T+2 en el navegador con un modelo logístico sintético preajustado.
 
 Para el sistema completo, su despliegue y su operación, ver el
 [README de la raíz](../../README.md).

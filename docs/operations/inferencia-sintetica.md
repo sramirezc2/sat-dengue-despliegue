@@ -1,20 +1,34 @@
 # Inferencia con el paquete sintético local
 
-El archivo local ignorado `pipeline/data/demo/package.json` contiene un modelo
-logístico artificial ya entrenado para T+2. Es una demostración; sus
-probabilidades no sustentan alertas ni decisiones sanitarias. No existe T+1 en
-este paquete. La herramienta valida el hash interno y aplica la preparación y
-los coeficientes guardados, sin entrenar ni descargar datos.
+El archivo local ignorado `pipeline/data/demo/package.json` contiene una
+regresión logística sin clima ya ajustada con datos artificiales para T+2.
+Incluye la preparación, los coeficientes y la historia municipal. El tablero
+verifica su SHA-256 y calcula probabilidades de demostración en el navegador.
 
-En el dashboard, abra **Carga de demostración**, seleccione el CSV o Excel y el
-paquete `pipeline/data/demo/package.json`, y pulse **Calcular ranking T+2**.
-También puede cargar la muestra artificial desde el botón. El archivo y el
-paquete se leen en el navegador; el paquete solo admite el periodo declarado
-en sus metadatos. El Excel puede incluir `COD_DPTO_R` y `COD_MUN_R`; también se
-admite `municipality_code`. Las columnas `INI_SIN` y `confirmados` son
-obligatorias. Los meses cargados sustituyen la historia sintética correspondiente
-y asumen cero casos graves; los resultados sin historia suficiente quedan sin
-predicción. La probabilidad no es una alerta.
+## Preparar el tablero
+
+Desde la raíz, antes de iniciar el tablero o construir su imagen, copie el
+**paquete sintético** a la ruta de recursos estáticos ignorada por Git:
+
+```sh
+install -D -m 0644 pipeline/data/demo/package.json app/dashboard/public/demo/logistica-t2.json
+```
+
+Si `install -D` no está disponible, cree `app/dashboard/public/demo/` y copie el
+archivo allí con el nombre `logistica-t2.json`. El tablero sirve ese recurso en
+`/demo/logistica-t2.json`. Use HTTPS o `localhost` para que el navegador pueda
+verificar el hash. Todo visitante del tablero puede descargar el recurso, por
+lo que esta ruta se reserva al paquete de demostración con datos artificiales.
+
+Abra **Carga de demostración**, seleccione el CSV o Excel (o la muestra dummy)
+y pulse **Calcular ranking T+2**. El tablero carga el modelo automáticamente y
+procesa el archivo en el navegador. El paquete actual admite `2025-10` como mes
+de referencia. El archivo debe incluir `INI_SIN`, `confirmados` y los códigos
+`COD_DPTO_R` y `COD_MUN_R` o `municipality_code`. Los meses cargados sustituyen
+las filas correspondientes de la historia sintética y asumen cero casos graves.
+Los municipios sin historia suficiente quedan sin predicción.
+
+## Herramienta de línea de comandos
 
 Desde la raíz, para probar con predictores artificiales:
 
