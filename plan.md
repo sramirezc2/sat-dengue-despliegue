@@ -1053,3 +1053,29 @@ el contrato, que permanece PROPUESTA_PARA_APROBACION. Revisión científica
 independiente, aprobación global, confirmación y N=3 finalista siguen pendientes.
 Solo se escriben informe y plan; sin correcciones, datos reales, uso de 2025 para
 ajustar la regla, campeón, commit/push o merge por esta auditoría.
+
+## Demo local Streamlit · EXP315
+
+En `feature/demo-streamlit` se autoriza la repetición técnica EXP315 de la logística
+con clima T+2 de Meta y Tolima. El alcance comprende exportación verificable del ajuste,
+contexto municipal anterior a 2025, carga mensual en memoria, ranking y mapa en Streamlit.
+La autorización del usuario corresponde a la ejecución técnica. El veredicto científico
+y la habilitación de alertas con insumos disponibles en tiempo real son decisiones posteriores.
+La evidencia de cada ejecución se consulta en el registro de experimentos.
+
+Ejecución `1e0fbf2385b44da99f90ee4bd99d2ea2`. Kedro completó las diez etapas en
+479,3 s con un ajuste y paridad de probabilidades brutas a tolerancia absoluta de
+`1e-12`. La demo aplica la representación original y el umbral congelado de 0,025.
+Tras el embargo hay 13 meses de origen, de octubre de 2023 a octubre de 2024.
+En la evaluación histórica hubo 65 detecciones entre 66 inicios y 289 falsas
+alarmas entre 354 señales. La tolerancia FAR de la receta se aplicó en selección de
+umbral; la evaluación posterior arrojó 81,6 %. El registro queda pendiente de
+conclusión humana. [Inventario de la corrida](docs/evidence/experiments/EXP315/1e0fbf2385b44da99f90ee4bd99d2ea2/inventory.json).
+
+Verificación local. Pasaron las 843 pruebas del pipeline con uv y las 10 de la
+demo, las 35 de la API y las 55 del tablero. Se verificaron Ruff, lock, build del
+tablero, inventario experimental y los 49 archivos protegidos. La prueba de
+Chromium cubrió CSV, Excel fuera de cobertura, muestra y los 76 polígonos. Una
+copia privada alterada del contexto fue rechazada. Tras la corrida se reforzó
+la comprobación previa de columnas derivadas para otras recetas; el ajuste de
+EXP315 se conserva con la identidad de código que figura en su recibo.

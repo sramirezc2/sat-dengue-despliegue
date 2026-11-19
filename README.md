@@ -10,6 +10,56 @@ Proyecto: Despliegue de Soluciones. **Grupo 11**.
 
 ---
 
+## Demo local de inferencia en Streamlit
+
+Con el paquete privado de EXP315 instalado, ejecute desde la raíz con Python 3.12 y uv:
+
+```sh
+uv run --locked --project pipeline --with-requirements demo/requirements.txt streamlit run demo/app.py --server.address 127.0.0.1 --server.port 8501
+```
+
+Abra **http://127.0.0.1:8501**. Pulse **Cargar muestra dummy** y después **Calcular ranking T+2**.
+También puede elegir **Subir archivo** para procesar un mes en CSV o Excel. La demo funciona
+de forma independiente de los servicios de API y dashboard.
+
+El archivo requiere `INI_SIN` y `Confirmados` (0 o 1). Para el municipio se prefiere el par de
+residencia `COD_DPTO_R` y `COD_MUN_R`. También se admite `municipality_code` o `cod_DPTO_O`
+cuando contiene el DIVIPOLA municipal completo de **cinco dígitos**. El código debe representar
+el municipio al que se atribuye el conteo. En archivos con códigos de residencia y ocurrencia
+se usa residencia, como en el entrenamiento. Las cabeceras admiten mayúsculas y minúsculas.
+La demo reconoce `COD_EVE` 210/220 y `Nombre_evento` dengue/dengue grave.
+Sin columna de evento, las filas se interpretan como dengue. Un municipio ausente queda sin
+estimación. Si falta el conteo de dengue grave, se usa el valor del contexto histórico del mes.
+Se aceptan fechas ISO o día/mes/año y una sola hoja de Excel. Los archivos subidos se procesan
+en memoria.
+
+**Qué significa el resultado.** Para municipios sin exceso en T, la tabla ordena la probabilidad
+de pasar de ausencia de exceso en T+1 a exceso en T+2. La zona al origen se recalcula con
+los casos cargados. El clima, los rezagos y los percentiles proceden del municipio y mes del
+canónico verificado. El color compara la probabilidad con el umbral congelado del experimento.
+El gris incluye municipios en exceso, sin datos en la carga o con predictores incompletos.
+La demo suma confirmados, mientras que la fuente de entrenamiento cuenta notificaciones
+por evento. La equivalencia de esos conteos y la disponibilidad real del clima al cierre
+del mes requieren verificación antes de usar el ranking para alertas operativas.
+
+**Cómo se obtiene el paquete.** La ejecución aprobada de EXP315 usa el release privado
+`satd-raw-173d5856`. Para una nueva identidad aprobada con la misma preparación,
+el pipeline de exportación se invoca desde la raíz (sustituya `ID_APROBADO` por la identidad
+registrada y configure el acceso a Hugging Face descrito abajo):
+
+```sh
+uv run --locked --directory pipeline kedro run --pipelines experiment_run_export_t2 --params experiment_id=ID_APROBADO
+```
+
+La corrida verifica la paridad de la logística exportada con Kedro antes de cerrar la evidencia.
+El contexto solo incluye predictores de orígenes posteriores a la congelación del umbral con
+objetivo anterior a 2025. La demo aplica además el embargo de la receta. En EXP315 se pueden
+cargar los 13 meses de origen de octubre de 2023 a octubre de 2024. Para abrir la demo en otra máquina se necesitan el inventario y los
+agregados de `docs/evidence/experiments/EXP315/<execution_id>/` y los dos archivos privados
+`model.json` y `context.csv` de `pipeline/data/experiments/<execution_id>/inference-fit/`,
+en esas mismas rutas. Streamlit comprueba sus huellas al leerlos. La muestra cambia la entrada
+al modelo real. Los ejemplos de octubre de 2025 quedan fuera de esta ventana.
+
 ## Construcción canónica desde la raíz
 
 Para una operación privada autorizada, instale Python 3.12 y uv 0.11.19 y sincronice:

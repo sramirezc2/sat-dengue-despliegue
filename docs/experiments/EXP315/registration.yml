@@ -1,0 +1,14 @@
+experiment_id: EXP315
+experiment_slug: exp315-logistica-clima-t2
+hypothesis_id: EXP315-H01
+title: Repetición propuesta de logística con clima T+2
+experiment_type: scientific
+status: PROPOSED
+protocol: docs/experiments/EXP315/SPECIFICATION.md
+protocol_sha256: 61bea551be9d84452abddc520409a413e8e9c9940532cf8a170791ec79927b14
+configuration: pipeline/conf/experiments/EXP315.yml
+configuration_sha256: ddff69f46a735a7e4f12e3e38b00c876844c558c7c7ac05ed60a4e20c28f0846
+pipeline: experiment_run
+conclusions: docs/experiments/EXP315/CONCLUSIONS.md
+scientific_result: PENDING
+champion_status: NOT_SELECTED

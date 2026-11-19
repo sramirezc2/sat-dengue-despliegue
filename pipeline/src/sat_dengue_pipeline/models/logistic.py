@@ -12,6 +12,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import sklearn
+from scipy.special import expit
 from sklearn.linear_model import LogisticRegression
 
 from sat_dengue_pipeline.domain.canonical import PREDICTORS
@@ -232,6 +233,21 @@ class LogisticOnsetAdapter:
         """
         return hashlib.sha256(self.model_json()).hexdigest()
 
+    def inference_state(self) -> dict[str, Any]:
+        """Export the full-precision state of the fitted logistic estimator."""
+        if not self.fitted or self._model is None or self._mean is None or self._std is None:
+            raise ValueError("Exportación antes del ajuste")
+        return {
+            "schema_version": 1,
+            "seed": self.spec.seed,
+            "adapter": self.settings,
+            "classes": self._model.classes_.tolist(),
+            "coef": self._model.coef_[0].tolist(),
+            "intercept": float(self._model.intercept_[0]),
+            "mean": self._mean.tolist(),
+            "std": self._std.tolist(),
+        }
+
     def coeficientes(self) -> dict[str, float]:
         """Coeficientes estandarizados por columna de la matriz, para interpretar el modelo.
 
@@ -241,3 +257,37 @@ class LogisticOnsetAdapter:
         if not self.fitted or self._model is None:
             raise ValueError("Modelo sin ajustar")
         return dict(zip(self.preparation["matrix_columns"], map(float, self._model.coef_[0])))
+
+
+def validate_state_version(state: dict[str, Any]) -> None:
+    """Read only the supported binary logistic export format."""
+    if state.get("schema_version") != 1 or state.get("classes") != [0, 1]:
+        raise ValueError("Versión o clases del modelo exportado incompatibles")
+
+
+def score_matrix(matrix: np.ndarray, index: pd.Index, state: dict[str, Any]) -> pd.Series:
+    """Score an already prepared matrix with the exported parameters."""
+    coef, mean, std = (np.asarray(state[key], dtype=float) for key in ("coef", "mean", "std"))
+    intercept = float(state["intercept"])
+    if (
+        any(v.shape != (matrix.shape[1],) or not np.isfinite(v).all() for v in (coef, mean, std))
+        or (std <= 0).any()
+        or not np.isfinite(intercept)
+    ):
+        raise ValueError("Coeficientes o escalado del modelo exportado inválidos")
+    scores = ((matrix - mean) / std) @ coef + intercept
+    if not np.isfinite(scores).all():
+        raise ValueError("Puntuación logística no finita")
+    probability = pd.Series(expit(scores), index=index)
+    validate_probabilities(probability, index)
+    return probability
+
+
+def predict_exported(X: pd.DataFrame, state: dict[str, Any]) -> pd.Series:
+    """Score a prepared predictor frame using the exported fit and canonical transform."""
+    validate_state_version(state)
+    spec = AdapterSpec(
+        "logistic_onset", "v1", canonical_json(state["adapter"]).decode(), state["seed"]
+    )
+    matrix = LogisticOnsetAdapter(spec).matrix(X)
+    return score_matrix(matrix, X.index, state)
