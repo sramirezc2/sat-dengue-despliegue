@@ -1,0 +1,10 @@
+# Publicación ordinaria: sin identidad aprobada falla antes de adquirir datos.
+risk_2025:
+  approval_record: data/risk-2025/approved.json
+  mode: frozen
+  source: approved
+  artifact_directory: data/risk-2025/approved-model
+  artifact_sha256: ""
+  certificate: data/risk-2025/certification.json
+  certificate_sha256: ""
+  edition: 2025-log-climate-v1

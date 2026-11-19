@@ -1,0 +1,934 @@
+{
+  "base_main": "a9c2c1abac386053b2e78f072bdb44e0141f4045",
+  "branch": "feature/dashboard-2025-risk-ranking",
+  "certification": {
+    "artifact_directory": "data/risk-2025/certifications/ac9078cdc5e14eafa8345bc2c1ecdde4/model-1",
+    "certificate": "data/risk-2025/certifications/ac9078cdc5e14eafa8345bc2c1ecdde4/certification.json",
+    "certificate_sha256": "6e6ad9e877a071bfcdb83ab9162e29158cb30710a936b4fd19c85a8b731c721c",
+    "initial_materialization_identical": true,
+    "package_commitment": "SHA-256 of canonical manifest containing names, sizes and SHA-256 of all twelve complete documents; frozen publication must match this commitment",
+    "process_count": 3,
+    "runs": [
+      {
+        "artifact_sha256": "7830c6cbb8d5b4f3bd5798440d1766953bb274ae5723015ff450c384fc9320d3",
+        "configuration_sha256": "1cb9603b3b7e7ad83effebd81fa404a065e1a09c291ecf4f622bfb6890ff33e2",
+        "directory": "pipeline/data/risk-2025/certifications/ac9078cdc5e14eafa8345bc2c1ecdde4/run-1",
+        "effective_state_sha256": "845312c753e2bf312b592bcc1fb48b706220d96203b190fc21c2ffe39eac37ea",
+        "fit_calls": 1,
+        "lineage_sha256": "6642c87a80d1389285b5403c0e30b7049014871d97d62e1f1da02221735ba56d",
+        "package_sha256": "4a667b6a0b864236e9cece106672b2c0f597b3614ad168370bedaa8737f6b2ae",
+        "run": 1,
+        "training_keys_sha256": "3ae5ace4612b7e44af9ecd62787265f62e98fd7427f4b8b75b61a8e5e4ba247f",
+        "training_labels_sha256": "c447a669808ee151293ae1a756af4b45e63a4a6af1f7b3b5fc43dddbcc4a4f8b",
+        "training_matrix_sha256": "be998f552ca2a12f5c2fda0bdd89e253898f597b1fd209fcc1008666b5790d77"
+      },
+      {
+        "artifact_sha256": "7830c6cbb8d5b4f3bd5798440d1766953bb274ae5723015ff450c384fc9320d3",
+        "configuration_sha256": "1cb9603b3b7e7ad83effebd81fa404a065e1a09c291ecf4f622bfb6890ff33e2",
+        "directory": "pipeline/data/risk-2025/certifications/ac9078cdc5e14eafa8345bc2c1ecdde4/run-2",
+        "effective_state_sha256": "845312c753e2bf312b592bcc1fb48b706220d96203b190fc21c2ffe39eac37ea",
+        "fit_calls": 1,
+        "lineage_sha256": "6642c87a80d1389285b5403c0e30b7049014871d97d62e1f1da02221735ba56d",
+        "package_sha256": "4a667b6a0b864236e9cece106672b2c0f597b3614ad168370bedaa8737f6b2ae",
+        "run": 2,
+        "training_keys_sha256": "3ae5ace4612b7e44af9ecd62787265f62e98fd7427f4b8b75b61a8e5e4ba247f",
+        "training_labels_sha256": "c447a669808ee151293ae1a756af4b45e63a4a6af1f7b3b5fc43dddbcc4a4f8b",
+        "training_matrix_sha256": "be998f552ca2a12f5c2fda0bdd89e253898f597b1fd209fcc1008666b5790d77"
+      },
+      {
+        "artifact_sha256": "7830c6cbb8d5b4f3bd5798440d1766953bb274ae5723015ff450c384fc9320d3",
+        "configuration_sha256": "1cb9603b3b7e7ad83effebd81fa404a065e1a09c291ecf4f622bfb6890ff33e2",
+        "directory": "pipeline/data/risk-2025/certifications/ac9078cdc5e14eafa8345bc2c1ecdde4/run-3",
+        "effective_state_sha256": "845312c753e2bf312b592bcc1fb48b706220d96203b190fc21c2ffe39eac37ea",
+        "fit_calls": 1,
+        "lineage_sha256": "6642c87a80d1389285b5403c0e30b7049014871d97d62e1f1da02221735ba56d",
+        "package_sha256": "4a667b6a0b864236e9cece106672b2c0f597b3614ad168370bedaa8737f6b2ae",
+        "run": 3,
+        "training_keys_sha256": "3ae5ace4612b7e44af9ecd62787265f62e98fd7427f4b8b75b61a8e5e4ba247f",
+        "training_labels_sha256": "c447a669808ee151293ae1a756af4b45e63a4a6af1f7b3b5fc43dddbcc4a4f8b",
+        "training_matrix_sha256": "be998f552ca2a12f5c2fda0bdd89e253898f597b1fd209fcc1008666b5790d77"
+      }
+    ],
+    "status": "PASS"
+  },
+  "clean_checkout": {
+    "commit": "a6a40245b6eab7f8883f1b4b4567354bfed353b4",
+    "dependency_environment": "Exact existing local pipeline uv.lock environment; no environment/data/temporaries from another worktree",
+    "method": "Local clone with no hardlinks; clean tracked tree; discovery + historical synthetic digest and normal/-O preservation",
+    "status": "PASS"
+  },
+  "date": "2026-11-14",
+  "edition": {
+    "directory": "datos/resultados/risk-ranking/2025-log-climate-v1",
+    "document_count": 12,
+    "files": [
+      {
+        "name": "prioridades_T2_2025-01.json",
+        "sha256": "9c6c2bfa991195c7111a56231a12a686038197d20f308baec076200d019c7ff5",
+        "size_bytes": 19289
+      },
+      {
+        "name": "prioridades_T2_2025-02.json",
+        "sha256": "84ba84a104fec027fcd5b8f7ae0bc4baf369227cf34b76a6407a2010876f7cf7",
+        "size_bytes": 19091
+      },
+      {
+        "name": "prioridades_T2_2025-03.json",
+        "sha256": "6264e41d966be0d1f7774ce46d0cb79a8fa0c5d1a7711c6734fb96da90c35566",
+        "size_bytes": 19145
+      },
+      {
+        "name": "prioridades_T2_2025-04.json",
+        "sha256": "946b7e6a0de85d3d8eb868b60f0020719e02c6a5c173d5b015e9c7286a7c6f79",
+        "size_bytes": 19163
+      },
+      {
+        "name": "prioridades_T2_2025-05.json",
+        "sha256": "a87281ddb62083d45a5dfc2445014dff1ac37ad77008dc99ef9fea3e42872bfa",
+        "size_bytes": 19163
+      },
+      {
+        "name": "prioridades_T2_2025-06.json",
+        "sha256": "0a7118cc703f1d8e715eb88550641cb0e98028b72fa5ef3eca31835281625121",
+        "size_bytes": 19145
+      },
+      {
+        "name": "prioridades_T2_2025-07.json",
+        "sha256": "7101839a9d896774969f5aaa34a7264242b732da9831b5bf4283912474a0b938",
+        "size_bytes": 19091
+      },
+      {
+        "name": "prioridades_T2_2025-08.json",
+        "sha256": "f1d0de38efc31fb63d6a0df20049077efc638b30edd291d5e452cc3decc864da",
+        "size_bytes": 18929
+      },
+      {
+        "name": "prioridades_T2_2025-09.json",
+        "sha256": "71191bdb318e15e962108853b85986108bef56ce41f6d192462e1676995632f3",
+        "size_bytes": 18911
+      },
+      {
+        "name": "prioridades_T2_2025-10.json",
+        "sha256": "9764814f01e5ab51823841ce13a853d65f6eafaa3768f968ff2a1742ac31e69d",
+        "size_bytes": 18911
+      },
+      {
+        "name": "prioridades_T2_2025-11.json",
+        "sha256": "f6a3189d7a3940422870d059498fb65d21e7dffec43e5aec009dca08b14f5b22",
+        "size_bytes": 18821
+      },
+      {
+        "name": "prioridades_T2_2025-12.json",
+        "sha256": "9ae2fb5bc5acc120ae08f5ae4c19f5076d6850fbf71c7cbb2b742b5df4126ad0",
+        "size_bytes": 18875
+      }
+    ],
+    "horizon": "T2",
+    "id": "2025-log-climate-v1",
+    "manifest_sha256": "4a667b6a0b864236e9cece106672b2c0f597b3614ad168370bedaa8737f6b2ae",
+    "monthly_counts": [
+      {
+        "eligible": 39,
+        "meta": 29,
+        "municipalities": 76,
+        "reference_period": "2024-11",
+        "selected": 8,
+        "target_period": "2025-01",
+        "tolima": 47
+      },
+      {
+        "eligible": 50,
+        "meta": 29,
+        "municipalities": 76,
+        "reference_period": "2024-12",
+        "selected": 8,
+        "target_period": "2025-02",
+        "tolima": 47
+      },
+      {
+        "eligible": 47,
+        "meta": 29,
+        "municipalities": 76,
+        "reference_period": "2025-01",
+        "selected": 8,
+        "target_period": "2025-03",
+        "tolima": 47
+      },
+      {
+        "eligible": 46,
+        "meta": 29,
+        "municipalities": 76,
+        "reference_period": "2025-02",
+        "selected": 8,
+        "target_period": "2025-04",
+        "tolima": 47
+      },
+      {
+        "eligible": 46,
+        "meta": 29,
+        "municipalities": 76,
+        "reference_period": "2025-03",
+        "selected": 8,
+        "target_period": "2025-05",
+        "tolima": 47
+      },
+      {
+        "eligible": 47,
+        "meta": 29,
+        "municipalities": 76,
+        "reference_period": "2025-04",
+        "selected": 8,
+        "target_period": "2025-06",
+        "tolima": 47
+      },
+      {
+        "eligible": 50,
+        "meta": 29,
+        "municipalities": 76,
+        "reference_period": "2025-05",
+        "selected": 8,
+        "target_period": "2025-07",
+        "tolima": 47
+      },
+      {
+        "eligible": 59,
+        "meta": 29,
+        "municipalities": 76,
+        "reference_period": "2025-06",
+        "selected": 8,
+        "target_period": "2025-08",
+        "tolima": 47
+      },
+      {
+        "eligible": 60,
+        "meta": 29,
+        "municipalities": 76,
+        "reference_period": "2025-07",
+        "selected": 8,
+        "target_period": "2025-09",
+        "tolima": 47
+      },
+      {
+        "eligible": 60,
+        "meta": 29,
+        "municipalities": 76,
+        "reference_period": "2025-08",
+        "selected": 8,
+        "target_period": "2025-10",
+        "tolima": 47
+      },
+      {
+        "eligible": 65,
+        "meta": 29,
+        "municipalities": 76,
+        "reference_period": "2025-09",
+        "selected": 8,
+        "target_period": "2025-11",
+        "tolima": 47
+      },
+      {
+        "eligible": 62,
+        "meta": 29,
+        "municipalities": 76,
+        "reference_period": "2025-10",
+        "selected": 8,
+        "target_period": "2025-12",
+        "tolima": 47
+      }
+    ],
+    "reference_max": "2025-10",
+    "reference_min": "2024-11",
+    "schema": "satd-risk-ranking-v1",
+    "target_max": "2025-12",
+    "target_min": "2025-01"
+  },
+  "environment": {
+    "api": {
+      "packages": {
+        "fastapi": "0.161.0",
+        "httpx": "0.28.1",
+        "pydantic": "2.14.1",
+        "pytest": "9.1.1"
+      },
+      "python": "3.12.13"
+    },
+    "architecture": "arm64",
+    "bun": "1.4.0",
+    "dashboard_lock_sha256": "8b0cacd32a4b8c06b1b00505a28324bc0c1d143da79e11393f91062bed2b90c2",
+    "disk_free_bytes": 663552000000,
+    "lock_sha256": "5bd75700f0b6a9785478cf808e58544ac3d7d98bc36409c0e6086e5531a60fb7",
+    "memory_bytes": 34359738368,
+    "memory_measurement_reference": "20261114-validation-blocked.json same host",
+    "os_release": "27.2.0",
+    "pipeline": {
+      "packages": {
+        "jsonschema": "4.23.0",
+        "kedro": "1.7.0",
+        "numpy": "2.5.4",
+        "pandas": "3.0.6",
+        "pytest": "9.2.0",
+        "ruff": "0.17.4",
+        "scikit-learn": "1.7.2",
+        "scipy": "1.18.1"
+      },
+      "python": "3.12.13"
+    },
+    "system": "Darwin",
+    "uv": "uv 0.11.19 (Homebrew 2026-06-03 aarch64-apple-darwin)"
+  },
+  "frozen_publication": {
+    "artifact_sha256": "7830c6cbb8d5b4f3bd5798440d1766953bb274ae5723015ff450c384fc9320d3",
+    "certified_package_sha256": "4a667b6a0b864236e9cece106672b2c0f597b3614ad168370bedaa8737f6b2ae",
+    "execution_id": "f507b2e15ac0477990fecd213917b975",
+    "guard_scope": "Validation-only sitecustomize blocks LogisticOnsetAdapter.fit, sklearn LogisticRegression.fit, preparation build_labels and domain onset build_labels during the entire frozen CLI process; no product code changed",
+    "package_sha256": "4a667b6a0b864236e9cece106672b2c0f597b3614ad168370bedaa8737f6b2ae",
+    "publication_manifest_sha256": "4a667b6a0b864236e9cece106672b2c0f597b3614ad168370bedaa8737f6b2ae",
+    "receipt": "pipeline/data/risk-2025/runs/f507b2e15ac0477990fecd213917b975/receipt.json",
+    "runtime_guard": {
+      "fit_calls": 0,
+      "guard_ready": true,
+      "label_builder_calls": 0
+    },
+    "stages": [
+      "raw_integrity",
+      "frozen_model",
+      "monthly_priorities",
+      "package_validation",
+      "publication"
+    ],
+    "status": "COMMITTED"
+  },
+  "gates": [
+    {
+      "child_cpu_seconds": 1.443,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_synthetic.py::test_registry_and_discovery",
+        "-o",
+        "addopts=",
+        "-q",
+        "--junitxml=data/risk-2025/validation/20261114-e1d3946f0f/discovery.xml"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 1.471,
+      "gate": "focused_discovery",
+      "peak_child_rss_bytes": 183877632,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 3.649,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_risk_2025.py",
+        "-m",
+        "not intensive",
+        "-o",
+        "addopts=",
+        "-q",
+        "--junitxml=data/risk-2025/validation/20261114-e1d3946f0f/focused.xml"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 3.671,
+      "gate": "focused_risk",
+      "peak_child_rss_bytes": 171835392,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 140.587,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_risk_2025.py",
+        "tests/test_risk_2025_e2e.py",
+        "-m",
+        "intensive",
+        "-o",
+        "addopts=",
+        "-q",
+        "--junitxml=data/risk-2025/validation/20261114-e1d3946f0f/intensive.xml",
+        "--basetemp=data/risk-2025/validation/20261114-e1d3946f0f/intensive-tmp"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 140.506,
+      "gate": "focused_intensive",
+      "peak_child_rss_bytes": 458326016,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 0.019,
+      "command": [
+        ".venv/bin/ruff",
+        "check",
+        "."
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 0.014,
+      "gate": "software_ruff",
+      "peak_child_rss_bytes": 19234816,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 489.146,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-o",
+        "addopts=",
+        "-q",
+        "--junitxml=data/risk-2025/validation/20261114-e1d3946f0f/pipeline.xml",
+        "--basetemp=data/risk-2025/validation/20261114-e1d3946f0f/pytest-tmp"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 491.054,
+      "gate": "software_pipeline",
+      "peak_child_rss_bytes": 1654505472,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 0.68,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "--junitxml=../../pipeline/data/risk-2025/validation/20261114-e1d3946f0f/api.xml"
+      ],
+      "cwd": "app/api",
+      "elapsed_seconds": 0.704,
+      "gate": "software_api",
+      "peak_child_rss_bytes": 71745536,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 0.04,
+      "command": [
+        "bun",
+        "install",
+        "--frozen-lockfile"
+      ],
+      "cwd": "app/dashboard",
+      "elapsed_seconds": 0.067,
+      "gate": "dashboard_install",
+      "peak_child_rss_bytes": 21364736,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 4.126,
+      "command": [
+        "bun",
+        "run",
+        "lint"
+      ],
+      "cwd": "app/dashboard",
+      "elapsed_seconds": 2.058,
+      "gate": "dashboard_lint",
+      "peak_child_rss_bytes": 520110080,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 8.644,
+      "command": [
+        "bun",
+        "run",
+        "test",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=../../pipeline/data/risk-2025/validation/20261114-e1d3946f0f/dashboard.xml"
+      ],
+      "cwd": "app/dashboard",
+      "elapsed_seconds": 2.665,
+      "gate": "dashboard_tests",
+      "peak_child_rss_bytes": 292880384,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 4.404,
+      "command": [
+        "env",
+        "NITRO_PRESET=node_server",
+        "bun",
+        "run",
+        "build"
+      ],
+      "cwd": "app/dashboard",
+      "elapsed_seconds": 1.953,
+      "gate": "dashboard_build",
+      "peak_child_rss_bytes": 871006208,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 1.056,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "sat_dengue_pipeline.experiment_management",
+        "validate"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 1.065,
+      "gate": "registry",
+      "peak_child_rss_bytes": 156090368,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 0.992,
+      "command": [
+        ".venv/bin/python",
+        "tools/check_experiment_preservation.py"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 1.006,
+      "gate": "preservation",
+      "peak_child_rss_bytes": 147259392,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 1.037,
+      "command": [
+        ".venv/bin/python",
+        "-O",
+        "tools/check_experiment_preservation.py"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 1.189,
+      "gate": "preservation_optimized",
+      "peak_child_rss_bytes": 147587072,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 715.021,
+      "command": [
+        "uv",
+        "run",
+        "--locked",
+        "--directory",
+        "pipeline",
+        "kedro",
+        "run",
+        "--pipeline",
+        "risk_2025_publication",
+        "--params",
+        "risk_2025.mode=materialize,risk_2025.artifact_directory=data/risk-2025/materialization-001"
+      ],
+      "cwd": ".",
+      "elapsed_seconds": 880.277,
+      "gate": "real_materialization",
+      "peak_child_rss_bytes": 2471657472,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 2089.374,
+      "command": [
+        "uv",
+        "run",
+        "--locked",
+        "--directory",
+        "pipeline",
+        "python",
+        "tools/certify_risk_2025.py",
+        "--activate"
+      ],
+      "cwd": ".",
+      "elapsed_seconds": 2094.749,
+      "gate": "real_certification",
+      "peak_child_rss_bytes": 2415575040,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 0.03,
+      "command": [
+        "env",
+        "-u",
+        "HF_TOKEN",
+        "pipeline/.venv/bin/python",
+        "pipeline/data/risk-2025/validation/20261114-e1d3946f0f/verify_certificate.py"
+      ],
+      "cwd": ".",
+      "elapsed_seconds": 0.033,
+      "gate": "real_certificate_check",
+      "peak_child_rss_bytes": 20480000,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 642.317,
+      "command": [
+        "env",
+        "PYTHONPATH=pipeline/data/risk-2025/validation/20261114-e1d3946f0f/frozen_guard",
+        "uv",
+        "run",
+        "--locked",
+        "--directory",
+        "pipeline",
+        "kedro",
+        "run",
+        "--pipeline",
+        "risk_2025_publication"
+      ],
+      "cwd": ".",
+      "elapsed_seconds": 643.713,
+      "gate": "real_publication",
+      "peak_child_rss_bytes": 2381824000,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 0.442,
+      "command": [
+        "env",
+        "-u",
+        "HF_TOKEN",
+        "-u",
+        "VIRTUAL_ENV",
+        "PYTHONPATH=app/api",
+        "app/api/.venv/bin/python",
+        "pipeline/data/risk-2025/validation/20261114-e1d3946f0f/verify_api.py"
+      ],
+      "cwd": ".",
+      "elapsed_seconds": 0.461,
+      "gate": "real_api_validation",
+      "peak_child_rss_bytes": 58703872,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 1.406,
+      "command": [
+        "env",
+        "SATD_RISK_E2E_RESPONSE=pipeline/data/risk-2025/validation/20261114-e1d3946f0f/real-api-response.json",
+        "bun",
+        "run",
+        "test",
+        "src/test/risk-ranking.test.tsx",
+        "-t",
+        "respuesta E2E"
+      ],
+      "cwd": "app/dashboard",
+      "elapsed_seconds": 1.139,
+      "gate": "real_dashboard_response",
+      "peak_child_rss_bytes": 159825920,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 0.048,
+      "command": [
+        "env",
+        "-u",
+        "HF_TOKEN",
+        "pipeline/.venv/bin/python",
+        "pipeline/data/risk-2025/validation/20261114-e1d3946f0f/verify_http.py"
+      ],
+      "cwd": ".",
+      "elapsed_seconds": 0.094,
+      "gate": "real_http_validation",
+      "peak_child_rss_bytes": 28114944,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 0.96,
+      "command": [
+        ".venv/bin/python",
+        "tools/check_experiment_preservation.py"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 1.113,
+      "gate": "final_preservation",
+      "peak_child_rss_bytes": 146767872,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 0.952,
+      "command": [
+        ".venv/bin/python",
+        "-O",
+        "tools/check_experiment_preservation.py"
+      ],
+      "cwd": "pipeline",
+      "elapsed_seconds": 1.11,
+      "gate": "final_preservation_optimized",
+      "peak_child_rss_bytes": 146653184,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 1.675,
+      "command": [
+        "env",
+        "-u",
+        "HF_TOKEN",
+        "PYTHONPATH=src",
+        "pipeline/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-o",
+        "addopts=",
+        "-q",
+        "tests/test_synthetic.py::test_registry_and_discovery",
+        "tests/test_raw_canonical.py::test_fixed_synthetic_digest_receipt"
+      ],
+      "cwd": "pipeline/data/risk-2025/validation/20261114-e1d3946f0f/clean-checkout/pipeline",
+      "elapsed_seconds": 1.764,
+      "gate": "clean_checkout_discovery_digest",
+      "peak_child_rss_bytes": 190840832,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 0.955,
+      "command": [
+        "env",
+        "-u",
+        "HF_TOKEN",
+        "pipeline/.venv/bin/python",
+        "tools/check_experiment_preservation.py"
+      ],
+      "cwd": "pipeline/data/risk-2025/validation/20261114-e1d3946f0f/clean-checkout/pipeline",
+      "elapsed_seconds": 0.963,
+      "gate": "clean_checkout_preservation",
+      "peak_child_rss_bytes": 147554304,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 0.954,
+      "command": [
+        "env",
+        "-u",
+        "HF_TOKEN",
+        "pipeline/.venv/bin/python",
+        "-O",
+        "tools/check_experiment_preservation.py"
+      ],
+      "cwd": "pipeline/data/risk-2025/validation/20261114-e1d3946f0f/clean-checkout/pipeline",
+      "elapsed_seconds": 0.962,
+      "gate": "clean_checkout_preservation_optimized",
+      "peak_child_rss_bytes": 147439616,
+      "returncode": 0
+    },
+    {
+      "child_cpu_seconds": 0.322,
+      "command": [
+        "env",
+        "-u",
+        "HF_TOKEN",
+        "PYTHONPATH=src",
+        "pipeline/.venv/bin/python",
+        "-O",
+        "pipeline/data/risk-2025/validation/20261114-e1d3946f0f/check_digest_optimized.py"
+      ],
+      "cwd": "pipeline/data/risk-2025/validation/20261114-e1d3946f0f/clean-checkout/pipeline",
+      "elapsed_seconds": 0.327,
+      "gate": "clean_checkout_digest_optimized_retry",
+      "peak_child_rss_bytes": 74596352,
+      "returncode": 0
+    }
+  ],
+  "governance": {
+    "champion_selected": false,
+    "historical_reproduction_approved": true,
+    "operational_use_authorized": false,
+    "report_selected": true
+  },
+  "historical_digest_gate": {
+    "expected_hashes_changed": false,
+    "normal": "PASS in clean checkout test_fixed_synthetic_digest_receipt",
+    "optimized": "PASS in clean checkout standalone producer with explicit checks independent of assert",
+    "prior_root_cause_evidence": "docs/evidence/risk-2025/20261114-recovery.json",
+    "semantic_digest": "26cc689566b05ffaf46a42aaa8311cca0ffc3137e31af6f64cfb1e9834f6b957",
+    "serialized_sha256": "4ca14c3c07079130606a91274a516e083b513c6a1a7afe41d8df92be9b3bb046"
+  },
+  "hygiene": {
+    "broken_new_anchors": [],
+    "broken_new_links": [],
+    "changed_notebooks": [],
+    "import_violations": [],
+    "large_tracked_files": [],
+    "limitations": [
+      "Pattern scan is not universal secret detection",
+      "Unchanged historical links excluded; private ignored raw/model/cache files never read for hygiene",
+      "Dynamic write boundaries covered by the full pipeline sentinel suite"
+    ],
+    "secret_candidate_paths_only": [],
+    "status": "PASS"
+  },
+  "initial_head": "d399e4fb797148f3420a9092844eac8c8ab3195f",
+  "initial_materialization": {
+    "artifact_sha256": "7830c6cbb8d5b4f3bd5798440d1766953bb274ae5723015ff450c384fc9320d3",
+    "effective_state_sha256": "845312c753e2bf312b592bcc1fb48b706220d96203b190fc21c2ffe39eac37ea",
+    "fit_calls": 1,
+    "last_training_available": "2024-10",
+    "last_training_target": "2024-09",
+    "matrix_columns": 36,
+    "model_code_sha": "a6a40245b6eab7f8883f1b4b4567354bfed353b4",
+    "predictors": 33,
+    "training_keys_sha256": "3ae5ace4612b7e44af9ecd62787265f62e98fd7427f4b8b75b61a8e5e4ba247f",
+    "training_rows": 7596
+  },
+  "invocation_recovery": [
+    {
+      "action": "Corrected only script path; clean_checkout_digest_optimized_retry passed; no data, code or expectations changed",
+      "cause": "Typo in validation-only script absolute path; interpreter exited before executing producer/test",
+      "exit_code": 2,
+      "gate": "clean_checkout_digest_optimized",
+      "original_record_retained": true
+    }
+  ],
+  "limitations": [
+    "2025 was previously consumed and is not independent confirmation or performance evaluation",
+    "Consolidated event dates do not establish real-time historical source availability",
+    "Only T+2 is published; no target in 2026",
+    "Browser visual check unavailable; actual API/HTTP/React DOM verified",
+    "Raw sources, models, certificate, operational receipts and published edition stay outside Git; deployment requires an authorized complete directory transfer"
+  ],
+  "pending_external": [
+    "Human review and authorized remote CI",
+    "Authorized deployment of complete edition and API configuration"
+  ],
+  "preservation": {
+    "additional_protected_files": 127,
+    "closed_evidence_modified": false,
+    "historical_json_count": 22,
+    "normal": "PASS after publication and clean checkout",
+    "optimized": "PASS after publication and clean checkout",
+    "original_protected_files": 49,
+    "sorted_path_sha256_map_digest": "4d3ddd3890a6a622b658fc2b1ef0159d0da6bc855cacc2c5b62854290623e16e"
+  },
+  "product": {
+    "api": {
+      "department_filters_preserve_global_document": true,
+      "forbidden_fields_found": false,
+      "index_validated": true,
+      "package_manifest_sha256": "4a667b6a0b864236e9cece106672b2c0f597b3614ad168370bedaa8737f6b2ae",
+      "read_only": true,
+      "scientific_imports": [],
+      "status": "PASS"
+    },
+    "dashboard": {
+      "assertions": [
+        "T+2 initial selected tab",
+        "Eight correct real selected municipality names",
+        "Global risk positions preserved under department filter without replacements",
+        "Artifact trace and permanent legend visible",
+        "No percentages, probability, threshold or outcome fields in rendered DOM/accessibility content"
+      ],
+      "automated_browser": "Unavailable: browser access host unavailable; no browser visual inspection claimed",
+      "method": "Actual RiskDashboard React component rendered through its public fetch contract with the real API response, using Testing Library/DOM and Zod validation",
+      "status": "PASS"
+    },
+    "live_http": {
+      "checks": [
+        {
+          "endpoint": "/periodos",
+          "origin": "http://127.0.0.1:18765",
+          "response_sha256": "c1c7a9c3675591a35418a39c2605cdb3c499fd104cb3f98bd840f2f301a9b226",
+          "status": 200
+        },
+        {
+          "endpoint": "?target_period=2025-01&horizon=T2",
+          "origin": "http://127.0.0.1:18765",
+          "response_sha256": "581f67a2249c8e416fb18ceba5dcd09f3a7b1da83b87873b42ea0f1212e222f2",
+          "status": 200
+        },
+        {
+          "endpoint": "/periodos",
+          "origin": "http://127.0.0.1:18766",
+          "response_sha256": "c1c7a9c3675591a35418a39c2605cdb3c499fd104cb3f98bd840f2f301a9b226",
+          "status": 200
+        },
+        {
+          "endpoint": "?target_period=2025-01&horizon=T2",
+          "origin": "http://127.0.0.1:18766",
+          "response_sha256": "581f67a2249c8e416fb18ceba5dcd09f3a7b1da83b87873b42ea0f1212e222f2",
+          "status": 200
+        }
+      ],
+      "scope": "live API and existing dashboard API proxy; no browser rendering assertion",
+      "status": "PASS"
+    },
+    "map": "Selected/rest neutral presentation and no accuracy/outcome color branches in risk-dashboard implementation; full component suite passed"
+  },
+  "recipe": {
+    "family": "logistic_onset/v1",
+    "library": "scikit-learn 1.7.2",
+    "path": "pipeline/conf/retroanalisis/noche/log_conclima.yml",
+    "seed": 53,
+    "sha256": "7d67f0595cfdd990e331682ae581d4f49d1f74f83a107f4d9474540412443ec8"
+  },
+  "remote_actions": {
+    "deployment": false,
+    "merge": false,
+    "pull_request": false,
+    "push": false
+  },
+  "schema": "satd-risk-2025-r7-validation-v1",
+  "scope": "Local approved A–E implementation and real historical priorities, no experiment or scientific reinterpretation",
+  "software": {
+    "contracts": "JSON Schema, Pydantic and Zod parity/invalid fixtures included in full suites",
+    "focused_ruff_and_diff": "PASS before integration commit",
+    "lock_and_sync": {
+      "commands": [
+        "uv lock --check --project pipeline",
+        "uv sync --locked --project pipeline"
+      ],
+      "dependency_changes": false,
+      "status": "PASS"
+    },
+    "real_dashboard_targeted": {
+      "deselected_by_name": 17,
+      "passed": 1,
+      "reason": "New real API payload after synthetic/full software gates; no full-suite repetition"
+    },
+    "test_summaries": {
+      "api": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 54
+      },
+      "dashboard": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 73
+      },
+      "discovery": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 1
+      },
+      "focused": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 33
+      },
+      "intensive": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 2
+      },
+      "pipeline": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 878
+      }
+    },
+    "warnings": [
+      "Six pre-existing OmegaConf deprecations in pipeline suite; no skipped tests in full suites",
+      "Inherited VIRTUAL_ENV pointing elsewhere was never used; each command used the local pipeline/API interpreter"
+    ]
+  },
+  "sources": {
+    "acquisition": "Only missing five files acquired by the existing sources node; hashes/sizes verified before model/data use; subsequent runs reused immutable local cache",
+    "files": 5,
+    "initial_cache_files_present": 0,
+    "manifest": "pipeline/conf/releases/operational-raw-173d5856.json",
+    "normalized_manifest_sha256": "1b2a28a4c90d3225272c2103b27d3cef1bfb69f3a6aeb9470e4177fd3798ed01",
+    "private_access": "Available; HF_TOKEN existence checked as boolean, value never printed, persisted or passed as argument",
+    "release": "satd-raw-173d5856"
+  },
+  "status": "PASS",
+  "tested_code_and_training_commit": "a6a40245b6eab7f8883f1b4b4567354bfed353b4"
+}

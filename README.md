@@ -806,3 +806,10 @@ bloque `evaluation_context`, de modo que las cifras que se ven en pantalla
 siempre vienen con el alcance al que corresponden. Comparar resultados de
 evaluaciones con ventanas distintas no es válido, y por eso el alcance viaja
 con el dato y no en una nota al pie.
+
+## Prioridades retrospectivas de 2025
+
+La nueva vista de prioridades usa T+2, cupo global de ocho y un contrato separado
+del histórico. Implementación y operación: [guía de prioridades](docs/operations/risk-2025.md);
+[decisiones A–E](docs/decisions/2025-risk-publication.md). Validación intensiva
+y publicación real pendientes del término de EXP006; no autorización sanitaria.

@@ -68,3 +68,11 @@ La matriz de sistemas operativos (incluido comportamiento de locks/rename) queda
 para tarea 15. Autenticación, reproducción real, candidatos reales e integración
 desde fuentes crudas certificadas quedan para tarea 16. No hay promoción de
 champion ni nueva evidencia científica sobre 2025.
+
+## Extensión satd-risk-ranking-v1
+
+La [decisión A–E](2025-risk-publication.md) autoriza una publicación distinta
+para prioridades retrospectivas 2025. Reutiliza staging, validación, manifiesto,
+promoción y rollback; añade ediciones inmutables y exige doce meses T+2
+completos. No cambia el contrato ni los bytes históricos.
+[Contrato, ubicación y operación](../operations/risk-2025.md#contrato-y-entrega-apidashboard).

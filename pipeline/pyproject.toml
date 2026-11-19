@@ -37,6 +37,7 @@ source_dir = "src"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = ["intensive: E2E y certificaciones diferidos hasta finalizar EXP006"]
 
 [tool.ruff]
 target-version = "py312"

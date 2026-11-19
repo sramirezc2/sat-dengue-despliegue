@@ -1,0 +1,383 @@
+{
+  "$defs": {
+    "MunicipalPriority": {
+      "additionalProperties": false,
+      "description": "Una fila territorial, incluida cuando no puede participar en el cupo.",
+      "properties": {
+        "department_code": {
+          "enum": [
+            "50",
+            "73"
+          ],
+          "title": "Department Code",
+          "type": "string"
+        },
+        "department_name": {
+          "enum": [
+            "Meta",
+            "Tolima"
+          ],
+          "title": "Department Name",
+          "type": "string"
+        },
+        "eligibility_status": {
+          "enum": [
+            "ELIGIBLE",
+            "INELIGIBLE"
+          ],
+          "title": "Eligibility Status",
+          "type": "string"
+        },
+        "ineligibility_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "ORIGIN_STATE_MISSING",
+                "EXCESS_AT_ORIGIN",
+                "REQUIRED_PREDICTORS_MISSING"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ineligibility Reason"
+        },
+        "municipality_code": {
+          "pattern": "^(50|73)[0-9]{3}$",
+          "title": "Municipality Code",
+          "type": "string"
+        },
+        "municipality_name": {
+          "maxLength": 150,
+          "minLength": 1,
+          "title": "Municipality Name",
+          "type": "string"
+        },
+        "risk_rank": {
+          "anyOf": [
+            {
+              "ge": 1,
+              "le": 76,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Risk Rank"
+        },
+        "selected_for_attention": {
+          "title": "Selected For Attention",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "municipality_code",
+        "municipality_name",
+        "department_code",
+        "department_name",
+        "risk_rank",
+        "selected_for_attention",
+        "eligibility_status",
+        "ineligibility_reason"
+      ],
+      "title": "MunicipalPriority",
+      "type": "object"
+    },
+    "RiskGovernance": {
+      "additionalProperties": false,
+      "description": "Separar selección para informe, reproducción y autorización operativa.",
+      "properties": {
+        "champion_status": {
+          "const": "NOT_SELECTED",
+          "title": "Champion Status",
+          "type": "string"
+        },
+        "historical_reproduction": {
+          "const": "APPROVED",
+          "title": "Historical Reproduction",
+          "type": "string"
+        },
+        "limitation": {
+          "const": "Orden de prioridad retrospectivo. La posición no representa una probabilidad calibrada ni una autorización para uso operativo.",
+          "title": "Limitation",
+          "type": "string"
+        },
+        "operational_use": {
+          "const": "NOT_AUTHORIZED",
+          "title": "Operational Use",
+          "type": "string"
+        },
+        "report_selection": {
+          "const": "SELECTED",
+          "title": "Report Selection",
+          "type": "string"
+        }
+      },
+      "required": [
+        "report_selection",
+        "historical_reproduction",
+        "operational_use",
+        "champion_status",
+        "limitation"
+      ],
+      "title": "RiskGovernance",
+      "type": "object"
+    },
+    "RiskTrace": {
+      "additionalProperties": false,
+      "description": "Linaje público sin modelos, observaciones ni rutas privadas.",
+      "properties": {
+        "adapter_version": {
+          "const": "v1",
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "artifact_contract": {
+          "const": "satd-frozen-logistic-v1",
+          "title": "Artifact Contract",
+          "type": "string"
+        },
+        "artifact_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Artifact Sha256",
+          "type": "string"
+        },
+        "code_sha": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Code Sha",
+          "type": "string"
+        },
+        "code_tree_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Code Tree Sha256",
+          "type": "string"
+        },
+        "effective_state_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Effective State Sha256",
+          "type": "string"
+        },
+        "feature_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Feature Sha256",
+          "type": "string"
+        },
+        "first_origin": {
+          "const": "2024-11",
+          "title": "First Origin",
+          "type": "string"
+        },
+        "library_version": {
+          "const": "1.7.2",
+          "title": "Library Version",
+          "type": "string"
+        },
+        "lock_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Lock Sha256",
+          "type": "string"
+        },
+        "model_family": {
+          "const": "logistic_onset",
+          "title": "Model Family",
+          "type": "string"
+        },
+        "predictors_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Predictors Sha256",
+          "type": "string"
+        },
+        "preparation_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Preparation Sha256",
+          "type": "string"
+        },
+        "procedure_id": {
+          "const": "SATD-RISK-2025-LOG-CLIMATE-v1",
+          "title": "Procedure Id",
+          "type": "string"
+        },
+        "procedure_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Procedure Sha256",
+          "type": "string"
+        },
+        "raw_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Manifest Sha256",
+          "type": "string"
+        },
+        "recipe_commit": {
+          "const": "a9c2c1abac386053b2e78f072bdb44e0141f4045",
+          "title": "Recipe Commit",
+          "type": "string"
+        },
+        "recipe_sha256": {
+          "const": "7d67f0595cfdd990e331682ae581d4f49d1f74f83a107f4d9474540412443ec8",
+          "title": "Recipe Sha256",
+          "type": "string"
+        },
+        "training_available_end": {
+          "const": "2024-10",
+          "title": "Training Available End",
+          "type": "string"
+        },
+        "training_keys_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Training Keys Sha256",
+          "type": "string"
+        },
+        "training_target_end": {
+          "const": "2024-09",
+          "title": "Training Target End",
+          "type": "string"
+        },
+        "training_target_start": {
+          "const": "2012-01",
+          "title": "Training Target Start",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recipe_sha256",
+        "recipe_commit",
+        "model_family",
+        "adapter_version",
+        "library_version",
+        "artifact_sha256",
+        "effective_state_sha256",
+        "training_keys_sha256",
+        "preparation_sha256",
+        "predictors_sha256",
+        "raw_manifest_sha256",
+        "code_sha",
+        "code_tree_sha256",
+        "lock_sha256",
+        "feature_sha256",
+        "procedure_id",
+        "procedure_sha256",
+        "training_target_start",
+        "training_target_end",
+        "training_available_end",
+        "first_origin",
+        "artifact_contract"
+      ],
+      "title": "RiskTrace",
+      "type": "object"
+    }
+  },
+  "$id": "satd-risk-ranking-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Paquete global completo; filtros nunca modifican su ranking o presupuesto.",
+  "properties": {
+    "data_cutoff": {
+      "pattern": "^20[0-9]{2}-(0[1-9]|1[0-2])$",
+      "title": "Data Cutoff",
+      "type": "string"
+    },
+    "data_kind": {
+      "enum": [
+        "CONSOLIDATED_RETROSPECTIVE",
+        "SYNTHETIC"
+      ],
+      "title": "Data Kind",
+      "type": "string"
+    },
+    "data_version": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Data Version",
+      "type": "string"
+    },
+    "eligible_count": {
+      "ge": 8,
+      "le": 76,
+      "title": "Eligible Count",
+      "type": "integer"
+    },
+    "governance": {
+      "$ref": "#/$defs/RiskGovernance"
+    },
+    "horizon": {
+      "const": "T2",
+      "title": "Horizon",
+      "type": "string"
+    },
+    "logical_generated_at": {
+      "const": "2024-11-01T00:00:00Z",
+      "title": "Logical Generated At",
+      "type": "string"
+    },
+    "municipalities": {
+      "items": {
+        "$ref": "#/$defs/MunicipalPriority"
+      },
+      "maxItems": 76,
+      "minItems": 76,
+      "title": "Municipalities",
+      "type": "array"
+    },
+    "population_count": {
+      "const": 76,
+      "title": "Population Count",
+      "type": "integer"
+    },
+    "reference_period": {
+      "pattern": "^20[0-9]{2}-(0[1-9]|1[0-2])$",
+      "title": "Reference Period",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "satd-risk-ranking-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "selection_budget": {
+      "const": 8,
+      "title": "Selection Budget",
+      "type": "integer"
+    },
+    "selection_scope": {
+      "const": "META_TOLIMA_GLOBAL",
+      "title": "Selection Scope",
+      "type": "string"
+    },
+    "target_period": {
+      "pattern": "^2025-(0[1-9]|1[0-2])$",
+      "title": "Target Period",
+      "type": "string"
+    },
+    "tie_break": {
+      "const": "SCORE_DESC_DIVIPOLA_ASC",
+      "title": "Tie Break",
+      "type": "string"
+    },
+    "trace": {
+      "$ref": "#/$defs/RiskTrace"
+    }
+  },
+  "required": [
+    "schema_version",
+    "reference_period",
+    "horizon",
+    "target_period",
+    "data_cutoff",
+    "logical_generated_at",
+    "data_version",
+    "data_kind",
+    "selection_budget",
+    "selection_scope",
+    "population_count",
+    "eligible_count",
+    "tie_break",
+    "trace",
+    "governance",
+    "municipalities"
+  ],
+  "title": "RiskRanking",
+  "type": "object"
+}

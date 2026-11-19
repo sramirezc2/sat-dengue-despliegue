@@ -1,8 +1,10 @@
 """Verificar publicaciones/T16 por hash, también con Python -O y rutas Windows."""
 
 import json
+from hashlib import sha256 as bytes_sha256
 from pathlib import Path
 
+from sat_dengue_pipeline.models.logistic import canonical_json
 from sat_dengue_pipeline.raw.contract import sha256
 
 
@@ -25,6 +27,17 @@ def verify(root: Path) -> dict:
     expected = {p for p in baseline["sha256"] if p.startswith("datos/resultados/")}
     if published != expected or len(published) != 22:
         raise ValueError("Inventario de publicaciones distinto del snapshot de 22 JSON")
+    publication_digest = bytes_sha256(
+        canonical_json({name: sha256(root / name) for name in sorted(published)})
+    ).hexdigest()
+    extension = json.loads((root / "docs/decisions/risk-2025-preservation.json").read_bytes())
+    if publication_digest != extension["historical_publication_sha256"]:
+        raise ValueError("Digest agregado de publicaciones históricas alterado")
+    if not extension["sha256"]:
+        raise ValueError("Inventario extendido vacío")
+    for name, digest in extension["sha256"].items():
+        if sha256(root / name) != digest:
+            raise ValueError(f"Archivo protegido alterado: {name}")
     previous = [
         p
         for p in baseline["sha256"]
@@ -45,6 +58,8 @@ def verify(root: Path) -> dict:
         "status": "PASSED",
         "protected_files": len(baseline["sha256"]),
         "published_json": len(published),
+        "historical_publication_sha256": publication_digest,
+        "extended_protected_files": len(extension["sha256"]),
         "previous_t16_receipts": len(previous),
         "t16_n3_identity": baseline["t16_identity_sha256"],
     }

@@ -79,6 +79,7 @@ class Configuracion:
     segundos_espera_s3: int
     exponer_docs: bool
     segundos_cache: int
+    directorio_prioridades: Path | None = None
 
     @property
     def usa_almacenamiento_remoto(self) -> bool:
@@ -93,13 +94,22 @@ def obtener_configuracion() -> Configuracion:
         nombre_servicio=_texto("NOMBRE_SERVICIO", "sat-dengue-api"),
         entorno=_texto("ENTORNO", "local"),
         nivel_log=_texto("NIVEL_LOG", "info").lower(),
-        directorio_resultados=Path(_texto("DIRECTORIO_RESULTADOS", "datos/resultados")).resolve(),
+        directorio_resultados=Path(
+            _texto("DIRECTORIO_RESULTADOS", "datos/resultados")
+        ).resolve(),
         departamentos=_departamentos("DEPARTAMENTOS", "50,73"),
-        origenes_cors=_origenes("ORIGENES_CORS", "http://localhost:3000,http://localhost:5173"),
+        origenes_cors=_origenes(
+            "ORIGENES_CORS", "http://localhost:3000,http://localhost:5173"
+        ),
         bucket_s3=_texto("BUCKET_S3", ""),
         prefijo_s3=_texto("PREFIJO_S3", "resultados/"),
         sincronizar_al_arrancar=_booleano("SINCRONIZAR_AL_ARRANCAR", "true"),
         segundos_espera_s3=_entero_positivo("ESPERA_S3_SEGUNDOS", "20"),
         exponer_docs=_booleano("EXPONER_DOCS", "true"),
         segundos_cache=_entero_positivo("CACHE_SEGUNDOS", "300"),
+        directorio_prioridades=(
+            Path(_texto("DIRECTORIO_PRIORIDADES", "")).absolute()
+            if _texto("DIRECTORIO_PRIORIDADES", "")
+            else None
+        ),
     )

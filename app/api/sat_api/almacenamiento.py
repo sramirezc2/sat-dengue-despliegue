@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import tempfile
 from pathlib import Path
 from typing import Protocol
@@ -111,7 +112,9 @@ def sincronizar_desde_s3(configuracion: Configuracion) -> int:
     destino.mkdir(parents=True, exist_ok=True)
 
     if not configuracion.usa_almacenamiento_remoto:
-        registro.info("Sin bucket declarado, se usa solo el directorio local %s", destino)
+        registro.info(
+            "Sin bucket declarado, se usa solo el directorio local %s", destino
+        )
         return len(list(destino.glob("*.json")))
 
     origen = f"s3://{configuracion.bucket_s3}/{configuracion.prefijo_s3}"
@@ -127,6 +130,11 @@ def sincronizar_desde_s3(configuracion: Configuracion) -> int:
             for objeto in pagina.get("Contents", ()):
                 clave = objeto["Key"]
                 if not clave.endswith(".json"):
+                    continue
+                # El transporte legado no aplana ediciones de prioridades ni manifiestos.
+                if not re.fullmatch(
+                    r"resultado_[0-9]{2}_[0-9]{4}-[0-9]{2}\.json", Path(clave).name
+                ):
                     continue
                 archivo = destino / Path(clave).name
                 _descargar_resultado(
@@ -145,7 +153,9 @@ def sincronizar_desde_s3(configuracion: Configuracion) -> int:
 
     archivos = list(destino.glob("*.json"))
     registro.info(
-        "Sincronizacion completa: %d descargado(s), %d disponible(s)", descargados, len(archivos)
+        "Sincronizacion completa: %d descargado(s), %d disponible(s)",
+        descargados,
+        len(archivos),
     )
     return len(archivos)
 

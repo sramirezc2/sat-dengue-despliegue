@@ -176,6 +176,10 @@ def validate_document(document: dict, schema: dict, name: str) -> None:
 def validate_package(package: PublicationPackage, schema: dict) -> dict:
     """Verificar el conjunto cerrado, hashes y metadatos antes de cualquier promoción."""
     manifest = decode_json(package.manifest)
+    if schema.get("$id") == "satd-risk-ranking-v1":
+        from sat_dengue_pipeline.risk.publication import validate_package as validate_ranking
+
+        return validate_ranking(package, schema)
     _require(
         set(manifest)
         == {
