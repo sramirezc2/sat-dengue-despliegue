@@ -53,16 +53,44 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from sat_dengue_pipeline.raw.serialization import (  # noqa: E402
-    CanonicalArtifact,
-    load_canonical,
-)
-
 #: Departamentos del estudio: Meta (50) y Tolima (73).
 DEPARTAMENTOS = ("50", "73")
 
 #: Destino, relativo a la raiz del repositorio.
 DESTINO = Path("datos") / "panel"
+
+
+def leer_panel(carpeta: Path) -> tuple[pd.DataFrame, dict]:
+    """Releer el panel exportado restaurando los tipos que el CSV no conserva.
+
+    Vive aqui, junto al escritor, para que el formato tenga una sola definicion:
+    los cuadernos de `notebooks/` importan esta funcion en vez de repetir la
+    restauracion por su cuenta.
+
+    Args:
+        carpeta: Directorio con `panel_meta_tolima.csv` y `esquema.json`.
+
+    Returns:
+        El panel con los dtypes del esquema y el esquema leido.
+
+    Raises:
+        ValueError: Si el CSV no trae las filas que el esquema declara.
+
+    """
+    esquema = json.loads((carpeta / "esquema.json").read_text(encoding="utf-8"))
+    panel = pd.read_csv(carpeta / "panel_meta_tolima.csv", dtype=object)
+    for columna in esquema["columns"]:
+        serie = panel[columna["name"]]
+        if "bool" in columna["dtype"]:
+            # El CSV guarda los booleanos como las cadenas "True" y "False", y
+            # `astype("boolean")` sobre texto falla con "Need to pass bool-like
+            # values". Se mapean antes; cualquier otro valor queda nulo y el
+            # chequeo de filas de mas abajo no lo tapa, porque cuenta filas.
+            serie = serie.map({"True": True, "False": False})
+        panel[columna["name"]] = serie.astype(columna["dtype"])
+    if len(panel) != esquema["panel"]["filas"]:
+        raise ValueError("El CSV no trae las filas que declara el esquema")
+    return panel, esquema
 
 
 def exportar(ruta: Path, huella: str, destino: Path) -> dict:
@@ -81,6 +109,12 @@ def exportar(ruta: Path, huella: str, destino: Path) -> dict:
             vacio o si el CSV no vuelve a leerse con las mismas dimensiones.
 
     """
+    # El cargador canonico se importa aqui y no arriba a proposito: `leer_panel`
+    # solo necesita pandas, y los cuadernos de `notebooks/` la importan de este
+    # modulo. Si la cadena de adquisicion se importara al cargar el archivo, leer
+    # un CSV exigiria el paquete entero y el interprete exacto del pipeline.
+    from sat_dengue_pipeline.raw.serialization import CanonicalArtifact, load_canonical
+
     artefacto = CanonicalArtifact(
         ruta, huella, hashlib.sha256(ruta.read_bytes()).hexdigest()
     )
