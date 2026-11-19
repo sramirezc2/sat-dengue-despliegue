@@ -426,6 +426,22 @@ Sin estas reglas los resultados se ven bien y no valen nada.
 
 ## 5. Registro de tandas
 
+**Cómo se registra una tanda, desde la tanda 12.** Tres personas escribiendo en
+el mismo archivo se pisan, y git resuelve markdown mal. Así que:
+
+- Cada tanda vive en su propio archivo, `docs/bitacora/tanda-NN-linea-X.md`.
+  Aquí queda un resumen de un párrafo y el enlace.
+- **El archivo se crea antes de correr nada**, con la preinscripción: qué
+  hipótesis prueba, qué métrica decide, qué contaría como mejora y qué contaría
+  como fracaso. Es la regla 8, y de paso reclama la línea: si ya existe un
+  archivo con esa línea, está tomada.
+- La tabla de la sección 6 es la única zona compartida. Cada quien toca solo su
+  fila.
+- Las entradas se pushean a la rama `bitacora`, que no exige revisión, y de ahí
+  entran a `main` por un PR cuando convenga. El código y las recetas siguen
+  yendo por PR a `main`.
+
+
 ### Tanda 1 — Objetivo de entrenamiento: exceso contra inicio
 
 **Hipótesis.** El informe concluye que el modelo aprendió a prolongar el estado
@@ -1897,6 +1913,30 @@ el piso se quedaba en 2018, la velocidad restaba contra la fila anterior. Nada
 de eso produce un error; produce un número. Y un número que nadie puede
 distinguir de uno bueno es peor que una excepción, porque viaja.
 
+### Tanda 12, línea T — G sobre el modelo del banco: tampoco reproduce
+
+Documentada en detalle en [tanda-12-linea-T.md](bitacora/tanda-12-linea-T.md).
+
+**Preinscrito en la tanda 11:** la misma comparación con XGBoost, que es donde G
+ganó su confirmación, sobre la base común y las mismas filas. El modelo no es
+EXP001 —que es de cuatro rondas y profundidad 2— sino el del banco, con los
+hiperparámetros de `experimentos/tanda_07/origen_movil.py`.
+
+**Resultado.** Sobre las mismas 7 612 filas en T+1 y 7 572 en T+2, cero orígenes
+omitidos, el bloque mueve entre −2 y +12 inicios según horizonte y línea base.
+Ayuda más a los árboles que a la logística —+12 contra +2 al presupuesto del
+canal condicionado, que es lo que predijo el mecanismo de la tanda 11— pero no
+alcanza: **la logística sin bloque le gana a XGBoost con bloque en todos los
+presupuestos**, y la configuración declarada vigente tras la tanda 5 es la peor
+de las cuatro sobre la base común.
+
+**El +79 de la tanda 7 no aparece.** Y la comparación de totales contra el banco
+no está autorizada: banco y retroanálisis difieren en insumos (29 variables sin
+clima contra 33), cadencia de reentrenamiento (anual contra mensual) y reparto
+de alertas (cupo mensual contra volumen igualado). La línea G queda **no
+reproducida**, no cerrada; la línea U preinscrita es acercar los dos
+instrumentos de a una diferencia.
+
 ## 6. Estado de las líneas de trabajo
 
 | Línea | Estado |
@@ -1907,7 +1947,7 @@ distinguir de uno bueno es peor que una excepción, porque viaja.
 | B. Entrenar sin las variables del canal | **Cerrada**: rechazada en la tanda 4; esas variables son necesarias |
 | C. Modelo en dos etapas | **Cerrada**: rechazada en la tanda 3; el modelo ya estratifica solo |
 | D. Costo asimétrico en el entrenamiento | **Cerrada**: rechazada en la tanda 4 |
-| G. Margen continuo al umbral del canal | **Confirmada en la tanda 5 sobre XGBoost y no reproducida en la tanda 11 sobre la logística**: sobre la base común no mueve las detecciones, porque un modelo log-lineal ya forma el margen con lo que tiene. Pendiente medirla sobre XGBoost en la base común |
+| G. Margen continuo al umbral del canal | **No reproducida sobre la base común** (tandas 11 y 12): sobre la logística no mueve nada, porque el log1p le deja formar el margen; sobre el modelo del banco mueve entre −2 y +12 inicios, contra los +79 que reportó la tanda 7. No se cierra: lo que falló es la reproducción del banco entero |
 | H. Presión epidémica regional | **Cerrada**: rechazada en la tanda 5 con esta forma de medirla |
 | I. Memoria y agotamiento de susceptibles | **Cerrada**: rechazada en la tanda 5 |
 | J. Regresión sobre el margen | **Cerrada**: no aporta sobre la clasificación |
@@ -1922,7 +1962,8 @@ distinguir de uno bueno es peor que una excepción, porque viaja.
 | Q. Canal condicionado a no estar en exceso | **Confirmada** en la tanda 9 a T+1 y **rechazada a T+2 por fuga**; pasa a ser la línea base principal y reduce la ventaja publicada del modelo a +22 % en el punto de operación |
 | R. Retroanálisis con datos reales y logística | Confirmada en la tanda 10 como exploratoria; su receta versionada no enciende G (ver tanda 11) |
 | S. Base común del retroanálisis | **Confirmada** en la tanda 11: el banco queda reproducido (647 inicios, año por año) y las recetas corren sobre el mismo panel, los mismos folds y las mismas filas |
-| T. Reproducir G sobre la base común | Preinscrita para la tanda 12: la misma comparación con XGBoost, que es donde G ganó su confirmación |
+| T. Reproducir G sobre la base común | **Resuelta en la tanda 12 y con resultado negativo**: ni G ni el banco reproducen. La logística sin bloque le gana a XGBoost con bloque en todos los presupuestos |
+| U. Identificar la diferencia de insumos con el banco | Preinscrita tras la tanda 12: correr el modelo del banco con sus 29 variables contra las 33 del contrato, sobre la base común. Es el paso previo a cualquier veredicto sobre G |
 | R. Regresión logística sobre el margen, con datos reales | **Exploratoria** en la tanda 10: supera al canal condicionado y a XGBoost, sin llegar a la meta de 10 puntos; pendiente de confirmar en EXP003 |
 
 **Horizonte T+2.** Se cerró tras la tanda 3 y **vuelve a estar en duda** tras la
