@@ -37,6 +37,18 @@ aislados en una máquina `arm64` y las tres dieron
 y `effective_state_sha256 = 845312c753e2bf312b592bcc1fb48b706220d96203b190fc21c2ffe39eac37ea`
 ([recibo](../docs/evidence/risk-2025/20261114-r7-final-e1d3946f0f.json)).
 
+## El artefacto que está aquí
+
+| | |
+| --- | --- |
+| `effective_state_sha256` | `d59ce5af5c001352da1aa2e81b9d5d51cef4db0e701de2aaf65d6fbaec64ed2f` |
+| `artifact_sha256` | `d0a883a7528afd5d3d1fdbe43d44e5c5a396c109ab20ed49845a198ccdb75c8c` |
+
+Materializado el 19 de noviembre en x86-64. Sus tres huellas de entrenamiento
+coinciden con las de la certificación del 14, de modo que el conjunto con el que
+se ajustó es el mismo. El `artifact_sha256` es el que hay que pasarle a
+`load_artifact`, porque esa función compara el sha256 de este archivo.
+
 ## Qué modelo es
 
 Regresión logística con penalización L2, `C = 1`, 5000 iteraciones,
@@ -69,7 +81,7 @@ from sat_dengue_pipeline.risk.frozen import load_artifact
 
 modelo = load_artifact(
     Path("modelos/logistica-conclima-t2"),
-    "7830c6cbb8d5b4f3bd5798440d1766953bb274ae5723015ff450c384fc9320d3",
+    "d0a883a7528afd5d3d1fdbe43d44e5c5a396c109ab20ed49845a198ccdb75c8c",
     procedencia,
 )
 margen = modelo.score(X)
@@ -106,7 +118,9 @@ implementaciones distintas de BLAS converge a valores que difieren en los
 
 Que **dos** máquinas x86 independientes hayan llegado al mismo `d59ce5af…` es lo
 que permite afirmar que se trata de la arquitectura y no de azar ni de un estado
-corrupto: dentro de una familia de máquina el ajuste sí es reproducible.
+corrupto: dentro de una familia de máquina el ajuste sí es reproducible. La
+comparación no se quedó en el resumen: los coeficientes, el escalado y el
+intercepto de las dos corridas son iguales valor por valor.
 
 Conviene no confundir dos cosas que esto deja separadas:
 
