@@ -32,3 +32,6 @@ experimentos/
 
 # Datos crudos locales
 /datos/datos-crudos/
+
+# Lectura grafo
+.serena/

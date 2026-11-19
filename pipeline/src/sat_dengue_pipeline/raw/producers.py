@@ -126,6 +126,13 @@ def climate_daily_normalization(
     frame: pd.DataFrame, geography: pd.DataFrame, config: BuildConfig
 ) -> tuple[pd.DataFrame, dict]:
     """Validar fechas redundantes, claves y valores después de cuarentena."""
+    return normalize_climate_window(frame, geography, start=config.start, end=config.end)
+
+
+def normalize_climate_window(
+    frame: pd.DataFrame, geography: pd.DataFrame, *, start: str, end: str
+) -> tuple[pd.DataFrame, dict]:
+    """Normalize climate for a declared window using the canonical daily checks."""
     records, outside = [], 0
     known = set(geography.municipality_code)
     for values in frame.itertuples(index=False, name=None):
@@ -147,7 +154,7 @@ def climate_daily_normalization(
             str(day.timetuple().tm_yday),
         ):
             raise ValueError("Calendario diario climático incoherente")
-        if not config.start <= period <= config.end:
+        if not start <= period <= end:
             outside += 1
             continue
         values = []

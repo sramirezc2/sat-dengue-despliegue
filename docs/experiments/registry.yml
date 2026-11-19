@@ -28,3 +28,17 @@ experiments:
   conclusions: docs/experiments/EXP002/CONCLUSIONS.md
   scientific_result: NOT_APPLICABLE
   champion_status: NOT_SELECTED
+- experiment_id: EXP314
+  experiment_slug: exp314-logistica-con-clima-t2
+  hypothesis_id: EXP314-H01
+  title: "Log\xEDstica con clima T+2 para Meta y Tolima"
+  experiment_type: scientific
+  status: RUNNING
+  protocol: docs/experiments/EXP314/SPECIFICATION.md
+  protocol_sha256: c3d1c65fc9f8dcbeaa5c3cdd7fcd71d9eec62113ebda0b4228c7d2156bc645cb
+  configuration: pipeline/conf/experiments/EXP314.yml
+  configuration_sha256: ddff69f46a735a7e4f12e3e38b00c876844c558c7c7ac05ed60a4e20c28f0846
+  pipeline: experiment_run
+  conclusions: docs/experiments/EXP314/CONCLUSIONS.md
+  scientific_result: PENDING
+  champion_status: NOT_SELECTED

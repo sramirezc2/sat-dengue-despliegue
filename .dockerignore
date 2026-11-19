@@ -1,0 +1,11 @@
+.git
+.aws
+.codex
+.serena
+**/.env*
+**/.venv
+**/node_modules
+**/__pycache__
+pipeline/data
+pipeline/.tracking
+app/dashboard/.output

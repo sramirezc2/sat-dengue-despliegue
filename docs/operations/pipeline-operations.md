@@ -20,7 +20,7 @@ capacidades y limitaciones; esta guía conserva los procedimientos operacionales
 
 | Ruta | Responsabilidad |
 |---|---|
-| `app/` | API de lectura y tablero desplegados, sin Kedro ni dependencias científicas. |
+| `app/` | API y tablero desplegados. La demo retrospectiva usa el paquete compartido de inferencia. |
 | `pipeline/` | Subproyecto científico independiente, herramientas, configuración y lock. |
 | `datos/datos-crudos/` | Entrada privada local ignorada por Git; no es publicación. |
 | `pipeline/data/` | Inbox/cachés, canónico, trabajo y recuperación locales ignorados. |

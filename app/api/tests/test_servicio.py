@@ -11,10 +11,13 @@ import dataclasses
 import json
 import shutil
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 from fastapi.testclient import TestClient
 
+from sat_api import inferencia
 from sat_api.configuracion import Configuracion, ErrorDeConfiguracion, obtener_configuracion
 from sat_api.main import crear_app
 from sat_api.repositorio import RepositorioDirectorio, construir_indice
@@ -180,10 +183,82 @@ def test_las_rutas_fuera_del_contrato_usan_la_misma_forma_de_error(cliente: Test
     assert respuesta.json()["error_code"] == "NOT_FOUND"
 
 
-def test_el_servicio_es_de_solo_lectura(cliente: TestClient) -> None:
+def test_los_resultados_publicados_admiten_solo_lectura(cliente: TestClient) -> None:
     respuesta = cliente.post("/api/dashboard")
     assert respuesta.status_code == 405
     assert respuesta.json()["error_code"] == "METHOD_NOT_ALLOWED"
+
+
+def test_la_api_funciona_sin_paquete_de_inferencia(configuracion: Configuracion) -> None:
+    cliente = TestClient(
+        crear_app(dataclasses.replace(
+            configuracion, directorio_inferencia=configuracion.directorio_resultados,
+            huella_inferencia="a" * 64,
+        ))
+    )
+    estado = cliente.get("/api/inferencia/t2")
+    assert estado.status_code == 200
+    assert estado.headers["cache-control"] == "no-store"
+    assert len(estado.json()["municipalities"]) == 76
+    assert estado.json()["model"] is None
+    respuesta = cliente.post("/api/inferencia/t2", json={})
+    assert respuesta.status_code == 503
+    assert respuesta.headers["cache-control"] == "no-store"
+    assert respuesta.json()["error_code"] == "MODEL_UNAVAILABLE"
+    publicado = cliente.get(
+        "/api/dashboard", params={"department_code": "73", "period": _periodo("73")}
+    )
+    assert publicado.status_code == 200
+
+
+def test_la_api_valida_la_carga_y_envia_el_cero_al_modelo(
+    configuracion: Configuracion, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    fila = {"code": "50001", "probability": 0.25}
+    motor = SimpleNamespace(
+        manifest=SimpleNamespace(
+            experiment_id="EXP314", execution_id="fixture", periods=["2025-10"],
+            history_mode="retrospective",
+        ),
+        coverage={"2025-10": {"50001"}},
+        predict=Mock(return_value=[fila]),
+    )
+    monkeypatch.setattr(inferencia, "InferenceEngine", Mock(return_value=motor))
+    cliente = TestClient(
+        crear_app(dataclasses.replace(
+            configuracion, directorio_inferencia=configuracion.directorio_resultados,
+            huella_inferencia="a" * 64,
+        ))
+    )
+    ruta = "/api/inferencia/t2"
+    assert cliente.get(ruta).json()["model"]["experiment_id"] == "EXP314"
+    preflight = cliente.options(
+        ruta,
+        headers={"Origin": "http://localhost", "Access-Control-Request-Method": "POST"},
+    )
+    assert preflight.status_code == 200
+
+    observacion = {"code": "50001", "dengue": 0, "grave": None}
+    carga = {"period": "2025-10", "rows": [observacion], "sample": True}
+    for entrada, codigo in (
+        ({**carga, "period": "2026-01"}, "OUTSIDE_COVERAGE"),
+        ({**carga, "rows": [observacion, observacion]}, "INVALID_DIVIPOLA"),
+        ({**carga, "rows": [{**observacion, "dengue": -1}]}, "INVALID_UPLOAD"),
+    ):
+        respuesta = cliente.post(ruta, json=entrada)
+        assert respuesta.status_code == 422
+        assert respuesta.headers["cache-control"] == "no-store"
+        assert respuesta.json()["error_code"] == codigo
+    assert cliente.post(ruta, content=b" " * (16 * 1024 + 1)).status_code == 413
+    motor.predict.assert_not_called()
+
+    respuesta = cliente.post(ruta, json=carga)
+    assert respuesta.status_code == 200
+    assert respuesta.headers["cache-control"] == "no-store"
+    assert respuesta.json()["rows"] == [fila]
+    assert respuesta.json()["target_period"] == "2025-12"
+    assert respuesta.json()["sample"] is True
+    assert motor.predict.call_args.args[0].rows[0].dengue == 0
 
 
 def test_la_raiz_orienta_en_vez_de_responder_404(cliente: TestClient) -> None:

@@ -20,6 +20,7 @@ from .almacenamiento import ErrorDeSincronizacion, asegurar_resultados
 from .configuracion import Configuracion, ErrorDeConfiguracion, obtener_configuracion
 from .contrato.api import create_app as crear_app_contrato
 from .contrato.service import _SUPPORTED_DEPARTMENTS as DEPARTAMENTOS_DEL_CONTRATO
+from .inferencia import RUTA_INFERENCIA, crear_router
 from .repositorio import RepositorioDirectorio
 
 registro = logging.getLogger(__name__)
@@ -69,24 +70,25 @@ def crear_app(configuracion: Configuracion | None = None) -> FastAPI:
     aplicacion.title = "SAT Dengue, API del tablero"
     aplicacion.version = VERSION
     aplicacion.description = (
-        "Servicio de solo lectura que entrega los resultados de evaluacion "
-        "publicados para los municipios de Tolima y Meta. No ejecuta inferencia."
+        "Resultados publicados e inferencia logística retrospectiva T+2 "
+        "para los municipios de Tolima y Meta."
     )
+    aplicacion.include_router(crear_router(actual))
     aplicacion.add_middleware(
         CORSMiddleware,
         allow_origins=list(actual.origenes_cors),
         allow_credentials=False,
-        allow_methods=["GET"],
+        allow_methods=["GET", "POST"],
         allow_headers=["Accept", "Content-Type"],
     )
 
     @aplicacion.middleware("http")
     async def cachear_resultados(peticion: Request, siguiente: Any):
-        """Un resultado publicado es inmutable; la salud nunca se cachea."""
+        """Controlar la caché de resultados, salud e inferencia."""
         respuesta = await siguiente(peticion)
         if peticion.url.path == RUTA_DASHBOARD and respuesta.status_code == 200:
             respuesta.headers["Cache-Control"] = f"public, max-age={actual.segundos_cache}"
-        elif peticion.url.path == RUTA_SALUD:
+        elif peticion.url.path in {RUTA_SALUD, RUTA_INFERENCIA}:
             respuesta.headers["Cache-Control"] = "no-store"
         return respuesta
 
@@ -97,7 +99,7 @@ def crear_app(configuracion: Configuracion | None = None) -> FastAPI:
             return _error(404, "NOT_FOUND", "La ruta solicitada no existe en este servicio.")
         if excepcion.status_code == 405:
             return _error(
-                405, "METHOD_NOT_ALLOWED", "Este servicio es de solo lectura y solo admite GET."
+                405, "METHOD_NOT_ALLOWED", "El método solicitado no está permitido en esta ruta."
             )
         return _error(excepcion.status_code, "INTERNAL_ERROR", str(excepcion.detail))
 
@@ -111,6 +113,7 @@ def crear_app(configuracion: Configuracion | None = None) -> FastAPI:
             "rutas": {
                 "resultados": f"{RUTA_DASHBOARD}?department_code=73&period=2026-09",
                 "salud": RUTA_SALUD,
+                "inferencia_t2": RUTA_INFERENCIA,
                 **({"documentacion": RUTA_DOCS} if actual.exponer_docs else {}),
             },
         }

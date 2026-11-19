@@ -28,6 +28,9 @@ tracking = [
 requires = ["uv_build==0.11.19"]
 build-backend = "uv_build"
 
+[tool.uv.build-backend]
+module-name = ["sat_dengue_pipeline", "sat_dengue_runtime"]
+
 [tool.kedro]
 package_name = "sat_dengue_pipeline"
 project_name = "SAT DENGUE synthetic smoke"

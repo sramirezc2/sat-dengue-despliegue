@@ -7,20 +7,15 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { loadEnv } from "vite";
 
-const apiProxyTarget =
-  process.env["API_PROXY_TARGET"] ?? loadEnv("development", process.cwd(), "")["API_PROXY_TARGET"];
+const env = loadEnv("development", process.cwd(), "");
+const apiProxyTarget = process.env["API_PROXY_TARGET"] ?? env["API_PROXY_TARGET"];
 
 export default defineConfig({
   vite: {
     server: {
-      proxy: apiProxyTarget
-        ? {
-            "/api": {
-              target: apiProxyTarget,
-              changeOrigin: true,
-            },
-          }
-        : {},
+      proxy: {
+        ...(apiProxyTarget ? { "/api": { target: apiProxyTarget, changeOrigin: true } } : {}),
+      },
     },
   },
   tanstackStart: {

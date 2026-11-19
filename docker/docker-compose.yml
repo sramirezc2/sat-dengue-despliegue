@@ -20,10 +20,15 @@ services:
       SATD_PREFIJO_S3: ${SATD_PREFIJO_S3:-resultados/}
       SATD_SINCRONIZAR_AL_ARRANCAR: ${SATD_SINCRONIZAR_AL_ARRANCAR:-true}
       SATD_ESPERA_S3_SEGUNDOS: ${SATD_ESPERA_S3_SEGUNDOS:-20}
+      SATD_INFERENCE_DIR: /release
+      SATD_INFERENCE_MANIFEST_SHA256: ${SATD_INFERENCE_MANIFEST_SHA256:-}
       AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
+    group_add:
+      - "${SATD_INFERENCE_GID:-1000}"
     volumes:
       # Cache local de resultados; sobrevive al reinicio de la instancia.
       - resultados:/datos/resultados
+      - ${SATD_INFERENCE_RELEASE_DIR:-../pipeline/data/inference}:/release:ro
     expose:
       - "8000"
 

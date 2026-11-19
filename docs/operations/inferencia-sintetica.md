@@ -1,32 +1,62 @@
-# Inferencia con el paquete sintético local
+# Inferencia retrospectiva T+2 desde el tablero
 
-El archivo local ignorado `pipeline/data/demo/package.json` contiene una
-regresión logística sin clima ya ajustada con datos artificiales para T+2.
-Incluye la preparación, los coeficientes y la historia municipal. El tablero
-verifica su SHA-256 y calcula probabilidades de demostración en el navegador.
+El tablero usa el ajuste logístico real de EXP314 para Meta y Tolima. El
+historial y las nueve variables climáticas provienen del consolidado posterior
+`satd-raw-173d5856`. La interfaz identifica el ranking como **Demo retrospectiva
+con datos consolidados posteriores**.
 
-## Preparar el tablero
+## Preparar el paquete privado
 
-Desde la raíz, antes de iniciar el tablero o construir su imagen, copie el
-**paquete sintético** a la ruta de recursos estáticos ignorada por Git:
+Desde la raíz del repositorio:
 
 ```sh
-install -D -m 0644 pipeline/data/demo/package.json app/dashboard/public/demo/logistica-t2.json
+uv run --locked --directory pipeline --with pydantic==2.14.3 \
+  python -m sat_dengue_pipeline.experiment_management.inference_bundle \
+  --experiment-id EXP314 --execution-id 87c361fd4c134b3086a606b68aad9d63
 ```
 
-Si `install -D` no está disponible, cree `app/dashboard/public/demo/` y copie el
-archivo allí con el nombre `logistica-t2.json`. El tablero sirve ese recurso en
-`/demo/logistica-t2.json`. Use HTTPS o `localhost` para que el navegador pueda
-verificar el hash. Todo visitante del tablero puede descargar el recurso, por
-lo que esta ruta se reserva al paquete de demostración con datos artificiales.
+El ensamblador verifica el recibo de Kedro, la huella del ajuste y los archivos
+locales del inbox. Genera `model.json`, `history.csv`, `climate.csv` y
+`manifest.json` en `pipeline/data/inference/87c361fd4c134b3086a606b68aad9d63/retrospective/`.
+El paquete preparado admite 59 meses, de febrero de 2021 a diciembre de 2025.
 
-Abra **Carga de demostración**, seleccione el CSV o Excel (o la muestra dummy)
-y pulse **Calcular ranking T+2**. El tablero carga el modelo automáticamente y
-procesa el archivo en el navegador. El paquete actual admite `2025-10` como mes
-de referencia. El archivo debe incluir `INI_SIN`, `confirmados` y los códigos
-`COD_DPTO_R` y `COD_MUN_R` o `municipality_code`. Los meses cargados sustituyen
-las filas correspondientes de la historia sintética y asumen cero casos graves.
-Los municipios sin historia suficiente quedan sin predicción.
+## Activar y probar
+
+En desarrollo, instale las dependencias de la API en su entorno Python 3.12.
+Desde la raíz, asigne a `SATD_INFERENCE_DIR` la ruta absoluta del paquete y
+a `SATD_INFERENCE_MANIFEST_SHA256` la huella que devuelve el ensamblador.
+
+```sh
+python -m pip install -r app/api/requirements.txt
+PYTHONPATH="$PWD/pipeline/src" python -m uvicorn sat_api.main:app --app-dir app/api \
+  --host 127.0.0.1 --port 8000
+```
+
+Vite reenvía `/api` a la API con `API_PROXY_TARGET=http://127.0.0.1:8000`.
+Consulte `GET /api/inferencia/t2` para ver el modelo y los meses habilitados.
+El tablero envía los conteos agregados al mismo endpoint con `POST`.
+
+En Compose, configure `SATD_INFERENCE_RELEASE_DIR` con la ruta absoluta del
+paquete, `SATD_INFERENCE_MANIFEST_SHA256` con la misma huella y
+`SATD_INFERENCE_GID` con el grupo autorizado a leer el paquete. Conceda a ese
+grupo acceso al directorio y lectura a sus cuatro archivos. La API monta el
+paquete en modo de solo lectura y lo verifica al arrancar.
+
+```sh
+docker compose -f docker/docker-compose.yml --env-file .env up -d --build --remove-orphans
+```
+
+Si el proxy ya estaba en ejecución, reinícielo para que lea el Nginx actualizado.
+Si la respuesta de estado contiene `"model": null`, verifique ruta, permisos y
+huella y reinicie la API. Los resultados publicados siguen disponibles.
+
+Abra **Carga de demostración** y seleccione un CSV UTF-8 o XLSX de un solo mes,
+de hasta 5 MB. Use `INI_SIN`, `confirmados` con 0 o 1 y los códigos de
+residencia DIVIPOLA. La columna opcional `COD_EVE` permite distinguir dengue
+(210) y dengue grave (220). El resumen muestra ceros explícitos, rechazos y
+filas excluidas por cobertura. El archivo `datos/202510_ejemplo.xlsx` permite
+probar el ranking y el mapa para diciembre de 2025. La opción **Cargar muestra
+dummy** envía una entrada artificial al mismo ajuste entrenado.
 
 ## Herramienta de línea de comandos
 

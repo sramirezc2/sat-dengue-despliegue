@@ -14,36 +14,24 @@ import pandas as pd
 import sklearn
 from sklearn.linear_model import LogisticRegression
 
-from sat_dengue_pipeline.domain.canonical import PREDICTORS
 from sat_dengue_pipeline.domain.derived import declared_derived
 from sat_dengue_pipeline.models.adapters import (
     AdapterSpec,
     validate_features,
     validate_probabilities,
 )
-
-ZONES = {"EXITO": 0, "SEGURIDAD": 1, "ALERTA": 2, "EXCESO": 3}
-MODOS_FIJOS = (
-    "early_stopping",
-    "hyperparameter_search",
-    "class_balancing",
-    "refit",
-    "seed_selection",
+from sat_dengue_runtime.logistic import (
+    canonical_json as canonical_json,
 )
-
-
-def canonical_json(value: Any) -> bytes:
-    """Serializar estado JSON con floats finitos y orden estable.
-
-    Args:
-        value: Estado serializable.
-
-    Returns:
-        Bytes UTF-8 deterministas.
-    """
-    return json.dumps(
-        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
-    ).encode()
+from sat_dengue_runtime.logistic import (
+    load_inference_state as load_inference_state,
+)
+from sat_dengue_runtime.logistic import (
+    logistic_matrix,
+    score_matrix,
+    validate_settings,
+    validate_state_version,
+)
 
 
 class LogisticOnsetAdapter:
@@ -73,45 +61,13 @@ class LogisticOnsetAdapter:
         # Derivadas de preparación: vacías salvo que la receta declare el bloque
         # de margen. Nunca son canónicas y siempre van al final de la matriz.
         self.derived: tuple[str, ...] = declared_derived(self.preparation)
-        predictors = self.settings["predictors"]
-        if (
-            not predictors
-            or predictors != [p for p in PREDICTORS if p in predictors]
-            or spec.family != self.candidate["family"]
-            or spec.version != self.candidate["adapter_version"]
-            or self.candidate["library"] != "scikit-learn"
-            or self.candidate["library_version"] != sklearn.__version__
-            or any(self.candidate[name] is not False for name in MODOS_FIJOS)
-        ):
-            raise ValueError("Identidad, versión o modo del candidato no autorizado")
-        c, max_iter = self.candidate["C"], self.candidate["max_iter"]
-        if not (isinstance(c, (int, float)) and c > 0) or type(max_iter) is not int or max_iter < 1:
-            raise ValueError("Regularización o iteraciones inválidas")
-        if (
-            self.preparation["zone_encoding"] != "fixed_onehot"
-            or self.preparation["zone_mapping"] != ZONES
-            or self.preparation["zone_columns"] != ["zona_canal_t__" + z for z in ZONES]
-            or self.preparation["missing"] != "error"
-            or self.preparation["scaling"] != "standard_train"
-            or self.preparation["imputation"] != "none"
-            or self.preparation["matrix_dtype"] != "float64"
-            or type(self.preparation["variables_g"]) is not bool
-            or self.preparation["channel_budget"] is not False
-        ):
-            raise ValueError("Preparación diferente de la autorizada")
-        expected = [
-            column
-            for name in predictors
-            for column in (self.preparation["zone_columns"] if name == "zona_canal_t" else [name])
-        ]
-        # Los bloques derivados van al final y solo si la receta los declara; sin
-        # ellos la matriz es idéntica a la histórica. La comprobación que vale es
-        # la de `matrix_columns`: compara lo que la receta escribió contra lo que
-        # los interruptores resuelven, que son dos cosas distintas.
-        if self.preparation["matrix_columns"] != [*expected, *self.derived]:
-            raise ValueError("Orden o cardinalidad de matriz interna alterados")
-        if not set(self.preparation["log1p_columns"]) <= set(predictors) - {"zona_canal_t"}:
-            raise ValueError("log1p declarado sobre columnas inexistentes")
+        validate_settings(
+            self.settings,
+            self.derived,
+            family=spec.family,
+            version=spec.version,
+            library_version=sklearn.__version__,
+        )
 
     def matrix(self, X: pd.DataFrame) -> np.ndarray:
         """Proyectar predictores declarados, con zona one-hot y log1p, sin aprender.
@@ -124,26 +80,7 @@ class LogisticOnsetAdapter:
             Matriz float64 en el orden de ``matrix_columns``.
         """
         validate_features(X, self._dtypes, derived=self.derived)
-        log1p = set(self.preparation["log1p_columns"])
-        parts = []
-        # Las derivadas entran crudas: son márgenes con signo y log1p no está
-        # definido en los negativos. La estandarización del fold las escala.
-        for name in [*self.settings["predictors"], *self.derived]:
-            if name == "zona_canal_t":
-                codes = X[name].map(ZONES).to_numpy(dtype=int)
-                parts.append(np.eye(len(ZONES))[codes])
-            else:
-                col = X[name].to_numpy(dtype=float)
-                parts.append(
-                    (np.log1p(np.clip(col, 0, None)) if name in log1p else col).reshape(-1, 1)
-                )
-        result = np.concatenate(parts, axis=1)
-        if (
-            result.shape != (len(X), len(self.preparation["matrix_columns"]))
-            or not np.isfinite(result).all()
-        ):
-            raise ValueError("Matriz interna inválida o no finita")
-        return result
+        return logistic_matrix(X, self.preparation, self.settings["predictors"], self.derived)
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> None:
         """Ajustar una sola vez con train; estandarización aprendida solo aquí.
@@ -232,6 +169,21 @@ class LogisticOnsetAdapter:
         """
         return hashlib.sha256(self.model_json()).hexdigest()
 
+    def inference_state(self) -> dict[str, Any]:
+        """Export the full-precision state of the fitted logistic estimator."""
+        if not self.fitted or self._model is None or self._mean is None or self._std is None:
+            raise ValueError("Exportación antes del ajuste")
+        return {
+            "schema_version": 1,
+            "seed": self.spec.seed,
+            "adapter": self.settings,
+            "classes": self._model.classes_.tolist(),
+            "coef": self._model.coef_[0].tolist(),
+            "intercept": float(self._model.intercept_[0]),
+            "mean": self._mean.tolist(),
+            "std": self._std.tolist(),
+        }
+
     def coeficientes(self) -> dict[str, float]:
         """Coeficientes estandarizados por columna de la matriz, para interpretar el modelo.
 
@@ -241,3 +193,13 @@ class LogisticOnsetAdapter:
         if not self.fitted or self._model is None:
             raise ValueError("Modelo sin ajustar")
         return dict(zip(self.preparation["matrix_columns"], map(float, self._model.coef_[0])))
+
+
+def predict_exported(X: pd.DataFrame, state: dict[str, Any]) -> pd.Series:
+    """Score a prepared predictor frame using the exported fit and canonical transform."""
+    validate_state_version(state)
+    spec = AdapterSpec(
+        "logistic_onset", "v1", canonical_json(state["adapter"]).decode(), state["seed"]
+    )
+    matrix = LogisticOnsetAdapter(spec).matrix(X)
+    return score_matrix(matrix, X.index, state)

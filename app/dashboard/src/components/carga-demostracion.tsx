@@ -2,11 +2,14 @@ import { useRef, useState } from "react";
 import { Upload as UploadIcon, FlaskConical, ArrowRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  loadDefaultPackage,
+  getInferenceStatus,
+  MAX_BYTES,
+  MODEL_UNAVAILABLE,
   parseFile,
-  rank,
+  requestRanking,
+  type InferenceStatus,
+  type Ranking,
   type Upload,
-  type Result,
 } from "@/lib/demo-inference";
 import boundaries from "@/lib/municipal-boundaries.json";
 
@@ -18,11 +21,23 @@ const normalizedName = (name: string) =>
     .toLowerCase();
 const probability = (value: number | null | undefined) =>
   value == null ? "Sin predicción" : `${(value * 100).toFixed(1)} %`;
+const retrospectiveLabel = "Demo retrospectiva con datos consolidados posteriores";
+const missingReason = {
+  missing_upload: "Municipio sin filas en la carga",
+  missing_dengue: "Falta dato de dengue",
+  missing_grave: "Falta dato de dengue grave",
+  missing_climate: "Clima incompleto en el mes de referencia",
+  missing_history: "Historia insuficiente",
+  excess_at_origin: "Exceso observado en el mes de referencia",
+};
 
 export function CargaDemostracion() {
   const [open, setOpen] = useState(false);
   const [upload, setUpload] = useState<Upload | null>(null);
-  const [results, setResults] = useState<Result[]>([]);
+  const [ranking, setRanking] = useState<Ranking | null>(null);
+  const [status, setStatus] = useState<InferenceStatus | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [sample, setSample] = useState(false);
   const [search, setSearch] = useState("");
   const [zone, setZone] = useState("");
   const [selected, setSelected] = useState("");
@@ -34,24 +49,43 @@ export function CargaDemostracion() {
   const [calculating, setCalculating] = useState(false);
   const dataInput = useRef<HTMLInputElement>(null);
   const dataRequest = useRef(0);
+  const inFlight = useRef<AbortController | null>(null);
   function clearResults() {
-    setResults([]);
+    setRanking(null);
     setSelected("");
     setError("");
   }
-  async function fileLoad(file: File) {
+  async function checkAvailability() {
+    setChecking(true);
+    try {
+      setStatus(await getInferenceStatus());
+    } catch {
+      setStatus(null);
+    } finally {
+      setChecking(false);
+    }
+  }
+  async function fileLoad(file: File, isSample = false) {
     const request = ++dataRequest.current;
+    inFlight.current?.abort();
     clearResults();
     setUpload(null);
     setDataName(file.name);
+    setSample(isSample);
     setDataError("");
     setDataBusy(true);
     setCalculating(false);
     try {
-      const data = parseFile(await file.arrayBuffer());
+      if (file.size > MAX_BYTES) throw Error("El archivo admite hasta 5 MB.");
+      const data = parseFile(
+        await file.arrayBuffer(),
+        file.name,
+        status ? new Set(status.municipalities) : undefined,
+      );
       if (request === dataRequest.current) {
         setUpload(data);
-        if (!data.last) setDataError("El archivo no contiene filas válidas para calcular T+2.");
+        if (!data.period) setDataError("El archivo no contiene filas válidas para calcular T+2.");
+        else if (data.rejected) setDataError("Corrige las filas rechazadas antes de calcular.");
       }
     } catch (e) {
       if (request === dataRequest.current)
@@ -61,13 +95,15 @@ export function CargaDemostracion() {
     }
   }
   async function calculate() {
-    if (!upload?.last || calculating) return;
+    if (!upload || !monthSupported || invalidCatalogue || upload.rejected || calculating) return;
     const request = dataRequest.current;
+    const controller = new AbortController();
+    inFlight.current = controller;
     clearResults();
     setCalculating(true);
     try {
-      const model = await loadDefaultPackage();
-      if (request === dataRequest.current) setResults(rank(model, upload));
+      const result = await requestRanking(upload, sample, controller.signal);
+      if (request === dataRequest.current) setRanking(result);
     } catch (e) {
       if (request === dataRequest.current)
         setError(e instanceof Error ? e.message : "No se pudo calcular el ranking.");
@@ -75,7 +111,13 @@ export function CargaDemostracion() {
       if (request === dataRequest.current) setCalculating(false);
     }
   }
-  const visible = results.filter((r) => r.code.startsWith(department === "tolima" ? "73" : "50"));
+  const monthSupported = Boolean(upload?.period && status?.model?.periods.includes(upload.period));
+  const invalidCatalogue = Boolean(
+    status && upload?.rows.some((row) => !status.municipalities.includes(row.code)),
+  );
+  const visible = (ranking?.rows ?? []).filter((r) =>
+    r.code.startsWith(department === "tolima" ? "73" : "50"),
+  );
   const filtered = visible.filter(
     (r) => normalizedName(r.name).includes(normalizedName(search)) && (!zone || r.zone === zone),
   );
@@ -91,7 +133,10 @@ export function CargaDemostracion() {
         </div>
         <Button
           variant="outline"
-          onClick={() => setOpen(!open)}
+          onClick={() => {
+            if (!open && !checking) void checkAvailability();
+            setOpen(!open);
+          }}
           aria-expanded={open}
           aria-controls="demo-content"
         >
@@ -102,9 +147,25 @@ export function CargaDemostracion() {
       {open && (
         <div id="demo-content" className="space-y-5 border-t border-border p-4 sm:p-5">
           <p className="text-sm text-muted-foreground">
-            Modelo logístico e historia sintética para T+2. Tu navegador procesa los datos y asume
-            cero casos graves en los meses cargados. Las probabilidades son de demostración.
+            El navegador valida el archivo y envía conteos por municipio. El modelo usa el clima del
+            mes de referencia y el historial del consolidado.
           </p>
+          {checking && (
+            <p role="status" className="text-sm">
+              Comprobando el modelo T+2…
+            </p>
+          )}
+          {!checking && !status?.model && (
+            <div className="flex flex-wrap items-center gap-3">
+              <p role="status" className="text-sm">
+                {MODEL_UNAVAILABLE} Puedes revisar el archivo.
+              </p>
+              <Button variant="outline" onClick={() => void checkAvailability()}>
+                Reintentar conexión
+              </Button>
+            </div>
+          )}
+          {!ranking && status?.model && <p className="text-sm font-medium">{retrospectiveLabel}</p>}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="min-w-0 space-y-2">
               <input
@@ -136,17 +197,22 @@ export function CargaDemostracion() {
             <div>
               <Button
                 variant="ghost"
-                onClick={() =>
+                onClick={() => {
+                  const periods = status?.model?.periods ?? [];
+                  const period = periods.includes("2025-10")
+                    ? "2025-10"
+                    : (periods.at(-1) ?? "2025-10");
                   void fileLoad(
                     new File(
                       [
-                        "municipality_code,INI_SIN,confirmados\n50001,2025-10-01,1\n73001,2025-10-02,1\n",
+                        `municipality_code,INI_SIN,confirmados,COD_EVE\n50001,${period}-01,1,210\n50001,${period}-02,0,220\n73001,${period}-01,1,210\n73001,${period}-02,0,220\n`,
                       ],
                       "muestra-dummy.csv",
                       { type: "text/csv" },
                     ),
-                  )
-                }
+                    true,
+                  );
+                }}
               >
                 <FlaskConical aria-hidden className="mr-2 h-4 w-4" />
                 Cargar muestra dummy
@@ -161,9 +227,11 @@ export function CargaDemostracion() {
               {[
                 ["Filas", upload.total],
                 ["Confirmados", upload.confirmed],
+                ["Filas con cero", upload.zeros],
                 ["Rechazados", upload.rejected],
-                ["Municipios", new Set([...upload.counts.keys()].map((k) => k.slice(0, 5))).size],
-                ["Último mes", upload.last || "—"],
+                ["Fuera de Meta y Tolima", upload.excluded],
+                ["Municipios", upload.rows.length],
+                ["Mes de referencia", upload.period || "—"],
               ].map(([label, value]) => (
                 <div key={label}>
                   <dt className="text-xs text-muted-foreground">{label}</dt>
@@ -172,9 +240,41 @@ export function CargaDemostracion() {
               ))}
             </dl>
           )}
+          {upload && Object.keys(upload.reasons).length > 0 && (
+            <ul className="list-disc pl-5 text-sm" aria-label="Motivos de rechazo">
+              {Object.entries(upload.reasons).map(([reason, count]) => (
+                <li key={reason}>
+                  {reason}: {count}
+                </li>
+              ))}
+            </ul>
+          )}
+          {upload?.period && status?.model && !monthSupported && (
+            <div className="space-y-1 text-sm">
+              <p role="alert" className="text-destructive">
+                Mes fuera de cobertura.
+              </p>
+              <details>
+                <summary className="cursor-pointer">Ver meses disponibles</summary>
+                <p className="mt-1 text-muted-foreground">{status.model.periods.join(", ")}</p>
+              </details>
+            </div>
+          )}
+          {invalidCatalogue && (
+            <p role="alert" className="text-sm text-destructive">
+              La carga tiene códigos DIVIPOLA desconocidos.
+            </p>
+          )}
           <div className="flex flex-wrap items-center gap-3">
             <Button
-              disabled={!upload?.last || dataBusy || calculating}
+              disabled={
+                !monthSupported ||
+                invalidCatalogue ||
+                !!upload?.rejected ||
+                dataBusy ||
+                calculating ||
+                checking
+              }
               onClick={() => void calculate()}
             >
               Calcular ranking T+2
@@ -191,8 +291,9 @@ export function CargaDemostracion() {
               {error}
             </p>
           )}
-          {results.length > 0 && (
+          {ranking && (
             <div className="space-y-4 border-t border-border pt-5">
+              <p className="text-sm font-medium">{retrospectiveLabel}</p>
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex gap-2" aria-label="Departamento de demostración">
                   {(["tolima", "meta"] as const).map((d) => (
@@ -210,19 +311,9 @@ export function CargaDemostracion() {
                   ))}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Referencia {upload?.last} · Objetivo{" "}
-                  {upload?.last
-                    ? new Date(
-                        Date.UTC(
-                          Number(upload.last.slice(0, 4)),
-                          Number(upload.last.slice(5)) + 1,
-                          1,
-                        ),
-                      )
-                        .toISOString()
-                        .slice(0, 7)
-                    : "—"}{" "}
-                  · Probabilidades sintéticas T+2
+                  Referencia {ranking.reference_period} · Objetivo {ranking.target_period} · Modelo{" "}
+                  {ranking.experiment_id}
+                  {ranking.sample && " · Entrada de muestra artificial"}
                 </p>
               </div>
               <div className="grid items-start gap-5 lg:grid-cols-2">
@@ -260,7 +351,7 @@ export function CargaDemostracion() {
                     </select>
                   </div>
                   <div className="max-h-[28rem] overflow-auto">
-                    <table className="w-full min-w-[38rem] text-left text-sm">
+                    <table className="w-full min-w-[35rem] text-left text-sm">
                       <thead className="sticky top-0 z-10 bg-muted text-xs text-muted-foreground">
                         <tr>
                           <th scope="col" className="px-3 py-3">
@@ -312,15 +403,13 @@ export function CargaDemostracion() {
                                 ? "No disponible"
                                 : r.p75t2.toLocaleString("es-CO", { maximumFractionDigits: 2 })}
                             </td>
-                            <td
-                              className="px-3 py-3 text-right font-mono"
-                              title={
-                                r.probability == null
-                                  ? "Historia insuficiente o variables no disponibles"
-                                  : undefined
-                              }
-                            >
+                            <td className="px-3 py-3 text-right font-mono">
                               {probability(r.probability)}
+                              {r.reason && (
+                                <span className="block text-xs text-muted-foreground">
+                                  {missingReason[r.reason]}
+                                </span>
+                              )}
                               {r.probability != null && (
                                 <span className="mt-1 block h-1.5 w-20 bg-muted" aria-hidden>
                                   <span
@@ -336,8 +425,8 @@ export function CargaDemostracion() {
                     </table>
                   </div>
                   <p className="border-t border-border p-3 text-xs text-muted-foreground">
-                    P75 de T+2: percentil histórico en casos. Probabilidad T+2: salida del modelo
-                    sintético, sin umbral de alerta.
+                    P75 de T+2: percentil histórico en casos. Probabilidad T+2: estimación de inicio
+                    de exceso.
                   </p>
                 </section>
                 <section
@@ -351,7 +440,7 @@ export function CargaDemostracion() {
                     <svg
                       viewBox="0 0 1000 400"
                       className="h-64 w-full bg-muted/30 sm:h-80"
-                      aria-label={`Mapa sintético ${department}`}
+                      aria-label={`Mapa T+2 ${department}`}
                     >
                       {boundaries[department].map((area) => {
                         const item = visible.find(

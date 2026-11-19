@@ -189,9 +189,9 @@ en `/api/docs`. Esa interfaz carga sus recursos desde un CDN público;
 
 ### API
 
-Python 3.12. Pines propios en `app/api/requirements.txt`; las dependencias
-científicas se mantienen separadas en `pipeline/pyproject.toml` y nunca entran
-en la imagen de la API.
+Python 3.12. La API fija sus dependencias en `app/api/requirements.txt`.
+NumPy, pandas y SciPy tienen los mismos pines que el pipeline para calcular
+la demostración T+2. El entorno de Kedro y entrenamiento se instala aparte.
 
 | Paquete | Versión |
 | --- | --- |
@@ -199,6 +199,9 @@ en la imagen de la API.
 | pydantic | 2.14.1 |
 | uvicorn | 0.54.0 |
 | boto3 | 1.42.6 |
+| numpy | 2.5.4 |
+| pandas | 3.0.6 |
+| scipy | 1.18.1 |
 
 ### Tablero
 
@@ -281,17 +284,21 @@ independiente `pipeline/`, fuera de los contenedores del producto.
 
 ### Entrada
 
-La API es de solo lectura y su entrada son dos parámetros de consulta:
+La consulta de resultados publicados recibe el departamento y el mes.
 
 ```
 GET /api/dashboard?department_code=73&period=2026-09
 ```
 
-La entrada del **sistema**, en cambio, son los resultados publicados: archivos
-JSON en el directorio que declara `SATD_DIRECTORIO_RESULTADOS`, con la
+Los resultados publicados son archivos JSON en el directorio que declara
+`SATD_DIRECTORIO_RESULTADOS`, con la
 convención de nombre `resultado_<departamento>_<AAAA-MM>.json`. Publicar un
 periodo nuevo es dejar un archivo; no hay que editar código ni volver a
 construir la imagen.
+
+La carga de demostración envía conteos municipales a
+`POST /api/inferencia/t2` y calcula el ranking retrospectivo con el ajuste
+EXP314. [Activar la inferencia T+2](docs/operations/inferencia-sintetica.md)
 
 `scripts/construir_resultados.py` es la envoltura compatible del publicador de
 `pipeline/`, que recibe panel, predicciones y comparación locales ya calculados.

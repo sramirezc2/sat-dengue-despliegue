@@ -11,6 +11,8 @@ COPY app/api/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app/api/sat_api ./sat_api
+COPY pipeline/src/sat_dengue_runtime ./sat_dengue_runtime
+COPY pipeline/conf/geografia/divipola_coordenadas.csv ./sat_api/divipola_coordenadas.csv
 
 # Los archivos versionados siembran un volumen nuevo en el primer arranque.
 ENV SATD_DIRECTORIO_RESULTADOS=/datos/resultados

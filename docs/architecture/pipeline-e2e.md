@@ -14,7 +14,7 @@ La distribución observada es compatible con una integración aditiva:
 
 | Ruta actual | Responsabilidad observada |
 | --- | --- |
-| `app/api/` | API de solo lectura; valida y sirve JSON persistidos, sin inferencia en línea. |
+| `app/api/` | Sirve los JSON publicados y calcula el ranking de demostración retrospectiva T+2. |
 | `app/dashboard/` | Producto que consume el contrato HTTP de la API. |
 | `datos/resultados/` | JSON publicados por departamento y mes, incluidos resultados de evaluación de 2025. |
 | `datos/retro/` | Evidencia de retroanálisis que el generador incorpora a los resultados. |
@@ -36,7 +36,7 @@ Síntesis de entregables, evidencia y límites en el
 app/                 producto desplegado existente
 pipeline/            proyecto Kedro autocontenido
 datos/datos-crudos/  entrada local privada, ignorada por Git
-datos/resultados/    único contrato entre pipeline y API
+datos/resultados/    contrato de resultados publicados
 docker/              despliegue existente
 scripts/             operación y envolturas temporales
 docs/                arquitectura, decisiones y evidencia
@@ -48,19 +48,24 @@ carpetas existentes. `docs/architecture/` contiene este documento central;
 `docs/decisions/` queda reservado para decisiones futuras que lo justifiquen,
 sin duplicar aquí las reglas en múltiples ADR.
 
-La única dirección permitida de entrega y consumo es:
+La entrega y el consumo de resultados publicados siguen esta dirección:
 
 ```text
 pipeline/ → datos/resultados/ → app/api/ → app/dashboard/
 ```
 
-Las flechas representan el flujo de artefactos y respuestas. En código, la API
-nunca importará Kedro ni módulos de `pipeline/`; el pipeline tampoco importará
-`app/` ni escribirá dentro de ella. El tablero consumirá la API, sin acceder al
-pipeline o a sus archivos internos.
+Las flechas representan el flujo de resultados publicados. El pipeline calcula
+y publica esos artefactos. La API los sirve y el tablero los consume.
 
-`pipeline/` tendrá configuración, catálogo y dependencias propias. Las
-dependencias científicas y Kedro no se instalarán en la imagen de la API.
+La demostración envía los conteos municipales al endpoint
+`/api/inferencia/t2` de la misma API. El paquete privado con el ajuste EXP314
+y los agregados históricos se monta de solo lectura y se verifica al arrancar.
+La API y Kedro comparten el paquete Python `sat_dengue_runtime` para preparar
+los predictores y aplicar el ajuste. La imagen de la API incluye ese paquete,
+el catálogo DIVIPOLA, NumPy, pandas y SciPy. Kedro, el entrenamiento y su
+configuración se ejecutan en el subproyecto científico.
+[Operación de la demo T+2](../operations/inferencia-sintetica.md)
+
 Cada responsabilidad tendrá un dueño: adquisición y normalización, dominio
 científico, y publicación. Se aplicarán DRY, SOLID e inversión de dependencias
 mediante interfaces pequeñas; se evitarán implementaciones duplicadas y capas
@@ -68,8 +73,7 @@ sin necesidad. El Python futuro usará tipado y docstrings estilo Google.
 
 ## Contrato de publicación: `datos/resultados/`
 
-Es la única frontera entre el cálculo científico y el servicio. No se publican
-bundles de entrenamiento, modelos ni dependencias ejecutables en esta frontera.
+Esta frontera contiene los resultados científicos publicados como JSON.
 Se conserva la convención `resultado_<departamento>_<AAAA-MM>.json` y el esquema
 vigente `DashboardResponse`, definido en
 [`schemas.py`](../../app/api/sat_api/contrato/schemas.py). El consumidor actual es

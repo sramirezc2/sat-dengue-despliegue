@@ -1,5 +1,6 @@
 """Pruebas del adaptador logístico de inicios y su uso en el retroanálisis."""
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -13,9 +14,38 @@ from sat_dengue_pipeline.domain.canonical import build_table
 from sat_dengue_pipeline.domain.margin import MARGIN_COLUMNS
 from sat_dengue_pipeline.evaluation.retroanalisis import predicciones_rolling
 from sat_dengue_pipeline.factory.configuration import adapter_spec
-from sat_dengue_pipeline.models.logistic import LogisticOnsetAdapter
+from sat_dengue_pipeline.models.logistic import (
+    LogisticOnsetAdapter,
+    canonical_json,
+    load_inference_state,
+    predict_exported,
+)
 
 RECETA = Path(__file__).resolve().parents[1] / "conf/retroanalisis/logistica_sin_clima.yml"
+
+
+def test_exported_climate_fit_scores_with_parity_and_rejects_incomplete_input(
+    tmp_path: Path,
+) -> None:
+    """Reload the full climate fit without changing its preprocessing or probabilities."""
+    climate_recipe = RECETA.parent / "noche/log_conclima.yml"
+    config = yaml.safe_load(climate_recipe.read_bytes())
+    adapter = LogisticOnsetAdapter(adapter_spec(config))
+    X = _entrada()
+    adapter.fit(X, pd.Series([0, 0, 1, 1], index=X.index))
+    model = tmp_path / "model.json"
+    payload = canonical_json(adapter.inference_state())
+    digest = hashlib.sha256(payload).hexdigest()
+    model.write_bytes(payload)
+    loaded = load_inference_state(model, digest)
+    np.testing.assert_allclose(
+        predict_exported(X, loaded), adapter.predict_positive(X), atol=1e-12, rtol=0
+    )
+    with pytest.raises(ValueError):
+        predict_exported(X.drop(columns="rain_mm_month_sum"), loaded)
+    model.write_bytes(payload + b" ")
+    with pytest.raises(ValueError, match="huella"):
+        load_inference_state(model, digest)
 
 
 def _config() -> dict:

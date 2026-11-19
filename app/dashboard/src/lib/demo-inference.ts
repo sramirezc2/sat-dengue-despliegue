@@ -1,281 +1,311 @@
 import * as XLSX from "xlsx";
 import { z } from "zod";
 
-type Row = Record<string, unknown>;
-const countSchema = z.object({
-  dengue_notifications_count: z.number().int().nonnegative(),
-  dengue_grave_notifications_count: z.number().int().nonnegative(),
-  total_notifications_count: z.number().int().nonnegative(),
+import { getDashboardConfig } from "./dashboard-config";
+
+export const MAX_BYTES = 5 * 1024 * 1024;
+const MAX_ROWS = 100_000;
+const ENDPOINT = "/api/inferencia/t2";
+export const MODEL_UNAVAILABLE = "Modelo T+2 no disponible.";
+const period = z.string().regex(/^[0-9]{4}-(0[1-9]|1[0-2])$/);
+const code = z.string().regex(/^(50|73)[0-9]{3}$/);
+const retrospective = z.literal("retrospective");
+
+const statusSchema = z.object({
+  municipalities: z.array(code).length(76),
+  model: z
+    .object({
+      experiment_id: z.string().min(1),
+      version: z.string().min(1),
+      periods: z.array(period).min(1),
+      history_mode: retrospective,
+    })
+    .nullable(),
 });
-type Count = z.infer<typeof countSchema>;
-const municipalityCode = z.string().regex(/^(50|73)\d{3}$/);
-const period = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
-const packageSchema = z.object({
-  schema: z.literal("sat-dengue.monthly-demo/v1"),
-  metadata: z.object({
-    kind: z.literal("synthetic"),
-    horizon: z.literal(2),
-    supported_periods: z.array(period).min(1),
-  }),
-  history: z.array(countSchema.extend({ municipality_code: municipalityCode, year_month: period })),
-  geography: z
-    .array(z.object({ municipality_code: municipalityCode, municipality_name: z.string().min(1) }))
-    .min(1),
-  model: z.object({
-    schema: z.literal("sat-dengue.logistic-inference/v1"),
-    classes: z.tuple([z.literal(0), z.literal(1)]),
-    coef: z.tuple([z.array(z.number()).min(1)]),
-    intercept: z.tuple([z.number()]),
-    mean: z.array(z.number()),
-    std: z.array(z.number().positive()),
-    spec: z.object({
-      family: z.literal("logistic_onset"),
-      version: z.literal("v1"),
-      config_json: z.string(),
-    }),
-  }),
+const resultSchema = z.object({
+  code,
+  name: z.string().min(1),
+  cases: z.number().int().nonnegative().nullable(),
+  zone: z.enum(["EXITO", "SEGURIDAD", "ALERTA", "EXCESO"]).nullable(),
+  p75t2: z.number().nonnegative().nullable(),
+  probability: z.number().min(0).max(1).nullable(),
+  reason: z
+    .enum([
+      "missing_upload",
+      "missing_dengue",
+      "missing_grave",
+      "missing_climate",
+      "missing_history",
+      "excess_at_origin",
+    ])
+    .nullable(),
 });
-const configSchema = z.object({
-  predictors: z.array(z.string()).min(1),
-  preparation: z.object({
-    zone_encoding: z.literal("fixed_onehot"),
-    zone_columns: z.array(z.string()).length(4),
-    matrix_columns: z.array(z.string()),
-    log1p_columns: z.array(z.string()),
-    scaling: z.literal("standard_train"),
-    imputation: z.literal("none"),
-    variables_g: z.literal(false),
-  }),
+const rankingSchema = z.object({
+  experiment_id: z.string().min(1),
+  model_version: z.string().min(1),
+  history_mode: retrospective,
+  reference_period: period,
+  target_period: period,
+  sample: z.boolean(),
+  rows: z.array(resultSchema).length(76),
 });
-type Package = z.infer<typeof packageSchema> & { config: z.infer<typeof configSchema> };
-const MODEL_PATH = "/demo/logistica-t2.json";
-const INVALID_MODEL = "El modelo logístico T+2 es incompatible o está alterado.";
-let defaultPackage: Promise<Package> | undefined;
+
+type Count = { code: string; dengue: number | null; grave: number | null };
 export type Upload = {
   total: number;
   rejected: number;
+  excluded: number;
   confirmed: number;
-  last: string;
-  counts: Map<string, number>;
+  zeros: number;
+  period: string;
+  reasons: Record<string, number>;
+  rows: Count[];
 };
-export type Result = {
-  code: string;
-  name: string;
-  probability: number | null;
-  cases: number | null;
-  zone: string | null;
-  p75t2: number | null;
-};
+export type Ranking = z.infer<typeof rankingSchema>;
+export type InferenceStatus = z.infer<typeof statusSchema>;
 
-export function parseFile(buffer: ArrayBuffer): Upload {
-  const book = XLSX.read(new Uint8Array(buffer), { type: "array", cellDates: true, raw: true });
-  const rows = XLSX.utils.sheet_to_json<Row>(book.Sheets[book.SheetNames[0]!]!, { defval: "" });
-  if (!rows.length) throw Error("El archivo no contiene filas.");
-  const headers = Object.keys(rows[0]!).map((s) => s.toLowerCase());
+export async function getInferenceStatus(): Promise<InferenceStatus> {
+  const { apiBaseUrl } = getDashboardConfig();
+  const response = await fetch(`${apiBaseUrl}${ENDPOINT}`, {
+    cache: "no-store",
+    signal: AbortSignal.timeout(5000),
+  });
+  if (!response.ok) throw Error(MODEL_UNAVAILABLE);
+  return statusSchema.parse(await response.json());
+}
+
+export async function requestRanking(
+  upload: Upload,
+  sample: boolean,
+  signal: AbortSignal,
+): Promise<Ranking> {
+  const { apiBaseUrl } = getDashboardConfig();
+  const response = await fetch(`${apiBaseUrl}${ENDPOINT}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ period: upload.period, rows: upload.rows, sample }),
+    signal: AbortSignal.any([signal, AbortSignal.timeout(15000)]),
+    cache: "no-store",
+  }).catch(() => {
+    throw Error(MODEL_UNAVAILABLE);
+  });
+  if (!response.ok) {
+    if (response.status === 422) {
+      const error = z
+        .object({ message: z.string() })
+        .safeParse(await response.json().catch(() => null));
+      if (error.success) throw Error(error.data.message);
+    }
+    throw Error(MODEL_UNAVAILABLE);
+  }
+  const result = rankingSchema.safeParse(await response.json().catch(() => null));
   if (
-    !["ini_sin", "confirmados"].every((s) => headers.includes(s)) ||
-    !(
-      headers.includes("municipality_code") ||
-      ["cod_dpto_r", "cod_mun_r"].every((s) => headers.includes(s))
-    )
-  )
-    throw Error("Faltan INI_SIN, confirmados o códigos de residencia.");
-  let rejected = 0,
-    confirmed = 0,
-    last = "";
-  const counts = new Map<string, number>();
-  for (const raw of rows) {
-    const r = Object.fromEntries(Object.entries(raw).map(([k, v]) => [k.toLowerCase(), v]));
-    const codePart = (v: unknown, n: number) =>
-      /^\d+$/.test(String(v).trim()) ? String(v).trim().padStart(n, "0") : "";
-    const code = r["municipality_code"]
-      ? codePart(r["municipality_code"], 5)
-      : codePart(r["cod_dpto_r"], 2) + codePart(r["cod_mun_r"], 3);
-    const d = r["ini_sin"];
-    let date =
-      d instanceof Date && !Number.isNaN(d.getTime())
-        ? d.toISOString().slice(0, 10)
-        : (String(d).trim().split(" ")[0] ?? "");
-    const match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(date);
-    if (match) date = `${match[3]}-${match[2]!.padStart(2, "0")}-${match[1]!.padStart(2, "0")}`;
-    const parsed = /^\d{4}-\d{2}-\d{2}$/.test(date) ? new Date(`${date}T00:00:00Z`) : null;
-    const value = String(r["confirmados"]).trim();
+    !result.success ||
+    result.data.reference_period !== upload.period ||
+    result.data.sample !== sample
+  ) {
+    throw Error("La respuesta de inferencia no corresponde a la carga.");
+  }
+  return result.data;
+}
+
+const text = (value: unknown) => String(value ?? "").trim();
+
+function codePart(value: unknown, length: number) {
+  const digits = text(value);
+  return /^[0-9]+$/.test(digits) && digits.length <= length ? digits.padStart(length, "0") : "";
+}
+
+function month(value: unknown): string {
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? "" : value.toISOString().slice(0, 7);
+  }
+  const raw = text(value);
+  const iso = /^(\d{4})-(\d{2})-(\d{2})(?:[ T].+)?$/.exec(raw);
+  const local = /^(\d{1,2})\/(\d{1,2})\/(\d{4})(?: .+)?$/.exec(raw);
+  const parts = iso ? [iso[1], iso[2], iso[3]] : local ? [local[3], local[2], local[1]] : [];
+  const [year, monthNumber, day] = parts.map(Number);
+  if (!year || !monthNumber || !day || year < 1900) return "";
+  const date = new Date(Date.UTC(year, monthNumber - 1, day));
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== monthNumber - 1 ||
+    date.getUTCDate() !== day
+  ) {
+    return "";
+  }
+  return date.toISOString().slice(0, 7);
+}
+
+function event(value: string): "dengue" | "grave" | null {
+  switch (value.toUpperCase()) {
+    case "210":
+    case "DENGUE":
+      return "dengue";
+    case "220":
+    case "DENGUE GRAVE":
+      return "grave";
+    default:
+      return null;
+  }
+}
+
+function checkWorkbookSize(buffer: ArrayBuffer) {
+  const zip = new DataView(buffer);
+  for (let end = zip.byteLength - 22; end >= Math.max(0, zip.byteLength - 65557); end--) {
     if (
-      !/^(50|73)\d{3}$/.test(code) ||
-      !parsed ||
-      Number.isNaN(parsed.getTime()) ||
-      parsed.toISOString().slice(0, 10) !== date ||
-      !["0", "1"].includes(value)
-    ) {
-      rejected++;
+      zip.getUint32(end, true) !== 0x06054b50 ||
+      end + 22 + zip.getUint16(end + 20, true) !== zip.byteLength
+    )
+      continue;
+    const entries = zip.getUint16(end + 10, true);
+    let offset = zip.getUint32(end + 16, true);
+    let expanded = 0;
+    if (entries > 512 || offset + zip.getUint32(end + 12, true) !== end) break;
+    for (let i = 0; i < entries; i++) {
+      if (offset + 46 > end || zip.getUint32(offset, true) !== 0x02014b50) {
+        throw Error("El archivo no es un Excel (.xlsx) válido.");
+      }
+      expanded += zip.getUint32(offset + 24, true);
+      if (expanded > 32 * 1024 * 1024) throw Error("El contenido expandido de Excel supera 32 MB.");
+      offset +=
+        46 +
+        zip.getUint16(offset + 28, true) +
+        zip.getUint16(offset + 30, true) +
+        zip.getUint16(offset + 32, true);
+    }
+    if (offset === end && entries) return;
+    break;
+  }
+  throw Error("El archivo no es un Excel (.xlsx) válido.");
+}
+
+function readRows(buffer: ArrayBuffer, filename: string): unknown[][] {
+  const csv = /\.csv$/i.test(filename);
+  if (!csv && !/\.xlsx$/i.test(filename)) throw Error("Selecciona un CSV o un Excel (.xlsx).");
+  if (!buffer.byteLength || buffer.byteLength > MAX_BYTES) {
+    throw Error("El archivo debe contener datos y pesar como máximo 5 MB.");
+  }
+  if (!csv) checkWorkbookSize(buffer);
+  let workbook: XLSX.WorkBook;
+  try {
+    const bytes = new Uint8Array(buffer);
+    const input = csv ? new TextDecoder("utf-8", { fatal: true }).decode(bytes) : bytes;
+    workbook = XLSX.read(input, {
+      type: csv ? "string" : "array",
+      cellDates: true,
+      cellFormula: false,
+      raw: true,
+      sheetRows: MAX_ROWS + 2,
+    });
+  } catch {
+    throw Error("No se pudo leer el archivo. Usa CSV UTF-8 o Excel (.xlsx).");
+  }
+  const sheets = workbook.SheetNames.map((name) => workbook.Sheets[name]).filter(
+    (sheet) => sheet?.["!ref"],
+  );
+  if (sheets.length !== 1) throw Error("El archivo debe contener una sola hoja con datos.");
+  const sheet = sheets[0]!;
+  const range = XLSX.utils.decode_range(sheet["!fullref"] || sheet["!ref"]!);
+  if (range.e.r - range.s.r > MAX_ROWS || range.e.c - range.s.c >= 256) {
+    throw Error("El archivo admite hasta 100 000 filas y 256 columnas.");
+  }
+  return XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1, defval: "", blankrows: false });
+}
+
+export function parseFile(
+  buffer: ArrayBuffer,
+  filename: string,
+  municipalities?: ReadonlySet<string>,
+): Upload {
+  const [header, ...rows] = readRows(buffer, filename);
+  if (!header || !rows.length) throw Error("El archivo no contiene filas.");
+  const columns = header.map((cell) => text(cell).toLowerCase());
+  const named = columns.filter(Boolean);
+  if (new Set(named).size !== named.length)
+    throw Error("El archivo contiene encabezados repetidos.");
+  const pos = (name: string) => columns.indexOf(name);
+  if (
+    pos("ini_sin") < 0 ||
+    pos("confirmados") < 0 ||
+    (pos("municipality_code") < 0 && (pos("cod_dpto_r") < 0 || pos("cod_mun_r") < 0))
+  )
+    throw Error("Faltan INI_SIN, confirmados o los códigos de residencia.");
+  const [dateCol, valueCol, codeCol, depCol, muniCol, eventCol, labelCol] = [
+    "ini_sin",
+    "confirmados",
+    "municipality_code",
+    "cod_dpto_r",
+    "cod_mun_r",
+    "cod_eve",
+    "nombre_evento",
+  ].map(pos) as [number, number, number, number, number, number, number];
+
+  const periods = new Set<string>();
+  const counts = new Map<string, Count>();
+  const reasons: Record<string, number> = {};
+  let confirmed = 0,
+    rejected = 0,
+    excluded = 0,
+    zeros = 0;
+  function reject(reason: string) {
+    rejected++;
+    reasons[reason] = (reasons[reason] ?? 0) + 1;
+  }
+  for (const row of rows) {
+    const full = codePart(row[codeCol], 5);
+    const department = codePart(row[depCol], 2);
+    const muni = codePart(row[muniCol], 3);
+    const split = department && muni ? department + muni : "";
+    const municipality = full || split;
+    if (!municipality || (text(row[codeCol]) && !full) || (full && split && full !== split)) {
+      reject("Código DIVIPOLA inválido");
       continue;
     }
-    const month = date.slice(0, 7);
-    last = month > last ? month : last;
-    const key = `${code}:${month}`;
-    counts.set(key, (counts.get(key) ?? 0) + Number(value));
-    if (value === "1") confirmed++;
+    if (!/^(50|73)/.test(municipality)) {
+      excluded++;
+      continue;
+    }
+    if (municipalities && !municipalities.has(municipality)) {
+      reject("Código DIVIPOLA inválido");
+      continue;
+    }
+    const t = month(row[dateCol]);
+    const value = text(row[valueCol]);
+    const rawEvent = text(row[eventCol]);
+    const rawLabel = text(row[labelCol]);
+    const fromCode = event(rawEvent);
+    const fromLabel = event(rawLabel);
+    const kind = rawEvent || rawLabel ? (fromCode ?? fromLabel) : "dengue";
+    if (!t) {
+      reject("Fecha INI_SIN inválida");
+    } else if (value !== "0" && value !== "1") {
+      reject("Confirmados debe ser 0 o 1");
+    } else if (
+      !kind ||
+      (rawEvent && !fromCode) ||
+      (rawLabel && !fromLabel) ||
+      (fromCode && fromLabel && fromCode !== fromLabel)
+    ) {
+      reject("Evento inválido o contradictorio");
+    } else {
+      const count = counts.get(municipality) ?? { code: municipality, dengue: null, grave: null };
+      count[kind] = (count[kind] ?? 0) + Number(value);
+      counts.set(municipality, count);
+      periods.add(t);
+      if (value === "0") zeros++;
+      else confirmed++;
+    }
   }
-  return { total: rows.length, rejected, confirmed, last, counts };
-}
-
-export async function loadPackage(text: string): Promise<Package> {
-  const start = '{"payload":';
-  const end = text.lastIndexOf(',"sha256":');
-  if (!text.startsWith(start) || end < 0) throw Error(INVALID_MODEL);
-  if (!globalThis.crypto?.subtle)
-    throw Error("Abre el tablero por HTTPS o localhost para verificar el modelo logístico T+2.");
-  const digest = await globalThis.crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(text.slice(start.length, end)),
-  );
-  const actual = Array.from(new Uint8Array(digest), (n) => n.toString(16).padStart(2, "0")).join(
-    "",
-  );
-  try {
-    const doc = JSON.parse(text);
-    if (actual !== doc.sha256) throw Error(INVALID_MODEL);
-    const pkg = packageSchema.parse(doc.payload);
-    const config = configSchema.parse(JSON.parse(pkg.model.spec.config_json));
-    const { predictors, preparation } = config;
-    const columns = predictors.flatMap((name) =>
-      name === "zona_canal_t" ? preparation.zone_columns : [name],
-    );
-    if (
-      new Set(columns).size !== columns.length ||
-      columns.length !== preparation.matrix_columns.length ||
-      columns.some((name, i) => name !== preparation.matrix_columns[i]) ||
-      [pkg.model.coef[0], pkg.model.mean, pkg.model.std].some((v) => v.length !== columns.length)
-    )
-      throw Error(INVALID_MODEL);
-    return { ...pkg, config };
-  } catch {
-    throw Error(INVALID_MODEL);
-  }
-}
-
-export function loadDefaultPackage(): Promise<Package> {
-  defaultPackage ??= fetch(MODEL_PATH, { cache: "no-store", signal: AbortSignal.timeout(10_000) })
-    .then(async (response) => {
-      if (!response.ok) throw Error();
-      return response.text();
-    })
-    .catch(() => {
-      throw Error("No se pudo cargar el modelo logístico T+2. Vuelve a intentar el cálculo.");
-    })
-    .then(loadPackage)
-    .catch((error: unknown) => {
-      defaultPackage = undefined;
-      throw error;
-    });
-  return defaultPackage;
-}
-
-function shift(month: string, n: number): string {
-  const [y, m] = month.split("-").map(Number);
-  const d = new Date(Date.UTC(y!, m! - 1 + n, 1));
-  return d.toISOString().slice(0, 7);
-}
-function quantile(values: number[], q: number): number {
-  const a = [...values].sort((x, y) => x - y);
-  const i = (a.length - 1) * q,
-    k = Math.floor(i);
-  return a[k]! + (i - k) * (a[Math.ceil(i)]! - a[k]!);
-}
-export function rank(pkg: Package, upload: Upload): Result[] {
-  if (!upload.last) throw Error("El archivo no contiene filas válidas para calcular T+2.");
-  const periods = pkg.metadata.supported_periods;
-  if (!periods.includes(upload.last))
-    throw Error(`El modelo logístico T+2 admite estos meses de referencia: ${periods.join(", ")}.`);
-  const history = new Map<string, Count>(
-    pkg.history.map((r) => [`${r.municipality_code}:${r.year_month}`, r]),
-  );
-  for (const [key, count] of upload.counts)
-    history.set(key, {
-      dengue_notifications_count: count,
-      dengue_grave_notifications_count: 0,
-      total_notifications_count: count,
-    });
-  const { model, config } = pkg;
-  const prep = config.preparation;
-  return pkg.geography
-    .map(({ municipality_code: code, municipality_name: name }) => {
-      try {
-        const get = (m: string): Count => {
-          const v = history.get(`${code}:${m}`);
-          if (!v) throw Error("Historia insuficiente");
-          return v;
-        };
-        const h5 = (period: string) =>
-          Array.from(
-            { length: 5 },
-            (_, i) =>
-              get(`${Number(period.slice(0, 4)) - 5 + i}${period.slice(4)}`)
-                .dengue_notifications_count,
-          );
-        const current = get(upload.last),
-          c = h5(upload.last),
-          p25 = quantile(c, 0.25),
-          p50 = quantile(c, 0.5),
-          p75 = quantile(c, 0.75),
-          n = current.dengue_notifications_count;
-        const f: Record<string, number | string> = {
-          ...current,
-          p25_canal_t: p25,
-          p50_canal_t: p50,
-          p75_canal_t: p75,
-          zona_canal_t: n < p25 ? "EXITO" : n <= p50 ? "SEGURIDAD" : n <= p75 ? "ALERTA" : "EXCESO",
-          month_of_year: Number(upload.last.slice(5)),
-        };
-        for (const key of [
-          "dengue_notifications_count",
-          "dengue_grave_notifications_count",
-          "total_notifications_count",
-        ] as const)
-          for (const lag of [1, 2, 3, 12])
-            f[`${key}_lag${lag}`] = get(shift(upload.last, -lag))[key];
-        for (const h of [1, 2]) {
-          const values = h5(shift(upload.last, h));
-          f[`p25_h5_t${h}`] = quantile(values, 0.25);
-          f[`p75_h5_t${h}`] = quantile(values, 0.75);
-        }
-        const matrix: number[] = [];
-        for (const key of config.predictors) {
-          const value = f[key];
-          if (key === "zona_canal_t")
-            matrix.push(
-              ...prep.zone_columns.map((col) => Number(col === `zona_canal_t__${value}`)),
-            );
-          else {
-            if (typeof value !== "number" || !Number.isFinite(value))
-              throw Error("Variable ausente");
-            matrix.push(prep.log1p_columns.includes(key) ? Math.log1p(Math.max(0, value)) : value);
-          }
-        }
-        const score = matrix.reduce(
-          (sum, x, i) => sum + (model.coef[0][i]! * (x - model.mean[i]!)) / model.std[i]!,
-          model.intercept[0],
-        );
-        if (!Number.isFinite(score)) throw Error("Resultado inválido");
-        return {
-          code,
-          name,
-          cases: n,
-          zone: String(f["zona_canal_t"]),
-          p75t2: Number(f["p75_h5_t2"]),
-          probability:
-            score >= 0 ? 1 / (1 + Math.exp(-score)) : Math.exp(score) / (1 + Math.exp(score)),
-        };
-      } catch {
-        return {
-          code,
-          name,
-          probability: null,
-          cases: history.get(`${code}:${upload.last}`)?.dengue_notifications_count ?? null,
-          zone: null,
-          p75t2: null,
-        };
-      }
-    })
-    .sort((a, b) => (b.probability ?? -1) - (a.probability ?? -1) || a.code.localeCompare(b.code));
+  if (periods.size > 1) throw Error("Carga un archivo con un solo mes de referencia.");
+  return {
+    total: rows.length,
+    confirmed,
+    rejected,
+    excluded,
+    zeros,
+    reasons,
+    period: periods.values().next().value ?? "",
+    rows: [...counts.values()],
+  };
 }

@@ -2,8 +2,9 @@
 
 Interfaz del sistema de alerta temprana de dengue para Tolima y Meta. Presenta
 los resultados de evaluación que publica la API del mismo repositorio. La
-[carga de demostración](../../docs/operations/inferencia-sintetica.md) calcula
-un ranking T+2 en el navegador con un modelo logístico sintético preajustado.
+[carga de demostración](../../docs/operations/inferencia-sintetica.md) valida el
+archivo en el navegador y consulta `/api/inferencia/t2` en la misma API. El
+tablero muestra el ranking retrospectivo calculado por el ajuste EXP314.
 
 Para el sistema completo, su despliegue y su operación, ver el
 [README de la raíz](../../README.md).
@@ -49,7 +50,8 @@ de degradar silenciosamente a un valor cualquiera.
 Desde la raíz del repositorio, levantar primero la API:
 
 ```sh
-uvicorn sat_api.main:app --app-dir app/api --reload
+python -m pip install -r app/api/requirements.txt
+PYTHONPATH="$PWD/pipeline/src" python -m uvicorn sat_api.main:app --app-dir app/api --reload
 ```
 
 Y en otra terminal el tablero, apuntando el proxy a esa API:
@@ -63,7 +65,7 @@ API_PROXY_TARGET=http://127.0.0.1:8000 bun run dev
 Para levantar las dos piezas juntas tal como corren en la instancia:
 
 ```sh
-docker compose -f docker/docker-compose.yml --env-file .env up -d --build
+docker compose -f docker/docker-compose.yml --env-file .env up -d --build --remove-orphans
 ```
 
 ## Cómo habla con la API

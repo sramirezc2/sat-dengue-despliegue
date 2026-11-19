@@ -79,6 +79,8 @@ class Configuracion:
     segundos_espera_s3: int
     exponer_docs: bool
     segundos_cache: int
+    directorio_inferencia: Path | None = None
+    huella_inferencia: str = ""
 
     @property
     def usa_almacenamiento_remoto(self) -> bool:
@@ -89,6 +91,7 @@ class Configuracion:
 @lru_cache
 def obtener_configuracion() -> Configuracion:
     """Resolver la configuracion del proceso una sola vez."""
+    directorio_inferencia = _texto("INFERENCE_DIR", "")
     return Configuracion(
         nombre_servicio=_texto("NOMBRE_SERVICIO", "sat-dengue-api"),
         entorno=_texto("ENTORNO", "local"),
@@ -102,4 +105,6 @@ def obtener_configuracion() -> Configuracion:
         segundos_espera_s3=_entero_positivo("ESPERA_S3_SEGUNDOS", "20"),
         exponer_docs=_booleano("EXPONER_DOCS", "true"),
         segundos_cache=_entero_positivo("CACHE_SEGUNDOS", "300"),
+        directorio_inferencia=Path(directorio_inferencia) if directorio_inferencia else None,
+        huella_inferencia=_texto("INFERENCE_MANIFEST_SHA256", ""),
     )

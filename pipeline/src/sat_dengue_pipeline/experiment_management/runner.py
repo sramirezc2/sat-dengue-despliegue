@@ -18,6 +18,7 @@ from sat_dengue_pipeline.raw.serialization import load_canonical
 from .certification import CertificationError, load_certified_recipe, verify_consumed
 from .configuration import load_configuration
 from .evidence import publish
+from .inference_export import validate_export_configuration, verified_inference_digest
 from .registry import Registry, confined, identifier, registry_lock
 from .tracking import ExperimentTracker
 
@@ -57,7 +58,9 @@ def code_identity(root: Path) -> dict:
     }
 
 
-def acquire_and_build(root: Path, config: dict, workspace: Path) -> tuple:
+def acquire_and_build(
+    root: Path, config: dict, workspace: Path, *, cache: str = "data/01_raw/experiments"
+) -> tuple:
     """Adquirir release fijado y reconstruir, sin aceptar tablas derivadas externas."""
     if config["data"]["mode"] == "synthetic":
         from .synthetic import acceptance_bundle, scientific_acceptance_bundle
@@ -76,7 +79,7 @@ def acquire_and_build(root: Path, config: dict, workspace: Path) -> tuple:
             {
                 "acquisition": {
                     "manifest": settings["manifest"].removeprefix("pipeline/"),
-                    "cache": "data/01_raw/experiments",
+                    "cache": cache,
                     "require_private": settings["require_private"],
                 }
             },
@@ -139,6 +142,7 @@ class RegisteredExecution:
     scientific_records: list = field(default_factory=list)
     gate: str = "initialization"
     finalized: bool = False
+    export_inference: bool = False
 
     def __deepcopy__(self, memo: dict) -> "RegisteredExecution":
         """Conservar la sesión propietaria al cruzar MemoryDataset, sin duplicar SQLite."""
@@ -151,6 +155,7 @@ def begin_execution(
     root: Path | None = None,
     execution_id: str | None = None,
     tracking: bool = True,
+    export_inference: bool = False,
 ) -> RegisteredExecution:
     """Reservar identidad/registro/evidencia una vez, antes de cualquier etapa científica."""
     root = root or project_root().parent
@@ -161,6 +166,8 @@ def begin_execution(
         entry = registry.get(experiment_id, approved=True)
         config = load_configuration(root, entry)
         registry.assert_identity(entry)
+        if export_inference:
+            validate_export_configuration(config)
         relative = f"docs/evidence/experiments/{experiment_id}/{execution_id}"
         folder = confined(root, relative, "docs/evidence/experiments", exists=False)
         folder.parent.mkdir(parents=True, exist_ok=True)
@@ -204,6 +211,7 @@ def begin_execution(
         utc_now(),
         ExperimentTracker(root / "pipeline", tracking),
         tags,
+        export_inference=export_inference,
     )
     try:
         session.parent = session.tracker.start(tags)
@@ -233,8 +241,9 @@ def advance(session: RegisteredExecution, *, stage: str) -> RegisteredExecution:
     session.gate = stage
     try:
         if stage == "acquisition_canonical_build":
+            cache = {"cache": "data/01_raw/inbox"} if session.export_inference else {}
             bundle, artifact, audit, table, schema, canonical = acquire_and_build(
-                session.root, session.config, session.workspace
+                session.root, session.config, session.workspace, **cache
             )
             table = rolling_protocol.filtrar_poblacion(table, session.config)
             session.lineage.update(
@@ -280,6 +289,8 @@ def advance(session: RegisteredExecution, *, stage: str) -> RegisteredExecution:
             function = getattr(engine, stage)
             for run in session.runs.values():
                 function(run)
+            if stage == "evaluate" and session.export_inference:
+                session.lineage["inference_model_sha256"] = verified_inference_digest(session)
     except BaseException as error:
         finish_execution(session, error)
     return session
