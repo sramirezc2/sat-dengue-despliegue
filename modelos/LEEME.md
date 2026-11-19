@@ -8,11 +8,33 @@ logística con variables climáticas, en el horizonte T+2, congelada.
 | `model.json` | El estado predictivo completo: receta, 33 predictores en orden, 36 columnas de matriz, coeficientes, intercepto, medias y desviaciones del escalado, dtypes, y las huellas del conjunto con el que se ajustó |
 | `manifest.json` | Contrato, `sha256` del artefacto y huella del estado efectivo |
 
-**Huella del artefacto:**
-`7830c6cbb8d5b4f3bd5798440d1766953bb274ae5723015ff450c384fc9320d3`
+## Dos huellas, y cuál identifica al modelo
 
-Esa huella no es decorativa: la certificación N=3 del 14 de noviembre ajustó el
-modelo tres veces en procesos aislados y los tres dieron exactamente este valor
+El artefacto trae dos, y conviene no confundirlas:
+
+- **`effective_state_sha256` es la identidad del modelo.** Resume el estado
+  predictivo: coeficientes, intercepto, medias, desviaciones, tipos de entrada y
+  parámetros nativos del estimador. Dos ajustes con este valor igual son el mismo
+  modelo.
+- **`artifact_sha256` es la identidad del sobre.** Es el sha256 de los bytes del
+  archivo, que además del estado incluye la **procedencia del código**: commit,
+  huella del árbol fuente y del archivo de bloqueo. Cambia con cada commit del
+  repositorio, aunque el modelo sea idéntico.
+
+Esto no es teoría. El 19 de noviembre se materializó el modelo en dos máquinas
+x86 distintas: las dos dieron `effective_state_sha256`
+`d59ce5af5c001352da1aa2e81b9d5d51cef4db0e701de2aaf65d6fbaec64ed2f` —el mismo
+modelo— y **dos `artifact_sha256` diferentes**, porque cada una partía de un
+commit distinto de la rama.
+
+Por eso, para comprobar que un artefacto es el modelo que describe el informe, lo
+que se compara es el estado efectivo y las tres huellas de entrenamiento, no el
+sha256 del archivo.
+
+La certificación N=3 del 14 de noviembre ajustó el modelo tres veces en procesos
+aislados en una máquina `arm64` y las tres dieron
+`artifact_sha256 = 7830c6cbb8d5b4f3bd5798440d1766953bb274ae5723015ff450c384fc9320d3`
+y `effective_state_sha256 = 845312c753e2bf312b592bcc1fb48b706220d96203b190fc21c2ffe39eac37ea`
 ([recibo](../docs/evidence/risk-2025/20261114-r7-final-e1d3946f0f.json)).
 
 ## Qué modelo es
@@ -75,13 +97,16 @@ artefacto registra —`training_keys_sha256`, `training_matrix_sha256` y
 mismas 7 596 filas, el mismo corte en 2024-09 y la misma receta. Lo que entra al
 ajuste es bit a bit lo mismo.
 
-**Los coeficientes no.** El estado efectivo dio
-`d59ce5af5c001352da1aa2e81b9d5d51cef4db0e701de2aaf65d6fbaec64ed2f` en lugar de
-`845312c753e2bf312b592bcc1fb48b706220d96203b190fc21c2ffe39eac37ea`. La
-diferencia entre las dos corridas es la máquina: el recibo de la certificación
-declara `arm64` con Python 3.12.13, y la segunda corrida fue x86-64 con 3.12.14.
-Una regresión logística ajustada con `lbfgs` sobre implementaciones distintas de
-BLAS converge a valores que difieren en los últimos bits.
+**Los coeficientes no.** El estado efectivo dio `d59ce5af…` en lugar de
+`845312c7…`. La diferencia entre las corridas es la máquina: el recibo de la
+certificación declara `arm64` con Python 3.12.13, y las dos corridas del 19 de
+noviembre fueron x86-64. Una regresión logística ajustada con `lbfgs` sobre
+implementaciones distintas de BLAS converge a valores que difieren en los
+últimos bits.
+
+Que **dos** máquinas x86 independientes hayan llegado al mismo `d59ce5af…` es lo
+que permite afirmar que se trata de la arquitectura y no de azar ni de un estado
+corrupto: dentro de una familia de máquina el ajuste sí es reproducible.
 
 Conviene no confundir dos cosas que esto deja separadas:
 
@@ -93,10 +118,10 @@ Conviene no confundir dos cosas que esto deja separadas:
   protege contra un ajuste accidental o un estado corrupto. No demuestra, ni
   pretendía demostrar, que dos máquinas distintas lleguen al mismo estado.
 
-Por eso una materialización en otra arquitectura que dé un SHA distinto **no es
-señal de que algo esté mal**, siempre que las tres huellas de entrenamiento
-coincidan. Si alguna de esas tres se moviera, entonces sí cambió lo que entra al
-modelo y hay que averiguar qué antes de usarlo.
+Por eso una materialización que dé un `artifact_sha256` distinto **no es señal
+de que algo esté mal**, siempre que las tres huellas de entrenamiento coincidan.
+Si alguna de esas tres se moviera, entonces sí cambió lo que entra al modelo y
+hay que averiguar qué antes de usarlo.
 
 ## Requisitos de ejecución
 
@@ -115,8 +140,8 @@ uv run --locked --directory pipeline kedro run --pipeline risk_2025_publication 
 ```
 
 Después se copian `model.json` y `manifest.json` a `modelos/logistica-conclima-t2/`.
-Lo que hay que comprobar primero son las tres huellas de entrenamiento; el
-`sha256` del artefacto coincidirá con el de arriba solo en la misma arquitectura,
-por lo que explica la sección anterior. El procedimiento completo, con sus
+Lo que hay que comprobar son las tres huellas de entrenamiento y el estado
+efectivo; el `artifact_sha256` cambiará con el commit y con la arquitectura, por
+lo que explica la sección anterior. El procedimiento completo, con sus
 compuertas, está en
 [operación de la publicación 2025](../docs/operations/risk-2025.md).
