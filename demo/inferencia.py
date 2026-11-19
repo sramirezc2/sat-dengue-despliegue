@@ -9,14 +9,19 @@ from pathlib import Path
 from xml.etree.ElementTree import ParseError
 from zipfile import BadZipFile, ZipFile
 
+import numpy as np
 import pandas as pd
 from openpyxl.utils.exceptions import InvalidFileException
 from sat_dengue_pipeline.domain.calendar import add_months
 from sat_dengue_pipeline.domain.canonical import CLIMATE, COUNTS, KEYS, PREDICTORS
 from sat_dengue_pipeline.domain.endemic_channel import CHANNEL, classify_endemic_zone
 from sat_dengue_pipeline.experiment_management.evidence import verify_execution
-from sat_dengue_pipeline.experiments.decisions import apply_sigmoid
-from sat_dengue_pipeline.models.logistic import predict_exported
+from sat_dengue_pipeline.models.adapters import AdapterSpec
+from sat_dengue_pipeline.models.logistic import (
+    LogisticOnsetAdapter,
+    canonical_json,
+    validate_state_version,
+)
 from sat_dengue_pipeline.raw.temporal import parse_date
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -108,8 +113,8 @@ def parse_upload(data: bytes, suffix: str, cities: pd.Index) -> tuple[str, pd.Da
         raise ValueError("El archivo necesita encabezados y al menos una notificación.")
     frame.columns = frame.iloc[0].str.strip().str.lower()
     frame = frame.iloc[1:].copy()
-    if not frame.columns.is_unique or not {"ini_sin", "confirmados"} <= set(frame):
-        raise ValueError("Se requieren encabezados únicos, INI_SIN y Confirmados.")
+    if not frame.columns.is_unique or "ini_sin" not in frame:
+        raise ValueError("Se requieren encabezados únicos e INI_SIN.")
     if {"cod_dpto_r", "cod_mun_r"} <= set(frame):
         dep, mun = frame.cod_dpto_r.str.strip(), frame.cod_mun_r.str.strip()
         if not (dep.str.fullmatch(r"[0-9]{1,2}") & mun.str.fullmatch(r"[0-9]{1,3}")).all():
@@ -128,11 +133,8 @@ def parse_upload(data: bytes, suffix: str, cities: pd.Index) -> tuple[str, pd.Da
     if rows.empty or not code[scoped].isin(cities).all():
         raise ValueError("Revise los códigos municipales de Meta y Tolima.")
     days = rows.ini_sin.map(parse_date)
-    flags = rows.confirmados.str.strip()
-    if days.isna().any() or not flags.isin(["0", "1"]).all():
-        raise ValueError(
-            "Hay fechas INI_SIN inválidas o valores de Confirmados distintos de 0 y 1."
-        )
+    if days.isna().any():
+        raise ValueError("Hay fechas INI_SIN inválidas.")
     months = days.map(lambda d: d.isoformat()[:7]).unique()
     if len(months) != 1:
         raise ValueError("Cargue un solo mes de inicio de síntomas.")
@@ -146,17 +148,38 @@ def parse_upload(data: bytes, suffix: str, cities: pd.Index) -> tuple[str, pd.Da
             ):
                 raise ValueError("Revise el evento de dengue (210) o dengue grave (220).")
             event = parsed
-    counts = flags.astype(int).groupby([code[scoped], event]).sum().unstack()
+    counts = rows.groupby([code[scoped], event]).size().unstack()
     counts = counts.reindex(columns=["210", "220"]).rename(
         columns={"210": "dengue", "220": "grave"}
     )
     summary = {
         "Filas": len(frame),
-        "Confirmados": int(flags.astype(int).sum()),
+        "Notificaciones": len(rows),
         "Municipios": len(counts),
         "Fuera de Meta y Tolima": int((~scoped).sum()),
     }
     return months[0], counts, summary
+
+
+def linear_score(features: pd.DataFrame, state: dict) -> pd.Series:
+    """Calcular el margen lineal con la preparación y el escalado congelados."""
+    validate_state_version(state)
+    spec = AdapterSpec(
+        "logistic_onset", "v1", canonical_json(state["adapter"]).decode(), state["seed"]
+    )
+    matrix = LogisticOnsetAdapter(spec).matrix(features)
+    coef, mean, std = (np.asarray(state[key], dtype=float) for key in ("coef", "mean", "std"))
+    intercept = float(state["intercept"])
+    if (
+        any(v.shape != (matrix.shape[1],) or not np.isfinite(v).all() for v in (coef, mean, std))
+        or (std <= 0).any()
+        or not np.isfinite(intercept)
+    ):
+        raise ValueError("Coeficientes o escalado del modelo exportado inválidos")
+    scores = ((matrix - mean) / std) @ coef + intercept
+    if not np.isfinite(scores).all():
+        raise ValueError("Puntuación logística no finita")
+    return pd.Series(scores, index=features.index)
 
 
 def ranking(model: Model, month: str, counts: pd.DataFrame, cities: pd.Series) -> pd.DataFrame:
@@ -177,26 +200,25 @@ def ranking(model: Model, month: str, counts: pd.DataFrame, cities: pd.Series) -
         dtype="str",
     )
     ready = features.notna().all(axis=1) & features.zona_canal_t.ne("EXCESO")
-    probability = pd.Series(float("nan"), index=cities.index)
+    scores = pd.Series(float("nan"), index=cities.index)
     if ready.any():
-        values = predict_exported(features.loc[ready], model.state)
-        if model.decisions["representation"] == "sigmoid":
-            values = apply_sigmoid(values, **model.decisions["calibrator"])
-        probability.loc[ready] = values
+        scores.loc[ready] = linear_score(features.loc[ready], model.state)
     status = pd.Series("Historia incompleta", index=cities.index)
     status.loc[features[CLIMATE].isna().any(axis=1)] = "Clima incompleto"
     status.loc[features.zona_canal_t.eq("EXCESO")] = "Exceso en el mes de origen"
     status.loc[features[COUNTS[0]].isna()] = "Sin conteo de dengue"
     status.loc[~cities.index.isin(counts.index)] = "Sin datos en la carga"
-    status.loc[ready] = "Bajo el umbral"
-    status.loc[probability.ge(model.decisions["threshold"])] = "Alcanza el umbral"
+    status.loc[ready] = "Disponible"
     result = pd.DataFrame(
         {
             "Municipio": cities,
-            "Casos": features[COUNTS[0]],
+            "Notificaciones": features[COUNTS[0]],
+            "Fuente dengue grave": pd.Series("Contexto histórico", index=cities.index).mask(
+                counts.grave.reindex(cities.index).notna(), "Archivo"
+            ),
             "Zona en T": features.zona_canal_t,
-            "Probabilidad T+2": probability,
+            "Puntuación T+2": scores,
             "Resultado": status,
         }
     )
-    return result.sort_values(["Probabilidad T+2", "Municipio"], ascending=[False, True])
+    return result.sort_values(["Puntuación T+2", "Municipio"], ascending=[False, True])

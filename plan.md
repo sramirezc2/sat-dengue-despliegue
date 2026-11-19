@@ -1079,3 +1079,13 @@ Chromium cubrió CSV, Excel fuera de cobertura, muestra y los 76 polígonos. Una
 copia privada alterada del contexto fue rechazada. Tras la corrida se reforzó
 la comprobación previa de columnas derivadas para otras recetas; el ajuste de
 EXP315 se conserva con la identidad de código que figura en su recibo.
+
+
+La demo cuenta cada fila aceptada como notificación, independientemente de
+`Confirmados`, y presenta la procedencia del conteo de dengue grave. La
+reproducción de una predicción histórica exige una carga completa de la misma
+fuente y mes. La evaluación de EXP315 y su evidencia permanecen congeladas.
+
+La demo presenta el margen lineal como puntuación relativa T+2, sin aplicar
+calibración ni umbral a los resultados mostrados. La evaluación histórica conserva
+sus métricas y su política experimental originales.

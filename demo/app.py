@@ -10,7 +10,7 @@ import streamlit as st
 from inferencia import ROOT, geography, load_model, parse_upload, ranking
 from sat_dengue_pipeline.domain.calendar import add_months
 
-COLORS = {"Alcanza el umbral": "#b45309", "Bajo el umbral": "#18765e"}
+COLORS = ("#d6ece5", "#87c6ad", "#338d72", "#155d4b")
 GRAY = "#d3dce1"
 st.set_page_config(page_title="SAT Dengue · Inferencia T+2", layout="wide")
 
@@ -23,6 +23,7 @@ def normalized(name: str) -> str:
 def maps(result: pd.DataFrame) -> None:
     """Colorear los polígonos del tablero por resultado del mismo ranking."""
     boundaries = json.loads((ROOT / "app/dashboard/src/lib/municipal-boundaries.json").read_bytes())
+    ranks = result["Puntuación T+2"].rank(method="average", pct=True)
     for department, prefix in [("Tolima", "73"), ("Meta", "50")]:
         rows = result[result.index.str.startswith(prefix)]
         lookup = {normalized(row["Municipio"]): row for _, row in rows.iterrows()}
@@ -38,22 +39,24 @@ def maps(result: pd.DataFrame) -> None:
         )
         for area in boundaries[department.lower()]:
             row = lookup[normalized(area["name"])]
-            status, p = row["Resultado"], row["Probabilidad T+2"]
+            status, p = row["Resultado"], row["Puntuación T+2"]
+            code = row.name
+            color = COLORS[min(int(ranks[code] * 4), 3)] if pd.notna(p) else GRAY
             polygon = ET.SubElement(
                 svg,
                 "path",
                 {
                     "d": area["path"],
-                    "fill": COLORS.get(status, GRAY),
+                    "fill": color,
                     "fill-rule": "evenodd",
                     "stroke": "#ffffff",
                     "stroke-width": "1.7",
                 },
             )
-            risk = f" · {p:.1%}" if pd.notna(p) else ""
+            risk = f" · puntuación {p:.3f}" if pd.notna(p) else ""
             ET.SubElement(polygon, "title").text = f"{area['name']}{risk} · {status}"
         st.iframe(ET.tostring(svg, encoding="unicode"), height="content")
-    st.caption("Ámbar · Alcanza el umbral   /   Verde · Bajo el umbral   /   Gris · Sin estimación")
+    st.caption("Verde claro a oscuro · menor a mayor puntuación relativa / Gris · Sin estimación")
 
 
 def choose(source: str) -> None:
@@ -66,7 +69,7 @@ def choose(source: str) -> None:
 def main() -> None:
     """Cargar una entrada, revisar su resumen y ejecutar inferencia bajo demanda."""
     st.title("Inferencia municipal de dengue")
-    st.write("Meta y Tolima · Probabilidad de inicio de exceso en el mes T+2")
+    st.write("Meta y Tolima · Puntuación de inicio de exceso en el mes T+2")
     try:
         model = load_model()
     except (OSError, ValueError, KeyError):
@@ -93,7 +96,7 @@ def main() -> None:
             key="upload",
             max_upload_size=5,
             on_change=lambda: st.session_state.pop("ranking", None),
-            help="INI_SIN, Confirmados (0 o 1) y código municipal. COD_EVE distingue 210 y 220.",
+            help="INI_SIN y código municipal. COD_EVE distingue 210 y 220.",
         )
         if upload is None:
             return
@@ -128,20 +131,20 @@ def main() -> None:
         st.warning("El mes está fuera de la cobertura verificada de clima e historia.")
         return
     st.caption(
-        "Casos = suma de Confirmados. Si falta el conteo grave, se usa el del release "
-        "para ese municipio y mes. El entrenamiento utilizó notificaciones por evento."
+        "Cada fila es una notificación. El conteo grave se toma del contexto histórico "
+        "si el archivo no contiene ese evento para el municipio."
     )
     if st.button("Calcular ranking T+2", type="primary"):
         st.session_state.ranking = ranking(model, month, counts, cities)
     if "ranking" not in st.session_state:
         return
     result = st.session_state.ranking
-    eligible = result.loc[result["Probabilidad T+2"].notna()].copy()
+    eligible = result.loc[result["Puntuación T+2"].notna()].copy()
     st.divider()
     st.subheader(f"Priorización para {add_months(month, 2)}")
-    threshold = model.decisions["threshold"]
     st.caption(
-        f"{len(eligible)} municipios con inferencia · Umbral experimental {threshold:.1%}. "
+        f"{len(eligible)} municipios con puntuación. "
+        "Un valor mayor indica mayor prioridad relativa. "
         "El evento es el paso de un mes sin exceso (T+1) a uno con exceso (T+2)."
     )
     far = next(
@@ -159,31 +162,31 @@ def main() -> None:
         if eligible.empty:
             st.info("Ningún municipio de la carga cumple las condiciones del modelo.")
         else:
-            eligible["Riesgo T+2 (%)"] = eligible.pop("Probabilidad T+2") * 100
             st.dataframe(
                 eligible.rename_axis("DIVIPOLA"),
                 column_order=[
                     "Municipio",
-                    "Casos",
+                    "Notificaciones",
+                    "Fuente dengue grave",
                     "Zona en T",
-                    "Riesgo T+2 (%)",
+                    "Puntuación T+2",
                     "Resultado",
                 ],
-                column_config={"Riesgo T+2 (%)": st.column_config.NumberColumn(format="%.2f")},
+                column_config={"Puntuación T+2": st.column_config.NumberColumn(format="%.2f")},
                 width="stretch",
             )
         with st.expander("Municipios sin estimación"):
             st.dataframe(
                 result.loc[
-                    result["Probabilidad T+2"].isna(),
-                    ["Municipio", "Casos", "Resultado"],
+                    result["Puntuación T+2"].isna(),
+                    ["Municipio", "Notificaciones", "Resultado"],
                 ],
                 width="stretch",
             )
     with right:
         maps(result)
     st.caption(
-        f"Ejecución {model.execution} · Umbral para demostración histórica. "
+        f"Ejecución {model.execution} · Demostración histórica. "
         "La emisión de alertas operativas requiere validación prospectiva."
     )
 

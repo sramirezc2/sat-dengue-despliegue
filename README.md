@@ -22,7 +22,7 @@ Abra **http://127.0.0.1:8501**. Pulse **Cargar muestra dummy** y después **Calc
 También puede elegir **Subir archivo** para procesar un mes en CSV o Excel. La demo funciona
 de forma independiente de los servicios de API y dashboard.
 
-El archivo requiere `INI_SIN` y `Confirmados` (0 o 1). Para el municipio se prefiere el par de
+El archivo requiere `INI_SIN` y una fila por notificación. Para el municipio se prefiere el par de
 residencia `COD_DPTO_R` y `COD_MUN_R`. También se admite `municipality_code` o `cod_DPTO_O`
 cuando contiene el DIVIPOLA municipal completo de **cinco dígitos**. El código debe representar
 el municipio al que se atribuye el conteo. En archivos con códigos de residencia y ocurrencia
@@ -33,14 +33,16 @@ estimación. Si falta el conteo de dengue grave, se usa el valor del contexto hi
 Se aceptan fechas ISO o día/mes/año y una sola hoja de Excel. Los archivos subidos se procesan
 en memoria.
 
-**Qué significa el resultado.** Para municipios sin exceso en T, la tabla ordena la probabilidad
-de pasar de ausencia de exceso en T+1 a exceso en T+2. La zona al origen se recalcula con
+**Qué significa el resultado.** Para municipios sin exceso en T, la tabla ordena la puntuación
+relativa de inicio de exceso en T+2. Un valor mayor indica mayor prioridad relativa.
+La puntuación es el margen lineal del modelo y no representa una probabilidad. La zona al origen se recalcula con
 los casos cargados. El clima, los rezagos y los percentiles proceden del municipio y mes del
-canónico verificado. El color compara la probabilidad con el umbral congelado del experimento.
+canónico verificado. El color representa la posición relativa de la puntuación en el ranking.
 El gris incluye municipios en exceso, sin datos en la carga o con predictores incompletos.
-La demo suma confirmados, mientras que la fuente de entrenamiento cuenta notificaciones
-por evento. La equivalencia de esos conteos y la disponibilidad real del clima al cierre
-del mes requieren verificación antes de usar el ranking para alertas operativas.
+La demo cuenta todas las notificaciones aceptadas, sin filtrar por `Confirmados`, como el
+productor canónico. Para reproducir un resultado histórico, la carga debe representar el
+mismo conjunto completo de notificaciones del municipio y mes. La disponibilidad real del
+clima al cierre del mes requiere verificación antes de usar el ranking para alertas operativas.
 
 **Cómo se obtiene el paquete.** La ejecución aprobada de EXP315 usa el release privado
 `satd-raw-173d5856`. Para una nueva identidad aprobada con la misma preparación,
