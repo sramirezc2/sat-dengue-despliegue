@@ -13,9 +13,7 @@ logística con variables climáticas, en el horizonte T+2, congelada.
 
 Esa huella no es decorativa: la certificación N=3 del 14 de noviembre ajustó el
 modelo tres veces en procesos aislados y los tres dieron exactamente este valor
-([recibo](../docs/evidence/risk-2025/20261114-r7-final-e1d3946f0f.json)). Si una
-materialización futura diera otra, algo cambió y hay que averiguar qué antes de
-usarla.
+([recibo](../docs/evidence/risk-2025/20261114-r7-final-e1d3946f0f.json)).
 
 ## Qué modelo es
 
@@ -65,6 +63,41 @@ receta, huella de la receta, procedimiento, procedencia, lista de predictores,
 columnas de matriz, corte temporal, número de ajustes, versión o parámetros
 nativos del estimador, o la huella del estado efectivo.
 
+## Qué reproduce y qué no
+
+El 19 de noviembre se volvió a materializar el modelo en otra máquina, y conviene
+dejar escrito lo que se encontró, porque acota lo que el proyecto puede afirmar
+sobre su propia reproducibilidad.
+
+**Los datos de entrenamiento reprodujeron exactamente.** Las tres huellas que el
+artefacto registra —`training_keys_sha256`, `training_matrix_sha256` y
+`training_labels_sha256`— salieron idénticas a las de la certificación, con las
+mismas 7 596 filas, el mismo corte en 2024-09 y la misma receta. Lo que entra al
+ajuste es bit a bit lo mismo.
+
+**Los coeficientes no.** El estado efectivo dio
+`d59ce5af5c001352da1aa2e81b9d5d51cef4db0e701de2aaf65d6fbaec64ed2f` en lugar de
+`845312c753e2bf312b592bcc1fb48b706220d96203b190fc21c2ffe39eac37ea`. La
+diferencia entre las dos corridas es la máquina: el recibo de la certificación
+declara `arm64` con Python 3.12.13, y la segunda corrida fue x86-64 con 3.12.14.
+Una regresión logística ajustada con `lbfgs` sobre implementaciones distintas de
+BLAS converge a valores que difieren en los últimos bits.
+
+Conviene no confundir dos cosas que esto deja separadas:
+
+- **El artefacto es portable.** `load_artifact` compara el sha256 de los bytes
+  del archivo; no reajusta nada. El `model.json` versionado aquí carga y puntúa
+  igual en cualquier máquina, porque puntuar es un producto matriz-vector.
+- **El ajuste no es reproducible bit a bit entre arquitecturas.** La
+  certificación N=3 demuestra determinismo dentro de una máquina, que es lo que
+  protege contra un ajuste accidental o un estado corrupto. No demuestra, ni
+  pretendía demostrar, que dos máquinas distintas lleguen al mismo estado.
+
+Por eso una materialización en otra arquitectura que dé un SHA distinto **no es
+señal de que algo esté mal**, siempre que las tres huellas de entrenamiento
+coincidan. Si alguna de esas tres se moviera, entonces sí cambió lo que entra al
+modelo y hay que averiguar qué antes de usarlo.
+
 ## Requisitos de ejecución
 
 Son 36 coeficientes: el modelo cabe en memoria sin esfuerzo, no necesita GPU y
@@ -81,7 +114,9 @@ uv run --locked --directory pipeline kedro run --pipeline risk_2025_publication 
     --params 'risk_2025.mode=materialize,risk_2025.artifact_directory=data/risk-2025/materializacion'
 ```
 
-Después se copian `model.json` y `manifest.json` a `modelos/logistica-conclima-t2/`
-y se comprueba que el `sha256` del manifiesto es el de arriba. El procedimiento
-completo, con sus compuertas, está en
+Después se copian `model.json` y `manifest.json` a `modelos/logistica-conclima-t2/`.
+Lo que hay que comprobar primero son las tres huellas de entrenamiento; el
+`sha256` del artefacto coincidirá con el de arriba solo en la misma arquitectura,
+por lo que explica la sección anterior. El procedimiento completo, con sus
+compuertas, está en
 [operación de la publicación 2025](../docs/operations/risk-2025.md).
