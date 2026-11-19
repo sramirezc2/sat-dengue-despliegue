@@ -9,6 +9,7 @@ node_modules/
 .output/
 .wrangler/
 .tanstack/
+.serena/
 
 # Configuracion local
 .env
