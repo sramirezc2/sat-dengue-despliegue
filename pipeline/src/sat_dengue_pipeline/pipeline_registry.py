@@ -16,6 +16,9 @@ from sat_dengue_pipeline.pipelines.factory_validation.pipeline import (
     create_pipeline as factory_validation,
 )
 from sat_dengue_pipeline.pipelines.retroanalisis import create_pipeline as retroanalisis
+from sat_dengue_pipeline.pipelines.risk_2025_publication import (
+    create_pipeline as risk_publication,
+)
 from sat_dengue_pipeline.pipelines.synthetic.pipeline import create_pipeline
 
 
@@ -36,4 +39,5 @@ def register_pipelines() -> dict[str, Pipeline]:
         "experiment_run": experiment_run(),
         "experiment_run_export_t2": experiment_run(export_inference=True),
         "retroanalisis": retroanalisis(),
+        "risk_2025_publication": risk_publication(),
     }

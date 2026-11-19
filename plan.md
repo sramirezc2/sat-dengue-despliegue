@@ -1,12 +1,12 @@
 # Hoja de ruta de implementación — Pipeline E2E SAT DENGUE
 
-**Versión:** 1.8
+**Versión:** 1.11
 **Fecha de creación:** 7 de noviembre de 2026
-**Estado del alcance actual:** etapas documental y funcional COMPLETAS como implementación bajo contrato propuesto; agregación entre semillas COMPLETA como implementación propuesta; auditoría final FAIL histórica preservada; AUD-01/AUD-02/AUD-03 corregidos y verificados técnicamente, sin aprobación científica
+**Estado del alcance actual:** R1–R7 COMPLETAS; validación local real PASS bajo decisiones A–E intactas. Registros anteriores conservados como historia.
 **Último corte histórico T1–T27:** 26/27; T27 BLOQUEADA en su registro previo, sin reauditar sus gates en este alcance
 **Repositorio definitivo:** `sramirezc2/sat-dengue-despliegue`
-**Rama del alcance actual:** `feature/contrato-cientifico-fabrica-final`, creada desde `origin/main@a324f3c7f141b0ec53582b461cf6586643c5b569`
-**Entrega actual:** un PR nuevo con etapa documental y posterior etapa funcional en la misma rama; PR #1 ya fusionado
+**Rama del alcance actual:** `feature/dashboard-2025-risk-ranking`, desde `origin/main@a9c2c1abac386053b2e78f072bdb44e0141f4045`
+**Entrega actual:** registro/discovery corregidos, gates de software PASS, modelo real certificado N=3 y edición local 2025-log-climate-v1 publicada. Sin acciones remotas.
 
 El [PR #1](https://github.com/sramirezc2/sat-dengue-despliegue/pull/1) está
 fusionado y `main` actualizado ya contiene la fábrica. No hay dependencia de un
@@ -1054,28 +1054,174 @@ independiente, aprobación global, confirmación y N=3 finalista siguen pendient
 Solo se escriben informe y plan; sin correcciones, datos reales, uso de 2025 para
 ajustar la regla, campeón, commit/push o merge por esta auditoría.
 
-## Demo local Streamlit · EXP315
 
-En `feature/demo-streamlit` se autoriza la repetición técnica EXP315 de la logística
-con clima T+2 de Meta y Tolima. El alcance comprende exportación verificable del ajuste,
-contexto municipal anterior a 2025, carga mensual en memoria, ranking y mapa en Streamlit.
-La autorización del usuario corresponde a la ejecución técnica. El veredicto científico
-y la habilitación de alertas con insumos disponibles en tiempo real son decisiones posteriores.
-La evidencia de cada ejecución se consulta en el registro de experimentos.
+## 11. Prioridades retrospectivas 2025 — alcance autorizado
 
-Ejecución `1e0fbf2385b44da99f90ee4bd99d2ea2`. Kedro completó las diez etapas en
-479,3 s con un ajuste y paridad de probabilidades brutas a tolerancia absoluta de
-`1e-12`. La demo aplica la representación original y el umbral congelado de 0,025.
-Tras el embargo hay 13 meses de origen, de octubre de 2023 a octubre de 2024.
-En la evaluación histórica hubo 65 detecciones entre 66 inicios y 289 falsas
-alarmas entre 354 señales. La tolerancia FAR de la receta se aplicó en selección de
-umbral; la evaluación posterior arrojó 81,6 %. El registro queda pendiente de
-conclusión humana. [Inventario de la corrida](docs/evidence/experiments/EXP315/1e0fbf2385b44da99f90ee4bd99d2ea2/inventory.json).
+Decisión A–E aprobada explícitamente en el chat el 2026-11-13, registrada en
+[decisión de cierre](docs/decisions/2025-risk-publication.md). SHA inicial:
+`a9c2c1abac386053b2e78f072bdb44e0141f4045`; rama limpia al comenzar.
+No se crea experimento ni se cambia el registro científico.
 
-Verificación local. Pasaron las 843 pruebas del pipeline con uv y las 10 de la
-demo, las 35 de la API y las 55 del tablero. Se verificaron Ruff, lock, build del
-tablero, inventario experimental y los 49 archivos protegidos. La prueba de
-Chromium cubrió CSV, Excel fuera de cobertura, muestra y los 76 polígonos. Una
-copia privada alterada del contexto fue rechazada. Tras la corrida se reforzó
-la comprobación previa de columnas derivadas para otras recetas; el ajuste de
-EXP315 se conserva con la identidad de código que figura en su recibo.
+| Tarea | Estado | Condición de salida |
+|---|---|---|
+| R1 Decisión y autorización | COMPLETA | A–E registradas; receta por hash y corte lógico fijados. |
+| R2 Artefacto e inferencia temporal | COMPLETA | Persistencia fiel; ajuste hasta 2024-09, disponible hasta 2024-10; carga/publicación sin fit ni etiquetas. |
+| R3 Ranking y presupuesto | COMPLETA | Ocho globales, 76 registros, empates deterministas y fallos explícitos. |
+| R4 Contrato y publicación | COMPLETA | JSON Schema/Pydantic/Zod, transacción existente y edición real inmutable validada. |
+| R5 API y dashboard | COMPLETA | Solo lectura; respuesta real consumida por React, T+2 inicial y filtros sin reasignación. |
+| R6 Pruebas focalizadas y documentación | COMPLETA | Centinelas, digest resuelto sin cambiar expectativas y preservación normal/-O PASS. |
+| R7 Validación intensiva y real | COMPLETA | Software 878/54/73 PASS; dos intensivos PASS; N=3 real idéntico; congelado COMMITTED; doce meses con 76 municipios y ocho seleccionados. |
+
+Solo se utilizan rutas y entornos de este worktree. No hay autorización remota.
+El cierre local de R7 se acredita en el recibo final enlazado al final de esta
+sección; los registros previos se conservan sin atribuirles esa validación.
+
+### Registro inicial de implementación — histórico
+
+Operación y límites en [guía única](docs/operations/risk-2025.md). La publicación
+ordinaria exige activación de hashes certificados; no existe todavía artefacto
+real ni paquete nuevo publicado. N=3 real, cinco fuentes sintéticas E2E intensivo,
+suites completas, builds, checkout limpio y comprobación del producto con paquete
+real están diferidos. El centinela histórico de digest sintético falla también
+al ejecutar el productor del SHA base en el entorno Python disponible: ambos
+producen `8270c862…`, frente al esperado `26cc6895…`. No se modifica esa evidencia
+ni se declara aprobado el gate; queda por diagnosticar en el entorno bloqueado.
+
+Verificación local proporcional, sin ejecutar R7:
+
+- `PYTHONPATH=pipeline/src python3 -m pytest pipeline/tests/test_risk_2025.py
+  -m 'not intensive' -o addopts='' -q`: 31 aprobadas; después se añadió el test de
+  activación y se ejecutó junto con el import aislado (`-k 'activation or
+  outcome_builders'`): 2 aprobadas. Son 32 centinelas pequeños distintos verdes.
+- API: `test_risk_ranking.py` y la prueba S3 de no aplanar prioridades: 19 verdes.
+  Cuatro regresiones focalizadas del servicio (GET, cache, salud, OpenAPI): verdes.
+- Dashboard: `risk-ranking.test.tsx`: 17 verdes y un E2E de respuesta real omitido
+  explícitamente; prueba de enrutamiento: verde. ESLint focalizado: verde.
+- Preservación: verificador normal y `python -O`, 22 JSON/digest esperado,
+  49 protecciones originales y 127 adicionales: verdes. Pruebas del verificador
+  y herramientas privadas focalizadas: verdes, sin acceder a fuentes privadas.
+- Productores/puente/publicador previos: siete centinelas verdes; uno de digest
+  histórico falla como se describe arriba. Comparación directa del productor
+  base/actual: tablas y esquemas exactos e idéntico digest `8270c862…`.
+- Ruff sobre Python cambiado del pipeline y nuevos módulos API: verde con la
+  instalación disponible (no sustituye `uv sync --locked` ni el gate final).
+  Python 3.12.11, pytest 9.1.1, Ruff 0.17.0, jsonschema 4.26.0: esas versiones
+  de herramientas difieren del lock del pipeline. Sin builds ni suites completas.
+
+Pendiente por R7: resolver o clasificar formalmente la discrepancia heredada en
+el entorno bloqueado, E2E sintético intensivo y guard de futuro completo,
+materialización real, N=3 real, publicación real y verificación del producto con
+su edición. No hay hashes N=3 nuevos ni municipios reales publicados por este cambio.
+
+
+### Reanudación autorizada R7 — 14 de noviembre de 2026
+
+Inicio limpio en `70719f746183f31ef440b1711b31b4dcb710fae2`, rama esperada,
+siete commits sobre `origin/main@a9c2c1a`. EXP006 sin procesos activos; únicamente
+presencia booleana de HF_TOKEN comprobada. Ningún cambio en A–E, EXP004/EXP006
+ni evidencia cerrada. Entornos pipeline/API propios de este worktree.
+
+Corrección E2E: salida explícita MemoryDataset y recibo por `catalog.load`, seis
+nodos intactos; API con su intérprete separado. Dos intensivos PASS (139,58 s):
+tres materializaciones artificiales, freeze, certificación, publicación, API y
+consumo React; fit y etiquetas prohibidos en modo congelado.
+
+Digest resuelto con causa comprobada: PyArrow opcional cambiaba únicamente el
+dtype de `in_epi_coverage` de `boolean` a `bool[pyarrow]`. Filas/valores idénticos.
+El cast explícito restaura los bytes históricos; no cambia el hash esperado.
+`origin/main` en clon limpio y rama con uv.lock producen `26cc6895…` y `4ca14c3c…`,
+también Python normal/-O. El mismo host con PyArrow reproduce ambos hashes tras
+la corrección y al controlar `string_storage=python` sin cambios de código.
+[Evidencia agregada](docs/evidence/risk-2025/20261114-recovery.json).
+
+Carga congelada: permitir un commit descendiente solo con idénticos hashes de
+código científico/JSON, lock y crudos, conservando el SHA original de ajuste.
+Esto permite los commits finales documentales sin invalidar el modelo; cualquier
+cambio científico sigue bloqueando. CI prepara API y Bun para ejecutar el E2E
+completo; no omite pruebas ni nodos. Gates completos y datos reales aún pendientes.
+
+
+### Terminal R7 — BLOCKED, 14 de noviembre de 2026
+
+[Evidencia agregada](docs/evidence/risk-2025/20261114-validation-blocked.json),
+sobre `9f0ff00`, árbol limpio al iniciar los gates. Una ejecución completa:
+pipeline **877 PASS / 1 FAIL**, 878 casos sin omisiones (493,32 s de pytest;
+495,594 s del comando; pico RSS hijo 1.658.306.560 bytes). El único fallo es
+`tests/test_synthetic.py:30`: su conjunto cerrado esperado no incluye el pipeline
+registrado `risk_2025_publication`. Además, `find_pipelines` avisa que su paquete
+no exporta `create_pipeline`. No se aplican más correcciones tras este gate fallido,
+por la condición explícita de parada del usuario.
+
+Ambos intensivos pasan también dentro de esa suite. API **54 PASS**, tablero
+**73 PASS**, sin fallos ni skips; instalación congelada, lint y build PASS. Lock,
+sync, Ruff, JSON Schema/Pydantic/Zod (incluidos en suites), registro, preservación
+normal/-O, enlaces nuevos/anclas, patrones de secretos, tamaños, imports, diff y
+clones limpios de main/rama con digest normal/-O PASS. Los enlaces históricos
+sin cambios quedan fuera del gate de enlaces nuevos; no se reescribe historia.
+
+Los 22 JSON conservan exactamente el digest
+`4d3ddd3890a6a622b658fc2b1ef0159d0da6bc855cacc2c5b62854290623e16e`;
+receta y 127 archivos de preservación extendida intactos. Logs/XML/recursos
+operacionales se conservan bajo `pipeline/data/risk-2025/validation/20261114-680a80bc3c/`.
+No hay acceso/descarga privada para ejecución científica, materialización real,
+N=3 real, certificado activado, edición nueva ni validación real de API/tablero
+en esta ejecución. No se hacen declaraciones científicas de 2025.
+
+Acción mínima recomendada para una reanudación autorizada: actualizar el conjunto
+esperado sin relajar su igualdad, comprobar los seis nodos y entradas/salidas
+del pipeline nuevo y exportar `create_pipeline` para discovery. Ejecutar primero
+esa regresión; repetir la suite completa tendría una causa concreta: la
+corrección de este fallo. Solo tras todos los gates verdes, continuar con datos
+reales, N=3 y publicación. R7 no está completa; sin acciones remotas.
+
+
+### Reanudación acotada de registro/discovery — 14 de noviembre de 2026
+
+Inicio limpio en `d399e4fb797148f3420a9092844eac8c8ab3195f`; HF_TOKEN presente
+(comprobación booleana exclusivamente). Corrección autorizada de tres archivos
+en `a6a4024`: paquete exporta create_pipeline/__all__, registro usa su interfaz
+pública, prueba conserva comprobaciones previas y valida discovery, seis nodos
+y params:risk_2025 → risk_receipt. Discovery 1, focalizadas 33, intensivas 2 PASS
+en ese orden, Ruff y diff PASS.
+
+Una ejecución del gate completo: 878 pipeline PASS (488,89 s), 54 API y 73 tablero
+sin omisiones; frozen install, lint, build, lock/sync, Ruff, contratos, registro
+y preservación normal/-O PASS. Los 22 JSON conservan su digest. Evidencia
+operacional en `pipeline/data/risk-2025/validation/20261114-e1d3946f0f/`.
+Se reanuda R7 real bajo A–E intactas, sin ejecutar EXP004/EXP006 ni acciones remotas.
+
+### Cierre local R7 — PASS, 14 de noviembre de 2026
+
+[Recibo final](docs/evidence/risk-2025/20261114-r7-final-e1d3946f0f.json).
+Código validado y usado para ajuste: `a6a40245b6eab7f8883f1b4b4567354bfed353b4`.
+Una suite completa: 878 pipeline, 54 API y 73 tablero PASS, sin omisiones;
+discovery 1, focalizadas 33 y dos intensivos PASS. Lock/sync, Ruff, contratos,
+registro, instalación congelada, lint/build y preservación normal/-O PASS.
+Checkout temporal limpio: discovery y digest histórico PASS, preservación normal/-O PASS.
+
+Los cinco archivos ausentes se adquirieron dentro del grafo y se verificaron
+contra el manifiesto aprobado. Materialización real: 7596 filas autorizadas,
+un fit, objetivo máximo 2024-09 y disponibilidad máxima 2024-10. N=3 en tres
+procesos/directorios independientes: artefacto, estado, configuración, linaje
+y manifiesto que compromete los doce documentos idénticos. Certificado activado
+solo después de PASS. Publicación ordinaria COMMITTED con el mismo hash de paquete;
+guard de ejecución confirmó cero fit y cero llamadas al constructor de etiquetas.
+
+Edición local `datos/resultados/risk-ranking/2025-log-climate-v1`: enero–diciembre
+de 2025, solo T+2, 76 municipios (29 Meta/47 Tolima) y ocho seleccionados globales
+por mes. Ineligibles explícitos; filtros sin reposición. API valida los doce
+documentos; HTTP directo/proxy y componente React con respuesta real PASS.
+No se transportan probabilidades, umbrales ni desenlaces de 2025. Los 22 JSON
+históricos y evidencias cerradas permanecen intactos.
+
+Duraciones reales: materialización 880,277 s; N=3 2094,749 s; publicación congelada
+643,713 s. Pico RSS observado máximo 2.471.657.472 bytes; versiones, comandos,
+hashes completos y doce archivos en el recibo. Modelos, crudos, edición y recibos
+operacionales permanecen fuera de Git, en rutas propias de este worktree.
+
+Limitación de validación: navegador automatizado indisponible; se verificaron
+render DOM/accesibilidad de React con respuesta real y transporte HTTP local,
+sin afirmar inspección visual de navegador. 2025 fue previamente consumido: no
+es confirmación independiente ni evaluación de desempeño; uso operativo no
+autorizado y champion no seleccionado. Revisión/CI remota y despliegue requieren
+autorización posterior; no se hicieron push, PR ni merge.

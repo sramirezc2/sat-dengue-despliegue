@@ -768,3 +768,11 @@ T21 añadió exactamente cuatro skills canónicas bajo `.agents/skills/`:
 `sat-dengue-verification` y `sat-dengue-recovery`. Su catálogo es la entrada de
 descubrimiento; ninguna skill concede aprobación científica, secretos, push,
 publicación o merge.
+
+## Publicación 2025 desde un modelo congelado
+
+El pipeline `risk_2025_publication` reutiliza adquisición, productores y publicador.
+Sus modos de materialización y publicación congelada, comandos, pins, corte
+temporal y recuperación están en la [guía única](../docs/operations/risk-2025.md).
+No altera el canónico de desarrollo ni inicia un experimento. La fase intensiva
+y real permanece diferida mientras EXP006 esté activo.

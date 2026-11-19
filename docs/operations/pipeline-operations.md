@@ -516,3 +516,10 @@ autorización de publicación; el cierre local no autoriza merge.
 La publicación posterior autorizada y la primera CI del código operacional constan
 en el [recibo T26](../evidence/task26/publication-validation.json). Cada cierre
 documental requiere verificar nuevamente su HEAD; `plan.md` controla el estado.
+
+## Operación de prioridades 2025
+
+La [guía de prioridades](risk-2025.md) es la fuente única para materializar,
+certificar, activar pins, repetir una publicación congelada y recuperar fallos.
+Sus recibos son operacionales en `pipeline/data/risk-2025/`; no se escriben en
+evidencia cerrada. No ejecutar la fase intensiva hasta confirmar fin de EXP006.

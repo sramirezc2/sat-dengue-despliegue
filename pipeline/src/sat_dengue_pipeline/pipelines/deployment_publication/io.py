@@ -181,6 +181,13 @@ def promote(validated: ValidatedStage, schema: dict) -> dict:
             target = _safe_path(destination / name)
             existed[name] = target.exists()
             if target.exists():
+                if schema.get("$id") == "satd-risk-ranking-v1" and (
+                    not target.is_file()
+                    or target.read_bytes() != (stage.root / "new" / name).read_bytes()
+                ):
+                    raise PublicationTransactionError(
+                        "Edición inmutable: bytes existentes distintos"
+                    )
                 if not target.is_file():
                     raise PublicationTransactionError("Nombre ocupado por un directorio")
                 backup = stage.root / "old" / name

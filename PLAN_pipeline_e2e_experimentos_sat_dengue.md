@@ -2,14 +2,14 @@
 
 **Plan interno:** `PLAN_pipeline_e2e_experimentos_sat_dengue`
 
-**Versión de diseño:** 7.5 — evaluación integrada bajo contrato propuesto en PR #3
+**Versión de diseño:** 7.6 — extensión de prioridades retrospectivas 2025 autorizada A–E
 
-**Fase actual:** corrección del contrato propuesto en una rama nueva desde
-`main@a324f3c`, que ya contiene la fábrica del PR #1. Un único PR nuevo reunirá
-la etapa documental y su implementación funcional autorizada mediante DEC-036.
-La agregación entre semillas se implementa como propuesta bajo DEC-037;
-la aprobación científica del equipo sigue pendiente. `plan.md` es la única
-fuente de verdad sobre número, estado, dependencia y avance de las tareas.
+**Fase actual:** implementación autorizada de prioridades retrospectivas 2025 en
+`feature/dashboard-2025-risk-ranking`, desde
+`main@a9c2c1abac386053b2e78f072bdb44e0141f4045`. Decisiones A–E registradas;
+validación intensiva y real diferida por EXP006. El contrato científico global
+sigue como propuesta; esta publicación no selecciona champion. `plan.md` conserva
+el estado vigente y los registros anteriores como historia.
 
 **Nivel de rigor:** deep
 **Razón:** combina migración entre repositorios, datos científicos versionados,
@@ -1397,3 +1397,14 @@ pendientes y sin publicar. Se exige además:
 - [uv: proyectos y lock multiplataforma](https://docs.astral.sh/uv/guides/projects/)
 - [MLflow Tracking](https://mlflow.org/docs/latest/tracking/)
 - [GitHub rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets)
+
+
+## Extensión autorizada de cierre 2025
+
+El alcance actual se ejecuta exclusivamente en `feature/dashboard-2025-risk-ranking`
+desde `a9c2c1abac386053b2e78f072bdb44e0141f4045`.
+[Decisión A–E](docs/decisions/2025-risk-publication.md) y
+[arquitectura, operación y contratos](docs/operations/risk-2025.md).
+No se reinterpreta evidencia científica ni se abre otro experimento.
+El estado vigente está en la sección 11 de `plan.md`; las validaciones reales
+e intensivas esperan confirmación de término de EXP006.

@@ -1,0 +1,5 @@
+# Contexto operacional compartido exclusivamente por el runner secuencial.
+# Evitar copias profundas que perderían las etapas y hashes del recibo.
+risk_context:
+  type: MemoryDataset
+  copy_mode: assign

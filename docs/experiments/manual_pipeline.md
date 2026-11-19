@@ -74,3 +74,11 @@ Compare científicamente solo experimentos con población, periodos, evento y da
 Para repetir `EXP003`, prepare **EXP004** con un ID y aprobación nuevos. Declare si busca repetir exactamente la receta o estudiar un cambio concreto; conserve `EXP003` y toda su evidencia. Si la corrida falla o queda bloqueada, use `$sat-dengue-recovery` antes de reintentar. No borre recibos, desbloquee a ciegas ni vuelva a usar un ID ejecutado.
 
 **Ejemplo.** El equipo quiere comprobar si añadir clima ayuda. Prepara `EXP003` con dos brazos predeclarados, uno epidemiológico y otro con clima, sobre las mismas observaciones comparables. Un revisor comprueba la receta y el equipo la aprueba. Se ejecuta el comando E2E; la fábrica guarda ambos brazos, los cinco resultados por semilla y la evaluación por horizonte. Otra persona revisa la evidencia y documenta si el clima aportó algo, si el resultado fue inconcluso y qué límites tiene. Una repetición se registra como `EXP004`, sin alterar `EXP003`.
+
+## Prioridades 2025: publicación, no experimento
+
+La configuración logística aprobada se utiliza sin selección nueva ni
+modificación de receta. No registrar EXP007 ni reutilizar artefactos EXP004/EXP006.
+El ajuste único, la inferencia sin etiquetas y los dos modos Kedro se describen
+en la [guía de publicación](../operations/risk-2025.md). Las autorizaciones A–E
+no aprueban globalmente el contrato científico propuesto ni promueven champion.

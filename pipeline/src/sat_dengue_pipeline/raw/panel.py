@@ -16,13 +16,14 @@ from sat_dengue_pipeline.domain.canonical import (
 from sat_dengue_pipeline.domain.temporal import TemporalPolicy, guard_development
 
 from .contract import BuildConfig
+from .coverage import SourceCoverage
 
 
 def canonical_sources(
     geography: pd.DataFrame,
     epidemiology: pd.DataFrame,
     climate: pd.DataFrame,
-    config: BuildConfig,
+    config: SourceCoverage,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Exigir dimensión única y fuentes mensuales únicas sin claves huérfanas."""
     if len(geography) != config.municipalities or geography.municipality_code.duplicated().any():
@@ -38,7 +39,7 @@ def canonical_sources(
     return geography.copy(), epidemiology.copy(), climate.copy()
 
 
-def municipality_month_grid(geography: pd.DataFrame, config: BuildConfig) -> pd.DataFrame:
+def municipality_month_grid(geography: pd.DataFrame, config: SourceCoverage) -> pd.DataFrame:
     """Construir exactamente el producto cartesiano, también para 182.886 claves."""
     if len(geography) != config.municipalities or geography.municipality_code.duplicated().any():
         raise ValueError("Dimensión duplicada o incompleta")
@@ -55,11 +56,26 @@ def canonical_panel(
     sources: tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame], config: BuildConfig
 ) -> tuple[pd.DataFrame, dict[str, Any]]:
     """Construir el producto cartesiano y reutilizar canal/lags/roles de V3."""
+    panel = source_panel(sources, config)
+    # El consumidor científico conserva exactamente sus guards y perfiles.
+    policy = TemporalPolicy(config.reserved_start)
+    for h in (1, 2):
+        origins = panel.loc[panel.year_month.le(add_months(config.end, -h)), KEYS]
+        guard_development(panel[KEYS], origins, (h,), policy)
+    return build_table(panel)
+
+
+def source_panel(
+    sources: tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame], config: SourceCoverage
+) -> pd.DataFrame:
+    """Ensamblar fuentes normalizadas; el consumidor aplica su admisión temporal."""
     geography, epidemiology, climate = canonical_sources(*sources, config)
     grid = municipality_month_grid(geography, config)
     panel = grid.merge(geography, on="municipality_code", validate="many_to_one")
     panel = panel.merge(epidemiology, on=KEYS, how="left", validate="one_to_one")
-    panel["in_epi_coverage"] = panel.year_month.ge(config.epi_start)
+    # Comparar strings usa el backend opcional de pandas (Python o Arrow).
+    # Fijar el booleano nullable histórico evita que esa dependencia cambie el esquema.
+    panel["in_epi_coverage"] = panel.year_month.ge(config.epi_start).astype("boolean")
     for name in COUNTS:
         panel[name] = panel[name].astype("Int64")
         panel.loc[panel.in_epi_coverage, name] = panel.loc[panel.in_epi_coverage, name].fillna(0)
@@ -76,12 +92,7 @@ def canonical_panel(
         panel[name] = panel[name].astype("Int64")
     for name in CLIMATE:
         panel[name] = panel[name].astype("Float64")
-    # Solo claves antes de consultar valores del productor canónico.
-    policy = TemporalPolicy(config.reserved_start)
-    for h in (1, 2):
-        origins = panel.loc[panel.year_month.le(add_months(config.end, -h)), KEYS]
-        guard_development(panel[KEYS], origins, (h,), policy)
-    return build_table(panel)
+    return panel
 
 
 def canonical_validation(

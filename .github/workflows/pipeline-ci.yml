@@ -31,7 +31,7 @@ jobs:
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           elif git diff --name-only "$BASE_SHA...$HEAD_SHA" > /tmp/changed-paths; then
-            if grep -E '^(pipeline/|scripts/construir_resultados\.py$|datos/resultados/|app/api/sat_api/contrato/|app/dashboard/src/lib/dashboard-contract\.ts$|\.github/workflows/pipeline-ci\.yml$)' /tmp/changed-paths; then
+            if grep -E '^(pipeline/|scripts/construir_resultados\.py$|datos/resultados/|app/api/|app/dashboard/|contracts/|\.github/workflows/pipeline-ci\.yml$)' /tmp/changed-paths; then
               echo "changed=true" >> "$GITHUB_OUTPUT"
             else
               echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -57,6 +57,20 @@ jobs:
       - name: Lint pipeline
         if: steps.paths.outputs.changed == 'true'
         run: uv run --directory pipeline ruff check .
+      - uses: actions/setup-node@v7
+        if: steps.paths.outputs.changed == 'true'
+        with:
+          node-version: '22'
+      - uses: oven-sh/setup-bun@v2
+        if: steps.paths.outputs.changed == 'true'
+        with:
+          bun-version: '1.4.4'
+      - name: Prepare API and dashboard for complete E2E
+        if: steps.paths.outputs.changed == 'true'
+        run: |
+          uv venv app/api/.venv --python 3.12
+          uv pip install --python app/api/.venv -r app/api/requirements-dev.txt
+          bun install --frozen-lockfile --cwd app/dashboard
       - name: Test pipeline
         if: steps.paths.outputs.changed == 'true'
         run: uv run --directory pipeline pytest
@@ -112,6 +126,17 @@ jobs:
         env:
           HOMEBREW_NO_AUTO_UPDATE: '1'
         run: brew install libomp
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.4'
+      - name: Prepare API and dashboard for complete E2E
+        run: |
+          uv venv app/api/.venv --python 3.12
+          uv pip install --python app/api/.venv -r app/api/requirements-dev.txt
+          bun install --frozen-lockfile --cwd app/dashboard
       - name: Run locked portability gates
         run: python pipeline/tools/check_portability.py
       - name: Upload small environment receipt

@@ -37,10 +37,17 @@ def test_registry_and_discovery() -> None:
         "experiment_run",
         "experiment_run_export_t2",
         "retroanalisis",
+        "risk_2025_publication",
     }
     assert len(registered["synthetic"].nodes) == 5
     assert registered["synthetic"].inputs() == {"params:synthetic_smoke.years"}
     assert registered["synthetic"].outputs() == {"synthetic_metrics"}
+    discovered = find_pipelines()
+    assert "risk_2025_publication" in discovered
+    for risk in (registered["risk_2025_publication"], discovered["risk_2025_publication"]):
+        assert len(risk.nodes) == 6
+        assert risk.inputs() == {"params:risk_2025"}
+        assert risk.outputs() == {"risk_receipt"}
 
 
 def test_synthetic_fixture_is_deterministic_and_ends_in_2024() -> None:
