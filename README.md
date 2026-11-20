@@ -52,7 +52,8 @@ los municipios de Meta y Tolima sin exceso en el mes de origen se ordena por el 
 del modelo, con empate por código DIVIPOLA, y se priorizan exactamente 8 por mes. Es la regla de
 `risk.inference.prioritize`. Si hay menos de ocho elegibles no se publica el lote. La demo
 muestra la posición, no puntuaciones ni porcentajes. Al cargar el conjunto completo de
-notificaciones de un origen, el orden coincide con el de la publicación retrospectiva. La
+notificaciones de un origen, el orden coincide con el que calcula el procedimiento de
+publicación (`prioritize` sobre `feature_prefix`) para ese origen. La
 disponibilidad real del clima al cierre del mes requiere verificación antes de cualquier uso
 operativo.
 
