@@ -1,75 +1,63 @@
-"""Inferencia mensual con el ajuste de EXP315 y el contexto canónico de su ejecución."""
+"""Inferencia mensual con el modelo congelado del informe (logistica-conclima-t2)."""
 
 import csv
 import hashlib
 import io
 import json
-from dataclasses import dataclass
 from pathlib import Path
 from xml.etree.ElementTree import ParseError
 from zipfile import BadZipFile, ZipFile
 
-import numpy as np
 import pandas as pd
 from openpyxl.utils.exceptions import InvalidFileException
-from sat_dengue_pipeline.domain.calendar import add_months
-from sat_dengue_pipeline.domain.canonical import CLIMATE, COUNTS, KEYS, PREDICTORS
+from sat_dengue_pipeline.domain.canonical import COUNTS, KEYS, PREDICTORS
 from sat_dengue_pipeline.domain.endemic_channel import CHANNEL, classify_endemic_zone
-from sat_dengue_pipeline.experiment_management.evidence import verify_execution
-from sat_dengue_pipeline.models.adapters import AdapterSpec
-from sat_dengue_pipeline.models.logistic import (
-    LogisticOnsetAdapter,
-    canonical_json,
-    validate_state_version,
-)
+from sat_dengue_pipeline.raw.producers import epidemiology_normalization
 from sat_dengue_pipeline.raw.temporal import parse_date
+from sat_dengue_pipeline.risk.frozen import FrozenLogistic, load_artifact
+from sat_dengue_pipeline.risk.inference import InferenceCoverage, prioritize
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPERIMENT = "EXP315"
+ARTIFACT = ROOT / "modelos/logistica-conclima-t2"
+ARTIFACT_SHA256 = "d0a883a7528afd5d3d1fdbe43d44e5c5a396c109ab20ed49845a198ccdb75c8c"
+CONTEXT_DIR = ROOT / "pipeline/data/demo"
+METADATA = ["department_code", "municipality_name"]
+REASONS = {
+    "EXCESS_AT_ORIGIN": "Exceso en el mes de origen",
+    "ORIGIN_STATE_MISSING": "Sin canal endémico en el origen",
+    "REQUIRED_PREDICTORS_MISSING": "Predictores incompletos",
+}
 
 
-@dataclass
-class Model:
-    """Artefactos privados de una corrida completada."""
+def load_model(directory: Path = ARTIFACT) -> FrozenLogistic:
+    """Cargar el artefacto congelado y exigir su SHA-256 aprobado.
 
-    execution: str
-    state: dict
-    context: pd.DataFrame
-    decisions: dict
+    La procedencia esperada es la registrada en el propio artefacto: la demo no
+    necesita un clon git ni el release crudo para puntuar, y la identidad del
+    modelo queda garantizada por el SHA-256 de sus bytes y su manifiesto.
+    """
+    provenance = json.loads((directory / "model.json").read_bytes())["provenance"]
+    return load_artifact(directory, ARTIFACT_SHA256, provenance)
 
 
-def load_model(root: Path = ROOT) -> Model:
-    """Vincular modelo, predictores y decisiones al inventario de la misma corrida."""
-    inventories = list((root / "docs/evidence/experiments" / EXPERIMENT).glob("*/inventory.json"))
-    if len(inventories) != 1:
-        raise ValueError("Se necesita el inventario de una ejecución completa de EXP315.")
-    inventory = inventories[0]
-    receipt = verify_execution(root, inventory.relative_to(root).as_posix())
-    if receipt["status"] != "COMPLETED" or receipt["experiment_type"] != "scientific":
-        raise ValueError("EXP315 aún no tiene un ajuste completado.")
-    execution = receipt["execution_id"]
-    evidence = inventory.parent
-    lineage = json.loads((evidence / "lineage.json").read_bytes())
-    private = root / "pipeline/data/experiments" / execution / "inference-fit"
-
-    def read_verified(name: str, key: str) -> bytes:
-        data = (private / name).read_bytes()
-        if hashlib.sha256(data).hexdigest() != lineage[key]:
-            raise ValueError("El paquete privado difiere del inventario de EXP315.")
-        return data
-
-    state = json.loads(read_verified("model.json", "inference_model_sha256"))
-    context = pd.read_csv(
-        io.BytesIO(read_verified("context.csv", "inference_context_sha256")),
-        dtype={KEYS[0]: str},
-        float_precision="round_trip",
-    )
-    validation = json.loads((evidence / "validation.json").read_bytes())
-    config = json.loads((evidence / "configuration.json").read_bytes())
-    available = validation["temporal"]["2"]["support"]["threshold_selection"]["available"]
-    context = context.loc[context.year_month.gt(add_months(available, config["embargo_months"]))]
-    decisions = json.loads((evidence / "metrics.json").read_bytes())["2"]
-    return Model(execution, state, context, decisions)
+def load_context(model: FrozenLogistic, directory: Path = CONTEXT_DIR) -> dict[str, pd.DataFrame]:
+    """Leer el contexto privado por origen y verificar huellas, release y tipos."""
+    index = json.loads((directory / "contexto.json").read_bytes())
+    if index["raw_manifest_sha256"] != model.payload["provenance"]["raw_manifest_sha256"]:
+        raise ValueError("El contexto procede de un release distinto del modelo.")
+    dtypes = dict(zip(PREDICTORS, model.payload["state"]["dtypes"], strict=True))
+    contexts = {}
+    for origin, digest in index["files"].items():
+        data = (directory / f"contexto-{origin}.csv").read_bytes()
+        if hashlib.sha256(data).hexdigest() != digest:
+            raise ValueError("El contexto privado difiere de su índice.")
+        frame = pd.read_csv(
+            io.BytesIO(data),
+            dtype={c: "string" for c in [*KEYS, *METADATA]},
+            float_precision="round_trip",
+        )
+        contexts[origin] = frame.astype(dtypes)
+    return contexts
 
 
 def geography() -> pd.Series:
@@ -78,8 +66,8 @@ def geography() -> pd.Series:
     return geo.loc[geo.cod_dpto.isin(["50", "73"])].set_index("cod_mpio").nom_mpio
 
 
-def parse_upload(data: bytes, suffix: str, cities: pd.Index) -> tuple[str, pd.DataFrame, dict]:
-    """Reducir las notificaciones válidas de un mes a conteos por residencia y evento."""
+def read_table(data: bytes, suffix: str) -> pd.DataFrame:
+    """Leer una hoja Excel o un CSV como texto, con límites de tamaño."""
     if len(data) > 5 * 1024**2:
         raise ValueError("El archivo supera 5 MB.")
     stream = io.BytesIO(data)
@@ -91,134 +79,113 @@ def parse_upload(data: bytes, suffix: str, cities: pd.Index) -> tuple[str, pd.Da
             with pd.ExcelFile(stream, engine="openpyxl") as book:
                 if len(book.sheet_names) != 1:
                     raise ValueError("El Excel debe contener una sola hoja.")
-                frame = book.parse(header=None, dtype=str, keep_default_na=False)
+                return book.parse(header=None, dtype=str, keep_default_na=False)
         except (BadZipFile, InvalidFileException, KeyError, ParseError, OSError) as error:
             raise ValueError("El archivo Excel no se puede leer.") from error
-    elif suffix.lower() == ".csv":
+    if suffix.lower() == ".csv":
         try:
             separator = (
                 csv.Sniffer().sniff(data.decode("utf-8-sig").splitlines()[0], ",;\t").delimiter
             )
-            frame = pd.read_csv(
-                stream, sep=separator, header=None, dtype=str, keep_default_na=False
-            )
+            return pd.read_csv(stream, sep=separator, header=None, dtype=str, keep_default_na=False)
         except (IndexError, csv.Error, UnicodeError, pd.errors.ParserError) as error:
             raise ValueError(
                 "Revise la cabecera, el separador y la codificación UTF-8 del CSV."
             ) from error
-    else:
-        raise ValueError("Elija un archivo CSV o XLSX.")
+    raise ValueError("Elija un archivo CSV o XLSX.")
 
+
+def parse_upload(data: bytes, suffix: str, cities: pd.Index) -> tuple[str, pd.DataFrame, dict]:
+    """Contar las notificaciones de un mes completo con el productor canónico.
+
+    Cada notificación aceptada cuenta por residencia y evento, sin filtrar
+    Confirmados; el total es dengue (210) más dengue grave (220). Un municipio sin
+    filas en la carga cuenta cero, igual que en el panel de entrenamiento.
+    """
+    frame = read_table(data, suffix)
     if len(frame) < 2:
         raise ValueError("El archivo necesita encabezados y al menos una notificación.")
-    frame.columns = frame.iloc[0].str.strip().str.lower()
+    frame.columns = frame.iloc[0].str.strip().str.upper()
     frame = frame.iloc[1:].copy()
-    if not frame.columns.is_unique or "ini_sin" not in frame:
-        raise ValueError("Se requieren encabezados únicos e INI_SIN.")
-    if {"cod_dpto_r", "cod_mun_r"} <= set(frame):
-        dep, mun = frame.cod_dpto_r.str.strip(), frame.cod_mun_r.str.strip()
-        if not (dep.str.fullmatch(r"[0-9]{1,2}") & mun.str.fullmatch(r"[0-9]{1,3}")).all():
-            raise ValueError("Los códigos de residencia no son válidos.")
-        code = dep.str.zfill(2) + mun.str.zfill(3)
-    elif key := next((c for c in ("municipality_code", "cod_dpto_o") if c in frame), None):
-        code = frame[key].str.strip()
-    else:
-        raise ValueError(
-            "Falta el código DIVIPOLA municipal de cinco dígitos o el par de residencia."
-        )
-    if not code.str.fullmatch(r"[0-9]{5}").all():
-        raise ValueError("Se requiere el DIVIPOLA municipal de cinco dígitos.")
-    scoped = code.str.startswith(("50", "73"))
-    rows = frame.loc[scoped]
-    if rows.empty or not code[scoped].isin(cities).all():
-        raise ValueError("Revise los códigos municipales de Meta y Tolima.")
-    days = rows.ini_sin.map(parse_date)
+    if not frame.columns.is_unique or not {"INI_SIN", "COD_DPTO_R", "COD_MUN_R"} <= set(frame):
+        raise ValueError("Se requieren encabezados únicos, INI_SIN, COD_DPTO_R y COD_MUN_R.")
+    days = frame.INI_SIN.map(parse_date)
     if days.isna().any():
         raise ValueError("Hay fechas INI_SIN inválidas.")
     months = days.map(lambda d: d.isoformat()[:7]).unique()
     if len(months) != 1:
         raise ValueError("Cargue un solo mes de inicio de síntomas.")
     events = {"210": "210", "220": "220", "DENGUE": "210", "DENGUE GRAVE": "220"}
-    event = pd.Series("210", index=rows.index)
-    for field in ("cod_eve", "nombre_evento"):
-        if field in rows:
-            parsed = rows[field].str.strip().str.upper().map(events)
+    event = pd.Series("210", index=frame.index)
+    for field in ("COD_EVE", "NOMBRE_EVENTO"):
+        if field in frame:
+            parsed = frame[field].str.strip().str.upper().map(events)
             if parsed.isna().any() or (
-                field == "nombre_evento" and "cod_eve" in rows and not parsed.equals(event)
+                field == "NOMBRE_EVENTO" and "COD_EVE" in frame and not parsed.equals(event)
             ):
                 raise ValueError("Revise el evento de dengue (210) o dengue grave (220).")
             event = parsed
-    counts = rows.groupby([code[scoped], event]).size().unstack()
-    counts = counts.reindex(columns=["210", "220"]).rename(
-        columns={"210": "dengue", "220": "grave"}
+    frame["COD_EVE"] = event
+    month = months[0]
+    columns = ["COD_DPTO_R", "COD_MUN_R", "INI_SIN", "COD_EVE"]
+    monthly, audit = epidemiology_normalization(
+        {
+            "dengue_notifications": frame.loc[event.eq("210"), columns],
+            "severe_dengue_notifications": frame.loc[event.eq("220"), columns],
+        },
+        pd.DataFrame({"municipality_code": cities}),
+        InferenceCoverage(month, start=month, epi_start=month),
     )
+    rejected = {
+        reason: sum(a["rejected"][reason] for a in audit.values())
+        for reason in ("invalid_residence", "unknown_municipality")
+    }
+    counts = monthly.set_index(KEYS[0])[COUNTS].reindex(cities, fill_value=0).astype("Int64")
     summary = {
         "Filas": len(frame),
-        "Notificaciones": len(rows),
-        "Municipios": len(counts),
-        "Fuera de Meta y Tolima": int((~scoped).sum()),
+        "Notificaciones": sum(a["accepted"] for a in audit.values()),
+        "Municipios con casos": int(counts[COUNTS[2]].gt(0).sum()),
+        "Fuera de Meta y Tolima": rejected["unknown_municipality"],
+        "Residencia inválida": rejected["invalid_residence"],
     }
-    return months[0], counts, summary
+    return month, counts, summary
 
 
-def linear_score(features: pd.DataFrame, state: dict) -> pd.Series:
-    """Calcular el margen lineal con la preparación y el escalado congelados."""
-    validate_state_version(state)
-    spec = AdapterSpec(
-        "logistic_onset", "v1", canonical_json(state["adapter"]).decode(), state["seed"]
+def ranking(
+    model: FrozenLogistic, month: str, counts: pd.DataFrame, context: pd.DataFrame
+) -> pd.DataFrame:
+    """Priorizar con la regla publicada: ocho cupos entre municipios sin exceso en T.
+
+    Los conteos del origen se sustituyen por los de la carga y la zona del canal se
+    recalcula con el conteo de dengue, como en la tabla canónica. Rezagos, clima y
+    percentiles proceden del contexto del mismo origen. El orden lo decide
+    risk.inference.prioritize: puntuación descendente y DIVIPOLA ascendente.
+    """
+    table = context.set_index(KEYS[0])
+    for name in COUNTS:
+        table[name] = counts[name].reindex(table.index).astype("Int64")
+    table[CHANNEL[3]] = pd.array(
+        [
+            pd.NA if pd.isna(p25) or pd.isna(now) else classify_endemic_zone(now, p25, p50, p75)
+            for now, p25, p50, p75 in table[[COUNTS[0], *CHANNEL[:3]]].itertuples(
+                index=False, name=None
+            )
+        ],
+        dtype="string",
     )
-    matrix = LogisticOnsetAdapter(spec).matrix(features)
-    coef, mean, std = (np.asarray(state[key], dtype=float) for key in ("coef", "mean", "std"))
-    intercept = float(state["intercept"])
-    if (
-        any(v.shape != (matrix.shape[1],) or not np.isfinite(v).all() for v in (coef, mean, std))
-        or (std <= 0).any()
-        or not np.isfinite(intercept)
-    ):
-        raise ValueError("Coeficientes o escalado del modelo exportado inválidos")
-    scores = ((matrix - mean) / std) @ coef + intercept
-    if not np.isfinite(scores).all():
-        raise ValueError("Puntuación logística no finita")
-    return pd.Series(scores, index=features.index)
-
-
-def ranking(model: Model, month: str, counts: pd.DataFrame, cities: pd.Series) -> pd.DataFrame:
-    """Recalcular el canal al origen y puntuar municipios elegibles con la política congelada."""
-    context = model.context.loc[model.context.year_month.eq(month)].set_index(KEYS[0])
-    if context.empty:
-        raise ValueError("El mes está fuera de la cobertura de clima e historia del paquete.")
-    features = context.reindex(cities.index)[PREDICTORS].copy()
-    features[COUNTS[0]] = counts.dengue.reindex(cities.index)
-    features[COUNTS[1]] = counts.grave.reindex(cities.index).fillna(features[COUNTS[1]])
-    features[COUNTS[2]] = features[COUNTS[0]] + features[COUNTS[1]]
-    inputs = features[[COUNTS[0], *CHANNEL[:3]]].dropna()
-    features[CHANNEL[3]] = pd.Series(
+    table = table.reset_index()[[*KEYS, *METADATA, *PREDICTORS]]
+    roles = {"key": KEYS, "metadata": METADATA, "feature": PREDICTORS, "target": [], "control": []}
+    rows, _ = prioritize(table, {"column_roles": roles}, month, model)
+    result = pd.DataFrame(rows).set_index("municipality_code")
+    current = table.set_index(KEYS[0])
+    return pd.DataFrame(
         {
-            code: classify_endemic_zone(current, p25, p50, p75)
-            for code, current, p25, p50, p75 in inputs.itertuples(name=None)
-        },
-        dtype="str",
-    )
-    ready = features.notna().all(axis=1) & features.zona_canal_t.ne("EXCESO")
-    scores = pd.Series(float("nan"), index=cities.index)
-    if ready.any():
-        scores.loc[ready] = linear_score(features.loc[ready], model.state)
-    status = pd.Series("Historia incompleta", index=cities.index)
-    status.loc[features[CLIMATE].isna().any(axis=1)] = "Clima incompleto"
-    status.loc[features.zona_canal_t.eq("EXCESO")] = "Exceso en el mes de origen"
-    status.loc[features[COUNTS[0]].isna()] = "Sin conteo de dengue"
-    status.loc[~cities.index.isin(counts.index)] = "Sin datos en la carga"
-    status.loc[ready] = "Disponible"
-    result = pd.DataFrame(
-        {
-            "Municipio": cities,
-            "Notificaciones": features[COUNTS[0]],
-            "Fuente dengue grave": pd.Series("Contexto histórico", index=cities.index).mask(
-                counts.grave.reindex(cities.index).notna(), "Archivo"
-            ),
-            "Zona en T": features.zona_canal_t,
-            "Puntuación T+2": scores,
-            "Resultado": status,
+            "Posición": result.risk_rank.astype("Int64"),
+            "Municipio": result.municipality_name,
+            "Departamento": result.department_name,
+            "Notificaciones": current[COUNTS[2]],
+            "Zona en T": current[CHANNEL[3]],
+            "Priorizado": result.selected_for_attention,
+            "Resultado": result.ineligibility_reason.map(REASONS).fillna("Elegible"),
         }
-    )
-    return result.sort_values(["Puntuación T+2", "Municipio"], ascending=[False, True])
+    ).sort_values(["Posición", "Municipio"], na_position="last")
