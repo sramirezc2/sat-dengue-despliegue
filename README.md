@@ -12,55 +12,49 @@ Proyecto: Despliegue de Soluciones. **Grupo 11**.
 
 ## Demo local de inferencia en Streamlit
 
-Con el paquete privado de EXP315 instalado, ejecute desde la raíz con Python 3.12 y uv:
+La demo usa el mismo modelo que el informe: el artefacto congelado
+`modelos/logistica-conclima-t2/` (ver [`modelos/LEEME.md`](modelos/LEEME.md)), cargado con
+`load_artifact` y su SHA-256 aprobado. Necesita además el contexto privado de predictores de los
+orígenes publicados. Con acceso al release crudo `satd-raw-173d5856`, se construye una vez desde
+la raíz (unos tres minutos por origen):
+
+```sh
+uv run --locked --project pipeline python demo/contexto.py
+```
+
+El comando calcula, para cada origen de 2024-11 a 2025-10, los rezagos de 1, 2, 3 y 12 meses,
+los percentiles del canal endémico y el clima del mes con `feature_prefix`, el mismo prefijo
+temporal de la publicación. Escribe `pipeline/data/demo/contexto-AAAA-MM.csv` y un índice
+`contexto.json` con sus huellas; nada de esto se versiona. Después:
 
 ```sh
 uv run --locked --project pipeline --with-requirements demo/requirements.txt streamlit run demo/app.py --server.address 127.0.0.1 --server.port 8501
 ```
 
-Abra **http://127.0.0.1:8501**. Pulse **Cargar muestra dummy** y después **Calcular ranking T+2**.
-También puede elegir **Subir archivo** para procesar un mes en CSV o Excel. La demo funciona
-de forma independiente de los servicios de API y dashboard.
+Abra **http://127.0.0.1:8501**. Pulse **Cargar muestra dummy** y después **Calcular prioridades
+T+2**, o elija **Subir archivo** para procesar un mes en CSV o Excel. La demo funciona de forma
+independiente de los servicios de API y dashboard.
 
-El archivo requiere `INI_SIN` y una fila por notificación. Para el municipio se prefiere el par de
-residencia `COD_DPTO_R` y `COD_MUN_R`. También se admite `municipality_code` o `cod_DPTO_O`
-cuando contiene el DIVIPOLA municipal completo de **cinco dígitos**. El código debe representar
-el municipio al que se atribuye el conteo. En archivos con códigos de residencia y ocurrencia
-se usa residencia, como en el entrenamiento. Las cabeceras admiten mayúsculas y minúsculas.
-La demo reconoce `COD_EVE` 210/220 y `Nombre_evento` dengue/dengue grave.
-Sin columna de evento, las filas se interpretan como dengue. Un municipio ausente queda sin
-estimación. Si falta el conteo de dengue grave, se usa el valor del contexto histórico del mes.
-Se aceptan fechas ISO o día/mes/año y una sola hoja de Excel. Los archivos subidos se procesan
-en memoria.
+El archivo tiene una fila por notificación con `INI_SIN`, el par de residencia `COD_DPTO_R` y
+`COD_MUN_R`, y `COD_EVE` 210 (dengue) o 220 (dengue grave); también se reconoce
+`Nombre_evento`. Sin columna de evento, las filas se interpretan como dengue. Las cabeceras
+admiten mayúsculas y minúsculas, fechas ISO o día/mes/año y una sola hoja de Excel. Los archivos
+se procesan en memoria.
 
-**Qué significa el resultado.** Para municipios sin exceso en T, la tabla ordena la puntuación
-relativa de inicio de exceso en T+2. Un valor mayor indica mayor prioridad relativa.
-La puntuación es el margen lineal del modelo y no representa una probabilidad. La zona al origen se recalcula con
-los casos cargados. El clima, los rezagos y los percentiles proceden del municipio y mes del
-canónico verificado. El color representa la posición relativa de la puntuación en el ranking.
-El gris incluye municipios en exceso, sin datos en la carga o con predictores incompletos.
-La demo cuenta todas las notificaciones aceptadas, sin filtrar por `Confirmados`, como el
-productor canónico. Para reproducir un resultado histórico, la carga debe representar el
-mismo conjunto completo de notificaciones del municipio y mes. La disponibilidad real del
-clima al cierre del mes requiere verificación antes de usar el ranking para alertas operativas.
+**Cómo se cuenta.** Las filas pasan por el mismo productor que construye el panel canónico:
+cada notificación aceptada cuenta por residencia y evento, sin filtrar por `Confirmados`, y el
+total es dengue más dengue grave. La carga representa el mes completo: un municipio sin filas
+cuenta cero, como en el panel. La zona del canal en el origen se recalcula con el conteo de
+dengue cargado.
 
-**Cómo se obtiene el paquete.** La ejecución aprobada de EXP315 usa el release privado
-`satd-raw-173d5856`. Para una nueva identidad aprobada con la misma preparación,
-el pipeline de exportación se invoca desde la raíz (sustituya `ID_APROBADO` por la identidad
-registrada y configure el acceso a Hugging Face descrito abajo):
-
-```sh
-uv run --locked --directory pipeline kedro run --pipelines experiment_run_export_t2 --params experiment_id=ID_APROBADO
-```
-
-La corrida verifica la paridad de la logística exportada con Kedro antes de cerrar la evidencia.
-El contexto solo incluye predictores de orígenes posteriores a la congelación del umbral con
-objetivo anterior a 2025. La demo aplica además el embargo de la receta. En EXP315 se pueden
-cargar los 13 meses de origen de octubre de 2023 a octubre de 2024. Para abrir la demo en otra máquina se necesitan el inventario y los
-agregados de `docs/evidence/experiments/EXP315/<execution_id>/` y los dos archivos privados
-`model.json` y `context.csv` de `pipeline/data/experiments/<execution_id>/inference-fit/`,
-en esas mismas rutas. Streamlit comprueba sus huellas al leerlos. La muestra cambia la entrada
-al modelo real. Los ejemplos de octubre de 2025 quedan fuera de esta ventana.
+**Qué significa el resultado.** La salida es un orden de prioridad, no una probabilidad: entre
+los municipios de Meta y Tolima sin exceso en el mes de origen se ordena por el margen lineal
+del modelo, con empate por código DIVIPOLA, y se priorizan exactamente 8 por mes. Es la regla de
+`risk.inference.prioritize`. Si hay menos de ocho elegibles no se publica el lote. La demo
+muestra la posición, no puntuaciones ni porcentajes. Al cargar el conjunto completo de
+notificaciones de un origen, el orden coincide con el de la publicación retrospectiva. La
+disponibilidad real del clima al cierre del mes requiere verificación antes de cualquier uso
+operativo.
 
 ## Construcción canónica desde la raíz
 
