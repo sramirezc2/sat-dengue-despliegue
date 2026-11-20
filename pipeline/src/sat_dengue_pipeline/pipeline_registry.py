@@ -37,6 +37,7 @@ def register_pipelines() -> dict[str, Pipeline]:
         "deployment_publication": publication(),
         "factory_validation": factory_validation(),
         "experiment_run": experiment_run(),
+        "experiment_run_export_t2": experiment_run(export_inference=True),
         "retroanalisis": retroanalisis(),
         "risk_2025_publication": risk_publication(),
     }

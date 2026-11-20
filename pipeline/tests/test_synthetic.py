@@ -35,6 +35,7 @@ def test_registry_and_discovery() -> None:
         "deployment_publication",
         "factory_validation",
         "experiment_run",
+        "experiment_run_export_t2",
         "retroanalisis",
         "risk_2025_publication",
     }

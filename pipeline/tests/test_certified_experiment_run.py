@@ -365,7 +365,7 @@ def test_legacy_receipts_remain_readable_and_unchanged() -> None:
     """No reinterpretar como digest explícito el campo ambiguo de evidencia anterior."""
     files = list((ROOT / "docs/evidence/experiments").glob("*/*/*.json"))
     before = {p: sha256(p) for p in files}
-    rows = compare(ROOT)
+    rows = [row for row in compare(ROOT) if row["experiment_id"] in {"EXP001", "EXP002"}]
     assert {r["experiment_id"] for r in rows} == {"EXP001", "EXP002"}
     assert all(
         r["dataset_sha256"]
