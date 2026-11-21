@@ -69,7 +69,7 @@ jobs:
       - name: Lint and test Streamlit demo explicitly
         if: steps.paths.outputs.changed == 'true'
         run: |
-          uv run --locked --project pipeline ruff check --config pipeline/pyproject.toml demo/app.py demo/inferencia.py demo/configuracion.py demo/contexto_paquete.py demo/ejemplos.py demo/tests streamlit_app.py
+          uv run --locked --project pipeline ruff check --config pipeline/pyproject.toml demo/app.py demo/inferencia.py demo/configuracion.py demo/contexto_paquete.py demo/ejemplos.py demo/respaldo_cientifico.py demo/tests streamlit_app.py
           demo/.venv/bin/python -m pytest demo/tests -q
       - name: Verify Community Cloud installation
         if: steps.paths.outputs.changed == 'true'

@@ -263,8 +263,8 @@ demo/.venv/bin/python -m pytest demo/tests -q
 ```
 
 Estas pruebas instalan contextos artificiales temporales, usan el modelo
-versionado, recorren la UI con `streamlit.testing.v1.AppTest`, cambian los cuatro
-cupos sin un segundo scoring, comparan tabla/mapa y reinician sesión. Además
+versionado, recorren la UI con `streamlit.testing.v1.AppTest`, cambian las veinte
+capacidades de 5 % a 100 % sin un segundo scoring, comparan tabla/mapa y reinician sesión. Además
 arrancan dos procesos reales de Streamlit, comprueban salud/página HTTP y los
 detienen. No crean evidencia científica ni acceden a contexto privado.
 CI ejecuta explícitamente `demo/tests` en un entorno separado; el descubrimiento
@@ -281,8 +281,17 @@ Después de elegir y configurar proveedor, SHA, contexto privado y dominio TLS:
 4. Pulsar **Calcular prioridades T+2**: revisar tabla, mapa y excluidos. El número
    seleccionado es el menor entre elegibles y ocho; el contexto auténtico puede
    excluir municipios que el fixture artificial no excluye.
-5. Cambiar 5/10/15/20 %: cupos solicitados 4/8/12/16, posiciones idénticas,
-   selección coherente entre mapa y tabla. Si faltan elegibles debe advertirse.
+5. Cambiar 5/10/25/50/90/95/100 %: cupos solicitados 4/8/19/38/69/73/76.
+   La tabla contiene solo seleccionados y conserva posiciones; el mapa mantiene
+   los 76 municipios. Si faltan elegibles se informa el déficit.
+   Ambos botones de descarga sirven `sample_csv` del último mes verificado, con
+   los mismos bytes y nombre `muestra-artificial.csv` (24 notificaciones inventadas
+   de seis municipios), listo para cargar sin edición.
+   Debajo del resultado aparecen dos gráficas y cuatro métricas de la receta en
+   la confirmación retrospectiva 2023–2024: no evalúan el archivo cargado ni cambian
+   con el selector. `demo/respaldo-cientifico.json` fija conteos, intervalos y SHA-256
+   de `docs/evidence/reserva-2023-2024-t2/reserva.csv`; si falla su validación, el
+   ranking permanece visible y se informa el error solo en esa sección.
 6. Reiniciar el proceso desde el administrador del servicio; volver a comprobar
    salud y repetir la muestra/inferencia. La sesión nueva no conserva una carga
    anterior y los recursos privados deben seguir disponibles.

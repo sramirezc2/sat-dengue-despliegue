@@ -1,0 +1,43 @@
+{
+  "schema": "satd-demo-scientific-support-v1",
+  "recipe": "log_conclima",
+  "period": {
+    "start": "2023-01",
+    "end": "2024-12",
+    "label": "confirmación retrospectiva 2023–2024"
+  },
+  "horizon": 2,
+  "nominal_budget": 0.1,
+  "origin_months": 23,
+  "counts": {
+    "alerts_per_method": 200,
+    "evaluable_onsets": 147,
+    "evaluable_municipality_months": 836,
+    "model_anticipated": 70,
+    "channel_anticipated": 57
+  },
+  "intervals": {
+    "confidence": 0.95,
+    "resampling_unit": "origin_month",
+    "replicates": 2000,
+    "sensitivity_difference_pp": {
+      "estimate": 8.8,
+      "low": 1.4,
+      "high": 16.3
+    },
+    "false_alerts_difference_per100": {
+      "estimate": -1.56,
+      "low": -2.87,
+      "high": -0.24
+    }
+  },
+  "source": {
+    "path": "docs/evidence/reserva-2023-2024-t2/reserva.csv",
+    "sha256": "35d2c8d0c3082374272fa17c6ff32ce727427f8a5f10c8c2661547c9eff2172f"
+  },
+  "model": {
+    "artifact_sha256": "d0a883a7528afd5d3d1fdbe43d44e5c5a396c109ab20ed49845a198ccdb75c8c",
+    "recipe_path": "pipeline/conf/retroanalisis/noche/log_conclima.yml",
+    "recipe_sha256": "7d67f0595cfdd990e331682ae581d4f49d1f74f83a107f4d9474540412443ec8"
+  }
+}

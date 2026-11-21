@@ -10,7 +10,7 @@ import inferencia
 import pandas as pd
 import pytest
 from configuracion import CONTEXT_DIR, ROOT, resource_directory
-from ejemplos import HEADERS, sample_csv, template_csv
+from ejemplos import HEADERS, sample_csv
 from inferencia import (
     ARTIFACT,
     METADATA,
@@ -150,13 +150,13 @@ def test_priority_order(model) -> None:
     assert not any("Puntuación" in c or "Probabilidad" in c for c in result)
 
 
-@pytest.mark.parametrize("available", [0, 5, 7])
+@pytest.mark.parametrize("available", [0, 5, 7, 74])
 def test_priority_with_insufficient_eligible(model, available) -> None:
     """La simulación informa déficit y nunca rellena con municipios no elegibles."""
     counts = pd.DataFrame(9, index=geography().index, columns=COUNTS, dtype="Int64")
     counts.iloc[:available] = 0
     ordered = ranking(model, MONTH, counts, context(model))
-    for percentage in (5, 10, 15, 20):
+    for percentage in range(5, 101, 5):
         result = select_capacity(ordered, percentage)
         assert result.Priorizado.sum() == min(available, capacity(percentage))
         assert not result.loc[result["Posición"].isna(), "Priorizado"].any()
@@ -183,7 +183,10 @@ def test_context_checks_digest(model, tmp_path) -> None:
         load_context(model, tmp_path)
 
 
-@pytest.mark.parametrize(("percentage", "expected"), [(5, 4), (10, 8), (15, 12), (20, 16)])
+@pytest.mark.parametrize(("percentage", "expected"), [
+    (5, 4), (10, 8), (15, 12), (20, 16), (25, 19), (50, 38),
+    (90, 69), (95, 73), (100, 76),
+])
 def test_capacity_keeps_ranking_without_scoring(model, monkeypatch, percentage, expected) -> None:
     """Cada capacidad reutiliza posiciones y no llama al modelo ni muta la entrada."""
     _, counts, _ = parse_upload(sample_csv(MONTH), ".csv", geography().index)
@@ -229,7 +232,7 @@ def test_default_matches_historical_selection(model, monkeypatch) -> None:
     assert len(historical) == 8 and procedure()["budget"] == 8
 
 
-@pytest.mark.parametrize("percentage", [0, 8, 25, -10, "10"])
+@pytest.mark.parametrize("percentage", [0, 8, 101, -10, "10", 5.0, True])
 def test_unsupported_percentage(percentage) -> None:
     """No aceptar capacidades fuera del selector aprobado para la demo."""
     with pytest.raises(ValueError, match="porcentaje"):
@@ -338,14 +341,9 @@ def test_context_rejects_symlinks(model, tmp_path) -> None:
 
 
 def test_template_and_artificial_sample_end_to_end(model, tmp_path) -> None:
-    """Plantilla completada y muestra recorren carga, contexto, modelo y selección."""
-    template = template_csv()
-    assert template.decode().strip().split(",") == list(HEADERS)
-    _, counts, summary = parse_upload(
-        template + b"50,001,2024-11-01,210\n", ".csv", geography().index
-    )
-    assert summary["Notificaciones"] == 1 and counts.loc["50001", COUNTS[0]] == 1
+    """La muestra descargable recorre carga, contexto, modelo y selección sin edición."""
     data = sample_csv(MONTH)
+    assert data.decode().splitlines()[0].split(",") == list(HEADERS)
     assert data == sample_csv(MONTH)
     frame = pd.read_csv(io.BytesIO(data), dtype=str)
     assert set(frame.COD_DPTO_R) == {"50", "73"} and set(frame.COD_EVE) == {"210", "220"}
@@ -370,3 +368,11 @@ def test_demo_lock_preserves_direct_and_scientific_versions() -> None:
     for package in scientific["package"]:
         if package["name"] in locked:
             assert package["version"] == locked[package["name"]]
+
+
+def test_all_twenty_capacities():
+    """Los veinte porcentajes tienen redondeo hacia arriba sobre 76 municipios."""
+    assert inferencia.PERCENTAGES == tuple(range(5, 101, 5))
+    assert [capacity(p) for p in inferencia.PERCENTAGES] == [
+        4, 8, 12, 16, 19, 23, 27, 31, 35, 38, 42, 46, 50, 54, 57, 61, 65, 69, 73, 76,
+    ]

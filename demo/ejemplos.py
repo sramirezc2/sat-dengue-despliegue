@@ -1,4 +1,4 @@
-"""Plantilla y notificaciones artificiales reproducibles, sin desenlaces reales."""
+"""Notificaciones artificiales reproducibles para ambas descargas, sin desenlaces reales."""
 
 import csv
 import io
@@ -6,11 +6,7 @@ import io
 from sat_dengue_pipeline.domain.calendar import validate_period
 
 HEADERS = ("COD_DPTO_R", "COD_MUN_R", "INI_SIN", "COD_EVE")
-
-
-def template_csv() -> bytes:
-    """Generar los encabezados admitidos para completar un mes de notificaciones."""
-    return (",".join(HEADERS) + "\n").encode()
+SAMPLE_FILENAME = "muestra-artificial.csv"
 
 
 def sample_csv(month: str) -> bytes:

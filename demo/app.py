@@ -9,7 +9,7 @@ import pandas as pd
 import streamlit as st
 from configuracion import ROOT
 from contexto_paquete import obtain_context
-from ejemplos import sample_csv, template_csv
+from ejemplos import SAMPLE_FILENAME, sample_csv
 from inferencia import (
     PERCENTAGES,
     POPULATION,
@@ -20,6 +20,14 @@ from inferencia import (
     parse_upload,
     ranking,
     select_capacity,
+)
+from respaldo_cientifico import (
+    INTRODUCTION,
+    chart_data,
+    comparison_chart,
+    descriptive_metrics,
+    load_support,
+    spanish,
 )
 from sat_dengue_pipeline.domain.calendar import add_months
 from sat_dengue_pipeline.risk.configuration import LEGEND
@@ -87,6 +95,73 @@ def resources() -> tuple:
     return model, obtain_context(model)
 
 
+def scientific_support() -> None:
+    """Mostrar historia de la receta; un error de respaldo no afecta al ranking actual."""
+    st.subheader("Respaldo científico del modelo")
+    try:
+        support = load_support()
+    except (OSError, ValueError, KeyError, TypeError):
+        st.error("No se puede mostrar el respaldo científico: el archivo está ausente o inválido.")
+        return
+    st.write(INTRODUCTION)
+    counts = support["counts"]
+    intervals = support["intervals"]
+    sensitivity, burden = chart_data(support)
+    dark = st.context.theme.type == "dark"
+    st.markdown("**Resultado histórico principal T+2**")
+    st.altair_chart(
+        comparison_chart(sensitivity, "Inicios anticipados (%)", 100, dark=dark), width="stretch",
+    )
+    difference = intervals["sensitivity_difference_pp"]
+    st.write(
+        f"Ventaja del modelo: {spanish(difference['estimate'], signed=True)} puntos porcentuales. "
+        f"IC del 95 %: {spanish(difference['low'], signed=True)} a "
+        f"{spanish(difference['high'], signed=True)}."
+    )
+    st.caption(
+        "Confirmación retrospectiva 2023–2024, T+2. Presupuesto nominal del 10 %: "
+        f"{counts['alerts_per_method']} alertas por método durante {support['origin_months']} "
+        f"meses, equivalentes a {spanish(counts['alerts_per_method'] / support['origin_months'])} "
+        "alertas mensuales."
+    )
+    st.markdown("**Carga de falsas alertas**")
+    st.altair_chart(
+        comparison_chart(
+            burden, "Falsas alertas por cada 100 municipio-mes evaluables", 25, dark=dark,
+        ),
+        width="stretch",
+    )
+    difference = intervals["false_alerts_difference_per100"]
+    st.write(
+        f"Diferencia: {spanish(difference['estimate'], 2)} falsas alertas por cada 100 "
+        f"municipio-mes. IC del 95 %: {spanish(difference['low'], 2)} a "
+        f"{spanish(difference['high'], 2)}."
+    )
+    st.caption(
+        "Una falsa alerta corresponde a un municipio priorizado en el que no se observó "
+        "el inicio de exceso definido para el mes objetivo."
+    )
+    metrics = descriptive_metrics(support)
+    cards = (
+        ("Sensibilidad", f"{spanish(100 * metrics['sensitivity'])} %",
+         f"{counts['model_anticipated']} / {counts['evaluable_onsets']}. "
+         "De los inicios reales, cuántos anticipó."),
+        ("Precisión", f"{spanish(100 * metrics['precision'])} %",
+         f"{counts['model_anticipated']} / {counts['alerts_per_method']}. "
+         "De las alertas emitidas, cuántas anticiparon un inicio."),
+        ("F1", spanish(metrics['f1'], 3),
+         f"2 × {counts['model_anticipated']} / ({counts['alerts_per_method']} + "
+         f"{counts['evaluable_onsets']}). Balance entre precisión y sensibilidad."),
+        ("Falsas alertas por inicio anticipado", spanish(metrics['false_per_hit'], 2),
+         f"{counts['alerts_per_method'] - counts['model_anticipated']} / "
+         f"{counts['model_anticipated']}. Falsas alertas por cada inicio anticipado."),
+    )
+    for column, (label, value, definition) in zip(st.columns(4), cards, strict=True):
+        column.markdown(f"**{label}**")
+        column.metric(label, value, label_visibility="collapsed")
+        column.caption(definition)
+
+
 def main() -> None:
     """Cargar un mes de notificaciones y calcular bajo demanda el orden de prioridad."""
     st.title("Prioridades municipales de dengue")
@@ -98,16 +173,6 @@ def main() -> None:
     st.caption(
         "Demostración retrospectiva; cambiar la capacidad no produce nueva evidencia "
         "científica. 2025 es evaluación previamente utilizada. " + LEGEND
-    )
-    st.download_button(
-        "Descargar plantilla CSV",
-        data=template_csv(),
-        file_name="plantilla-notificaciones.csv",
-        mime="text/csv",
-    )
-    st.caption(
-        "Complete un mes entero: una fila por notificación de dengue (210) o dengue grave "
-        "(220). Un municipio ausente se interpreta como cero notificaciones."
     )
     try:
         model, contexts = resources()
@@ -121,9 +186,19 @@ def main() -> None:
         return
     cities = geography()
     months = sorted(contexts)
+    artificial_sample = sample_csv(months[-1])
     st.caption(
         "Modelo congelado logistica-conclima-t2 · Regresión logística con clima · "
         f"Meses de origen disponibles: {months[0]} a {months[-1]}."
+    )
+    st.download_button(
+        "Descargar plantilla CSV", data=artificial_sample,
+        file_name=SAMPLE_FILENAME, mime="text/csv",
+    )
+    st.caption(
+        "Descargue un archivo de ejemplo con datos artificiales, listo para cargar o modificar. "
+        "Complete un mes entero: una fila por notificación de dengue (210) o dengue grave "
+        "(220). Un municipio ausente se interpreta como cero notificaciones."
     )
     st.subheader("Notificaciones del mes")
     uploader, sample = st.columns(2)
@@ -144,14 +219,13 @@ def main() -> None:
         data, suffix = upload.getvalue(), Path(upload.name).suffix
     elif source == "sample":
         suffix = ".csv"
-        period = months[-1]
-        data = sample_csv(period)
+        data = artificial_sample
         st.caption(
             "Datos artificiales: 24 notificaciones inventadas de seis municipios de Meta y "
             "Tolima, con dengue y dengue grave. No representan observaciones ni desenlaces reales."
         )
         st.download_button(
-            "Descargar muestra artificial", data=data, file_name="muestra-artificial.csv",
+            "Descargar muestra artificial", data=artificial_sample, file_name=SAMPLE_FILENAME,
             mime="text/csv",
         )
     else:
@@ -203,7 +277,7 @@ def main() -> None:
     left, right = st.columns([3, 2])
     with left:
         st.dataframe(
-            eligible.rename_axis("DIVIPOLA"),
+            result.loc[result.Priorizado].sort_values("Posición").rename_axis("DIVIPOLA"),
             column_order=[
                 "Posición",
                 "Municipio",
@@ -228,6 +302,7 @@ def main() -> None:
         "Demostración retrospectiva. La emisión de alertas operativas requiere validación "
         "prospectiva."
     )
+    scientific_support()
 
 
 main()

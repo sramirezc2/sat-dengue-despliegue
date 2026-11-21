@@ -21,7 +21,7 @@ from sat_dengue_pipeline.risk.frozen import FrozenLogistic, load_artifact
 from sat_dengue_pipeline.risk.inference import InferenceCoverage, rank_eligible
 
 ARTIFACT_SHA256 = "d0a883a7528afd5d3d1fdbe43d44e5c5a396c109ab20ed49845a198ccdb75c8c"
-PERCENTAGES = (5, 10, 15, 20)
+PERCENTAGES = tuple(range(5, 101, 5))
 POPULATION = 76
 METADATA = ["department_code", "municipality_name"]
 REASONS = {
@@ -220,8 +220,8 @@ def ranking(
 
 def capacity(percentage: int) -> int:
     """Convertir el porcentaje permitido a cupos con techo sobre 76 municipios."""
-    if percentage not in PERCENTAGES:
-        raise ValueError("El porcentaje debe ser 5, 10, 15 o 20.")
+    if type(percentage) is not int or percentage not in PERCENTAGES:
+        raise ValueError("El porcentaje debe ser un múltiplo de cinco entre 5 y 100.")
     return ceil(POPULATION * percentage / 100)
 
 
@@ -246,6 +246,7 @@ def capacity_warning(eligible: int, percentage: int) -> str | None:
     if eligible < requested:
         return (
             f"Solo hay {eligible} municipios elegibles para {requested} cupos solicitados; "
-            f"se seleccionan {eligible}. No se completa con municipios no elegibles."
+            f"se seleccionan {eligible}. Faltan {requested - eligible} para completar los cupos. "
+            "No se completa con municipios no elegibles."
         )
     return None
