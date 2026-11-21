@@ -31,7 +31,7 @@ jobs:
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           elif git diff --name-only "$BASE_SHA...$HEAD_SHA" > /tmp/changed-paths; then
-            if grep -E '^(pipeline/|demo/|scripts/construir_resultados\.py$|datos/resultados/|app/api/|app/dashboard/|contracts/|\.github/workflows/pipeline-ci\.yml$)' /tmp/changed-paths; then
+            if grep -E '^(pipeline/|demo/|streamlit_app\.py$|requirements\.txt$|scripts/construir_resultados\.py$|datos/resultados/|app/api/|app/dashboard/|contracts/|\.github/workflows/pipeline-ci\.yml$)' /tmp/changed-paths; then
               echo "changed=true" >> "$GITHUB_OUTPUT"
             else
               echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -69,8 +69,14 @@ jobs:
       - name: Lint and test Streamlit demo explicitly
         if: steps.paths.outputs.changed == 'true'
         run: |
-          uv run --locked --project pipeline ruff check --config pipeline/pyproject.toml demo/app.py demo/inferencia.py demo/configuracion.py demo/contexto_paquete.py demo/ejemplos.py demo/tests
+          uv run --locked --project pipeline ruff check --config pipeline/pyproject.toml demo/app.py demo/inferencia.py demo/configuracion.py demo/contexto_paquete.py demo/ejemplos.py demo/tests streamlit_app.py
           demo/.venv/bin/python -m pytest demo/tests -q
+      - name: Verify Community Cloud installation
+        if: steps.paths.outputs.changed == 'true'
+        run: |
+          uv venv /tmp/satd-cloud --python 3.12
+          uv pip install --python /tmp/satd-cloud/bin/python -r requirements.txt
+          /tmp/satd-cloud/bin/python -c "from sat_dengue_pipeline.risk.configuration import ROOT; from pathlib import Path; assert ROOT == Path.cwd(); import streamlit; import huggingface_hub"
       - uses: actions/setup-node@v7
         if: steps.paths.outputs.changed == 'true'
         with:

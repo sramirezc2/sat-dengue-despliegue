@@ -22,6 +22,9 @@ from zlib import error as CompressionError
 
 import pandas as pd
 from configuracion import CONTEXT_DIR, ROOT, resource_directory, resource_file
+from httpx2 import HTTPError
+from huggingface_hub import hf_hub_download
+from huggingface_hub.errors import HfHubHTTPError
 from inferencia import ARTIFACT_SHA256, POPULATION, load_context, load_model
 from sat_dengue_pipeline.risk.frozen import FrozenLogistic
 
@@ -218,6 +221,33 @@ def _cached_context(model: FrozenLogistic, cache: Path, digest: str) -> dict[str
     return complete_context(model, directory)
 
 
+def _download_hugging_face(output: Path) -> None:
+    """Obtener un Dataset público en una revisión inmutable, sin credenciales.
+
+    La caché propia recibe una copia regular: el cliente del Hub puede devolver
+    enlaces internos de su caché, que nunca se extraen ni se modifican.
+    """
+    repo = os.environ.get("SATD_DEMO_HF_REPO_ID", "")
+    revision = os.environ.get("SATD_DEMO_HF_REVISION", "")
+    filename = os.environ.get("SATD_DEMO_HF_FILENAME", "context-real-v1.zip")
+    if (
+        re.fullmatch(r"[\w.-]+/[\w.-]+", repo) is None
+        or re.fullmatch(r"[0-9a-f]{40}", revision) is None
+        or filename != "context-real-v1.zip"
+    ):
+        raise ContextUnavailable("Configure el Dataset público y su revisión completa.")
+    downloaded = Path(hf_hub_download(
+        repo_id=repo, repo_type="dataset", filename=filename,
+        revision=revision, token=False,
+    ))
+    with downloaded.open("rb") as source, output.open("xb") as target:
+        data = source.read(MAX_DOWNLOAD + 1)
+        if len(data) > MAX_DOWNLOAD:
+            raise ContextUnavailable("El paquete de contexto supera el límite de tamaño.")
+        target.write(data)
+    output.chmod(0o600)
+
+
 def obtain_context(
     model: FrozenLogistic, *, allow_test_http: bool = False
 ) -> dict[str, pd.DataFrame]:
@@ -242,17 +272,20 @@ def obtain_context(
         installed = cache / digest
         if installed.exists() or installed.is_symlink():
             return _cached_context(model, installed, digest)
-        if not url:
+        if not url and not os.environ.get("SATD_DEMO_HF_REPO_ID"):
             raise ContextUnavailable("Configure la URL del contexto privado.")
         with tempfile.TemporaryDirectory(prefix=".download-", dir=cache) as temporary:
             staging = Path(temporary)
             package = staging / "bundle.zip"
-            _download(
-                url,
-                os.environ.get("SATD_DEMO_CONTEXT_TOKEN"),
-                package,
-                allow_test_http=allow_test_http,
-            )
+            if os.environ.get("SATD_DEMO_HF_REPO_ID"):
+                if url:
+                    raise ContextUnavailable("Configure una sola fuente remota de contexto.")
+                _download_hugging_face(package)
+            else:
+                _download(
+                    url, os.environ.get("SATD_DEMO_CONTEXT_TOKEN"), package,
+                    allow_test_http=allow_test_http,
+                )
             _write_files(_archive_files(package, digest, model), staging / "context")
             contexts = complete_context(model, staging / "context")
             # Otra instancia puede haber terminado la misma instalación mientras se descargaba.
@@ -262,13 +295,13 @@ def obtain_context(
             return contexts
     except (
         OSError, ValueError, KeyError, TypeError, BadZipFile, CompressionError,
-        RuntimeError, HTTPException,
+        RuntimeError, HTTPException, HTTPError, HfHubHTTPError,
     ):
         pass
     # Fuera del except: tampoco se conserva una excepción de red con URL/token en __context__.
     raise ContextUnavailable(
         "Contexto privado no disponible o inválido. El administrador debe revisar "
-        "SATD_DEMO_CONTEXT_DIR o la URL, SHA-256 y credencial del paquete."
+        "el directorio o la fuente remota, revisión y SHA-256 del paquete."
     )
 
 

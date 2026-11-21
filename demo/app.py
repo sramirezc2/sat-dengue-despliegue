@@ -113,9 +113,9 @@ def main() -> None:
         model, contexts = resources()
     except (OSError, ValueError, KeyError):
         st.error(
-            "El modelo o contexto privado verificado no está disponible. "
+            "El modelo o contexto verificado no está disponible. "
             "El administrador debe revisar SATD_DEMO_MODEL_DIR, SATD_DEMO_CONTEXT_DIR "
-            "o la configuración del paquete privado según la guía de operación. "
+            "o la configuración del paquete según la guía de operación. "
             "No necesita ingresar credenciales."
         )
         return

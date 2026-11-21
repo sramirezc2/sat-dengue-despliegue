@@ -26,6 +26,52 @@ from sat_dengue_pipeline.risk.configuration import procedure
 from test_inferencia import context, write_context
 
 
+def test_public_hub_download_is_pinned_and_cached(monkeypatch, tmp_path, package, model):
+    """Descargar anónimamente una revisión fija y reutilizar solo bytes verificados."""
+    configure_download(monkeypatch, tmp_path, "", package[1]["package_sha256"])
+    monkeypatch.setenv("SATD_DEMO_HF_REPO_ID", "sat-dengue/hf_hub_download")
+    monkeypatch.setenv("SATD_DEMO_HF_REVISION", "a" * 40)
+    calls = []
+
+    def download(**kwargs):
+        calls.append(kwargs)
+        return str(package[0])
+
+    monkeypatch.setattr("contexto_paquete.hf_hub_download", download)
+    assert len(obtain_context(model)) == 12
+    assert calls == [{
+        "repo_id": "sat-dengue/hf_hub_download", "repo_type": "dataset",
+        "filename": "context-real-v1.zip", "revision": "a" * 40, "token": False,
+    }]
+    monkeypatch.setattr("contexto_paquete.hf_hub_download", lambda **kw: pytest.fail("Red"))
+    assert len(obtain_context(model)) == 12
+
+
+@pytest.mark.parametrize("failure", ["mutable", "hash", "network", "two-sources"])
+def test_public_hub_rejects_invalid_sources(monkeypatch, tmp_path, package, model, failure):
+    """Fallar cerrado ante revisión mutable, bytes ajenos, red o fuentes ambiguas."""
+    configure_download(monkeypatch, tmp_path, "", package[1]["package_sha256"])
+    monkeypatch.setenv("SATD_DEMO_HF_REPO_ID", "sat-dengue/hf_hub_download")
+    monkeypatch.setenv("SATD_DEMO_HF_REVISION", "main" if failure == "mutable" else "a" * 40)
+    if failure == "hash":
+        monkeypatch.setenv("SATD_DEMO_CONTEXT_BUNDLE_SHA256", "0" * 64)
+    if failure == "two-sources":
+        monkeypatch.setenv("SATD_DEMO_CONTEXT_BUNDLE_URL", "https://example.org/file")
+
+    def download(**kwargs):
+        if failure == "network":
+            from httpx2 import ConnectError
+            raise ConnectError("artificial-private-url")
+        return str(package[0])
+
+    monkeypatch.setattr("contexto_paquete.hf_hub_download", download)
+    with pytest.raises(ContextUnavailable) as error:
+        obtain_context(model)
+    assert "artificial-private-url" not in str(error.value)
+    assert error.value.__context__ is None
+    assert not list((tmp_path / "cache").glob("*/context"))
+
+
 @pytest.fixture
 def model():
     """Cargar exclusivamente el modelo versionado aprobado."""

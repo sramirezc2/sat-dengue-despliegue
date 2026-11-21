@@ -17,3 +17,6 @@ def isolate_demo_configuration(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("SATD_DEMO_CONTEXT_BUNDLE_SHA256", raising=False)
     monkeypatch.delenv("SATD_DEMO_CONTEXT_TOKEN", raising=False)
     monkeypatch.delenv("SATD_DEMO_CONTEXT_CACHE_DIR", raising=False)
+    monkeypatch.delenv("SATD_DEMO_HF_REPO_ID", raising=False)
+    monkeypatch.delenv("SATD_DEMO_HF_REVISION", raising=False)
+    monkeypatch.delenv("SATD_DEMO_HF_FILENAME", raising=False)

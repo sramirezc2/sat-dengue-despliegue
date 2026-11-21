@@ -1,5 +1,52 @@
 # Operación de la demo Streamlit
 
+## Despliegue académico en Community Cloud
+
+El entrypoint de nube es **`streamlit_app.py` en la raíz**, Python **3.12**.
+Community Cloud instala el único `requirements.txt` de ese directorio. Este fija
+las versiones compatibles con los locks existentes e instala `-e ./pipeline`:
+el modo editable es necesario porque el paquete resuelve recetas y artefactos
+relativos al checkout. No se necesita preparar una `.venv` en el servidor.
+`demo/app.py` y su entorno separado continúan siendo el recorrido local.
+
+El contexto público está en
+[sat-dengue/hf_hub_download](https://huggingface.co/datasets/sat-dengue/hf_hub_download),
+archivo `context-real-v1.zip`, revisión
+`3935f67b9b79a0e8810f7804867d919615d3840a`, SHA-256
+`59fad5e1f56b5603feca036656756a8e04d19b502925ad0157ff03639d25ff6e`.
+La identidad completa se conserva en `demo/context-release.json`. El launcher
+configura esos valores sin pedir credenciales al visitante. El cliente oficial
+`hf_hub_download` usa `repo_type=dataset` y `token=False`; el ZIP pasa después
+por las validaciones de SHA, inventario, meses, población y release existentes.
+La revisión completa evita seguir cambios futuros de `main` en Hugging Face.
+
+Variables públicas adicionales: `SATD_DEMO_HF_REPO_ID`,
+`SATD_DEMO_HF_REVISION` (40 caracteres hexadecimales), `SATD_DEMO_HF_FILENAME`.
+El nombre admitido es `context-real-v1.zip`. No configurar a la vez estas
+variables y `SATD_DEMO_CONTEXT_BUNDLE_URL`. El directorio local existente sigue
+teniendo prioridad, y una caché verificada permite reiniciar sin volver a la red.
+
+Para desplegar: conectar el repositorio en Community Cloud, elegir la rama
+revisada, `streamlit_app.py` y Python 3.12. No se requiere ningún secreto.
+El propietario o administrador del repositorio debe completar la conexión si
+la cuenta que publica solo tiene permiso de escritura. El despliegue público y
+la aceptación en navegador externo se acreditarán con su URL y recibo; una
+prueba local no acredita esa entrega.
+
+Prueba de instalación desde la raíz:
+
+```sh
+uv venv .venv-cloud --python 3.12
+uv pip install --python .venv-cloud/bin/python -r requirements.txt
+.venv-cloud/bin/streamlit run streamlit_app.py
+```
+
+El paquete (284.552 bytes) contiene derivados mensuales agregados, no microdatos,
+etiquetas ni desenlaces de 2025. Su publicación pública fue autorizada por el
+equipo. Las referencias a contexto privado y alojamiento neutral más abajo
+describen el mecanismo local/HTTPS previo; Community Cloud utiliza el Dataset
+público fijado en esta sección.
+
 La entrega final de aplicación es `demo/app.py`. API/React en `app/` es el
 servicio heredado de publicaciones, con despliegue y dependencias independientes.
 La demo carga notificaciones en memoria, valida un mes, aplica el modelo
@@ -11,10 +58,12 @@ El tutor nunca ingresa credenciales; cualquier token pertenece solo al servidor.
 
 ## Estado del alojamiento
 
-El repositorio solo tenía instrucciones de ejecución local de Streamlit; no
-define proveedor, aplicación remota, dominio HTTPS ni credenciales de despliegue.
-La instancia AWS Academy documentada en el README corresponde al servicio
-heredado, no a esta demo. No hay URL pública Streamlit comprobada.
+Community Cloud está elegido para la entrega actual. No hay aún URL pública
+comprobada: el formulario confirmó que `j-mauro-r` carece de permiso administrador
+sobre el repositorio oficial y deshabilitó Deploy. La instancia AWS Academy del
+servicio heredado es independiente. El procedimiento neutral siguiente se
+conserva para instalaciones locales o en otro host; la configuración pública de
+Hugging Face está descrita al comienzo de esta guía.
 
 La siguiente receta es para un alojamiento Python/Linux que admita instalación
 bloqueada, almacenamiento privado persistente y WebSocket detrás de HTTPS. No

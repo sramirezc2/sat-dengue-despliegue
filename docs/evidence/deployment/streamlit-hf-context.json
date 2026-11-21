@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-21",
+  "base_commit": "a2b2411b5737c0b152e93c5e4789db44006a544d",
+  "context": {
+    "repo_id": "sat-dengue/hf_hub_download",
+    "repo_type": "dataset",
+    "filename": "context-real-v1.zip",
+    "revision": "3935f67b9b79a0e8810f7804867d919615d3840a",
+    "sha256": "59fad5e1f56b5603feca036656756a8e04d19b502925ad0157ff03639d25ff6e",
+    "bytes": 284552,
+    "anonymous_download": "PASS"
+  },
+  "local_clean_install": {
+    "status": "PASS",
+    "python": "3.12.13",
+    "platform": "macOS ARM64",
+    "entrypoint": "streamlit_app.py",
+    "first_interface_seconds": 4.58,
+    "inference_seconds": 0.054,
+    "input": "artificial_notifications",
+    "context": "real_pinned_hf",
+    "percentages": [5, 10, 15, 20],
+    "selected": [4, 8, 12, 16],
+    "ranking_unchanged": true
+  },
+  "demo_tests": {"passed": 70, "failed": 0},
+  "preservation_normal": "PASS",
+  "preservation_optimized": "PASS",
+  "registry": "VALID",
+  "github_account_can_push": true,
+  "github_account_is_admin": false,
+  "public_application_url": null,
+  "external_tutor_acceptance": "PENDING",
+  "scientific_training": false,
+  "operational_authorization": false
+}

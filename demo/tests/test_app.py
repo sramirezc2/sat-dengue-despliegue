@@ -154,3 +154,16 @@ def test_streamlit_http_health_and_restart(demo_context, tmp_path) -> None:
                 except subprocess.TimeoutExpired:
                     process.kill()
                     process.wait(timeout=5)
+
+
+def test_cloud_entrypoint_uses_same_application(demo_context):
+    """El launcher público conserva carga e inferencia con contexto artificial aislado."""
+    app = AppTest.from_file(str(Path(__file__).resolve().parents[2] / "streamlit_app.py"))
+    app.run(timeout=30)
+    assert not app.exception and not app.error
+    next(button for button in app.button if button.label == "Cargar muestra artificial").click()
+    app.run(timeout=30)
+    next(button for button in app.button if "Calcular prioridades" in button.label).click()
+    app.run(timeout=30)
+    assert not app.exception and not app.error
+    assert len(app.dataframe) >= 1

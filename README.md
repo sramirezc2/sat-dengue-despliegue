@@ -2,7 +2,7 @@
 
 Sistema de alerta temprana de brotes de dengue para los municipios de **Tolima
 y Meta**. La entrega final de aplicación es la **demo Streamlit de priorización T+2** en
-`demo/app.py`. El servicio heredado API/React en `app/` sirve publicaciones
+`streamlit_app.py`, que ejecuta `demo/app.py`. El servicio heredado API/React en `app/` sirve publicaciones
 persistidas y se conserva independiente. La fábrica científica V3 está en
 `pipeline/`; la API no importa Kedro ni ejecuta inferencia.
 
@@ -14,9 +14,9 @@ Proyecto: Despliegue de Soluciones. **Grupo 11**.
 ## Entrega final: demo Streamlit
 
 Usa exclusivamente `logistica-conclima-t2`, congelado y sin método de entrenamiento,
-con el SHA-256 aprobado. Requiere un contexto privado previamente construido y
-verificado; no se incluye en Git. El servidor lo obtiene de un directorio local
-o de un paquete privado HTTPS con SHA-256 fijado y caché. Instalación
+con el SHA-256 aprobado. Obtiene el contexto agregado de un Dataset público de
+Hugging Face, con revisión y SHA-256 fijados y caché; el contexto no se incluye
+en Git. Puede usar también un directorio local previamente verificado. Instalación
 reproducible, provisión segura, recuperación y alojamiento en la
 [guía de Streamlit](docs/operations/streamlit-demo.md).
 Los criterios y resultados locales están en el
@@ -25,14 +25,15 @@ Los criterios y resultados locales están en el
 Desde la raíz, con Python 3.12 y uv 0.11.19 (macOS/Linux):
 
 ```sh
-UV_PROJECT_ENVIRONMENT="$PWD/demo/.venv" uv sync --locked --project pipeline --no-dev
-uv pip install --python demo/.venv/bin/python --require-hashes -r demo/requirements.lock
-demo/.venv/bin/streamlit run demo/app.py --server.address 127.0.0.1 --server.port 8501 --browser.gatherUsageStats false
+uv venv .venv-cloud --python 3.12
+uv pip install --python .venv-cloud/bin/python -r requirements.txt
+.venv-cloud/bin/streamlit run streamlit_app.py --server.address 127.0.0.1 --server.port 8501 --browser.gatherUsageStats false
 ```
 
 Abra **http://127.0.0.1:8501**. El entorno de la demo queda aislado del científico.
 Sin contexto válido se muestra un mensaje de configuración y no se calcula el ranking.
-No hay URL pública Streamlit verificada ni proveedor configurado en este repositorio.
+El proveedor elegido es Streamlit Community Cloud. La URL pública y su prueba
+externa siguen pendientes de que un administrador conecte el repositorio.
 
 | Variable | Valor predeterminado, desde la raíz del repo |
 | --- | --- |
@@ -864,3 +865,15 @@ La nueva vista de prioridades usa T+2, cupo global de ocho y un contrato separad
 del histórico. Implementación y operación: [guía de prioridades](docs/operations/risk-2025.md);
 [decisiones A–E](docs/decisions/2025-risk-publication.md). Validación intensiva
 y publicación real pendientes del término de EXP006; no autorización sanitaria.
+
+## Demo académica en Streamlit Community Cloud
+
+La entrada de despliegue es `streamlit_app.py` (raíz), con Python 3.12 y
+`requirements.txt`. Carga el modelo congelado y obtiene automáticamente el
+contexto público de Hugging Face con revisión y SHA fijados en
+`demo/context-release.json`. El visitante no necesita cuenta ni token.
+El flujo permite cargar notificaciones mensuales, calcular el ranking T+2 y
+simular 5/10/15/20 % de priorización, conservando las posiciones.
+La [guía de despliegue](docs/operations/streamlit-demo.md) documenta instalación,
+identidad del contexto y configuración. La URL pública permanece pendiente de
+creación y prueba externa; los resultados locales no acreditan un despliegue.
