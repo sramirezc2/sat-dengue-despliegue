@@ -231,3 +231,39 @@ no se agregan a Git. El escaneo de los archivos del diff no encontró candidatos
 de secretos ni rutas absolutas de esta máquina. Enlaces locales y diff PASS.
 El árbol se deja limpio tras los commits locales; no se abre PR ni se hace push
 o merge. La comprobación remota de CI queda diferida, sin atribuirle este PASS.
+
+## Corrección de CI: lock condicionado por plataforma
+
+El job **136864140792**, `Pipeline quality` del PR #18 sobre `794cf2b`, falló
+en `Install isolated demo environment`: `uv sync` terminó correctamente, pero
+`uv pip install --require-hashes -r demo/requirements.lock` devolvió código 2
+porque faltaba el pin de `watchdog`. Streamlit 1.67.0 lo requiere fuera de Darwin;
+el lock anterior se había compilado en macOS sin resolución universal.
+
+Se reprodujo el mismo error localmente resolviendo para Linux en un entorno
+vacío. Se regeneró el lock con `--universal`, manteniendo hashes y constraints
+del pipeline: las 35 versiones previas permanecen iguales y se añade únicamente
+`watchdog==7.1.1 ; sys_platform != 'darwin'`, con sus hashes. No se cambia la
+dependencia directa de Streamlit ni el lock científico. La guía documenta el
+comando correcto y CI ahora resuelve de forma explícita Linux x64, macOS arm64
+y Windows x64 con `--require-hashes --reinstall --dry-run --only-binary=:all:`.
+`--reinstall` impide que paquetes ya instalados oculten dependencias omitidas.
+
+Verificación de esta corrección:
+
+- Resolución cruzada completa de los tres destinos: PASS.
+- Instalación cruzada real de los 36 paquetes/wheels Linux con hashes, en un
+  entorno vacío separado: PASS. No se ejecutó código Linux ni se afirma un
+  smoke nativo Linux; el daemon Docker local no estaba disponible.
+- Instalación con hashes en macOS y `pytest demo/tests`: **64 PASS**, 19,36 s,
+  incluidos smoke HTTP y reinicio. YAML, Ruff del pipeline, lock check y diff: PASS.
+- Preservación normal/-O: PASS, 49 protecciones originales, 127 extendidas y
+  22 JSON intactos. Sin cambios de modelo, evidencia, contratos ni presupuesto.
+- No se repiten las suites completas pipeline/API/dashboard: solo cambian el
+  lock de la demo, su guard de instalación y documentación. Los resultados
+  acumulados anteriores corresponden a su revisión, no a una nueva ejecución.
+
+Los logs locales quedan en `pipeline/data/demo-validation/ci-watchdog/`, ignorados.
+El resultado remoto de la corrección requiere publicar el commit y ejecutar CI;
+no se hace push ni merge aquí. La revisión humana requerida del PR permanece
+vigente y no es un fallo de instalación ni una regla que deba desactivarse.

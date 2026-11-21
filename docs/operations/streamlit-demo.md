@@ -48,10 +48,15 @@ Para renovar deliberadamente el lock de la demo (no en cada despliegue):
 ```sh
 mkdir -p pipeline/data/demo-validation
 uv export --locked --project pipeline --no-dev --no-emit-project --no-hashes --output-file pipeline/data/demo-validation/pipeline-constraints.txt
-uv pip compile demo/requirements.txt --constraint pipeline/data/demo-validation/pipeline-constraints.txt --python-version 3.12 --generate-hashes --no-annotate --output-file demo/requirements.lock
+uv pip compile demo/requirements.txt --constraint pipeline/data/demo-validation/pipeline-constraints.txt --python-version 3.12 --universal --generate-hashes --no-annotate --output-file demo/requirements.lock
 ```
 
 Revisar el diff y repetir las pruebas. El lock científico no se modifica.
+`--universal` es obligatorio para conservar las dependencias condicionadas por
+sistema operativo: Streamlit requiere `watchdog` en Linux/Windows y lo omite en
+macOS. CI comprueba la resolución completa con hashes y wheels para los tres
+sistemas antes de instalar la demo en su runner Ubuntu. Es una resolución
+cruzada; no sustituye ejecutar la demo de forma nativa en cada sistema.
 
 ## Rutas e identidad
 

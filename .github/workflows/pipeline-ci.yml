@@ -61,6 +61,10 @@ jobs:
         if: steps.paths.outputs.changed == 'true'
         run: |
           UV_PROJECT_ENVIRONMENT="$GITHUB_WORKSPACE/demo/.venv" uv sync --locked --project pipeline
+          # Resolve every dependency, including those absent on the runner's OS.
+          for platform in x86_64-unknown-linux-gnu aarch64-apple-darwin x86_64-pc-windows-msvc; do
+            uv pip install --python demo/.venv/bin/python --python-platform "$platform" --python-version 3.12 --only-binary=:all: --require-hashes --reinstall --dry-run -r demo/requirements.lock
+          done
           uv pip install --python demo/.venv/bin/python --require-hashes -r demo/requirements.lock
       - name: Lint and test Streamlit demo explicitly
         if: steps.paths.outputs.changed == 'true'
