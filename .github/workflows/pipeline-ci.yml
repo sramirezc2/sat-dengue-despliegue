@@ -12,7 +12,8 @@ jobs:
   validate:
     name: Pipeline quality
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Complete suites exceed 15–20 minutes on hosted Linux/Windows runners.
+    timeout-minutes: 45
     env:
       DO_NOT_TRACK: '1'
     steps:
@@ -110,7 +111,7 @@ jobs:
   portability:
     name: Pipeline portability (${{ matrix.platform }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:

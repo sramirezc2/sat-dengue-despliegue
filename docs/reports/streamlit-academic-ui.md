@@ -160,6 +160,25 @@ Evidencias finales, solo muestra artificial y agregados históricos públicos:
 - [Introducción y dos gráficas históricas](streamlit-academic-ui/respaldo-graficas.png).
 - [Carga de falsas alertas y cuatro tarjetas](streamlit-academic-ui/respaldo-tarjetas.png).
 
+## Recuperación de los límites de tiempo de CI
+
+La ejecución [44938492833](https://github.com/sramirezc2/sat-dengue-despliegue/actions/runs/44938492833),
+sobre `b5c7d95`, aprobó las 98 pruebas de demo y la instalación de Community Cloud,
+pero agotó los límites de los jobs: quality a los 15 minutos y portabilidad
+Ubuntu/Windows a los 20. El último progreso de quality fue 80 %, sin aserción
+fallida registrada; su log conserva `The operation was canceled`. macOS completó
+la portabilidad con PASSED. Los logs originales y los intentos cancelados se
+conservan en GitHub; la ausencia de recibos Ubuntu/Windows es consecuencia de la
+terminación, no se fabrican recibos para completar esos intentos.
+
+Recuperación mínima: ampliar únicamente el límite de ambos tipos de job a
+45 minutos, manteniendo íntegros comandos, pruebas, aserciones, matriz, versiones
+y procedimiento científico. Es un límite operativo de CI, independiente del
+presupuesto científico de ocho. No se cambia código de cálculo ni se omiten tests.
+No corresponde un nuevo ID experimental: son gates de software, no una ejecución
+científica. Validación local de YAML y equivalencia de todas las demás claves;
+la recuperación solo queda acreditada cuando la CI del SHA final termine verde.
+
 ## Entrega remota
 
 El resultado terminal de CI corresponde al SHA final del PR, y se registra en la
