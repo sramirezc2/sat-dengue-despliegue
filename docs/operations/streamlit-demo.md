@@ -270,6 +270,51 @@ detienen. No crean evidencia científica ni acceden a contexto privado.
 CI ejecuta explícitamente `demo/tests` en un entorno separado; el descubrimiento
 normal de pytest bajo `pipeline/` no los incluye.
 
+### Comparación descriptiva de prioridades
+
+El acordeón **Comparación de prioridades del mes** está cerrado por defecto,
+después de no elegibles y antes del respaldo científico. Compara las listas
+producidas para la carga; no consulta desenlaces ni mide desempeño. Abrirlo no
+ejecuta el modelo. Cambiar la capacidad reutiliza las posiciones ya calculadas.
+
+La regla estricta del canal es `dengue_notifications_count(T) >
+CHANNEL_FRACTION * p75_h5_t2`, con `CHANNEL_FRACTION = 0.95` definido únicamente
+en `demo/inferencia.py`. El test lo reconcilia con la fila `log_conclima`, horizonte
+2, presupuesto 0.1 de `docs/evidence/reserva-2023-2024-t2/reserva.csv`.
+Se usa exclusivamente dengue 210: no se suman evento 220 ni notificaciones totales.
+El P75 procede del contexto verificado del mismo origen. La cohorte común son
+exactamente los municipios con posición en el ranking: sin exceso en T, con
+canal observado y predictores completos. Los ya excluidos siguen excluidos.
+
+Los candidatos del canal se ordenan por `casos210 - 0.95 * p75_h5_t2`
+descendente y DIVIPOLA ascendente, hasta los cupos simulados. No se completan
+cupos con márgenes cero o negativos. El modelo conserva su selección por posición.
+Las tarjetas cuentan **Coinciden**, **Solo modelo** y **Solo canal**; la tabla
+contiene únicamente su unión, conserva las posiciones originales y ordena por
+posición y DIVIPOLA. No muestra scores ni márgenes. La leyenda declara capacidad,
+cupos y ambas cantidades efectivas, incluso cuando el canal utiliza menos cupos.
+
+La cobertura completa y sin duplicados se valida antes de comparar. Un P75
+ausente, negativo o no finito dentro de la cohorte elegible impide la comparación;
+no se imputa ni se reduce la cohorte. El error queda dentro de este acordeón y
+no interrumpe ranking, mapas, tabla principal ni respaldo histórico. Un municipio
+que el ranking ya excluyó por predictores incompletos no se reincorpora al canal.
+
+Durante cambios de esta comparación, ejecutar solo las pruebas focalizadas y
+Ruff sobre archivos modificados:
+
+```sh
+demo/.venv/bin/python -m pytest demo/tests/test_comparacion_prioridades.py -q
+demo/.venv/bin/python -m pytest \
+  demo/tests/test_comparacion_prioridades.py demo/tests/test_app.py \
+  -k "comparison or channel or capacity or expander" -q
+```
+
+Al terminar, ejecutar una vez `demo/tests`, Ruff explícito de la demo,
+`git diff --check` y preservación normal y con `python -O`. Las suites de pipeline,
+API y dashboard quedan a cargo de CI cuando esos componentes no cambian.
+Recorrido Chrome y capturas: [informe de comparación](../reports/streamlit-comparison.md).
+
 ## Recorrido funcional en el alojamiento
 
 Después de elegir y configurar proveedor, SHA, contexto privado y dominio TLS:
@@ -291,7 +336,9 @@ Después de elegir y configurar proveedor, SHA, contexto privado y dominio TLS:
    Ambos botones de descarga sirven `sample_csv` del último mes verificado, con
    los mismos bytes y nombre `muestra-artificial.csv` (24 notificaciones inventadas
    de seis municipios), listo para cargar sin edición.
-   Debajo de la nota retrospectiva, el acordeón **Respaldo científico del modelo**
+   Debajo de la nota retrospectiva, abrir **Comparación de prioridades del mes**:
+   comprobar tarjetas, unión y cupos; no hay evaluación del archivo cargado.
+   Después, el acordeón **Respaldo científico del modelo**
    está cerrado por defecto. Su encabezado abre o cierra el contenido sin rerun
    ni nuevo scoring; no hay subtítulo duplicado. Dentro se conservan dos gráficas
    y cuatro métricas de la receta en

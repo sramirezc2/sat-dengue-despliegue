@@ -15,6 +15,7 @@ from inferencia import (
     POPULATION,
     capacity,
     capacity_warning,
+    compare_priorities,
     geography,
     load_model,
     parse_upload,
@@ -166,6 +167,46 @@ def scientific_support() -> None:
         column.caption(definition)
 
 
+def priority_comparison(
+    ordered: pd.DataFrame, counts: pd.DataFrame, context: pd.DataFrame, percentage: int,
+) -> None:
+    """Presentar coincidencias de listas; aislar errores sin afectar otros resultados."""
+    st.write(
+        "Compara los municipios priorizados por el modelo y las alertas generadas por el "
+        "canal endémico con la información cargada. No determina cuál método acertará, "
+        "porque aún no se conocen los desenlaces de T+2."
+    )
+    try:
+        comparison = compare_priorities(ordered, counts, context, percentage)
+    except (ValueError, KeyError, TypeError, ArithmeticError):
+        st.error(
+            "No se puede calcular la comparación de prioridades. Revise los conteos y "
+            "el P75 histórico de T+2 del contexto; no se imputan valores."
+        )
+        return
+    categories = comparison["Comparación"].value_counts()
+    cards = (
+        ("Coinciden", "Ambos", "Seleccionados tanto por el modelo como por el canal."),
+        ("Solo modelo", "Solo modelo", "Seleccionados por el modelo, pero no por el canal."),
+        ("Solo canal", "Solo canal", "Alertados por el canal, fuera del top del modelo."),
+    )
+    for column, (label, category, definition) in zip(st.columns(3), cards, strict=True):
+        column.metric(label, int(categories.get(category, 0)))
+        column.caption(definition)
+    st.caption(
+        f"Capacidad simulada: {percentage} % · Cupos máximos: {capacity(percentage)} · "
+        f"Alertas del modelo: {int(comparison['Comparación'].ne('Solo canal').sum())} · "
+        f"Alertas del canal: {int(comparison['Alerta canal'].sum())}. "
+        "El canal utiliza solo los municipios que superan su umbral; puede emitir menos alertas "
+        "que cupos disponibles."
+    )
+    st.dataframe(comparison, width="stretch")
+    st.caption(
+        "Esta comparación describe las listas generadas con los datos cargados; "
+        "no mide aciertos ni desempeño."
+    )
+
+
 def main() -> None:
     """Cargar un mes de notificaciones y calcular bajo demanda el orden de prioridad."""
     st.title("Prioridades municipales de dengue")
@@ -304,6 +345,8 @@ def main() -> None:
         "Demostración retrospectiva. La emisión de alertas operativas requiere validación "
         "prospectiva."
     )
+    with st.expander("Comparación de prioridades del mes", expanded=False):
+        priority_comparison(st.session_state.ranking, counts, contexts[month], percentage)
     with st.expander("Respaldo científico del modelo", expanded=False):
         scientific_support()
 

@@ -12,6 +12,7 @@ import urllib.request
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
+import inferencia
 import pandas as pd
 import pytest
 import respaldo_cientifico
@@ -42,7 +43,7 @@ def click(app: AppTest, label: str) -> AppTest:
 
 
 @pytest.mark.parametrize("entrypoint", ["demo/app.py", "streamlit_app.py"])
-def test_sample_budget_and_restart(demo_context, monkeypatch, entrypoint) -> None:
+def test_sample_capacity_expander_and_restart(demo_context, monkeypatch, entrypoint) -> None:
     """Cargar, inferir una vez, cambiar cupos y reiniciar sin modificar posiciones."""
     calls = []
     score = type(demo_context).score
@@ -256,7 +257,9 @@ def test_downloads_are_same_upload_ready_resource(demo_context, monkeypatch):
 
 
 @pytest.mark.parametrize("corruption", [None, b"{invalid", b"{}"])
-def test_scientific_support_error_keeps_ranking(demo_context, monkeypatch, tmp_path, corruption):
+def test_scientific_support_expander_error_keeps_ranking(
+    demo_context, monkeypatch, tmp_path, corruption,
+):
     """Respaldo ausente o corrupto informa un error local; el ranking permanece disponible."""
     app = AppTest.from_file(ROOT / "demo/app.py").run()
     click(app, "Cargar muestra artificial")
@@ -275,4 +278,102 @@ def test_scientific_support_error_keeps_ranking(demo_context, monkeypatch, tmp_p
     assert not science.proto.id  # Apertura local en el navegador, sin widget que provoque rerun.
     assert len(app.dataframe[0].value) == 19 and len(app.get("iframe")) == 2
     pd.testing.assert_frame_equal(app.session_state["ranking"], ordered)
-    assert not app.get("vega_lite_chart") and len(app.metric) == 5
+    assert not app.get("vega_lite_chart") and len(app.metric) == 8
+
+
+def test_comparison_channel_capacity_expander(demo_context, monkeypatch) -> None:
+    """La comparación renderiza la unión y tarjetas, sin un segundo scoring al cambiar cupos."""
+    calls = []
+    score = type(demo_context).score
+
+    def counted(self, frame):
+        calls.append(len(frame))
+        return score(self, frame)
+
+    monkeypatch.setattr(type(demo_context), "score", counted)
+    app = AppTest.from_file(ROOT / "demo/app.py", default_timeout=15).run()
+    assert not any(e.label == "Comparación de prioridades del mes" for e in app.expander)
+    click(app, "Cargar muestra artificial")
+    click(app, "Calcular prioridades T+2")
+    ordered = app.session_state["ranking"].copy()
+    historical = [(m.label, m.value) for m in app.metric][-4:]
+    _, counts, _ = parse_upload(sample_csv(ORIGINS[-1]), ".csv", geography().index)
+    potential = sorted(counts.index[counts[COUNTS[0]].gt(0)])
+    assert len(potential) == 6  # P75 T+2 = 1 en el contexto artificial de esta prueba.
+    for percentage in (10, 5, 100, 10):
+        app.selectbox[0].select(percentage).run()
+        assert not app.exception and not app.error and len(calls) == 1
+        comparison = next(
+            e for e in app.expander if e.label == "Comparación de prioridades del mes"
+        )
+        science = next(e for e in app.expander if e.label == "Respaldo científico del modelo")
+        assert not comparison.proto.expanded and not comparison.proto.id
+        assert not comparison.get("vega_lite_chart") and len(comparison.metric) == 3
+        assert len(science.get("vega_lite_chart")) == 2 and len(science.metric) == 4
+        nodes = list(app.main)
+        excluded = next(e for e in app.expander if e.label == "Municipios no elegibles")
+        assert nodes.index(excluded) < nodes.index(comparison) < nodes.index(science)
+        table = comparison.dataframe[0].value
+        model = set(app.dataframe[0].value.index)
+        channel = set(potential[:capacity(percentage)])
+        assert set(table.index) == model | channel
+        assert table.index[table["Alerta canal"]].tolist() == [
+            c for c in table.index if c in channel
+        ]
+        assert [(m.label, m.value) for m in comparison.metric] == [
+            ("Coinciden", str(len(model & channel))),
+            ("Solo modelo", str(len(model - channel))),
+            ("Solo canal", str(len(channel - model))),
+        ]
+        assert sum(int(m.value) for m in comparison.metric) == len(table)
+        assert table["Posición modelo"].tolist() == ordered.loc[table.index, "Posición"].tolist()
+        assert list(table) == [
+            "Municipio", "Departamento", "Posición modelo", "Alerta canal", "Comparación",
+        ]
+        assert comparison.markdown[0].value == (
+            "Compara los municipios priorizados por el modelo y las alertas generadas por el "
+            "canal endémico con la información cargada. No determina cuál método acertará, "
+            "porque aún no se conocen los desenlaces de T+2."
+        )
+        assert comparison.caption[-1].value == (
+            "Esta comparación describe las listas generadas con los datos cargados; "
+            "no mide aciertos ni desempeño."
+        )
+        assert any(f"Alertas del canal: {len(channel)}." in c.value for c in comparison.caption)
+        assert [(m.label, m.value) for m in app.metric][-4:] == historical
+        pd.testing.assert_frame_equal(app.session_state["ranking"], ordered)
+
+
+@pytest.mark.parametrize("defect", ["column", "value"])
+def test_comparison_expander_context_error_is_isolated(demo_context, monkeypatch, defect) -> None:
+    """Un P75 inaccesible para comparar no invalida resultados ni respaldo histórico."""
+    original = inferencia.compare_priorities
+
+    def incomplete(ordered, counts, context, percentage):
+        frame = context.copy()
+        if defect == "column":
+            frame = frame.drop(columns="p75_h5_t2")
+        else:
+            frame.loc[0, "p75_h5_t2"] = pd.NA
+        return original(ordered, counts, frame, percentage)
+
+    monkeypatch.setattr(inferencia, "compare_priorities", incomplete)
+    app = AppTest.from_file(ROOT / "demo/app.py", default_timeout=15).run()
+    click(app, "Cargar muestra artificial")
+    click(app, "Calcular prioridades T+2")
+    ordered = app.session_state["ranking"].copy()
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("No se debe repetir la inferencia")
+
+    monkeypatch.setattr(type(demo_context), "score", forbidden)
+    app.selectbox[0].select(5).run()
+    comparison = next(e for e in app.expander if e.label == "Comparación de prioridades del mes")
+    science = next(e for e in app.expander if e.label == "Respaldo científico del modelo")
+    assert not app.exception and len(app.error) == len(comparison.error) == 1
+    assert app.error[0] is comparison.error[0] and not comparison.proto.expanded
+    assert not comparison.dataframe and not comparison.metric
+    assert len(app.dataframe[0].value) == 4 and len(app.get("iframe")) == 2
+    assert not science.error and len(science.metric) == 4
+    assert len(science.get("vega_lite_chart")) == 2
+    pd.testing.assert_frame_equal(app.session_state["ranking"], ordered)

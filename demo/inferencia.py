@@ -5,7 +5,7 @@ import hashlib
 import io
 import json
 import re
-from math import ceil
+from math import ceil, isfinite
 from pathlib import Path
 from xml.etree.ElementTree import ParseError
 from zipfile import BadZipFile, ZipFile
@@ -23,6 +23,7 @@ from sat_dengue_pipeline.risk.inference import InferenceCoverage, rank_eligible
 ARTIFACT_SHA256 = "d0a883a7528afd5d3d1fdbe43d44e5c5a396c109ab20ed49845a198ccdb75c8c"
 PERCENTAGES = tuple(range(5, 101, 5))
 POPULATION = 76
+CHANNEL_FRACTION = 0.95
 METADATA = ["department_code", "municipality_name"]
 REASONS = {
     "EXCESS_AT_ORIGIN": "Exceso en el mes de origen",
@@ -250,3 +251,64 @@ def capacity_warning(eligible: int, percentage: int) -> str | None:
             "No se completa con municipios no elegibles."
         )
     return None
+
+
+def compare_priorities(
+    ordered: pd.DataFrame, counts: pd.DataFrame, context: pd.DataFrame, percentage: int = 10,
+) -> pd.DataFrame:
+    """Comparar listas en la cohorte del ranking, sin puntuar ni consultar desenlaces.
+
+    El canal usa solo dengue 210 y P75 histórico de T+2, con desigualdad estricta.
+    Los candidatos se ordenan por exceso sobre ese umbral y luego por DIVIPOLA;
+    se limita su cantidad sin rellenar. La lista del modelo conserva sus posiciones.
+
+    Args:
+        ordered: Ranking completo ya calculado para la carga y el origen.
+        counts: Conteos de esa carga, indexados por municipio.
+        context: Contexto verificado del mismo origen.
+        percentage: Capacidad simulada permitida.
+
+    Returns:
+        Unión de las listas, sin scores ni márgenes internos.
+
+    Raises:
+        ValueError: Si la cobertura o los datos requeridos no permiten comparar.
+    """
+    selected = select_capacity(ordered, percentage)
+    try:
+        reference = context.set_index(KEYS[0])["p75_h5_t2"]
+        cases = counts[COUNTS[0]]
+        if (
+            len(selected) != POPULATION or not selected.index.is_unique
+            or not reference.index.is_unique or not cases.index.is_unique
+            or set(cases.index) != set(selected.index)
+            or set(reference.index) != set(selected.index)
+        ):
+            raise ValueError
+        eligible = selected.index[selected["Posición"].notna()]
+        cases = pd.to_numeric(cases.reindex(eligible), errors="raise")
+        reference = pd.to_numeric(reference.reindex(eligible), errors="raise")
+        for values in (cases, reference):
+            if values.isna().any() or not values.map(isfinite).all() or values.lt(0).any():
+                raise ValueError
+    except (KeyError, TypeError, ValueError, OverflowError):
+        raise ValueError(
+            "No se puede calcular la comparación: revise la cobertura, los conteos de "
+            "dengue 210 y el P75 histórico de T+2 de la cohorte elegible."
+        ) from None
+    margin = cases - CHANNEL_FRACTION * reference
+    candidates = pd.DataFrame({"margin": margin, "DIVIPOLA": margin.index}).rename_axis(None)
+    alerts = candidates.loc[margin.gt(0)].sort_values(
+        ["margin", "DIVIPOLA"], ascending=[False, True],
+    ).head(capacity(percentage))
+    selected["Alerta canal"] = selected.index.isin(alerts.index)
+    union = selected.loc[selected.Priorizado | selected["Alerta canal"]].copy()
+    union["Comparación"] = [
+        "Ambos" if model and channel else "Solo modelo" if model else "Solo canal"
+        for model, channel in union[["Priorizado", "Alerta canal"]].itertuples(
+            index=False, name=None,
+        )
+    ]
+    table = union.rename(columns={"Posición": "Posición modelo"}).rename_axis("DIVIPOLA")
+    columns = ["Municipio", "Departamento", "Posición modelo", "Alerta canal", "Comparación"]
+    return table[columns].sort_values(["Posición modelo", "DIVIPOLA"])
