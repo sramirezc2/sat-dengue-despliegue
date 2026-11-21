@@ -108,6 +108,33 @@ def prioritize(
     Returns:
         Filas territoriales ordenadas por código y digest de los predictores en T.
     """
+    rows, feature_digest = _rank_eligible(table, schema, origin, model, minimum_eligible=8)
+    for row in rows:
+        rank = row["risk_rank"]
+        row["selected_for_attention"] = rank is not None and rank <= 8
+    return rows, feature_digest
+
+
+def rank_eligible(
+    table: pd.DataFrame, schema: dict, origin: str, model: FrozenLogistic
+) -> tuple[list[dict], str]:
+    """Obtener el orden completo sin cupo, selección, puntuaciones ni probabilidades.
+
+    Comparte validación y desempate con la publicación. Admite incluso cero
+    elegibles para que la demo pueda informar capacidad insuficiente.
+    """
+    return _rank_eligible(table, schema, origin, model, minimum_eligible=0)
+
+
+def _rank_eligible(
+    table: pd.DataFrame,
+    schema: dict,
+    origin: str,
+    model: FrozenLogistic,
+    *,
+    minimum_eligible: int,
+) -> tuple[list[dict], str]:
+    """Validar y ordenar una sola vez, conservando el gate previo a scoring."""
     if not "2024-11" <= origin <= "2025-10" or table.year_month.max() > origin:
         raise ValueError("Prefijo con futuro o calendario de publicación no autorizado")
     if not "2025-01" <= add_months(origin, 2) <= "2025-12":
@@ -142,9 +169,9 @@ def prioritize(
             reason = None
         reasons.append(reason)
     eligible = [i for i, reason in enumerate(reasons) if reason is None]
-    if len(eligible) < 8:
+    if len(eligible) < minimum_eligible:
         raise ValueError("Menos de ocho municipios elegibles; no se publica el lote")
-    scores = model.score(X.iloc[eligible].reset_index(drop=True))
+    scores = model.score(X.iloc[eligible].reset_index(drop=True)) if eligible else []
     ordered = sorted(zip(eligible, scores, strict=True), key=lambda p: (-p[1], codes[p[0]]))
     ranks = {i: rank for rank, (i, _) in enumerate(ordered, 1)}
     rows = []
@@ -158,7 +185,6 @@ def prioritize(
                 "department_code": department,
                 "department_name": {"50": "Meta", "73": "Tolima"}[department],
                 "risk_rank": rank,
-                "selected_for_attention": rank is not None and rank <= 8,
                 "eligibility_status": "ELIGIBLE" if rank is not None else "INELIGIBLE",
                 "ineligibility_reason": reasons[i],
             }

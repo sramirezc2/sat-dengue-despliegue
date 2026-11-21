@@ -1,61 +1,117 @@
-# SAT Dengue, despliegue del tablero de alerta temprana
+# SAT Dengue: demo de priorización municipal y servicio heredado
 
 Sistema de alerta temprana de brotes de dengue para los municipios de **Tolima
-y Meta**. Este repositorio contiene la aplicación desplegada y la fábrica
-científica V3 independiente: la API sirve resultados persistidos, el tablero los
-presenta y `pipeline/` los construye sin introducir Kedro en el producto.
+y Meta**. La entrega final de aplicación es la **demo Streamlit de priorización T+2** en
+`demo/app.py`. El servicio heredado API/React en `app/` sirve publicaciones
+persistidas y se conserva independiente. La fábrica científica V3 está en
+`pipeline/`; la API no importa Kedro ni ejecuta inferencia.
 
 Universidad de los Andes, Maestría en Inteligencia Artificial.
 Proyecto: Despliegue de Soluciones. **Grupo 11**.
 
 ---
 
-## Demo local de inferencia en Streamlit
+## Entrega final: demo Streamlit
 
-La demo usa el mismo modelo que el informe: el artefacto congelado
-`modelos/logistica-conclima-t2/` (ver [`modelos/LEEME.md`](modelos/LEEME.md)), cargado con
-`load_artifact` y su SHA-256 aprobado. Necesita además el contexto privado de predictores de los
-orígenes publicados. Con acceso al release crudo `satd-raw-173d5856`, se construye una vez desde
-la raíz (unos tres minutos por origen):
+Usa exclusivamente `logistica-conclima-t2`, congelado y sin método de entrenamiento,
+con el SHA-256 aprobado. Requiere un contexto privado previamente construido y
+verificado; no se incluye en Git. El servidor lo obtiene de un directorio local
+o de un paquete privado HTTPS con SHA-256 fijado y caché. Instalación
+reproducible, provisión segura, recuperación y alojamiento en la
+[guía de Streamlit](docs/operations/streamlit-demo.md).
+Los criterios y resultados locales están en el
+[informe de verificación](docs/reports/streamlit-configurable-prioritization.md).
 
-```sh
-uv run --locked --project pipeline python demo/contexto.py
-```
-
-El comando calcula, para cada origen de 2024-11 a 2025-10, los rezagos de 1, 2, 3 y 12 meses,
-los percentiles del canal endémico y el clima del mes con `feature_prefix`, el mismo prefijo
-temporal de la publicación. Escribe `pipeline/data/demo/contexto-AAAA-MM.csv` y un índice
-`contexto.json` con sus huellas; nada de esto se versiona. Después:
+Desde la raíz, con Python 3.12 y uv 0.11.19 (macOS/Linux):
 
 ```sh
-uv run --locked --project pipeline --with-requirements demo/requirements.txt streamlit run demo/app.py --server.address 127.0.0.1 --server.port 8501
+UV_PROJECT_ENVIRONMENT="$PWD/demo/.venv" uv sync --locked --project pipeline --no-dev
+uv pip install --python demo/.venv/bin/python --require-hashes -r demo/requirements.lock
+demo/.venv/bin/streamlit run demo/app.py --server.address 127.0.0.1 --server.port 8501 --browser.gatherUsageStats false
 ```
 
-Abra **http://127.0.0.1:8501**. Pulse **Cargar muestra dummy** y después **Calcular prioridades
-T+2**, o elija **Subir archivo** para procesar un mes en CSV o Excel. La demo funciona de forma
-independiente de los servicios de API y dashboard.
+Abra **http://127.0.0.1:8501**. El entorno de la demo queda aislado del científico.
+Sin contexto válido se muestra un mensaje de configuración y no se calcula el ranking.
+No hay URL pública Streamlit verificada ni proveedor configurado en este repositorio.
 
-El archivo tiene una fila por notificación con `INI_SIN`, el par de residencia `COD_DPTO_R` y
-`COD_MUN_R`, y `COD_EVE` 210 (dengue) o 220 (dengue grave); también se reconoce
-`Nombre_evento`. Sin columna de evento, las filas se interpretan como dengue. Las cabeceras
-admiten mayúsculas y minúsculas, fechas ISO o día/mes/año y una sola hoja de Excel. Los archivos
-se procesan en memoria.
+| Variable | Valor predeterminado, desde la raíz del repo |
+| --- | --- |
+| `SATD_DEMO_MODEL_DIR` | `modelos/logistica-conclima-t2` |
+| `SATD_DEMO_CONTEXT_DIR` | `pipeline/data/demo` |
+| `SATD_DEMO_CONTEXT_BUNDLE_URL` | Sin valor; URL HTTPS privada, solo del servidor |
+| `SATD_DEMO_CONTEXT_BUNDLE_SHA256` | Sin valor; SHA-256 literal del paquete autorizado |
+| `SATD_DEMO_CONTEXT_TOKEN` | Opcional; token Bearer del servidor |
+| `SATD_DEMO_CONTEXT_CACHE_DIR` | `pipeline/data/demo-context-cache` |
 
-**Cómo se cuenta.** Las filas pasan por el mismo productor que construye el panel canónico:
-cada notificación aceptada cuenta por residencia y evento, sin filtrar por `Confirmados`, y el
-total es dengue más dengue grave. La carga representa el mes completo: un municipio sin filas
-cuenta cero, como en el panel. La zona del canal en el origen se recalcula con el conteo de
-dengue cargado.
+Admiten directorios locales absolutos o relativos al repositorio, existentes y
+sin enlaces simbólicos ni `..`. Solo cambia la ubicación: el SHA aprobado del
+modelo y las comprobaciones del índice, hashes y release del contexto son obligatorios.
+La ruta de contexto puede estar ausente para activar la descarga; la caché se crea
+de forma privada. Primero se usa el directorio local si existe y es válido; un
+directorio presente pero corrupto detiene la carga. En su ausencia se reutiliza
+la caché verificada o se descarga una vez el paquete, se verifica su hash externo
+y se instala atómicamente. Las interacciones no repiten la descarga ni la inferencia.
+Ejemplo con recursos instalados fuera del clon:
 
-**Qué significa el resultado.** La salida es un orden de prioridad, no una probabilidad: entre
-los municipios de Meta y Tolima sin exceso en el mes de origen se ordena por el margen lineal
-del modelo, con empate por código DIVIPOLA, y se priorizan exactamente 8 por mes. Es la regla de
-`risk.inference.prioritize`. Si hay menos de ocho elegibles no se publica el lote. La demo
-muestra la posición, no puntuaciones ni porcentajes. Al cargar el conjunto completo de
-notificaciones de un origen, el orden coincide con el que calcula el procedimiento de
-publicación (`prioritize` sobre `feature_prefix`) para ese origen. La
-disponibilidad real del clima al cierre del mes requiere verificación antes de cualquier uso
-operativo.
+```sh
+SATD_DEMO_MODEL_DIR=/srv/satd/modelos/logistica-conclima-t2 SATD_DEMO_CONTEXT_DIR=/srv/satd-private/context-v1 demo/.venv/bin/streamlit run demo/app.py --server.address 127.0.0.1
+```
+
+El CSV mensual del usuario contiene notificaciones de un mes; **no sustituye al
+contexto privado** de rezagos, clima y canal endémico construido offline con
+historia desde 2007. La aplicación exige los doce orígenes 2024-11–2025-10 y
+76 municipios por origen. Para empaquetar esos derivados ya construidos:
+
+```sh
+demo/.venv/bin/python demo/contexto_paquete.py --source pipeline/data/demo --output pipeline/data/demo-distribution/context-v1.zip
+```
+
+Produce ZIP determinista `satd-demo-context-v1` y un recibo `.manifest.json` con
+SHA-256, meses, release, población y fecha UTC. No incluye crudos ni etiquetas.
+La URL y, si hace falta, el token se configurarán en los secretos del servidor
+en la siguiente iteración. **El tutor no deberá ingresar credenciales y Streamlit
+no construirá el contexto.** Esta iteración solo valida localmente: no despliega,
+crea URL pública, wireframe, mockup ni evidencia final de sustentación.
+
+**Recorrido:** carga → validación mensual → inferencia congelada → ranking
+completo de elegibles → selección de capacidad → tabla y mapa. Pulse
+**Cargar muestra artificial** y **Calcular prioridades T+2**, o suba un CSV/Excel.
+La interfaz identifica el mes de origen T y el mes objetivo T+2. Cambiar el
+porcentaje conserva posiciones y reutiliza el ranking en memoria, sin otra inferencia.
+
+**Entrada.** Una fila por notificación, con encabezados
+`COD_DPTO_R,COD_MUN_R,INI_SIN,COD_EVE`. Eventos 210 (dengue) y 220 (dengue grave),
+residencia en Meta/Tolima y un único mes completo. Se admite también `Nombre_evento`;
+sin evento se interpreta dengue. Fechas ISO o día/mes/año, CSV UTF-8 o una hoja XLSX,
+hasta 5 MB. No se filtra por `Confirmados`. Un municipio ausente cuenta **cero
+notificaciones**; la carga parcial puede por ello producir prioridades engañosas.
+
+Descargue **la plantilla CSV** desde la aplicación y complete sus filas. También
+puede descargar la muestra de **24 registros artificiales**, seis municipios de
+ambos departamentos y ambos eventos. Se genera de forma determinista para el
+último origen disponible; no imita observaciones ni incorpora desenlaces reales
+de 2025. Su resultado solo demuestra el funcionamiento del software.
+
+**Salida.** Posición, municipio, departamento, notificaciones, zona en T, selección
+y motivo de exclusión. No se muestran puntuaciones ni probabilidades. Se ordena a
+los elegibles por puntuación descendente y DIVIPOLA ascendente, dentro del núcleo
+compartido del pipeline; la aplicación recibe solo posiciones. El mapa y la tabla
+actualizan la selección manteniendo ese orden. Los no elegibles aparecen aparte.
+
+**Simulación de capacidad.** El selector ofrece 5, 10, 15 y 20 % de los **76**
+municipios: `ceil(76 × porcentaje / 100)` produce **4, 8, 12 y 16** cupos. El valor
+predeterminado es **10 %**, las mismas ocho posiciones que la regla histórica
+sobre idénticas entradas. Si hay menos elegibles se seleccionan solo los disponibles
+y se advierte el déficit. La publicación histórica sigue exigiendo ocho y rechaza
+un lote insuficiente; `procedure()["budget"] == 8` permanece intacto.
+
+> Simulación de capacidad; no corresponde a una capacidad operativa validada con las secretarías de salud
+
+Cambiar el porcentaje no genera nueva evidencia científica ni modifica publicaciones.
+La demostración es retrospectiva; 2025 es evaluación previamente utilizada, no un
+holdout intacto. La disponibilidad del clima al cierre del mes y el uso operativo
+requieren validación. Las secciones de API/React siguientes describen el servicio
+heredado y sus resultados históricos, con contratos distintos de esta demo.
 
 ## Construcción canónica desde la raíz
 
@@ -128,7 +184,7 @@ exceso; superar al canal endémico y a la persistencia sobre exactamente las
 mismas filas; y mantener la tasa de falsas alarmas dentro de un margen que la
 secretaría pueda absorber.
 
-### Qué hace esta aplicación
+### Qué hace el servicio heredado API/React
 
 El tablero responde dos preguntas distintas y las separa en dos pestañas,
 porque mezcladas en una sola página ninguna se leía entera.
@@ -212,7 +268,7 @@ en `/api/docs`. Esa interfaz carga sus recursos desde un CDN público;
 
 | Recurso | Dirección |
 | --- | --- |
-| Aplicación desplegada | http://34.206.240.59 |
+| Servicio heredado API/React (referencia existente) | http://34.206.240.59 |
 | Repositorio del despliegue | https://github.com/sramirezc2/sat-dengue-despliegue |
 | Procedencia de los datos publicados | corrida `88e3ad9decce8bd4d`, evaluación congelada G5 |
 | Bitácora experimental | [`docs/bitacora-experimental.md`](docs/bitacora-experimental.md) |
