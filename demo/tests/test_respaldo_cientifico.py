@@ -3,6 +3,7 @@
 import csv
 import hashlib
 import json
+import subprocess
 from copy import deepcopy
 
 import pytest
@@ -93,3 +94,14 @@ def test_numeric_labels_follow_theme(dark, color):
     data, _ = support.chart_data(support.load_support())
     spec = support.comparison_chart(data, "Indicador", 100, dark=dark).to_dict()
     assert spec["layer"][1]["mark"]["color"] == color
+
+
+def test_support_digest_survives_windows_checkout():
+    """Un checkout con autocrlf no altera los bytes del JSON inmutable."""
+    path = "demo/respaldo-cientifico.json"
+    checked_out = subprocess.check_output([
+        "git", "-c", "core.autocrlf=true", "cat-file", "--filters",
+        f"--path={path}", f"HEAD:{path}",
+    ], cwd=ROOT)
+    assert checked_out == (ROOT / path).read_bytes()
+    assert hashlib.sha256(checked_out).hexdigest() == support.SUPPORT_SHA256

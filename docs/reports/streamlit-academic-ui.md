@@ -26,7 +26,7 @@ Los tres cambios son aplicables sin modificar el procedimiento científico.
 
 Cambios: `demo/app.py`, `demo/ejemplos.py`, `demo/inferencia.py`, el nuevo JSON y
 módulo `demo/respaldo_cientifico.py`, pruebas de la demo, lista explícita de Ruff en
-CI y [guía de operación](../operations/streamlit-demo.md). No se agregaron
+CI, `.gitattributes` y [guía de operación](../operations/streamlit-demo.md). No se agregaron
 dependencias, servicios ni infraestructura.
 
 ## Revisión científica de la presentación
@@ -73,7 +73,7 @@ fábrica experimental. Las pruebas con fixtures artificiales solo validan softwa
 | `uv sync --locked --project pipeline` | PASS, lock sin cambios |
 | `uv run --directory pipeline ruff check .` | PASS |
 | Ruff explícito de demo, módulo nuevo, pruebas y `streamlit_app.py` | PASS |
-| `demo/.venv/bin/python -m pytest demo/tests -q` | 98 passed |
+| `demo/.venv/bin/python -m pytest demo/tests -q` | 99 passed |
 | `uv run --directory pipeline pytest` | 896 passed, 6 advertencias preexistentes de OmegaConf (504,42 s) |
 | `app/api/.venv/bin/python -m pytest app/api` | 54 passed; 1 advertencia Starlette/httpx preexistente |
 | Dashboard: `bun install --frozen-lockfile` | PASS, sin cambios |
@@ -102,12 +102,18 @@ posiciones estables, cero/5/74 elegibles, 76 polígonos con colores coherentes,
 cuatro métricas invariables, dos gráficas y ausencia de scores individuales,
 reconciliación con la única fila fuente, validación de esquema/identidad/hashes,
 y errores aislados ante JSON ausente o corrupto. Se prueba el contraste de las
-etiquetas numéricas en temas claro y oscuro.
+etiquetas numéricas en temas claro y oscuro. La regresión de checkout ejecuta
+`git -c core.autocrlf=true cat-file --filters`: el JSON conserva exactamente su
+SHA-256. Antes de fijar LF para este archivo, esa simulación producía CRLF y un
+hash distinto. El ajuste es de checkout; el contenido del JSON y la UI no cambian.
+Las suites acumuladas se ejecutaron antes de ese ajuste de LF. Después se repitieron
+las 99 pruebas de demo, lock/sync, Ruff, preservación normal/-O y diff; la CI del SHA
+final valida además las suites completas y los runners nativos.
 
 ## Preservación
 
 Se cotejaron los SHA-256 de los 647 archivos de la base revisada: únicamente
-cambiaron los siete archivos existentes autorizados de producto/pruebas/CI/guía.
+cambiaron los ocho archivos existentes autorizados de producto/pruebas/CI/guía.
 El modelo, `plan.md`, manifiestos, dependencias, receta, contexto publicado,
 evidencia científica y publicación histórica conservan sus bytes.
 La comprobación de preservación informa 49 archivos protegidos, 127 extendidos,
