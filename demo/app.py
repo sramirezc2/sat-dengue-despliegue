@@ -7,7 +7,20 @@ from xml.etree import ElementTree as ET
 
 import pandas as pd
 import streamlit as st
-from inferencia import ROOT, geography, load_context, load_model, parse_upload, ranking
+from configuracion import ROOT
+from contexto_paquete import obtain_context
+from ejemplos import sample_csv, template_csv
+from inferencia import (
+    PERCENTAGES,
+    POPULATION,
+    capacity,
+    capacity_warning,
+    geography,
+    load_model,
+    parse_upload,
+    ranking,
+    select_capacity,
+)
 from sat_dengue_pipeline.domain.calendar import add_months
 from sat_dengue_pipeline.risk.configuration import LEGEND
 
@@ -21,7 +34,7 @@ def normalized(name: str) -> str:
 
 
 def maps(result: pd.DataFrame) -> None:
-    """Marcar en el mapa los ocho priorizados, los demás elegibles y los no elegibles."""
+    """Marcar la selección simulada, los demás elegibles y los no elegibles."""
     boundaries = json.loads((ROOT / "app/dashboard/src/lib/municipal-boundaries.json").read_bytes())
     for department, prefix in [("Tolima", "73"), ("Meta", "50")]:
         rows = result[result.index.str.startswith(prefix)]
@@ -54,7 +67,10 @@ def maps(result: pd.DataFrame) -> None:
             label = f"posición {position}" if pd.notna(position) else row["Resultado"]
             ET.SubElement(polygon, "title").text = f"{area['name']} · {label}"
         st.iframe(ET.tostring(svg, encoding="unicode"), height="content")
-    st.caption("Verde oscuro · priorizado (8 cupos) / Verde claro · elegible / Gris · no elegible")
+    st.caption(
+        "Verde oscuro · priorizado en la simulación / Verde claro · elegible / Gris · no elegible. "
+        "La tabla permite consultar la selección sin depender del color."
+    )
 
 
 def choose(source: str) -> None:
@@ -68,19 +84,39 @@ def choose(source: str) -> None:
 def resources() -> tuple:
     """Cargar una sola vez el artefacto congelado y el contexto verificado."""
     model = load_model()
-    return model, load_context(model)
+    return model, obtain_context(model)
 
 
 def main() -> None:
     """Cargar un mes de notificaciones y calcular bajo demanda el orden de prioridad."""
     st.title("Prioridades municipales de dengue")
     st.write("Meta y Tolima · Orden de atención para el mes T+2")
+    st.warning(
+        "Simulación de capacidad; no corresponde a una capacidad operativa validada "
+        "con las secretarías de salud"
+    )
+    st.caption(
+        "Demostración retrospectiva; cambiar la capacidad no produce nueva evidencia "
+        "científica. 2025 es evaluación previamente utilizada. " + LEGEND
+    )
+    st.download_button(
+        "Descargar plantilla CSV",
+        data=template_csv(),
+        file_name="plantilla-notificaciones.csv",
+        mime="text/csv",
+    )
+    st.caption(
+        "Complete un mes entero: una fila por notificación de dengue (210) o dengue grave "
+        "(220). Un municipio ausente se interpreta como cero notificaciones."
+    )
     try:
         model, contexts = resources()
     except (OSError, ValueError, KeyError):
         st.error(
-            "Falta el modelo congelado o el contexto privado de predictores. "
-            "Revise modelos/logistica-conclima-t2 y pipeline/data/demo según el README."
+            "El modelo o contexto privado verificado no está disponible. "
+            "El administrador debe revisar SATD_DEMO_MODEL_DIR, SATD_DEMO_CONTEXT_DIR "
+            "o la configuración del paquete privado según la guía de operación. "
+            "No necesita ingresar credenciales."
         )
         return
     cities = geography()
@@ -92,7 +128,7 @@ def main() -> None:
     st.subheader("Notificaciones del mes")
     uploader, sample = st.columns(2)
     uploader.button("Subir archivo", on_click=choose, args=("file",), width="stretch")
-    sample.button("Cargar muestra dummy", on_click=choose, args=("sample",), width="stretch")
+    sample.button("Cargar muestra artificial", on_click=choose, args=("sample",), width="stretch")
     source = st.session_state.get("source")
     if source == "file":
         upload = st.file_uploader(
@@ -109,20 +145,15 @@ def main() -> None:
     elif source == "sample":
         suffix = ".csv"
         period = months[-1]
-        data = (
-            "COD_DPTO_R,COD_MUN_R,INI_SIN,COD_EVE\n"
-            + "\n".join(
-                f"{code[:2]},{code[2:]},{period}-01,{event}"
-                for code, event in [
-                    ("50001", 210),
-                    ("50001", 220),
-                    ("73001", 210),
-                    ("50006", 210),
-                    ("73026", 210),
-                ]
-            )
-        ).encode()
-        st.caption("Muestra artificial de notificaciones. Usa el mismo modelo congelado.")
+        data = sample_csv(period)
+        st.caption(
+            "Datos artificiales: 24 notificaciones inventadas de seis municipios de Meta y "
+            "Tolima, con dengue y dengue grave. No representan observaciones ni desenlaces reales."
+        )
+        st.download_button(
+            "Descargar muestra artificial", data=data, file_name="muestra-artificial.csv",
+            mime="text/csv",
+        )
     else:
         return
     try:
@@ -148,14 +179,27 @@ def main() -> None:
             return
     if "ranking" not in st.session_state:
         return
-    result = st.session_state.ranking
+    percentage = st.selectbox(
+        "Capacidad simulada de priorización", PERCENTAGES, index=1,
+        format_func=lambda value: f"{value} %", key="percentage",
+        help="Aplica cupos al mismo ranking; no vuelve a ejecutar el modelo.",
+    )
+    result = select_capacity(st.session_state.ranking, percentage)
     eligible = result.loc[result["Posición"].notna()]
     st.divider()
     st.subheader(f"Prioridades para {add_months(month, 2)}")
     st.caption(
-        f"Se priorizan 8 municipios entre {len(eligible)} sin exceso en el origen. "
+        f"Porcentaje seleccionado: {percentage} % · Población de referencia: {POPULATION} "
+        f"municipios de Meta y Tolima · Redondeo hacia arriba: "
+        f"ceil({POPULATION} × {percentage} / 100) = {capacity(percentage)} cupos. "
+        f"Elegibles: {len(eligible)} · Seleccionados: {int(result.Priorizado.sum())}. "
+        "Se eligen las primeras posiciones entre municipios sin exceso en T, con canal "
+        "observado y predictores completos. "
         "Empates por código DIVIPOLA. " + LEGEND
     )
+    limitation = capacity_warning(len(eligible), percentage)
+    if limitation:
+        st.warning(limitation)
     left, right = st.columns([3, 2])
     with left:
         st.dataframe(

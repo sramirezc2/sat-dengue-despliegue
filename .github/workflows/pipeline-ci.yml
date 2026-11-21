@@ -31,7 +31,7 @@ jobs:
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           elif git diff --name-only "$BASE_SHA...$HEAD_SHA" > /tmp/changed-paths; then
-            if grep -E '^(pipeline/|scripts/construir_resultados\.py$|datos/resultados/|app/api/|app/dashboard/|contracts/|\.github/workflows/pipeline-ci\.yml$)' /tmp/changed-paths; then
+            if grep -E '^(pipeline/|demo/|scripts/construir_resultados\.py$|datos/resultados/|app/api/|app/dashboard/|contracts/|\.github/workflows/pipeline-ci\.yml$)' /tmp/changed-paths; then
               echo "changed=true" >> "$GITHUB_OUTPUT"
             else
               echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -57,6 +57,16 @@ jobs:
       - name: Lint pipeline
         if: steps.paths.outputs.changed == 'true'
         run: uv run --directory pipeline ruff check .
+      - name: Install isolated demo environment
+        if: steps.paths.outputs.changed == 'true'
+        run: |
+          UV_PROJECT_ENVIRONMENT="$GITHUB_WORKSPACE/demo/.venv" uv sync --locked --project pipeline
+          uv pip install --python demo/.venv/bin/python --require-hashes -r demo/requirements.lock
+      - name: Lint and test Streamlit demo explicitly
+        if: steps.paths.outputs.changed == 'true'
+        run: |
+          uv run --locked --project pipeline ruff check --config pipeline/pyproject.toml demo/app.py demo/inferencia.py demo/configuracion.py demo/contexto_paquete.py demo/ejemplos.py demo/tests
+          demo/.venv/bin/python -m pytest demo/tests -q
       - uses: actions/setup-node@v7
         if: steps.paths.outputs.changed == 'true'
         with:
