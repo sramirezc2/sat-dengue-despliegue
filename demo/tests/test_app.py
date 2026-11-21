@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import socket
 import subprocess
 import sys
@@ -9,6 +10,7 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+from xml.etree import ElementTree as ET
 
 import pandas as pd
 import pytest
@@ -61,6 +63,40 @@ def test_sample_budget_and_restart(demo_context, monkeypatch, entrypoint) -> Non
     assert any("Datos artificiales" in item.value for item in app.caption)
     click(app, "Calcular prioridades T+2")
     assert not app.exception and len(calls) == 1
+    science = next(item for item in app.expander if item.label == "Respaldo científico del modelo")
+    assert not science.proto.expanded
+    assert not science.proto.id  # Apertura local en el navegador, sin widget que provoque rerun.
+    assert len(science.get("vega_lite_chart")) == 2 and len(science.metric) == 4
+    assert not any(item.value == science.label for item in app.subheader)
+    assert any(
+        "Las alertas de 2025 no se utilizan para evaluar aciertos ni medir el desempeño del modelo."
+        in item.value for item in app.caption
+    )
+    assert not any(
+        "2025 es evaluación previamente utilizada." in item.value for item in app.caption
+    )
+    nodes = list(app.main)
+    table = app.dataframe[0]
+    excluded = next(item for item in app.expander if item.label == "Municipios no elegibles")
+    frames = app.get("iframe")
+    assert max(nodes.index(frame) for frame in frames) < nodes.index(table)
+    legend = [item for item in app.caption if item.value.startswith("Verde oscuro")]
+    assert len(legend) == 1
+    assert nodes.index(frames[-1]) < nodes.index(legend[0]) < nodes.index(table)
+    assert nodes.index(table) < nodes.index(excluded) < nodes.index(science)
+    assert table in app.main.children.values()
+    columns = [column for column in app.get("column") if column.get("iframe")]
+    assert len(columns) == 2 and columns[0].weight == columns[1].weight
+    assert [column.markdown[0].value for column in columns] == ["**Tolima**", "**Meta**"]
+    for frame, department, count in zip(frames, ("Tolima", "Meta"), (47, 29), strict=True):
+        svg = ET.fromstring(frame.proto.srcdoc)
+        assert svg.attrib["height"] == "200" and svg.attrib["width"] == "100%"
+        assert svg.attrib["aria-label"] == f"Prioridades por municipio de {department}"
+        assert len(svg.findall("path")) == len(svg.findall("path/title")) == count
+        x0, y0, width, height = map(float, svg.attrib["viewBox"].split())
+        for path in svg.findall("path"):
+            for x, y in re.findall(r"(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)", path.attrib["d"]):
+                assert x0 < float(x) < x0 + width and y0 < float(y) < y0 + height
     assert app.selectbox[0].value == 10
     assert app.selectbox[0].options == [f"{p} %" for p in range(5, 101, 5)]
     baseline = app.dataframe[0].value.copy()
@@ -233,6 +269,10 @@ def test_scientific_support_error_keeps_ranking(demo_context, monkeypatch, tmp_p
     app.selectbox[0].select(25).run()
     assert not app.exception and len(app.error) == 1
     assert "respaldo científico" in app.error[0].value
+    science = next(item for item in app.expander if item.label == "Respaldo científico del modelo")
+    assert len(science.error) == 1 and science.error[0] is app.error[0]
+    assert not science.proto.expanded
+    assert not science.proto.id  # Apertura local en el navegador, sin widget que provoque rerun.
     assert len(app.dataframe[0].value) == 19 and len(app.get("iframe")) == 2
     pd.testing.assert_frame_equal(app.session_state["ranking"], ordered)
     assert not app.get("vega_lite_chart") and len(app.metric) == 5

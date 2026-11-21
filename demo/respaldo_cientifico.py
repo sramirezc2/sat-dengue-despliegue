@@ -161,7 +161,7 @@ def chart_data(support: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 def comparison_chart(
-    data: pd.DataFrame, title: str, maximum: int, *, dark: bool = False,
+    data: pd.DataFrame, title: str | list[str], maximum: int, *, dark: bool = False,
 ) -> alt.LayerChart:
     """Dibujar barras desde cero, nombres de método y etiquetas numéricas explícitas."""
     base = alt.Chart(data).encode(
@@ -175,4 +175,4 @@ def comparison_chart(
     labels = base.mark_text(
         align="left", dx=5, fontSize=13, color="#fafafa" if dark else "#31333f",
     ).encode(text="Etiqueta:N")
-    return (bars + labels).properties(height=135).configure_view(stroke=None)
+    return (bars + labels).properties(height=175, padding={"right": 56}).configure_view(stroke=None)

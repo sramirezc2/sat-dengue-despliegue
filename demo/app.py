@@ -44,37 +44,42 @@ def normalized(name: str) -> str:
 def maps(result: pd.DataFrame) -> None:
     """Marcar la selección simulada, los demás elegibles y los no elegibles."""
     boundaries = json.loads((ROOT / "app/dashboard/src/lib/municipal-boundaries.json").read_bytes())
-    for department, prefix in [("Tolima", "73"), ("Meta", "50")]:
-        rows = result[result.index.str.startswith(prefix)]
-        lookup = {normalized(row["Municipio"]): row for _, row in rows.iterrows()}
-        st.markdown(f"**{department}**")
-        svg = ET.Element(
-            "svg",
-            {
-                "viewBox": "0 0 1000 400",
-                "width": "100%",
-                "role": "img",
-                "aria-label": f"Prioridades por municipio de {department}",
-            },
-        )
-        for area in boundaries[department.lower()]:
-            row = lookup[normalized(area["name"])]
-            position = row["Posición"]
-            color = SELECTED if row["Priorizado"] else ELIGIBLE if pd.notna(position) else GRAY
-            polygon = ET.SubElement(
-                svg,
-                "path",
+    for column, (department, prefix) in zip(
+        st.columns(2), [("Tolima", "73"), ("Meta", "50")], strict=True,
+    ):
+        with column:
+            rows = result[result.index.str.startswith(prefix)]
+            lookup = {normalized(row["Municipio"]): row for _, row in rows.iterrows()}
+            st.markdown(f"**{department}**")
+            # Marco común con margen para todos los polígonos de ambos departamentos.
+            svg = ET.Element(
+                "svg",
                 {
-                    "d": area["path"],
-                    "fill": color,
-                    "fill-rule": "evenodd",
-                    "stroke": "#ffffff",
-                    "stroke-width": "1.7",
+                    "viewBox": "270 0 460 400",
+                    "height": "200",
+                    "width": "100%",
+                    "role": "img",
+                    "aria-label": f"Prioridades por municipio de {department}",
                 },
             )
-            label = f"posición {position}" if pd.notna(position) else row["Resultado"]
-            ET.SubElement(polygon, "title").text = f"{area['name']} · {label}"
-        st.iframe(ET.tostring(svg, encoding="unicode"), height="content")
+            for area in boundaries[department.lower()]:
+                row = lookup[normalized(area["name"])]
+                position = row["Posición"]
+                color = SELECTED if row["Priorizado"] else ELIGIBLE if pd.notna(position) else GRAY
+                polygon = ET.SubElement(
+                    svg,
+                    "path",
+                    {
+                        "d": area["path"],
+                        "fill": color,
+                        "fill-rule": "evenodd",
+                        "stroke": "#ffffff",
+                        "stroke-width": "1.7",
+                    },
+                )
+                label = f"posición {position}" if pd.notna(position) else row["Resultado"]
+                ET.SubElement(polygon, "title").text = f"{area['name']} · {label}"
+            st.iframe(ET.tostring(svg, encoding="unicode"), height="content")
     st.caption(
         "Verde oscuro · priorizado en la simulación / Verde claro · elegible / Gris · no elegible. "
         "La tabla permite consultar la selección sin depender del color."
@@ -97,7 +102,6 @@ def resources() -> tuple:
 
 def scientific_support() -> None:
     """Mostrar historia de la receta; un error de respaldo no afecta al ranking actual."""
-    st.subheader("Respaldo científico del modelo")
     try:
         support = load_support()
     except (OSError, ValueError, KeyError, TypeError):
@@ -127,7 +131,7 @@ def scientific_support() -> None:
     st.markdown("**Carga de falsas alertas**")
     st.altair_chart(
         comparison_chart(
-            burden, "Falsas alertas por cada 100 municipio-mes evaluables", 25, dark=dark,
+            burden, ["Falsas alertas por cada 100", "municipio-mes evaluables"], 25, dark=dark,
         ),
         width="stretch",
     )
@@ -172,7 +176,8 @@ def main() -> None:
     )
     st.caption(
         "Demostración retrospectiva; cambiar la capacidad no produce nueva evidencia "
-        "científica. 2025 es evaluación previamente utilizada. " + LEGEND
+        "científica. Las alertas de 2025 no se utilizan para evaluar aciertos ni medir "
+        "el desempeño del modelo. " + LEGEND
     )
     try:
         model, contexts = resources()
@@ -274,35 +279,33 @@ def main() -> None:
     limitation = capacity_warning(len(eligible), percentage)
     if limitation:
         st.warning(limitation)
-    left, right = st.columns([3, 2])
-    with left:
+    maps(result)
+    st.dataframe(
+        result.loc[result.Priorizado].sort_values("Posición").rename_axis("DIVIPOLA"),
+        column_order=[
+            "Posición",
+            "Municipio",
+            "Departamento",
+            "Notificaciones",
+            "Zona en T",
+            "Priorizado",
+        ],
+        width="stretch",
+    )
+    with st.expander("Municipios no elegibles"):
         st.dataframe(
-            result.loc[result.Priorizado].sort_values("Posición").rename_axis("DIVIPOLA"),
-            column_order=[
-                "Posición",
-                "Municipio",
-                "Departamento",
-                "Notificaciones",
-                "Zona en T",
-                "Priorizado",
-            ],
+            result.loc[
+                result["Posición"].isna(),
+                ["Municipio", "Departamento", "Notificaciones", "Resultado"],
+            ].rename_axis("DIVIPOLA"),
             width="stretch",
         )
-        with st.expander("Municipios no elegibles"):
-            st.dataframe(
-                result.loc[
-                    result["Posición"].isna(),
-                    ["Municipio", "Departamento", "Notificaciones", "Resultado"],
-                ].rename_axis("DIVIPOLA"),
-                width="stretch",
-            )
-    with right:
-        maps(result)
     st.caption(
         "Demostración retrospectiva. La emisión de alertas operativas requiere validación "
         "prospectiva."
     )
-    scientific_support()
+    with st.expander("Respaldo científico del modelo", expanded=False):
+        scientific_support()
 
 
 main()

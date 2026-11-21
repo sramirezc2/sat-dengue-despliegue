@@ -278,7 +278,11 @@ Después de elegir y configurar proveedor, SHA, contexto privado y dominio TLS:
 2. Abrir la URL HTTPS y comprobar que no hay error de configuración.
 3. Pulsar **Cargar muestra artificial**: deben verse 24 notificaciones y seis
    municipios con casos, el origen disponible y su objetivo T+2.
-4. Pulsar **Calcular prioridades T+2**: revisar tabla, mapa y excluidos. El número
+4. Pulsar **Calcular prioridades T+2**: revisar mapas, tabla y excluidos.
+   Tolima aparece a la izquierda y Meta a la derecha, con altura SVG común de
+   200 px y marco que contiene todos los polígonos. En pantallas estrechas las
+   columnas nativas pueden apilarse. Hay una sola leyenda; la tabla ocupa todo
+   el ancho debajo de los mapas, seguida del acordeón de no elegibles. El número
    seleccionado es el menor entre elegibles y ocho; el contexto auténtico puede
    excluir municipios que el fixture artificial no excluye.
 5. Cambiar 5/10/25/50/90/95/100 %: cupos solicitados 4/8/19/38/69/73/76.
@@ -287,11 +291,16 @@ Después de elegir y configurar proveedor, SHA, contexto privado y dominio TLS:
    Ambos botones de descarga sirven `sample_csv` del último mes verificado, con
    los mismos bytes y nombre `muestra-artificial.csv` (24 notificaciones inventadas
    de seis municipios), listo para cargar sin edición.
-   Debajo del resultado aparecen dos gráficas y cuatro métricas de la receta en
+   Debajo de la nota retrospectiva, el acordeón **Respaldo científico del modelo**
+   está cerrado por defecto. Su encabezado abre o cierra el contenido sin rerun
+   ni nuevo scoring; no hay subtítulo duplicado. Dentro se conservan dos gráficas
+   y cuatro métricas de la receta en
    la confirmación retrospectiva 2023–2024: no evalúan el archivo cargado ni cambian
    con el selector. `demo/respaldo-cientifico.json` fija conteos, intervalos y SHA-256
    de `docs/evidence/reserva-2023-2024-t2/reserva.csv`; si falla su validación, el
-   ranking permanece visible y se informa el error solo en esa sección.
+   ranking permanece visible y se informa el error solo dentro de ese acordeón.
+   El aviso inicial dice: «Las alertas de 2025 no se utilizan para evaluar aciertos
+   ni medir el desempeño del modelo».
 6. Reiniciar el proceso desde el administrador del servicio; volver a comprobar
    salud y repetir la muestra/inferencia. La sesión nueva no conserva una carga
    anterior y los recursos privados deben seguir disponibles.
