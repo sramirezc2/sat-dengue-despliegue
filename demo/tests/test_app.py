@@ -111,7 +111,7 @@ def test_sample_capacity_expander_and_restart(demo_context, monkeypatch, entrypo
     maps = [str(item.proto) for item in app.get("iframe")]
     assert len(maps) == 2
     for percentage in [*range(5, 101, 5), 10]:
-        expected = capacity(percentage)
+        expected = min(capacity(percentage), 70)
         app.selectbox[0].select(percentage).run()
         assert not app.exception and len(calls) == 1
         actual = app.dataframe[0].value
@@ -158,8 +158,8 @@ def test_corrupt_context_is_sanitized(demo_context, monkeypatch) -> None:
     assert not app.exception and len(app.error) == 1 and not app.dataframe
 
 
-@pytest.mark.parametrize("available", [0, 5, 74])
-def test_insufficient_eligible_warning(demo_context, available) -> None:
+@pytest.mark.parametrize(("available", "eligible"), [(0, 0), (5, 5), (74, 70)])
+def test_insufficient_eligible_warning(demo_context, available, eligible) -> None:
     """La UI informa la limitación y mantiene visibles los excluidos con su motivo."""
     frames = {month: context(demo_context, month) for month in ORIGINS}
     frames[ORIGINS[-1]].loc[available:, f"{COUNTS[0]}_lag1"] = pd.NA
@@ -168,20 +168,21 @@ def test_insufficient_eligible_warning(demo_context, available) -> None:
     click(app, "Cargar muestra artificial")
     click(app, "Calcular prioridades T+2")
     initial_maps = "".join(item.proto.srcdoc for item in app.get("iframe"))
-    assert initial_maps.count('fill="#155d4b"') == min(8, available)
-    assert initial_maps.count('fill="#87c6ad"') == max(available - 8, 0)
-    assert initial_maps.count('fill="#d3dce1"') == 76 - available
+    assert initial_maps.count('fill="#155d4b"') == min(8, eligible)
+    assert initial_maps.count('fill="#87c6ad"') == max(eligible - 8, 0)
+    assert initial_maps.count('fill="#d3dce1"') == 76 - eligible
     app.selectbox[0].select(100).run()
-    assert not app.exception and len(app.dataframe[0].value) == available
+    assert not app.exception and len(app.dataframe[0].value) == eligible
     assert app.dataframe[0].value.Priorizado.all()
-    assert any(f"se seleccionan {available}" in warning.value for warning in app.warning)
-    assert any(f"Faltan {76 - available}" in warning.value for warning in app.warning)
+    assert any(f"se seleccionan {eligible}" in warning.value for warning in app.warning)
+    assert any(f"Faltan {76 - eligible}" in warning.value for warning in app.warning)
     svg = "".join(item.proto.srcdoc for item in app.get("iframe"))
     assert svg.count("<path ") == 76
-    assert svg.count('fill="#d3dce1"') == 76 - available
+    assert svg.count('fill="#d3dce1"') == 76 - eligible
     excluded = app.dataframe[1].value
-    assert len(excluded) == 76 - available
-    assert excluded.Resultado.eq("Predictores incompletos").all()
+    assert len(excluded) == 76 - eligible
+    assert excluded.Resultado.eq("Exceso en el mes de origen").sum() == 6
+    assert excluded.Resultado.eq("Predictores incompletos").sum() == 70 - eligible
 
 
 def test_streamlit_http_health_and_restart(demo_context, tmp_path) -> None:
@@ -238,7 +239,14 @@ def test_cloud_entrypoint_uses_same_application(demo_context):
 def test_downloads_are_same_upload_ready_resource(demo_context, monkeypatch):
     """Ambos botones usan los mismos bytes artificiales del último mes y nombre."""
     downloads = {}
+    uploads = []
     original = st.download_button
+    parse = inferencia.parse_upload
+
+    def capture_upload(data, suffix, cities):
+        """Observar los bytes de la carga integrada en el parser habitual."""
+        uploads.append(data)
+        return parse(data, suffix, cities)
 
     def capture(label, **kwargs):
         """Observar el recurso servido conservando el renderizado nativo."""
@@ -246,14 +254,24 @@ def test_downloads_are_same_upload_ready_resource(demo_context, monkeypatch):
         return original(label, **kwargs)
 
     monkeypatch.setattr(st, "download_button", capture)
+    monkeypatch.setattr(inferencia, "parse_upload", capture_upload)
     app = AppTest.from_file(ROOT / "demo/app.py").run()
     click(app, "Cargar muestra artificial")
     first = downloads["Descargar plantilla CSV"]
     assert first == downloads["Descargar muestra artificial"]
     assert first == (sample_csv(ORIGINS[-1]), SAMPLE_FILENAME)
+    assert SAMPLE_FILENAME == "muestra-artificial.csv"
     month, counts, summary = parse_upload(first[0], ".csv", geography().index)
-    assert month == ORIGINS[-1] and len(counts) == 76
-    assert summary["Notificaciones"] == 24 and summary["Municipios con casos"] == 6
+    assert month == "2025-10" and len(counts) == 76
+    assert summary["Notificaciones"] == 55 and summary["Municipios con casos"] == 8
+    assert uploads == [first[0]]
+    click(app, "Calcular prioridades T+2")
+    assert not app.exception and not app.error
+    assert app.dataframe[0].value.Priorizado.sum() == 8
+    pd.testing.assert_frame_equal(
+        app.session_state["ranking"],
+        inferencia.ranking(demo_context, month, counts, context(demo_context, month)),
+    )
 
 
 @pytest.mark.parametrize("corruption", [None, b"{invalid", b"{}"])
@@ -298,8 +316,10 @@ def test_comparison_channel_capacity_expander(demo_context, monkeypatch) -> None
     ordered = app.session_state["ranking"].copy()
     historical = [(m.label, m.value) for m in app.metric][-4:]
     _, counts, _ = parse_upload(sample_csv(ORIGINS[-1]), ".csv", geography().index)
-    potential = sorted(counts.index[counts[COUNTS[0]].gt(0)])
-    assert len(potential) == 6  # P75 T+2 = 1 en el contexto artificial de esta prueba.
+    potential = sorted(
+        counts.index[counts[COUNTS[0]].gt(0) & ordered["Posición"].notna().reindex(counts.index)]
+    )
+    assert len(potential) == 2  # Seis municipios exceden P75 en T del contexto artificial.
     for percentage in (10, 5, 100, 10):
         app.selectbox[0].select(percentage).run()
         assert not app.exception and not app.error and len(calls) == 1

@@ -321,7 +321,7 @@ Después de elegir y configurar proveedor, SHA, contexto privado y dominio TLS:
 
 1. Instalar desde clon y entorno nuevos; validar modelo/contexto antes del inicio.
 2. Abrir la URL HTTPS y comprobar que no hay error de configuración.
-3. Pulsar **Cargar muestra artificial**: deben verse 24 notificaciones y seis
+3. Pulsar **Cargar muestra artificial**: deben verse 55 notificaciones y ocho
    municipios con casos, el origen disponible y su objetivo T+2.
 4. Pulsar **Calcular prioridades T+2**: revisar mapas, tabla y excluidos.
    Tolima aparece a la izquierda y Meta a la derecha, con altura SVG común de
@@ -334,8 +334,8 @@ Después de elegir y configurar proveedor, SHA, contexto privado y dominio TLS:
    La tabla contiene solo seleccionados y conserva posiciones; el mapa mantiene
    los 76 municipios. Si faltan elegibles se informa el déficit.
    Ambos botones de descarga sirven `sample_csv` del último mes verificado, con
-   los mismos bytes y nombre `muestra-artificial.csv` (24 notificaciones inventadas
-   de seis municipios), listo para cargar sin edición.
+   los mismos bytes y nombre `muestra-artificial.csv` (55 notificaciones inventadas
+   de ocho municipios), listo para cargar sin edición.
    Debajo de la nota retrospectiva, abrir **Comparación de prioridades del mes**:
    comprobar tarjetas, unión y cupos; no hay evaluación del archivo cargado.
    Después, el acordeón **Respaldo científico del modelo**
