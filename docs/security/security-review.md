@@ -1,5 +1,22 @@
 # Revisión de seguridad — tarea 20
 
+## Addendum 2026-11-21: contexto público de la demo
+
+El equipo autorizó publicar el paquete derivado de inferencia en
+`sat-dengue/hf_hub_download`, revisión
+`3935f67b9b79a0e8810f7804867d919615d3840a`. Esta autorización es específica al
+ZIP de SHA `59fad5e1f56b5603feca036656756a8e04d19b502925ad0157ff03639d25ff6e`;
+no cambia la clasificación de microdatos o fuentes crudas.
+
+La demo descarga anónimamente con el cliente oficial, fija revisión y SHA,
+valida el inventario antes de extraer y conserva límites, caché e instalación
+atómica. Los errores del transporte se sanitizan. Las cargas del visitante
+siguen en memoria de su sesión; no se guardan en el Dataset ni en Git.
+No se introducen tokens de runtime, permisos de escritura del servidor ni una
+API. Las pruebas cubren hash ajeno, revisión mutable, fallo de red y fuentes
+ambiguas. La configuración del proveedor público requiere su prueba externa;
+esta revisión de código no acredita por sí sola el despliegue remoto.
+
 Fecha: 2026-11-08. Resultado: **APPROVED_WITH_LIMITATIONS**.
 Base documental y funcional: `498583b` (T19); correcciones auditadas:
 `0f4fc20c36390d6a9c1705b89eedd9bbcc901cbf` y corrección de transporte

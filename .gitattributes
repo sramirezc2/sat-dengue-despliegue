@@ -11,3 +11,6 @@ docs/experiments/** text eol=lf
 docs/evidence/** text eol=lf
 docs/decisions/task16-*.md text eol=lf
 datos/resultados/*.json text eol=lf
+
+# Immutable presentation support is also validated by its exact byte digest.
+demo/respaldo-cientifico.json text eol=lf

@@ -12,7 +12,8 @@ jobs:
   validate:
     name: Pipeline quality
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Complete suites exceed 15–20 minutes on hosted Linux/Windows runners.
+    timeout-minutes: 45
     env:
       DO_NOT_TRACK: '1'
     steps:
@@ -31,7 +32,7 @@ jobs:
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           elif git diff --name-only "$BASE_SHA...$HEAD_SHA" > /tmp/changed-paths; then
-            if grep -E '^(pipeline/|scripts/construir_resultados\.py$|datos/resultados/|app/api/|app/dashboard/|contracts/|\.github/workflows/pipeline-ci\.yml$)' /tmp/changed-paths; then
+            if grep -E '^(pipeline/|demo/|streamlit_app\.py$|requirements\.txt$|scripts/construir_resultados\.py$|datos/resultados/|app/api/|app/dashboard/|contracts/|\.github/workflows/pipeline-ci\.yml$)' /tmp/changed-paths; then
               echo "changed=true" >> "$GITHUB_OUTPUT"
             else
               echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -57,6 +58,26 @@ jobs:
       - name: Lint pipeline
         if: steps.paths.outputs.changed == 'true'
         run: uv run --directory pipeline ruff check .
+      - name: Install isolated demo environment
+        if: steps.paths.outputs.changed == 'true'
+        run: |
+          UV_PROJECT_ENVIRONMENT="$GITHUB_WORKSPACE/demo/.venv" uv sync --locked --project pipeline
+          # Resolve every dependency, including those absent on the runner's OS.
+          for platform in x86_64-unknown-linux-gnu aarch64-apple-darwin x86_64-pc-windows-msvc; do
+            uv pip install --python demo/.venv/bin/python --python-platform "$platform" --python-version 3.12 --only-binary=:all: --require-hashes --reinstall --dry-run -r demo/requirements.lock
+          done
+          uv pip install --python demo/.venv/bin/python --require-hashes -r demo/requirements.lock
+      - name: Lint and test Streamlit demo explicitly
+        if: steps.paths.outputs.changed == 'true'
+        run: |
+          uv run --locked --project pipeline ruff check --config pipeline/pyproject.toml demo/app.py demo/inferencia.py demo/configuracion.py demo/contexto_paquete.py demo/ejemplos.py demo/respaldo_cientifico.py demo/tests streamlit_app.py
+          demo/.venv/bin/python -m pytest demo/tests -q
+      - name: Verify Community Cloud installation
+        if: steps.paths.outputs.changed == 'true'
+        run: |
+          uv venv /tmp/satd-cloud --python 3.12
+          uv pip install --python /tmp/satd-cloud/bin/python -r requirements.txt
+          /tmp/satd-cloud/bin/python -c "from sat_dengue_pipeline.risk.configuration import ROOT; from pathlib import Path; assert ROOT == Path.cwd(); import streamlit; import huggingface_hub"
       - uses: actions/setup-node@v7
         if: steps.paths.outputs.changed == 'true'
         with:
@@ -90,7 +111,7 @@ jobs:
   portability:
     name: Pipeline portability (${{ matrix.platform }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:

@@ -4,23 +4,26 @@ import csv
 import hashlib
 import io
 import json
+import re
+from math import ceil, isfinite
 from pathlib import Path
 from xml.etree.ElementTree import ParseError
 from zipfile import BadZipFile, ZipFile
 
 import pandas as pd
+from configuracion import ARTIFACT, CONTEXT_DIR, ROOT, resource_directory, resource_file
 from openpyxl.utils.exceptions import InvalidFileException
 from sat_dengue_pipeline.domain.canonical import COUNTS, KEYS, PREDICTORS
 from sat_dengue_pipeline.domain.endemic_channel import CHANNEL, classify_endemic_zone
 from sat_dengue_pipeline.raw.producers import epidemiology_normalization
 from sat_dengue_pipeline.raw.temporal import parse_date
 from sat_dengue_pipeline.risk.frozen import FrozenLogistic, load_artifact
-from sat_dengue_pipeline.risk.inference import InferenceCoverage, prioritize
+from sat_dengue_pipeline.risk.inference import InferenceCoverage, rank_eligible
 
-ROOT = Path(__file__).resolve().parents[1]
-ARTIFACT = ROOT / "modelos/logistica-conclima-t2"
 ARTIFACT_SHA256 = "d0a883a7528afd5d3d1fdbe43d44e5c5a396c109ab20ed49845a198ccdb75c8c"
-CONTEXT_DIR = ROOT / "pipeline/data/demo"
+PERCENTAGES = tuple(range(5, 101, 5))
+POPULATION = 76
+CHANNEL_FRACTION = 0.95
 METADATA = ["department_code", "municipality_name"]
 REASONS = {
     "EXCESS_AT_ORIGIN": "Exceso en el mes de origen",
@@ -29,26 +32,44 @@ REASONS = {
 }
 
 
-def load_model(directory: Path = ARTIFACT) -> FrozenLogistic:
+def load_model(directory: Path | None = None) -> FrozenLogistic:
     """Cargar el artefacto congelado y exigir su SHA-256 aprobado.
 
     La procedencia esperada es la registrada en el propio artefacto: la demo no
     necesita un clon git ni el release crudo para puntuar, y la identidad del
     modelo queda garantizada por el SHA-256 de sus bytes y su manifiesto.
     """
-    provenance = json.loads((directory / "model.json").read_bytes())["provenance"]
+    directory = resource_directory("SATD_DEMO_MODEL_DIR", ARTIFACT, directory)
+    provenance = json.loads(resource_file(directory, "model.json").read_bytes())["provenance"]
     return load_artifact(directory, ARTIFACT_SHA256, provenance)
 
 
-def load_context(model: FrozenLogistic, directory: Path = CONTEXT_DIR) -> dict[str, pd.DataFrame]:
+def load_context(
+    model: FrozenLogistic, directory: Path | None = None
+) -> dict[str, pd.DataFrame]:
     """Leer el contexto privado por origen y verificar huellas, release y tipos."""
-    index = json.loads((directory / "contexto.json").read_bytes())
+    directory = resource_directory("SATD_DEMO_CONTEXT_DIR", CONTEXT_DIR, directory)
+    index = json.loads(resource_file(directory, "contexto.json").read_bytes())
+    if (
+        not isinstance(index, dict)
+        or set(index) != {"raw_manifest_sha256", "files"}
+        or not isinstance(index["files"], dict)
+        or not index["files"]
+    ):
+        raise ValueError("Índice de contexto privado inválido o vacío.")
     if index["raw_manifest_sha256"] != model.payload["provenance"]["raw_manifest_sha256"]:
         raise ValueError("El contexto procede de un release distinto del modelo.")
     dtypes = dict(zip(PREDICTORS, model.payload["state"]["dtypes"], strict=True))
     contexts = {}
     for origin, digest in index["files"].items():
-        data = (directory / f"contexto-{origin}.csv").read_bytes()
+        if (
+            re.fullmatch(r"20\d{2}-(0[1-9]|1[0-2])", origin) is None
+            or not "2024-11" <= origin <= "2025-10"
+            or not isinstance(digest, str)
+            or re.fullmatch(r"[0-9a-f]{64}", digest) is None
+        ):
+            raise ValueError("Origen o huella de contexto inválidos.")
+        data = resource_file(directory, f"contexto-{origin}.csv").read_bytes()
         if hashlib.sha256(data).hexdigest() != digest:
             raise ValueError("El contexto privado difiere de su índice.")
         frame = pd.read_csv(
@@ -56,6 +77,14 @@ def load_context(model: FrozenLogistic, directory: Path = CONTEXT_DIR) -> dict[s
             dtype={c: "string" for c in [*KEYS, *METADATA]},
             float_precision="round_trip",
         )
+        if (
+            set(frame) != {*KEYS, *METADATA, *PREDICTORS}
+            or len(frame) != POPULATION
+            or set(frame[KEYS[0]]) != set(geography().index)
+            or not frame.year_month.eq(origin).all()
+            or not frame.department_code.eq(frame[KEYS[0]].str[:2]).all()
+        ):
+            raise ValueError("Cobertura, columnas u origen del contexto inválidos.")
         contexts[origin] = frame.astype(dtypes)
     return contexts
 
@@ -154,12 +183,12 @@ def parse_upload(data: bytes, suffix: str, cities: pd.Index) -> tuple[str, pd.Da
 def ranking(
     model: FrozenLogistic, month: str, counts: pd.DataFrame, context: pd.DataFrame
 ) -> pd.DataFrame:
-    """Priorizar con la regla publicada: ocho cupos entre municipios sin exceso en T.
+    """Obtener todas las posiciones elegibles sin aplicar una capacidad de atención.
 
     Los conteos del origen se sustituyen por los de la carga y la zona del canal se
     recalcula con el conteo de dengue, como en la tabla canónica. Rezagos, clima y
     percentiles proceden del contexto del mismo origen. El orden lo decide
-    risk.inference.prioritize: puntuación descendente y DIVIPOLA ascendente.
+    risk.inference.rank_eligible: puntuación descendente y DIVIPOLA ascendente.
     """
     table = context.set_index(KEYS[0])
     for name in COUNTS:
@@ -175,7 +204,7 @@ def ranking(
     )
     table = table.reset_index()[[*KEYS, *METADATA, *PREDICTORS]]
     roles = {"key": KEYS, "metadata": METADATA, "feature": PREDICTORS, "target": [], "control": []}
-    rows, _ = prioritize(table, {"column_roles": roles}, month, model)
+    rows, _ = rank_eligible(table, {"column_roles": roles}, month, model)
     result = pd.DataFrame(rows).set_index("municipality_code")
     current = table.set_index(KEYS[0])
     return pd.DataFrame(
@@ -185,7 +214,101 @@ def ranking(
             "Departamento": result.department_name,
             "Notificaciones": current[COUNTS[2]],
             "Zona en T": current[CHANNEL[3]],
-            "Priorizado": result.selected_for_attention,
             "Resultado": result.ineligibility_reason.map(REASONS).fillna("Elegible"),
         }
     ).sort_values(["Posición", "Municipio"], na_position="last")
+
+
+def capacity(percentage: int) -> int:
+    """Convertir el porcentaje permitido a cupos con techo sobre 76 municipios."""
+    if type(percentage) is not int or percentage not in PERCENTAGES:
+        raise ValueError("El porcentaje debe ser un múltiplo de cinco entre 5 y 100.")
+    return ceil(POPULATION * percentage / 100)
+
+
+def select_capacity(ordered: pd.DataFrame, percentage: int = 10) -> pd.DataFrame:
+    """Seleccionar sobre posiciones existentes sin puntuar, reordenar ni rellenar.
+
+    Args:
+        ordered: Ranking completo devuelto por ranking, sin puntuaciones.
+        percentage: Porcentaje simulado de la población fija de 76 municipios.
+
+    Returns:
+        Copia con Priorizado; los no elegibles siempre permanecen fuera.
+    """
+    result = ordered.copy(deep=True)
+    result["Priorizado"] = result["Posición"].le(capacity(percentage)).fillna(False)
+    return result
+
+
+def capacity_warning(eligible: int, percentage: int) -> str | None:
+    """Explicar el déficit de elegibles sin completar con municipios excluidos."""
+    requested = capacity(percentage)
+    if eligible < requested:
+        return (
+            f"Solo hay {eligible} municipios elegibles para {requested} cupos solicitados; "
+            f"se seleccionan {eligible}. Faltan {requested - eligible} para completar los cupos. "
+            "No se completa con municipios no elegibles."
+        )
+    return None
+
+
+def compare_priorities(
+    ordered: pd.DataFrame, counts: pd.DataFrame, context: pd.DataFrame, percentage: int = 10,
+) -> pd.DataFrame:
+    """Comparar listas en la cohorte del ranking, sin puntuar ni consultar desenlaces.
+
+    El canal usa solo dengue 210 y P75 histórico de T+2, con desigualdad estricta.
+    Los candidatos se ordenan por exceso sobre ese umbral y luego por DIVIPOLA;
+    se limita su cantidad sin rellenar. La lista del modelo conserva sus posiciones.
+
+    Args:
+        ordered: Ranking completo ya calculado para la carga y el origen.
+        counts: Conteos de esa carga, indexados por municipio.
+        context: Contexto verificado del mismo origen.
+        percentage: Capacidad simulada permitida.
+
+    Returns:
+        Unión de las listas, sin scores ni márgenes internos.
+
+    Raises:
+        ValueError: Si la cobertura o los datos requeridos no permiten comparar.
+    """
+    selected = select_capacity(ordered, percentage)
+    try:
+        reference = context.set_index(KEYS[0])["p75_h5_t2"]
+        cases = counts[COUNTS[0]]
+        if (
+            len(selected) != POPULATION or not selected.index.is_unique
+            or not reference.index.is_unique or not cases.index.is_unique
+            or set(cases.index) != set(selected.index)
+            or set(reference.index) != set(selected.index)
+        ):
+            raise ValueError
+        eligible = selected.index[selected["Posición"].notna()]
+        cases = pd.to_numeric(cases.reindex(eligible), errors="raise")
+        reference = pd.to_numeric(reference.reindex(eligible), errors="raise")
+        for values in (cases, reference):
+            if values.isna().any() or not values.map(isfinite).all() or values.lt(0).any():
+                raise ValueError
+    except (KeyError, TypeError, ValueError, OverflowError):
+        raise ValueError(
+            "No se puede calcular la comparación: revise la cobertura, los conteos de "
+            "dengue 210 y el P75 histórico de T+2 de la cohorte elegible."
+        ) from None
+    margin = cases - CHANNEL_FRACTION * reference
+    candidates = pd.DataFrame({"margin": margin, "DIVIPOLA": margin.index}).rename_axis(None)
+    alerts = candidates.loc[margin.gt(0)].sort_values(
+        ["margin", "DIVIPOLA"], ascending=[False, True],
+    ).head(capacity(percentage))
+    selected["Alerta canal"] = selected.index.isin(alerts.index)
+    union = selected.loc[selected.Priorizado | selected["Alerta canal"]].copy()
+    union["Comparación"] = [
+        "Ambos" if model and channel else "Solo modelo" if model else "Solo canal"
+        for model, channel in union[["Priorizado", "Alerta canal"]].itertuples(
+            index=False, name=None,
+        )
+    ]
+    table = union.rename(columns={"Posición": "Posición modelo"}).rename_axis("DIVIPOLA")
+    columns = ["Municipio", "Departamento", "Posición modelo", "Alerta canal", "Comparación"]
+    return table[columns].sort_values(["Posición modelo", "DIVIPOLA"])
