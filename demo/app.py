@@ -267,7 +267,7 @@ def main() -> None:
         suffix = ".csv"
         data = artificial_sample
         st.caption(
-            "Datos artificiales: 24 notificaciones inventadas de seis municipios de Meta y "
+            "Datos artificiales: 55 notificaciones inventadas de ocho municipios de Meta y "
             "Tolima, con dengue y dengue grave. No representan observaciones ni desenlaces reales."
         )
         st.download_button(

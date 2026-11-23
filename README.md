@@ -88,7 +88,7 @@ hasta 5 MB. No se filtra por `Confirmados`. Un municipio ausente cuenta **cero
 notificaciones**; la carga parcial puede por ello producir prioridades engañosas.
 
 Descargue **la plantilla CSV** desde la aplicación y complete sus filas. También
-puede descargar la muestra de **24 registros artificiales**, seis municipios de
+puede descargar la muestra de **55 registros artificiales**, ocho municipios de
 ambos departamentos y ambos eventos. Se genera de forma determinista para el
 último origen disponible; no imita observaciones ni incorpora desenlaces reales
 de 2025. Su resultado solo demuestra el funcionamiento del software.

@@ -3,6 +3,7 @@
 import hashlib
 import io
 import json
+import os
 import shutil
 import tomllib
 
@@ -200,7 +201,7 @@ def test_capacity_keeps_ranking_without_scoring(model, monkeypatch, percentage, 
     monkeypatch.setattr(type(model), "score", forbidden)
     result = select_capacity(ordered, percentage)
     assert capacity(percentage) == expected
-    assert result.Priorizado.sum() == expected
+    assert result.Priorizado.sum() == min(expected, 70)  # Seis exceden P75 en T artificial.
     pd.testing.assert_frame_equal(result.drop(columns="Priorizado"), before)
     pd.testing.assert_frame_equal(ordered, before)
     assert list(result) == [
@@ -335,7 +336,12 @@ def test_context_rejects_symlinks(model, tmp_path) -> None:
     path.unlink()
     other = tmp_path / "other.csv"
     other.write_bytes(data)
-    path.symlink_to(other)
+    try:
+        path.symlink_to(other)
+    except OSError as error:
+        if os.name == "nt" and getattr(error, "winerror", None) == 1314:
+            pytest.skip("Windows requiere privilegios para crear enlaces simbólicos (1314).")
+        raise
     with pytest.raises(ValueError, match="enlazado"):
         load_context(model, tmp_path)
 
@@ -345,10 +351,13 @@ def test_template_and_artificial_sample_end_to_end(model, tmp_path) -> None:
     data = sample_csv(MONTH)
     assert data.decode().splitlines()[0].split(",") == list(HEADERS)
     assert data == sample_csv(MONTH)
+    assert hashlib.sha256(sample_csv("2025-10")).hexdigest() == (
+        "7c0101e8994f021848e5412cf80b5c1a8a1bd49a4b09f21683c56be38334125a"
+    )
     frame = pd.read_csv(io.BytesIO(data), dtype=str)
     assert set(frame.COD_DPTO_R) == {"50", "73"} and set(frame.COD_EVE) == {"210", "220"}
     month, counts, summary = parse_upload(data, ".csv", geography().index)
-    assert summary["Notificaciones"] == 24 and summary["Municipios con casos"] == 6
+    assert summary["Notificaciones"] == 55 and summary["Municipios con casos"] == 8
     write_context(tmp_path, model)
     result = select_capacity(ranking(model, month, counts, load_context(model, tmp_path)[month]))
     assert len(result) == 76 and result.Priorizado.sum() == 8

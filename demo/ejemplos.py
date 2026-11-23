@@ -10,7 +10,7 @@ SAMPLE_FILENAME = "muestra-artificial.csv"
 
 
 def sample_csv(month: str) -> bytes:
-    """Generar 24 registros inventados de ambos eventos y departamentos.
+    """Generar 55 registros inventados de ocho municipios y ambos eventos.
 
     Los códigos territoriales son del catálogo; fechas y conteos son artificiales
     y no representan observaciones ni desenlaces de ningún año.
@@ -19,7 +19,17 @@ def sample_csv(month: str) -> bytes:
     stream = io.StringIO()
     writer = csv.writer(stream, lineterminator="\n")
     writer.writerow(HEADERS)
-    for code in ("50001", "50006", "50110", "73001", "73024", "73026"):
-        for day, event in ((1, 210), (9, 220), (18, 210), (28, 210)):
+    for code, days, severe in (
+        ("73030", (1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 3, 6), 2),
+        ("73854", (5, 8, 11, 14, 17, 20, 23, 26, 1, 4), 1),
+        ("73043", (4, 7, 10, 13, 16, 19, 22, 25), 1),
+        ("73870", (1, 4, 7, 10, 13, 16, 19), 1),
+        ("73873", (4, 7, 10, 13, 16, 19), 1),
+        ("73226", (7, 10, 13, 16, 19), 1),
+        ("50245", (6, 9, 12, 15), 1),
+        ("73352", (3, 6, 9), 0),
+    ):
+        for index, day in enumerate(days):
+            event = 220 if index < severe else 210
             writer.writerow([code[:2], code[2:], f"{month}-{day:02d}", event])
     return stream.getvalue().encode()
